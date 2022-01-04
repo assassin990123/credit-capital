@@ -4,7 +4,7 @@ rewards v2 &amp; vault contracts for the credit capital ecosystem
 ## Design
 **Figure 1** shows a high level overview of the functionality associated with each contract. The goal here is to seperate the rewards logic, an evolving component of the system, and the definition of pools such that (hopefully) the vault contract does not need to be changed. You can think of the reward contract as the business layer and the vault contract as the persistance layer.
 
-![design illustration](cc-rv-design.jpg "Overview of Rewards V2")
+![design illustration](assets/cc-rv-design.jpg "Overview of Rewards V2")
 
 ### Pool Definition
 ```
@@ -51,3 +51,4 @@ Managing external locks is responsible for setting an external lock in the pool 
 Besides the core functionality, the vault contract will need a role based access control [(RBAC)](https://docs.openzeppelin.com/contracts/2.x/api/access#Roles) mechanism for accessing restricted functions.
 
 Staking will also need to be pausable at any time by an admin.
+
