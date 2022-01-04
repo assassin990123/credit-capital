@@ -55,7 +55,7 @@ contract Vault is Pausable {
     /*
         Write functions
     */
-    function depositLP(address _lp, uint256 _amount) external {}
+    function depositStake(address _lp, uint256 _amount) external {}
 
     function withdrawStake(address _lp, uint256 _stake) external {}
 
@@ -75,7 +75,7 @@ contract Vault is Pausable {
     /*  This function will check if a new stake needs to be created based on lockingThreshold.
         See readme for details.
     */
-    function checkTimelockThreshold() internal {}
+    function checkTimelockThreshold() internal returns (bool) {}
    
     /*
         Admin functions
