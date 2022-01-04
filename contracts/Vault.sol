@@ -12,6 +12,8 @@ contract Vault is Pausable, AccessControl {
     // If a user adds a deposit below the locking threshold, the lp is absorbed into the previous lock.
     // else, a new stake is created.
     uint256 public lockingThreshold;
+    // timelock duration
+    uint256 timelock = 365 days;
 
     // unique stake identifier
     mapping (uint256 => Stake) Stakes;
@@ -94,5 +96,7 @@ contract Vault is Pausable, AccessControl {
     function withdrawLP(address _lp) external {}
 
     function withdrawMATIC() external {}
+
+    function updateTimelockDuration(uint256 _duration) external {}
 
 }
