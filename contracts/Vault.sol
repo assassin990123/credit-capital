@@ -4,7 +4,8 @@ pragma solidity "0.8.11";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
-contract Vault is Pausable {
+contract Vault is Pausable, AccessControl {
+    // access control roles definition
     // reward token
     address public capl;
 
@@ -50,6 +51,9 @@ contract Vault is Pausable {
     // TBD: Assume creation with one pool required (?)
     constructor (address _capl) {
         capl = _capl;
+        // Grant the contract deployer the default admin role: it will be able
+        // to grant and revoke any roles
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
     
     /*
