@@ -13,7 +13,7 @@ contract Vault is Pausable, AccessControl {
     // else, a new stake is created.
     uint256 public lockingThreshold;
     // timelock duration
-    uint256 timelock = 365 days;
+    uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
 
     // unique stake identifier
     mapping (uint256 => Stake) Stakes;
@@ -21,11 +21,11 @@ contract Vault is Pausable, AccessControl {
     mapping(address => Stake[]) userStakes; 
 
     struct Stake {
-        address lp;
-        uint256 lpAmount;
+        address token;
+        uint256 tokenAmount;
         uint256 startBlock;
         uint256 lastClaimBlock;
-        bool externalLock;
+        bool staticLock;
         bool active;
     }
     // pool tracking
@@ -36,9 +36,8 @@ contract Vault is Pausable, AccessControl {
     mapping(address => Pool) Pools;
 
     struct Pool {
-        uint256 totalRewards;           // TBD if this stays or we add more on chain analytics
-        uint256 totalUsers;             // TBD if this stays or we add more on chain analytics
-        uint256 averageRewardsPerUser;  // TBD if this stays or we add more on chain analytics
+        uint256 totalPooled;    // total generic token pooled in the contract
+        uint256 totalUsers;
     }
 
     mapping(address => User) Users;
@@ -61,13 +60,13 @@ contract Vault is Pausable, AccessControl {
     /*
         Write functions
     */
-    function depositStake(address _lp, uint256 _amount) external {}
+    function depositStake(address _token, uint256 _amount) external {}
 
-    function withdrawStake(address _lp, uint256 _stake) external {}
+    function withdrawStake(address _token, uint256 _stake, uint256 _amount) external {}
 
-    function withdrawAllStake(address _lp) external {}
+    function withdrawAllStake(address _token) external {}
 
-    function setExternalLock(address _lp, uint256 _stakeId) external {}
+    function setStaticLock(address _token, uint256 _stakeId) external {}
    
     /*
         Read functions
@@ -89,13 +88,13 @@ contract Vault is Pausable, AccessControl {
     */
     function mintCapl(address _to, uint256 _amount) external {}
 
-    function addPool(address _lp) external {}
+    function addPool(address _token) external {}
 
-    function updatePool(uint256 _id, uint256 _totalRewards, uint256 _totalUsers) public {}
+    function updatePool(uint256 _id, uint256 _totalRewards, uint256 _totalUsers) internal {}
 
-    function withdrawLP(address _lp) external {}
+    function withdrawToken(address _token, uint256 _amount, address _destination) external {}
 
-    function withdrawMATIC() external {}
+    function withdrawMATIC(address _destination) external {}
 
     function updateTimelockDuration(uint256 _duration) external {}
 
