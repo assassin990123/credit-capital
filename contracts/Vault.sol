@@ -43,6 +43,7 @@ contract Vault is Pausable, AccessControl {
     struct Pool {
         uint256 totalPooled;    // total generic token pooled in the contract
         uint256 totalUsers;
+        uint256 accCAPLPerUser;
     }
 
     mapping(address => User) Users;
@@ -51,10 +52,10 @@ contract Vault is Pausable, AccessControl {
         uint256 pendingRewards;
         uint256 rewardDebt;     // house fee (?)
         uint256 claimedRewards;
-        // Stake[] stakes; // I don't understand clearly by this.
+        // Stake[] stakes; // I think this is not needed as we declared the userStakes mapping.
     }
 
-    event Deposit(address lp, uint256 amount);
+    event Deposit(address token, uint256 amount);
 
     // TBD: Assume creation with one pool required (?)
     constructor (address _capl) {
@@ -65,27 +66,42 @@ contract Vault is Pausable, AccessControl {
     }
     
     /*
-        Write functions
+    * Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
+    * 1. The stake's `accCAPLPerUser` (and `lastClaimBlock`) gets updated.
+    * 2. User receives the pending reward sent to his/her address. - perhaps this should go to ther reward contract
+    * 3. User's `amount` gets updated.
+    * 4. User's `rewardDebt` gets updated.
     */
     function depositStake(address _token, uint256 _amount) external {
+        Pool memory pool = Pools[_token];
         User storage user = Users[msg.sender]; 
-        Pool storage pool = Pools[_token];
         Stake storage userStake = userStakes[msg.sender][_token];
-        // updatePool(_token);
+
+        // update the userstake's lastClaimBlock
+        if (block.number <= userStake.lastClaimBlock) {
+            return;
+        }
+        uint256 lpSupply = IERC20(_token).balanceOf(address(this));
+        if (lpSupply == 0) {
+            userStake.lastClaimBlock = block.number;
+            return;
+        }
+
+        // return the user's pending reward - I am not suer this part should go to the reward contract.
         if (userStake.tokenAmount > 0) {
-            uint256 pending = userStake.tokenAmount.mul(pool.accCakePerShare).div(1e12).sub(user.rewardDebt);
+            uint256 pending = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(1e12).sub(user.rewardDebt);
             if(pending > 0) {
                 IERC20(_token).transfer(msg.sender, pending);
             }
         }
         if (_amount > 0) {
-            pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
+            IERC20(_token).transferFrom(address(msg.sender), address(this), _amount);
             userStake.tokenAmount = userStake.tokenAmount.add(_amount);
         }
 
         // update uesr's rewardDebt
-        user.rewardDebt = userStake.tokenAmount.mul(pool.accCakePerShare).div(1e12);
-        emit Deposit(msg.sender, _token, _amount);
+        user.rewardDebt = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(1e6);
+        emit Deposit(_token, _amount);
     }
 
     function withdrawStake(address _token, uint256 _stake, uint256 _amount) external {}
