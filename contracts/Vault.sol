@@ -3,6 +3,7 @@ pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "./libs/SafeMath.sol";
 
@@ -17,7 +18,7 @@ contract Vault is Pausable, AccessControl {
     // else, a new stake is created.
     uint256 public lockingThreshold;
     // timelock duration
-    uint256 timelock = 365 days;
+    uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
 
     // unique stake identifier
     mapping (address => Stake) Stakes;
@@ -25,11 +26,11 @@ contract Vault is Pausable, AccessControl {
     mapping(address => mapping (address => Stake)) userStakes; 
 
     struct Stake {
-        // address lp; // I think this field can go out of this struct and can be used as a mapping key.
-        uint256 lpAmount;
+        // address token; // I think this part can be omitted as we can use the token address as a mapping key.
+        uint256 tokenAmount;
         uint256 startBlock;
         uint256 lastClaimBlock;
-        bool externalLock;
+        bool staticLock;
         bool active;
     }
     // pool tracking
@@ -40,9 +41,8 @@ contract Vault is Pausable, AccessControl {
     mapping(address => Pool) Pools;
 
     struct Pool {
-        uint256 totalRewards;           // TBD if this stays or we add more on chain analytics
-        uint256 totalUsers;             // TBD if this stays or we add more on chain analytics
-        uint256 averageRewardsPerUser;  // TBD if this stays or we add more on chain analytics
+        uint256 totalPooled;    // total generic token pooled in the contract
+        uint256 totalUsers;
     }
 
     mapping(address => User) Users;
@@ -67,34 +67,32 @@ contract Vault is Pausable, AccessControl {
     /*
         Write functions
     */
-
-    // Deposit LP tokens to Vault for CAPL allocation.
-    function depositStake(address _lp, uint256 _amount) external {
-
-        User storage user = Users[msg.sender];
-        Pool storage pool = Pools[_lp];
-        Stake storage stake = Stakes[_lp];
-        Stake storage userStake = userStakes[msg.sender][_lp];
-        // updatePool(_lp);
-        if (userStake.lpAmount > 0) {
-            uint256 pending = userStake.lpAmount.mul(pool.averageRewardsPerUser).div(1e12).sub(user.rewardDebt);
+    function depositStake(address _token, uint256 _amount) external {
+        User storage user = Users[msg.sender]; 
+        Pool storage pool = Pools[_token];
+        Stake storage userStake = userStakes[msg.sender][_token];
+        // updatePool(_token);
+        if (userStake.tokenAmount > 0) {
+            uint256 pending = userStake.tokenAmount.mul(pool.accCakePerShare).div(1e12).sub(user.rewardDebt);
             if(pending > 0) {
-                capl.transfer(msg.sender, pending);
+                IERC20(_token).transfer(msg.sender, pending);
             }
         }
         if (_amount > 0) {
-            userStake.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
-            userStake.amount = userStake.amount.add(_amount);
+            pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
+            userStake.tokenAmount = userStake.tokenAmount.add(_amount);
         }
-        userStake.rewardDebt = userStake.amount.mul(userStake.accCakePerShare).div(1e12);
-        emit Deposit(msg.sender, _lp, _amount);
+
+        // update uesr's rewardDebt
+        user.rewardDebt = userStake.tokenAmount.mul(pool.accCakePerShare).div(1e12);
+        emit Deposit(msg.sender, _token, _amount);
     }
 
-    function withdrawStake(address _lp, uint256 _stake) external {}
+    function withdrawStake(address _token, uint256 _stake, uint256 _amount) external {}
 
-    function withdrawAllStake(address _lp) external {}
+    function withdrawAllStake(address _token) external {}
 
-    function setExternalLock(address _lp, uint256 _stakeId) external {}
+    function setStaticLock(address _token, uint256 _stakeId) external {}
    
     /*
         Read functions
@@ -116,13 +114,13 @@ contract Vault is Pausable, AccessControl {
     */
     function mintCapl(address _to, uint256 _amount) external {}
 
-    function addPool(address _lp) external {}
+    function addPool(address _token) external {}
 
-    function updatePool(uint256 _id, uint256 _totalRewards, uint256 _totalUsers) public {}
+    function updatePool(uint256 _id, uint256 _totalRewards, uint256 _totalUsers) internal {}
 
-    function withdrawLP(address _lp) external {}
+    function withdrawToken(address _token, uint256 _amount, address _destination) external {}
 
-    function withdrawMATIC() external {}
+    function withdrawMATIC(address _destination) external {}
 
     function updateTimelockDuration(uint256 _duration) external {}
 

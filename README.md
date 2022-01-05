@@ -15,21 +15,20 @@ struct Stake {
     uint256 lpAmount;
     uint256 startBlock;
     uint256 lastClaimBlock;
-    bool externalLock;
+    bool staticLock;
     bool active;
 }
 ```
 
 ### Timelocks
-Baked into the Stake struct is all of the logic required to calculate and read timelocks. All deposits into a given pool are subject to a one year timelock. However, a user that creates multiple deposits in a short amount of time should not be subject to multiple timelocks. If the user deposits multiple positions below the ``timelockThreshold`` (see contract) that deposit gets absorbed into the most recent position. Otherwise, a new position is created subject to its own, one year timelock.
+Baked into the Stake struct is all of the logic required to calculate and read timelocks. All deposits into a given pool are subject to a one year timelock. However, a user that creates multiple deposits in a short amount of time will not be subject to multiple timelocks. If the user deposits multiple positions below the ``timelockThreshold`` (see contract) that deposit gets absorbed into the most recent position. Otherwise, a new position is created subject to its own, one year timelock.
 
 ### Pool Definition
 ```
 # subject to change
 struct Pool {
-    uint256 totalRewards;           // TBD if this stays or we add more on chain analytics
-    uint256 totalUsers;             // TBD if this stays or we add more on chain analytics
-    uint256 averageRewardsPerUser;  // TBD if this stays or we add more on chain analytics
+    uint256 totalPooled;    // total generic token pooled in the contract
+    uint256 totalUsers;
 }
 ```
 
@@ -49,7 +48,7 @@ The vault essentially has four responsabilities:
 - Minting CAPL
 - Managing Pools
 - Managing Users
-- Managing Stakes (external locks)
+- Managing Stakes (+ external locks & timelocks)
 
 The first point is pretty straight forward. The vault will take ownership of the [CAPL](https://github.com/CreditCapital-io/CreditCapital-Contracts/blob/main/Deploy%201/CAPL.sol) token and be in charge of calling the mint function.
 
