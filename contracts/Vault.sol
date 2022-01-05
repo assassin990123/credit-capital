@@ -4,7 +4,11 @@ pragma solidity 0.8.11;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
+import "./libs/SafeMath.sol";
+
 contract Vault is Pausable, AccessControl {
+    using SafeMath for uint256;
+
     // access control roles definition
     // reward token
     address public capl;
@@ -16,12 +20,12 @@ contract Vault is Pausable, AccessControl {
     uint256 timelock = 365 days;
 
     // unique stake identifier
-    mapping (uint256 => Stake) Stakes;
+    mapping (address => Stake) Stakes;
     // maps a users address to their stakes
-    mapping(address => Stake[]) userStakes; 
+    mapping(address => mapping (address => Stake)) userStakes; 
 
     struct Stake {
-        address lp;
+        // address lp; // I think this field can go out of this struct and can be used as a mapping key.
         uint256 lpAmount;
         uint256 startBlock;
         uint256 lastClaimBlock;
@@ -47,8 +51,10 @@ contract Vault is Pausable, AccessControl {
         uint256 pendingRewards;
         uint256 rewardDebt;     // house fee (?)
         uint256 claimedRewards;
-        Stake[] stakes;
+        // Stake[] stakes; // I don't understand clearly by this.
     }
+
+    event Deposit(address lp, uint256 amount);
 
     // TBD: Assume creation with one pool required (?)
     constructor (address _capl) {
@@ -61,7 +67,28 @@ contract Vault is Pausable, AccessControl {
     /*
         Write functions
     */
-    function depositStake(address _lp, uint256 _amount) external {}
+
+    // Deposit LP tokens to Vault for CAPL allocation.
+    function depositStake(address _lp, uint256 _amount) external {
+
+        User storage user = Users[msg.sender];
+        Pool storage pool = Pools[_lp];
+        Stake storage stake = Stakes[_lp];
+        Stake storage userStake = userStakes[msg.sender][_lp];
+        // updatePool(_lp);
+        if (userStake.lpAmount > 0) {
+            uint256 pending = userStake.lpAmount.mul(pool.averageRewardsPerUser).div(1e12).sub(user.rewardDebt);
+            if(pending > 0) {
+                capl.transfer(msg.sender, pending);
+            }
+        }
+        if (_amount > 0) {
+            userStake.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
+            userStake.amount = userStake.amount.add(_amount);
+        }
+        userStake.rewardDebt = userStake.amount.mul(userStake.accCakePerShare).div(1e12);
+        emit Deposit(msg.sender, _lp, _amount);
+    }
 
     function withdrawStake(address _lp, uint256 _stake) external {}
 
