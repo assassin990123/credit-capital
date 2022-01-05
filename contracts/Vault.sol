@@ -14,15 +14,19 @@ contract Vault is Pausable, AccessControl {
     // reward token
     address public capl;
 
+    // the Treasury funded via platform fees upon deposit & withdraw
+    address public treasury;
+
     // If a user adds a deposit below the locking threshold, the lp is absorbed into the previous lock.
     // else, a new stake is created.
     uint256 public lockingThreshold;
     // timelock duration
     uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
-    // 0.1% deposit fee
-    uint256 public constant depositFee = 0.1; // 1%
+    // 0.1% platform fee
+    uint256 public constant depositFee = 1; // 1%
 
     uint256 public constant MULTIPLIER = 1e6;
+    uint256 public constant ONE_HUNDRED = 100;
 
     // unique stake identifier
     mapping (address => Stake) Stakes;
@@ -53,7 +57,7 @@ contract Vault is Pausable, AccessControl {
     mapping(address => User) Users;
 
     struct User {
-        uint256 pendingRewards; // I think there is no need to store this value as the pending rewards will only be calculated when it return back to the user on Deposit/Withdraw.
+        uint256 pendingRewards;
         uint256 rewardDebt;     // house fee (?)
         uint256 claimedRewards;
         // Stake[] stakes; // I think this is not needed as we declared the userStakes mapping.
@@ -63,8 +67,9 @@ contract Vault is Pausable, AccessControl {
     event WithdrawStake(address token, uint256 amount);
 
     // TBD: Assume creation with one pool required (?)
-    constructor (address _capl) {
+    constructor (address _capl, address _treasury) {
         capl = _capl;
+        treasury = _treasury;
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -92,13 +97,16 @@ contract Vault is Pausable, AccessControl {
             return;
         }
 
-        // return the user's pending reward - I am not suer this part should go to the reward contract.
+        // update the user's pending rewards.
         if (userStake.tokenAmount > 0) {
-            uint256 pending = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(1e12).sub(user.rewardDebt);
-            if(pending > 0) {
-                IERC20(_token).transfer(msg.sender, pending);
-            }
+            user.pendingRewards = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(1e12).sub(user.rewardDebt);
         }
+
+        // transfer the platform fee to the treasury address
+        uint256 currentDepositFee = _amount.mul(depositFee).div(ONE_HUNDRED);
+        _amount -= currentDepositFee;
+        IERC20(_token).transferFrom(address(msg.sender), treasury, currentDepositFee);
+
         if (_amount > 0) {
             IERC20(_token).transferFrom(address(msg.sender), address(this), _amount);
             userStake.tokenAmount = userStake.tokenAmount.add(_amount);
@@ -109,7 +117,7 @@ contract Vault is Pausable, AccessControl {
         emit DepositStake(_token, _amount);
     }
 
-    function withdrawStake(address _token, uint256 _stake, uint256 _amount) external {
+    function withdrawStake(address _token, uint256 _amount) external {
         User storage user = Users[msg.sender];
         Pool storage pool = Pools[_token];
         Stake storage userStake = userStakes[msg.sender][_token];
