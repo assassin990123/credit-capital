@@ -83,24 +83,24 @@ contract Vault is Pausable, AccessControl {
     * 4. User's `rewardDebt` gets updated.
     */
     function depositStake(address _token, uint256 _amount) external {
-        Pool memory pool = Pools[_token];
-        User storage user = Users[msg.sender]; 
+        // Pool memory pool = Pools[_token];
+        // User storage user = Users[msg.sender]; 
         Stake storage userStake = userStakes[msg.sender][_token];
 
-        // update the userstake's lastClaimBlock
-        if (block.number <= userStake.lastClaimBlock) {
-            return;
-        }
-        uint256 lpSupply = IERC20(_token).balanceOf(address(this));
-        if (lpSupply == 0) {
-            userStake.lastClaimBlock = block.number;
-            return;
-        }
+        // // update the userstake's lastClaimBlock
+        // if (block.number <= userStake.lastClaimBlock) {
+        //     return;
+        // }
+        // uint256 lpSupply = IERC20(_token).balanceOf(address(this));
+        // if (lpSupply == 0) {
+        //     userStake.lastClaimBlock = block.number;
+        //     return;
+        // }
 
-        // update the user's pending rewards.
-        if (userStake.tokenAmount > 0) {
-            user.pendingRewards = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(1e12).sub(user.rewardDebt);
-        }
+        // // update the user's pending rewards.
+        // if (userStake.tokenAmount > 0) {
+        //     user.pendingRewards = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(MULTIPLIER).sub(user.rewardDebt);
+        // }
 
         // transfer the platform fee to the treasury address
         uint256 currentDepositFee = _amount.mul(depositFee).div(ONE_HUNDRED);
@@ -112,27 +112,27 @@ contract Vault is Pausable, AccessControl {
             userStake.tokenAmount = userStake.tokenAmount.add(_amount);
         }
 
-        // update uesr's rewardDebt
-        user.rewardDebt = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(1e6);
+        // // update uesr's rewardDebt
+        // user.rewardDebt = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(MULTIPLIER);
         emit DepositStake(_token, _amount);
     }
 
     function withdrawStake(address _token, uint256 _amount) external {
-        User storage user = Users[msg.sender];
-        Pool storage pool = Pools[_token];
+        // User storage user = Users[msg.sender];
+        // Pool storage pool = Pools[_token];
         Stake storage userStake = userStakes[msg.sender][_token];
         require(userStake.tokenAmount >= _amount, "withdraw: not good");
 
-        // updatePool(_pid);
-        uint256 pending = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(1e12).sub(user.rewardDebt);
-        if(pending > 0) {
-            IERC20(_token).transfer(msg.sender, pending);
-        }
+        // uint256 pending = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(MULTIPLIER).sub(user.rewardDebt);
+        // if(pending > 0) {
+        //     IERC20(_token).transfer(msg.sender, pending);
+        //     user.pendingRewards -= pending;
+        // }
         if(_amount > 0) {
             userStake.tokenAmount = userStake.tokenAmount.sub(_amount);
             IERC20(_token).transfer(address(msg.sender), _amount);
         }
-        user.rewardDebt = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(1e12);
+        // user.rewardDebt = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(MULTIPLIER);
         emit WithdrawStake(_token, _amount);
     }
 
