@@ -19,6 +19,10 @@ contract Vault is Pausable, AccessControl {
     uint256 public lockingThreshold;
     // timelock duration
     uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
+    // 0.1% deposit fee
+    uint256 public constant depositFee = 0.1; // 1%
+
+    uint256 public constant MULTIPLIER = 1e6;
 
     // unique stake identifier
     mapping (address => Stake) Stakes;
@@ -49,13 +53,14 @@ contract Vault is Pausable, AccessControl {
     mapping(address => User) Users;
 
     struct User {
-        uint256 pendingRewards;
+        uint256 pendingRewards; // I think there is no need to store this value as the pending rewards will only be calculated when it return back to the user on Deposit/Withdraw.
         uint256 rewardDebt;     // house fee (?)
         uint256 claimedRewards;
         // Stake[] stakes; // I think this is not needed as we declared the userStakes mapping.
     }
 
-    event Deposit(address token, uint256 amount);
+    event DepositStake(address token, uint256 amount);
+    event WithdrawStake(address token, uint256 amount);
 
     // TBD: Assume creation with one pool required (?)
     constructor (address _capl) {
@@ -101,10 +106,27 @@ contract Vault is Pausable, AccessControl {
 
         // update uesr's rewardDebt
         user.rewardDebt = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(1e6);
-        emit Deposit(_token, _amount);
+        emit DepositStake(_token, _amount);
     }
 
-    function withdrawStake(address _token, uint256 _stake, uint256 _amount) external {}
+    function withdrawStake(address _token, uint256 _stake, uint256 _amount) external {
+        User storage user = Users[msg.sender];
+        Pool storage pool = Pools[_token];
+        Stake storage userStake = userStakes[msg.sender][_token];
+        require(userStake.tokenAmount >= _amount, "withdraw: not good");
+
+        // updatePool(_pid);
+        uint256 pending = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(1e12).sub(user.rewardDebt);
+        if(pending > 0) {
+            IERC20(_token).transfer(msg.sender, pending);
+        }
+        if(_amount > 0) {
+            userStake.tokenAmount = userStake.tokenAmount.sub(_amount);
+            IERC20(_token).transfer(address(msg.sender), _amount);
+        }
+        user.rewardDebt = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(1e12);
+        emit WithdrawStake(_token, _amount);
+    }
 
     function withdrawAllStake(address _token) external {}
 
