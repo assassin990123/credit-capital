@@ -3,31 +3,12 @@ pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Vault is Pausable, AccessControl {
     // access control roles definition
     // reward token
     address public capl;
-
-    // If a user adds a deposit below the locking threshold, the lp is absorbed into the previous lock.
-    // else, a new stake is created.
-    uint256 public lockingThreshold;
-    // timelock duration
-    uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
-
-    // unique stake identifier
-    mapping (uint256 => Stake) Stakes;
-    // maps a users address to their stakes
-    mapping(address => Stake[]) userStakes; 
-
-    struct Stake {
-        address token;
-        uint256 tokenAmount;
-        uint256 startBlock;
-        uint256 lastClaimBlock;
-        bool staticLock;
-        bool active;
-    }
     // pool tracking
     /* 
         I'm still undecided if I want to create one contract for all of the pools, or multiple contracts. 
@@ -38,17 +19,8 @@ contract Vault is Pausable, AccessControl {
     struct Pool {
         uint256 totalPooled;    // total generic token pooled in the contract
         uint256 totalUsers;
+        bool active;
     }
-
-    mapping(address => User) Users;
-
-    struct User {
-        uint256 pendingRewards;
-        uint256 rewardDebt;     // house fee (?)
-        uint256 claimedRewards;
-        Stake[] stakes;
-    }
-
     // TBD: Assume creation with one pool required (?)
     constructor (address _capl) {
         capl = _capl;
@@ -60,13 +32,9 @@ contract Vault is Pausable, AccessControl {
     /*
         Write functions
     */
-    function depositStake(address _token, uint256 _amount) external {}
+    function depositVault(address _token, uint256 _amount) external {}
 
-    function withdrawStake(address _token, uint256 _stake, uint256 _amount) external {}
-
-    function withdrawAllStake(address _token) external {}
-
-    function setStaticLock(address _token, uint256 _stakeId) external {}
+    function withdrawVault(address _token, uint256 _amount) external {}
    
     /*
         Read functions
@@ -75,7 +43,10 @@ contract Vault is Pausable, AccessControl {
 
     function getPools() external returns (Pool[] memory) {}
 
-    function getUserInfo() external returns (User memory) {}
+    function checkIfPoolExists(address _token) public returns (bool) {
+        return Pools[_token].active;
+    }
+
 
     /*  This function will check if a new stake needs to be created based on lockingThreshold.
         See readme for details.
@@ -88,7 +59,14 @@ contract Vault is Pausable, AccessControl {
     */
     function mintCapl(address _to, uint256 _amount) external {}
 
-    function addPool(address _token) external {}
+    function addPool(address _token, uint256 _amount) external {
+        require(!checkIfPoolExists(_token), "This pool already exists");
+        Pools[_token] = Pool({
+            totalPooled: _amount,
+            totalUsers: 1,
+            active: true
+        });
+    }
 
     function updatePool(uint256 _id, uint256 _totalRewards, uint256 _totalUsers) internal {}
 
@@ -96,6 +74,7 @@ contract Vault is Pausable, AccessControl {
 
     function withdrawMATIC(address _destination) external {}
 
-    function updateTimelockDuration(uint256 _duration) external {}
+    function withdrawAllVault(address _token) external {}
+
 
 }
