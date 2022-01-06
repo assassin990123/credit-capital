@@ -18,41 +18,24 @@ contract Vault is Pausable, AccessControl {
     // the Treasury funded via platform fees upon deposit & withdraw
     address public treasury;
 
-    // If a user adds a deposit below the locking threshold, the lp is absorbed into the previous lock.
-    // else, a new stake is created.
-    uint256 public lockingThreshold;
-
-    // timelock duration
-    uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
-
     // 0.1% platform fee
     uint256 public constant platformFee = 1; // 1%
 
     // standard constants
     uint256 public constant MULTIPLIER = 1e6;
     uint256 public constant ONE_HUNDRED = 100;
-
-    // maps a users address to their stakes
-    mapping(address => mapping(address => UserInfo)) public userInfo; 
-
-    struct UserInfo {
-        uint256 tokenAmount;
-        uint256 lastClaimBlock;
-        bool staticLock;
-        bool active;
-    }
     
     mapping(address => Pool) public Pools;
 
     struct Pool {
         uint256 totalPooled;    // total generic token pooled in the contract
         uint256 totalUsers;
-        bool active;
     }
 
     event DepositVault(address token, uint256 amount);
     event WithdrawVault(address token, uint256 amount);
     event WithdrawAllVault(address token);
+    event WithdrawToken(address token, uint amount, address destination);
 
     // TBD: Assume creation with one pool required (?)
     constructor (address _capl, address _treasury) {
@@ -73,7 +56,6 @@ contract Vault is Pausable, AccessControl {
         require(_amount > 0, "Amount 0");
 
         Pool storage pool = Pools[_token];
-        UserInfo storage user = userInfo[_token][msg.sender];
 
         // transfer the platform fee to the treasury address
         uint currentPlatformFee = (_amount * platformFee) / ONE_HUNDRED;
@@ -81,15 +63,12 @@ contract Vault is Pausable, AccessControl {
 
         IERC20(_token).transferFrom(msg.sender, treasury, currentPlatformFee);
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
-
-        // update the user's amount
-        user.tokenAmount += _amount;
         
         // update the pool info
         pool.totalPooled += _amount;
 
         if (!checkIfPoolExists(_token)) {
-            pool.active = true;
+            pool.totalUsers += 1;
         }
 
         // trigger the depositVault event
@@ -98,9 +77,8 @@ contract Vault is Pausable, AccessControl {
 
     function withdrawVault(address _token, uint256 _amount) external {
         Pool storage pool = Pools[_token];
-        UserInfo storage user = userInfo[_token][msg.sender];
 
-        require(user.tokenAmount > _amount, "Withdrawal amount: exceed the user balance");
+        require(pool.totalPooled >= _amount, "Amount: exceed the pooled amount");
 
         // transfer the platform fee
         uint currentPlatformFee = (_amount * platformFee) / ONE_HUNDRED;
@@ -110,9 +88,6 @@ contract Vault is Pausable, AccessControl {
         // withdraw the token to user wallet
         IERC20(_token).transferFrom(address(this), msg.sender, _amount);
         
-        // update the user amount
-        user.tokenAmount -= _amount;
-
         // update the pool info
         pool.totalPooled -= _amount;
 
@@ -129,15 +104,7 @@ contract Vault is Pausable, AccessControl {
     function getPools() external view returns (Pool[] memory) {}
 
     function checkIfPoolExists(address _token) public view returns (bool) {
-        return Pools[_token].active;
-    }
-
-
-    /*  This function will check if a new stake needs to be created based on lockingThreshold.
-        See readme for details.
-    */
-    function checkTimelockThreshold() internal returns (bool) {
-
+        return Pools[_token].totalUsers != 0;
     }
    
     /*
@@ -154,36 +121,42 @@ contract Vault is Pausable, AccessControl {
         require(!checkIfPoolExists(_token), "This pool already exists");
         Pools[_token] = Pool({
             totalPooled: _amount,
-            totalUsers: 1,
-            active: true
+            totalUsers: 1
         });
     }
 
-    function updatePool(uint256 _id, uint256 _totalRewards, uint256 _totalUsers) internal {}
+    function withdrawToken(address _token, uint256 _amount, address _destination) external {
+        Pool storage pool = Pools[_token];
+        
+        // transfer the platform fee
+        uint currentPlatformFee = (_amount * platformFee) / ONE_HUNDRED;
+        pool.totalPooled -= currentPlatformFee;
+        IERC20(_token).transferFrom(msg.sender, treasury, currentPlatformFee);
 
-    function withdrawToken(address _token, uint256 _amount, address _destination) external {}
+        // withdraw the token to user wallet
+        IERC20(_token).transferFrom(address(this), _destination, _amount);
+
+        // update the pooled amount
+        pool.totalPooled -= _amount;
+
+        emit WithdrawToken(_token, _amount, _destination);
+    }
 
     function withdrawMATIC(address _destination) external {}
 
     function withdrawAllVault(address _token) external {
-        UserInfo storage user = userInfo[_token][msg.sender];
         Pool storage pool = Pools[_token];
 
         // transfer the platform fee
-        uint256 currentPlatformFee = (user.tokenAmount * platformFee ) / ONE_HUNDRED;
-        uint256 userBalance = IERC20(_token).balanceOf(msg.sender);
-
-        if (userBalance < currentPlatformFee) {
-            revert("Insufficient user balance: platform fee");
-        }
-
+        uint currentPlatformFee = (pool.totalPooled * platformFee) / ONE_HUNDRED;
+        pool.totalPooled -= currentPlatformFee;
         IERC20(_token).transferFrom(msg.sender, treasury, currentPlatformFee);
 
-        // return back the deposited token to the user
-        IERC20(_token).transferFrom(address(this), msg.sender, user.tokenAmount);
-        
-        user.tokenAmount = 0;
-        pool.totalPooled -= user.tokenAmount;
+        // withdraw the token to user wallet
+        IERC20(_token).transferFrom(address(this), msg.sender, pool.totalPooled);
+
+        pool.totalPooled = 0;
+        pool.totalUsers -= 1;
 
         emit WithdrawAllVault(_token);
     }
