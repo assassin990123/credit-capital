@@ -52,6 +52,7 @@ contract Vault is Pausable, AccessControl {
 
     event DepositVault(address token, uint256 amount);
     event WithdrawVault(address token, uint256 amount);
+    event WithdrawAllVault(address token);
 
     // TBD: Assume creation with one pool required (?)
     constructor (address _capl, address _treasury) {
@@ -96,7 +97,26 @@ contract Vault is Pausable, AccessControl {
     }
 
     function withdrawVault(address _token, uint256 _amount) external {
+        Pool storage pool = Pools[_token];
+        UserInfo storage user = userInfo[_token][msg.sender];
 
+        require(user.tokenAmount > _amount, "Withdrawal amount: exceed the user balance");
+
+        // transfer the platform fee
+        uint currentPlatformFee = (_amount * platformFee) / ONE_HUNDRED;
+        _amount -= currentPlatformFee;
+        IERC20(_token).transferFrom(msg.sender, treasury, currentPlatformFee);
+
+        // withdraw the token to user wallet
+        IERC20(_token).transferFrom(address(this), msg.sender, _amount);
+        
+        // update the user amount
+        user.tokenAmount -= _amount;
+
+        // update the pool info
+        pool.totalPooled -= _amount;
+
+        emit WithdrawVault(_token, _amount);
     }
    
     /*
@@ -106,7 +126,7 @@ contract Vault is Pausable, AccessControl {
         return Pools[_token];
     }
 
-    function getPools() external returns (Pool[] memory) {}
+    function getPools() external view returns (Pool[] memory) {}
 
     function checkIfPoolExists(address _token) public view returns (bool) {
         return Pools[_token].active;
@@ -125,7 +145,7 @@ contract Vault is Pausable, AccessControl {
         TODO: Add RBAC for all
     */
     function mintCapl(address _to, uint256 _amount) external {
-        // should consider that limit per day - 5000 CAPL/day
+        // should consider the limit per day - 5000 CAPL/day
 
         ICAPL(capl).mint(_to, _amount);
     }
@@ -161,8 +181,10 @@ contract Vault is Pausable, AccessControl {
 
         // return back the deposited token to the user
         IERC20(_token).transferFrom(address(this), msg.sender, user.tokenAmount);
-
-        pool.totalUsers -= 1;
+        
+        user.tokenAmount = 0;
         pool.totalPooled -= user.tokenAmount;
+
+        emit WithdrawAllVault(_token);
     }
 }
