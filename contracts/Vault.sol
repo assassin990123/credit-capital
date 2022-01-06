@@ -29,12 +29,12 @@ contract Vault is Pausable, AccessControl {
     uint256 public constant ONE_HUNDRED = 100;
 
     // unique stake identifier
-    mapping (address => Stake) Stakes;
+    mapping (uint256 => Stake) Stakes;
     // maps a users address to their stakes
-    mapping(address => mapping (address => Stake)) userStakes; 
+    mapping(address => Stake[]) userStakes; 
 
     struct Stake {
-        // address token; // I think this part can be omitted as we can use the token address as a mapping key.
+        address token;
         uint256 tokenAmount;
         uint256 startBlock;
         uint256 lastClaimBlock;
@@ -60,7 +60,7 @@ contract Vault is Pausable, AccessControl {
         uint256 pendingRewards;
         uint256 rewardDebt;     // house fee (?)
         uint256 claimedRewards;
-        // Stake[] stakes; // I think this is not needed as we declared the userStakes mapping.
+        Stake[] stakes;
     }
 
     event DepositStake(address token, uint256 amount);
@@ -78,29 +78,21 @@ contract Vault is Pausable, AccessControl {
     /*
     * Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
     * 1. The stake's `accCAPLPerUser` (and `lastClaimBlock`) gets updated.
-    * 2. User receives the pending reward sent to his/her address. - perhaps this should go to ther reward contract
-    * 3. User's `amount` gets updated.
-    * 4. User's `rewardDebt` gets updated.
+    * 2. User's `amount` gets updated.
     */
     function depositStake(address _token, uint256 _amount) external {
-        // Pool memory pool = Pools[_token];
-        // User storage user = Users[msg.sender]; 
-        Stake storage userStake = userStakes[msg.sender][_token];
+        Stake storage userStake;
+        User storage user = Users[msg.sender];
 
-        // // update the userstake's lastClaimBlock
-        // if (block.number <= userStake.lastClaimBlock) {
-        //     return;
-        // }
-        // uint256 lpSupply = IERC20(_token).balanceOf(address(this));
-        // if (lpSupply == 0) {
-        //     userStake.lastClaimBlock = block.number;
-        //     return;
-        // }
-
-        // // update the user's pending rewards.
-        // if (userStake.tokenAmount > 0) {
-        //     user.pendingRewards = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(MULTIPLIER).sub(user.rewardDebt);
-        // }
+        // check if the user's deposit is under the lockThreadHold
+        if (checkTimelockThreshold()) {
+            userStake = userStakes[msg.sender][user.stakes.length];
+            userStake.lastClaimBlock = block.number;
+        } else {
+            userStake = userStakes.push()
+            userStake.token = _token;
+            userStake.startBlock = block.number;
+        }
 
         // transfer the platform fee to the treasury address
         uint256 currentDepositFee = _amount.mul(depositFee).div(ONE_HUNDRED);
@@ -112,15 +104,13 @@ contract Vault is Pausable, AccessControl {
             userStake.tokenAmount = userStake.tokenAmount.add(_amount);
         }
 
-        // // update uesr's rewardDebt
-        // user.rewardDebt = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(MULTIPLIER);
         emit DepositStake(_token, _amount);
     }
 
     function withdrawStake(address _token, uint256 _amount) external {
-        // User storage user = Users[msg.sender];
+        User storage user = Users[msg.sender];
         // Pool storage pool = Pools[_token];
-        Stake storage userStake = userStakes[msg.sender][_token];
+        Stake storage userStake = userStakes[msg.sender][user.stakes.length];
         require(userStake.tokenAmount >= _amount, "withdraw: not good");
 
         // uint256 pending = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(MULTIPLIER).sub(user.rewardDebt);
@@ -152,7 +142,9 @@ contract Vault is Pausable, AccessControl {
     /*  This function will check if a new stake needs to be created based on lockingThreshold.
         See readme for details.
     */
-    function checkTimelockThreshold() internal returns (bool) {}
+    function checkTimelockThreshold() internal returns (bool) {
+
+    }
    
     /*
         Admin functions
