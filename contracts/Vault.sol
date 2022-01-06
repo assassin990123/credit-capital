@@ -41,7 +41,9 @@ contract Vault is Pausable, AccessControl {
     /*
         Read functions
     */
-    function getPoolInfo(uint256 id) external returns (Pool memory) {}
+    function getPoolInfo(address _token) external view returns (Pool memory) {
+        return Pools[_token];
+    }
 
     function getPools() external returns (Pool[] memory) {}
 

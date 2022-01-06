@@ -161,10 +161,9 @@ contract RewardsV2 is Pausable, AccessControl {
         Users[msg.sender] = newUser;
         Users[msg.sender].stakeKeys.push(0);
 
-        Stakes[msg.sender][0] = newStake;
+        Stakes[msg.sender].push(newStake);
 
         // transfer funds to the vault
-        IERC20(_token).safeApprove(vault, _amount);
         IERC20(_token).safeTransferFrom(msg.sender, vault, _amount);
 
         vaultInstance.addPool(_token, _amount);
