@@ -44,8 +44,10 @@ contract Vault is Pausable, AccessControl {
         bool active;
     }
 
-    event DepositStake(address token, uint256 amount);
-    event WithdrawStake(address token, uint256 amount);
+    mapping(address => mapping(address => Pool)) UserPools;
+
+    event DepositVault(address token, uint256 amount);
+    event WithdrawVault(address token, uint256 amount);
 
     // TBD: Assume creation with one pool required (?)
     constructor (address _capl, address _treasury) {
@@ -63,7 +65,25 @@ contract Vault is Pausable, AccessControl {
     * 2. User's `amount` gets updated.
     */
     function depositVault(address _token, uint256 _amount) external {
+        require(_amount > 0, "Amount 0");
+        Pool storage userPool = UserPools[msg.sender][_token];
+        UserInfo storage user = Users[msg.sender];
 
+        // transfer the platform fee to the treasury address
+        uint currentPlatformFee = (_amount * depositFee) / ONE_HUNDRED;
+        _amount -= currentPlatformFee;
+
+        IERC20(_token).transferFrom(msg.sender, treasury, currentPlatformFee);
+        IERC20(_token).transferFrom(msg.sender, address(this), _amount);
+
+        // update the user's amount
+        user.tokenAmount += _amount;
+
+        // update the pool info
+        userPool.totalPooled += _amount;
+
+        // trigger the depositVault event
+        emit DepositVault(_token, _amount);
     }
 
     function withdrawVault(address _token, uint256 _amount) external {}
