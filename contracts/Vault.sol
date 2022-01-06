@@ -18,6 +18,9 @@ contract Vault is Pausable, AccessControl {
     // the Treasury funded via platform fees upon deposit & withdraw
     address public treasury;
 
+    // MATIC token address
+    address public constant MATIC = 0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0;
+
     // 0.1% platform fee
     uint256 public constant platformFee = 1; // 1%
 
@@ -47,21 +50,13 @@ contract Vault is Pausable, AccessControl {
         _grantRole(minter, msg.sender);
     }
     
-    /*
-    * Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
-    * 1. User's `amount` gets updated.
-    * 2. The platformfee is transferred to the treasury wallet.
-    */
     function depositVault(address _token, uint256 _amount) external {
         require(_amount > 0, "Amount 0");
 
         Pool storage pool = Pools[_token];
 
-        // transfer the platform fee to the treasury address
-        uint currentPlatformFee = (_amount * platformFee) / ONE_HUNDRED;
-        _amount -= currentPlatformFee;
-
-        IERC20(_token).transferFrom(msg.sender, treasury, currentPlatformFee);
+        // platform fee
+        _transferPlatformFee(_token, _amount);
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
         
         // update the pool info
@@ -80,10 +75,8 @@ contract Vault is Pausable, AccessControl {
 
         require(pool.totalPooled >= _amount, "Amount: exceed the pooled amount");
 
-        // transfer the platform fee
-        uint currentPlatformFee = (_amount * platformFee) / ONE_HUNDRED;
-        _amount -= currentPlatformFee;
-        IERC20(_token).transferFrom(msg.sender, treasury, currentPlatformFee);
+        // platform fee
+        _transferPlatformFee(_token, _amount);
 
         // withdraw the token to user wallet
         IERC20(_token).transferFrom(address(this), msg.sender, _amount);
@@ -128,10 +121,10 @@ contract Vault is Pausable, AccessControl {
     function withdrawToken(address _token, uint256 _amount, address _destination) external {
         Pool storage pool = Pools[_token];
         
-        // transfer the platform fee
-        uint currentPlatformFee = (_amount * platformFee) / ONE_HUNDRED;
-        pool.totalPooled -= currentPlatformFee;
-        IERC20(_token).transferFrom(msg.sender, treasury, currentPlatformFee);
+        require(pool.totalPooled >= pool.totalPooled, "Amount: no enough balance");
+        
+        // platform fee
+        _transferPlatformFee(_token, _amount);
 
         // withdraw the token to user wallet
         IERC20(_token).transferFrom(address(this), _destination, _amount);
@@ -142,15 +135,26 @@ contract Vault is Pausable, AccessControl {
         emit WithdrawToken(_token, _amount, _destination);
     }
 
-    function withdrawMATIC(address _destination) external {}
+    function withdrawMATIC(address _destination) external {
+        Pool storage pool = Pools[MATIC];
+
+        // platform fee
+        _transferPlatformFee(MATIC, pool.totalPooled);
+
+        // withdraw the token to user wallet
+        IERC20(MATIC).transferFrom(address(this), _destination, pool.totalPooled);
+
+        // update the pooled amount
+        pool.totalPooled -= pool.totalPooled;
+
+        emit WithdrawToken(MATIC, pool.totalPooled, _destination);
+    }
 
     function withdrawAllVault(address _token) external {
         Pool storage pool = Pools[_token];
 
-        // transfer the platform fee
-        uint currentPlatformFee = (pool.totalPooled * platformFee) / ONE_HUNDRED;
-        pool.totalPooled -= currentPlatformFee;
-        IERC20(_token).transferFrom(msg.sender, treasury, currentPlatformFee);
+        // platform fee
+        _transferPlatformFee(_token, pool.totalPooled);
 
         // withdraw the token to user wallet
         IERC20(_token).transferFrom(address(this), msg.sender, pool.totalPooled);
@@ -159,5 +163,12 @@ contract Vault is Pausable, AccessControl {
         pool.totalUsers -= 1;
 
         emit WithdrawAllVault(_token);
+    }
+
+    // transfer the platform fee
+    function _transferPlatformFee(address _token, uint256 _amount) private {
+        uint currentPlatformFee = (_amount * platformFee) / ONE_HUNDRED;
+        _amount -= currentPlatformFee;
+        IERC20(_token).transferFrom(msg.sender, treasury, currentPlatformFee);
     }
 }
