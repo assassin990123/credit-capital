@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Vault is Pausable, AccessControl {
+    bytes32 public constant minter = keccak256("MINTER");
     // access control roles definition
     // reward token
     address public capl;
@@ -53,6 +54,7 @@ contract Vault is Pausable, AccessControl {
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(minter, msg.sender);
     }
     
     /*
