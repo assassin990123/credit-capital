@@ -5,46 +5,50 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+interface ICAPL {
+    function mint(address _to, uint256 _amount) external;
+}
+
 contract Vault is Pausable, AccessControl {
     bytes32 public constant minter = keccak256("MINTER");
     // access control roles definition
     // reward token
     address public capl;
+
     // the Treasury funded via platform fees upon deposit & withdraw
     address public treasury;
 
     // If a user adds a deposit below the locking threshold, the lp is absorbed into the previous lock.
     // else, a new stake is created.
     uint256 public lockingThreshold;
+
     // timelock duration
     uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
-    // 0.1% platform fee
-    uint256 public constant depositFee = 1; // 1%
 
+    // 0.1% platform fee
+    uint256 public constant platformFee = 1; // 1%
+
+    // standard constants
     uint256 public constant MULTIPLIER = 1e6;
     uint256 public constant ONE_HUNDRED = 100;
 
     // maps a users address to their stakes
-    mapping(address => UserInfo) Users; 
+    mapping(address => mapping(address => UserInfo)) public userInfo; 
 
     struct UserInfo {
-        address token;
         uint256 tokenAmount;
-        uint256 startBlock;
         uint256 lastClaimBlock;
         bool staticLock;
         bool active;
     }
     
-    mapping(address => Pool) Pools;
+    mapping(address => Pool) public Pools;
 
     struct Pool {
         uint256 totalPooled;    // total generic token pooled in the contract
         uint256 totalUsers;
         bool active;
     }
-
-    mapping(address => mapping(address => Pool)) UserPools;
 
     event DepositVault(address token, uint256 amount);
     event WithdrawVault(address token, uint256 amount);
@@ -61,16 +65,17 @@ contract Vault is Pausable, AccessControl {
     
     /*
     * Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
-    * 1. The stake's `accCAPLPerUser` (and `lastClaimBlock`) gets updated.
-    * 2. User's `amount` gets updated.
+    * 1. User's `amount` gets updated.
+    * 2. The platformfee is transferred to the treasury wallet.
     */
     function depositVault(address _token, uint256 _amount) external {
         require(_amount > 0, "Amount 0");
-        Pool storage userPool = UserPools[msg.sender][_token];
-        UserInfo storage user = Users[msg.sender];
+
+        Pool storage pool = Pools[_token];
+        UserInfo storage user = userInfo[_token][msg.sender];
 
         // transfer the platform fee to the treasury address
-        uint currentPlatformFee = (_amount * depositFee) / ONE_HUNDRED;
+        uint currentPlatformFee = (_amount * platformFee) / ONE_HUNDRED;
         _amount -= currentPlatformFee;
 
         IERC20(_token).transferFrom(msg.sender, treasury, currentPlatformFee);
@@ -78,20 +83,28 @@ contract Vault is Pausable, AccessControl {
 
         // update the user's amount
         user.tokenAmount += _amount;
-
+        
         // update the pool info
-        userPool.totalPooled += _amount;
+        pool.totalPooled += _amount;
+
+        if (!checkIfPoolExists(_token)) {
+            pool.active = true;
+        }
 
         // trigger the depositVault event
         emit DepositVault(_token, _amount);
     }
 
-    function withdrawVault(address _token, uint256 _amount) external {}
+    function withdrawVault(address _token, uint256 _amount) external {
+
+    }
    
     /*
         Read functions
     */
-    function getPoolInfo(uint256 id) external returns (Pool memory) {}
+    function getPoolInfo(address _token) external view returns (Pool memory) {
+        return Pools[_token];
+    }
 
     function getPools() external returns (Pool[] memory) {}
 
@@ -111,7 +124,11 @@ contract Vault is Pausable, AccessControl {
         Admin functions
         TODO: Add RBAC for all
     */
-    function mintCapl(address _to, uint256 _amount) external {}
+    function mintCapl(address _to, uint256 _amount) external {
+        // should consider that limit per day - 5000 CAPL/day
+
+        ICAPL(capl).mint(_to, _amount);
+    }
 
     function addPool(address _token, uint256 _amount) external {
         require(!checkIfPoolExists(_token), "This pool already exists");
@@ -128,7 +145,24 @@ contract Vault is Pausable, AccessControl {
 
     function withdrawMATIC(address _destination) external {}
 
-    function withdrawAllVault(address _token) external {}
+    function withdrawAllVault(address _token) external {
+        UserInfo storage user = userInfo[_token][msg.sender];
+        Pool storage pool = Pools[_token];
 
+        // transfer the platform fee
+        uint256 currentPlatformFee = (user.tokenAmount * platformFee ) / ONE_HUNDRED;
+        uint256 userBalance = IERC20(_token).balanceOf(msg.sender);
 
+        if (userBalance < currentPlatformFee) {
+            revert("Insufficient user balance: platform fee");
+        }
+
+        IERC20(_token).transferFrom(msg.sender, treasury, currentPlatformFee);
+
+        // return back the deposited token to the user
+        IERC20(_token).transferFrom(address(this), msg.sender, user.tokenAmount);
+
+        pool.totalUsers -= 1;
+        pool.totalPooled -= user.tokenAmount;
+    }
 }
