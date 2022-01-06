@@ -5,15 +5,10 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import "./libs/SafeMath.sol";
-
 contract Vault is Pausable, AccessControl {
-    using SafeMath for uint256;
-
     // access control roles definition
     // reward token
     address public capl;
-
     // the Treasury funded via platform fees upon deposit & withdraw
     address public treasury;
 
@@ -28,12 +23,10 @@ contract Vault is Pausable, AccessControl {
     uint256 public constant MULTIPLIER = 1e6;
     uint256 public constant ONE_HUNDRED = 100;
 
-    // unique stake identifier
-    mapping (uint256 => Stake) Stakes;
     // maps a users address to their stakes
-    mapping(address => Stake[]) userStakes; 
+    mapping(address => UserInfo) Users; 
 
-    struct Stake {
+    struct UserInfo {
         address token;
         uint256 tokenAmount;
         uint256 startBlock;
@@ -41,26 +34,13 @@ contract Vault is Pausable, AccessControl {
         bool staticLock;
         bool active;
     }
-    // pool tracking
-    /* 
-        I'm still undecided if I want to create one contract for all of the pools, or multiple contracts. 
-        I'm currently leaning towards a single contract. Open to suggestions and critique from anyone.
-    */
+    
     mapping(address => Pool) Pools;
 
     struct Pool {
         uint256 totalPooled;    // total generic token pooled in the contract
         uint256 totalUsers;
-        uint256 accCAPLPerUser;
-    }
-
-    mapping(address => User) Users;
-
-    struct User {
-        uint256 pendingRewards;
-        uint256 rewardDebt;     // house fee (?)
-        uint256 claimedRewards;
-        Stake[] stakes;
+        bool active;
     }
 
     event DepositStake(address token, uint256 amount);
@@ -80,55 +60,11 @@ contract Vault is Pausable, AccessControl {
     * 1. The stake's `accCAPLPerUser` (and `lastClaimBlock`) gets updated.
     * 2. User's `amount` gets updated.
     */
-    function depositStake(address _token, uint256 _amount) external {
-        Stake storage userStake;
-        User storage user = Users[msg.sender];
+    function depositVault(address _token, uint256 _amount) external {
 
-        // check if the user's deposit is under the lockThreadHold
-        if (checkTimelockThreshold()) {
-            userStake = userStakes[msg.sender][user.stakes.length];
-            userStake.lastClaimBlock = block.number;
-        } else {
-            userStake = userStakes.push()
-            userStake.token = _token;
-            userStake.startBlock = block.number;
-        }
-
-        // transfer the platform fee to the treasury address
-        uint256 currentDepositFee = _amount.mul(depositFee).div(ONE_HUNDRED);
-        _amount -= currentDepositFee;
-        IERC20(_token).transferFrom(address(msg.sender), treasury, currentDepositFee);
-
-        if (_amount > 0) {
-            IERC20(_token).transferFrom(address(msg.sender), address(this), _amount);
-            userStake.tokenAmount = userStake.tokenAmount.add(_amount);
-        }
-
-        emit DepositStake(_token, _amount);
     }
 
-    function withdrawStake(address _token, uint256 _amount) external {
-        User storage user = Users[msg.sender];
-        // Pool storage pool = Pools[_token];
-        Stake storage userStake = userStakes[msg.sender][user.stakes.length];
-        require(userStake.tokenAmount >= _amount, "withdraw: not good");
-
-        // uint256 pending = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(MULTIPLIER).sub(user.rewardDebt);
-        // if(pending > 0) {
-        //     IERC20(_token).transfer(msg.sender, pending);
-        //     user.pendingRewards -= pending;
-        // }
-        if(_amount > 0) {
-            userStake.tokenAmount = userStake.tokenAmount.sub(_amount);
-            IERC20(_token).transfer(address(msg.sender), _amount);
-        }
-        // user.rewardDebt = userStake.tokenAmount.mul(pool.accCAPLPerUser).div(MULTIPLIER);
-        emit WithdrawStake(_token, _amount);
-    }
-
-    function withdrawAllStake(address _token) external {}
-
-    function setStaticLock(address _token, uint256 _stakeId) external {}
+    function withdrawVault(address _token, uint256 _amount) external {}
    
     /*
         Read functions
@@ -137,7 +73,10 @@ contract Vault is Pausable, AccessControl {
 
     function getPools() external returns (Pool[] memory) {}
 
-    function getUserInfo() external returns (User memory) {}
+    function checkIfPoolExists(address _token) public view returns (bool) {
+        return Pools[_token].active;
+    }
+
 
     /*  This function will check if a new stake needs to be created based on lockingThreshold.
         See readme for details.
@@ -152,7 +91,14 @@ contract Vault is Pausable, AccessControl {
     */
     function mintCapl(address _to, uint256 _amount) external {}
 
-    function addPool(address _token) external {}
+    function addPool(address _token, uint256 _amount) external {
+        require(!checkIfPoolExists(_token), "This pool already exists");
+        Pools[_token] = Pool({
+            totalPooled: _amount,
+            totalUsers: 1,
+            active: true
+        });
+    }
 
     function updatePool(uint256 _id, uint256 _totalRewards, uint256 _totalUsers) internal {}
 
@@ -160,6 +106,7 @@ contract Vault is Pausable, AccessControl {
 
     function withdrawMATIC(address _destination) external {}
 
-    function updateTimelockDuration(uint256 _duration) external {}
+    function withdrawAllVault(address _token) external {}
+
 
 }
