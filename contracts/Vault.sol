@@ -11,6 +11,10 @@ interface ICAPL {
 
 contract Vault is Pausable, AccessControl {
     bytes32 public constant minter = keccak256("MINTER");
+
+    // owner of vault contract
+    address private _owner;
+
     // access control roles definition
     // reward token
     address public capl;
@@ -18,11 +22,8 @@ contract Vault is Pausable, AccessControl {
     // the Treasury funded via platform fees upon deposit & withdraw
     address public treasury;
 
-    // MATIC token address
-    address public constant MATIC = 0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0;
-
     // 0.1% platform fee
-    uint256 public constant platformFee = 1; // 1%
+    uint256 public constant depositFee = 1; // 1%
 
     // standard constants
     uint256 public constant MULTIPLIER = 1e6;
@@ -35,29 +36,42 @@ contract Vault is Pausable, AccessControl {
         uint256 totalUsers;
     }
 
-    event DepositVault(address token, uint256 amount);
-    event WithdrawVault(address token, uint256 amount);
-    event WithdrawAllVault(address token);
+    event DepositVault(address user, address token, uint256 amount);
+    event WithdrawVault(address user, address token, uint256 amount);
+    event WithdrawAllVault(address user, address token);
     event WithdrawToken(address token, uint amount, address destination);
 
     // TBD: Assume creation with one pool required (?)
     constructor (address _capl, address _treasury) {
         capl = _capl;
+        _owner = msg.sender;
         treasury = _treasury;
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(minter, msg.sender);
     }
+
+    /**
+     * @dev Returns the address of the current owner.
+     */
+    function owner() public view virtual returns (address) {
+        return _owner;
+    }
+
+    modifier onlyOwner() {
+        require(owner() == msg.sender, "Ownable: caller is not the owner");
+        _;
+    }
     
-    function depositVault(address _token, uint256 _amount) external {
+    function depositVault(address _user, address _token, uint256 _amount) external {
         require(_amount > 0, "Amount 0");
 
         Pool storage pool = Pools[_token];
 
         // platform fee
-        _transferPlatformFee(_token, _amount);
-        IERC20(_token).transferFrom(msg.sender, address(this), _amount);
+        _transferDepositFee(_user, _token, _amount);
+        IERC20(_token).transferFrom(_user, address(this), _amount);
         
         // update the pool info
         pool.totalPooled += _amount;
@@ -67,24 +81,22 @@ contract Vault is Pausable, AccessControl {
         }
 
         // trigger the depositVault event
-        emit DepositVault(_token, _amount);
+        emit DepositVault(_user, _token, _amount);
     }
 
-    function withdrawVault(address _token, uint256 _amount) external {
+    function withdrawVault(address _user, address _token, uint256 _amount) external {
         Pool storage pool = Pools[_token];
 
+        require(pool.totalPooled > 0, "Nothing to withdraw");
         require(pool.totalPooled >= _amount, "Amount: exceed the pooled amount");
 
-        // platform fee
-        _transferPlatformFee(_token, _amount);
-
         // withdraw the token to user wallet
-        IERC20(_token).transferFrom(address(this), msg.sender, _amount);
+        IERC20(_token).transferFrom(address(this), _user, _amount);
         
         // update the pool info
         pool.totalPooled -= _amount;
 
-        emit WithdrawVault(_token, _amount);
+        emit WithdrawVault(_user, _token, _amount);
     }
    
     /*
@@ -118,14 +130,11 @@ contract Vault is Pausable, AccessControl {
         });
     }
 
-    function withdrawToken(address _token, uint256 _amount, address _destination) external {
+    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyOwner {
         Pool storage pool = Pools[_token];
         
-        require(pool.totalPooled >= pool.totalPooled, "Amount: no enough balance");
+        require(_amount > 0 && pool.totalPooled >= _amount);
         
-        // platform fee
-        _transferPlatformFee(_token, _amount);
-
         // withdraw the token to user wallet
         IERC20(_token).transferFrom(address(this), _destination, _amount);
 
@@ -135,40 +144,25 @@ contract Vault is Pausable, AccessControl {
         emit WithdrawToken(_token, _amount, _destination);
     }
 
-    function withdrawMATIC(address _destination) external {
-        Pool storage pool = Pools[MATIC];
-
-        // platform fee
-        _transferPlatformFee(MATIC, pool.totalPooled);
-
-        // withdraw the token to user wallet
-        IERC20(MATIC).transferFrom(address(this), _destination, pool.totalPooled);
-
-        // update the pooled amount
-        pool.totalPooled -= pool.totalPooled;
-
-        emit WithdrawToken(MATIC, pool.totalPooled, _destination);
+    function withdrawMATIC(address _destination) external onlyOwner {
     }
 
-    function withdrawAllVault(address _token) external {
+    function withdrawAllVault(address _user, address _token) external onlyOwner {
         Pool storage pool = Pools[_token];
 
-        // platform fee
-        _transferPlatformFee(_token, pool.totalPooled);
-
         // withdraw the token to user wallet
-        IERC20(_token).transferFrom(address(this), msg.sender, pool.totalPooled);
+        IERC20(_token).transferFrom(address(this), _user, pool.totalPooled);
 
         pool.totalPooled = 0;
         pool.totalUsers -= 1;
 
-        emit WithdrawAllVault(_token);
+        emit WithdrawAllVault(_user, _token);
     }
 
     // transfer the platform fee
-    function _transferPlatformFee(address _token, uint256 _amount) private {
-        uint currentPlatformFee = (_amount * platformFee) / ONE_HUNDRED;
-        _amount -= currentPlatformFee;
-        IERC20(_token).transferFrom(msg.sender, treasury, currentPlatformFee);
+    function _transferDepositFee(address _user, address _token, uint256 _amount) private {
+        uint currentDepositFee = (_amount * depositFee) / ONE_HUNDRED;
+        _amount -= currentDepositFee;
+        IERC20(_token).transferFrom(_user, treasury, currentDepositFee);
     }
 }
