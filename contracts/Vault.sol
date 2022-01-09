@@ -14,9 +14,6 @@ contract Vault is Pausable, AccessControl {
     bytes32 public constant minter = keccak256("MINTER");
     using SafeERC20 for IERC20;
 
-    // owner of vault contract
-    address private _owner;
-
     // access control roles definition
     // reward token
     address public capl;
@@ -51,25 +48,12 @@ contract Vault is Pausable, AccessControl {
         capl = _capl;
         matic = _matic;
 
-        _owner = msg.sender;
         treasury = _treasury;
 
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(minter, msg.sender);
-    }
-
-    /**
-     * @dev Returns the address of the current owner.
-     */
-    function owner() public view virtual returns (address) {
-        return _owner;
-    }
-
-    modifier onlyOwner() {
-        require(owner() == msg.sender, "Ownable: caller is not the owner");
-        _;
     }
     
     function depositVault(address _user, address _token, uint256 _amount) external {
@@ -124,7 +108,7 @@ contract Vault is Pausable, AccessControl {
         Admin functions
         TODO: Add RBAC for all
     */
-    function mintCapl(address _to, uint256 _amount) external {
+    function mintCapl(address _to, uint256 _amount) external onlyRole(minter) {
         // should consider the limit per day - 5000 CAPL/day
 
         ICAPL(capl).mint(_to, _amount);
@@ -138,7 +122,7 @@ contract Vault is Pausable, AccessControl {
         });
     }
 
-    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyOwner {
+    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {
         Pool storage pool = Pools[_token];
         
         require(_amount > 0 && pool.totalPooled >= _amount);
@@ -152,7 +136,7 @@ contract Vault is Pausable, AccessControl {
         emit WithdrawToken(_token, _amount, _destination);
     }
 
-    function withdrawMATIC(address _destination) external onlyOwner {
+    function withdrawMATIC(address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {
         Pool storage pool = Pools[matic];
         uint256 amount = pool.totalPooled;
         
@@ -167,7 +151,7 @@ contract Vault is Pausable, AccessControl {
         emit WithdrawToken(matic, amount, _destination);
     }
 
-    function withdrawAllVault(address _user, address _token) external onlyOwner {
+    function withdrawAllVault(address _user, address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
         Pool storage pool = Pools[_token];
 
         require(pool.totalPooled > 0, "Balance: 0");
