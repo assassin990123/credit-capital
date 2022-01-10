@@ -1,4 +1,6 @@
 //SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.11;
+
 interface IVault {
   function addPool ( address _token, uint256 _amount, uint256 _rewardsPerDay ) external;
   function checkIfPoolExists ( address _token ) external view returns ( bool );

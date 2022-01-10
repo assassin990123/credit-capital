@@ -23,7 +23,6 @@ contract Vault is Pausable, AccessControl {
     // user position tracking
     mapping(address => UserPosition[]) UserPositions;
 
-
     mapping(address => mapping(uint256 => Stake[])) Stakes;
     // users stake identifiers
 
@@ -70,7 +69,7 @@ contract Vault is Pausable, AccessControl {
         Pool storage pool = Pools[_token];
 
         // platform fee
-        _transferDepositFee(_user, _token, _amount);
+        // _transferDepositFee(_user, _token, _amount);
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
         
         // update the pool info
@@ -81,7 +80,7 @@ contract Vault is Pausable, AccessControl {
         }
 
         // trigger the depositVault event
-        emit DepositVault(_user, _token, _amount);
+        // emit DepositVault(_user, _token, _amount);
     }
 
     function withdrawVault(address _token, uint256 _amount) external {}
@@ -161,7 +160,7 @@ contract Vault is Pausable, AccessControl {
         });
     }
 
-    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyOwner {
+    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {
         Pool storage pool = Pools[_token];
         
         require(_amount > 0 && pool.totalPooled >= _amount);
@@ -171,6 +170,7 @@ contract Vault is Pausable, AccessControl {
 
         // update the pooled amount
         pool.totalPooled -= _amount;
+    }
 
     function withdrawMATIC(address _destination) external {}
 }

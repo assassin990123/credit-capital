@@ -1,11 +1,17 @@
+//SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.11;
+
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 interface ICAPL {
     function mint(address _to, uint256 _amount) external;
 }
 
 contract controller is AccessControl {
+    using SafeERC20 for IERC20;
+
     // MINTER = mint & burn role
     bytes32 public constant MINTER = keccak256("MINTER");
 
@@ -23,9 +29,6 @@ contract controller is AccessControl {
         // to grant and revoke any roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER, msg.sender);
-
-        // set the MINTER role's admin: the contract deployer
-        _setRoleAdmin(MINTER, msg.sender);
     }
 
     // Add RBAC
@@ -33,14 +36,14 @@ contract controller is AccessControl {
         ICAPL(CAPL).mint(destination, amount);
     }
     // Add RBAC
-    function burn(uint256 amount) external onlyOwner {
-        ICAPL(CAPL).safeTransfer(burner, amount);
+    function burn(uint256 amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        IERC20(CAPL).safeTransfer(burner, amount);
     }
 
     /**
     * @param _account The role that would be added to the MINTER role
     */
-    function addMinter(address _account) public onlyRole(getRoleAdmin(MINTER)) returns(uint256) {
+    function addMinter(address _account) public onlyRole(getRoleAdmin(MINTER)) {
         grantRole(MINTER, _account);
     }
 }
