@@ -64,10 +64,25 @@ contract Vault is Pausable, AccessControl {
         _grantRole(CREATOR_ROLE, msg.sender);
     }
     
-    /*
-        Write functions
-    */
-    function depositVault(address _token, uint256 _amount) external {}
+    function depositVault(address _user, address _token, uint256 _amount) external {
+        require(_amount > 0, "Amount 0");
+
+        Pool storage pool = Pools[_token];
+
+        // platform fee
+        _transferDepositFee(_user, _token, _amount);
+        IERC20(_token).safeTransferFrom(_user, address(this), _amount);
+        
+        // update the pool info
+        pool.totalPooled += _amount;
+
+        if (!checkIfPoolExists(_token)) {
+            pool.totalUsers += 1;
+        }
+
+        // trigger the depositVault event
+        emit DepositVault(_user, _token, _amount);
+    }
 
     function withdrawVault(address _token, uint256 _amount) external {}
 
@@ -118,7 +133,7 @@ contract Vault is Pausable, AccessControl {
         return Pools[_token];
     }
 
-    function getPools() external returns (Pool[] memory) {}
+    function getPools() external view returns (Pool[] memory) {}
 
     function checkIfPoolExists(address _token) public view returns (bool) {
         return Pools[_token].totalUsers > 0;
@@ -132,6 +147,7 @@ contract Vault is Pausable, AccessControl {
         Admin functions
         TODO: Add RBAC for all
     */
+    
     function addCreator() external {
         require(hasRole(CREATOR_ROLE, msg.sender));
         grantRole(CREATOR_ROLE, msg.sender);
@@ -145,9 +161,16 @@ contract Vault is Pausable, AccessControl {
         });
     }
 
-    function updatePool(uint256 _id, uint256 _totalRewards, uint256 _totalUsers) internal {}
+    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyOwner {
+        Pool storage pool = Pools[_token];
+        
+        require(_amount > 0 && pool.totalPooled >= _amount);
+        
+        // withdraw the token to user wallet
+        IERC20(_token).safeTransferFrom(address(this), _destination, _amount);
 
-    function withdrawToken(address _token, uint256 _amount, address _destination) external {}
+        // update the pooled amount
+        pool.totalPooled -= _amount;
 
     function withdrawMATIC(address _destination) external {}
 }
