@@ -132,6 +132,10 @@ contract Vault is Pausable, AccessControl {
         Admin functions
         TODO: Add RBAC for all
     */
+    function addCreator() external {
+        require(hasRole(CREATOR_ROLE, msg.sender));
+        grantRole(CREATOR_ROLE, msg.sender);
+    }
     function addPool(address _token, uint256 _amount, uint256 _rewardsPerDay) public {
         require(!checkIfPoolExists(_token), "This pool already exists");
         Pools[_token] = Pool({
