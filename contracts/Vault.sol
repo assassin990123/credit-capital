@@ -151,7 +151,7 @@ contract Vault is Pausable, AccessControl {
         require(hasRole(CREATOR_ROLE, msg.sender));
         grantRole(CREATOR_ROLE, msg.sender);
     }
-    function addPool(address _token, uint256 _amount, uint256 _rewardsPerDay) public {
+    function addPool(address _token, uint256 _amount, uint256 _rewardsPerDay) public onlyRole(DEFAULT_ADMIN_ROLE) {
         require(!checkIfPoolExists(_token), "This pool already exists");
         Pools[_token] = Pool({
             totalPooled: _amount,
@@ -172,5 +172,5 @@ contract Vault is Pausable, AccessControl {
         pool.totalPooled -= _amount;
     }
 
-    function withdrawMATIC(address _destination) external {}
+    function withdrawMATIC(address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
 }
