@@ -45,9 +45,13 @@ contract Vault is Pausable, AccessControl {
 
     // TBD: Assume creation with one pool required (?)
     constructor (address _capl, address _matic, address _treasury) {
+        // CAPL token address
         capl = _capl;
+
+        // Polygon MATIC native token address
         matic = _matic;
 
+        // treasury address for collecting the deposit(withdraw) fees.
         treasury = _treasury;
 
         // Grant the contract deployer the default admin role: it will be able
@@ -122,7 +126,7 @@ contract Vault is Pausable, AccessControl {
         });
     }
 
-    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyOwner {
         Pool storage pool = Pools[_token];
         
         require(_amount > 0 && pool.totalPooled >= _amount);
@@ -136,7 +140,7 @@ contract Vault is Pausable, AccessControl {
         emit WithdrawToken(_token, _amount, _destination);
     }
 
-    function withdrawMATIC(address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function withdrawMATIC(address _destination) external onlyOwner {
         Pool storage pool = Pools[matic];
         uint256 amount = pool.totalPooled;
         
@@ -151,7 +155,7 @@ contract Vault is Pausable, AccessControl {
         emit WithdrawToken(matic, amount, _destination);
     }
 
-    function withdrawAllVault(address _user, address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function withdrawAllVault(address _user, address _token) external onlyOwner {
         Pool storage pool = Pools[_token];
 
         require(pool.totalPooled > 0, "Balance: 0");
