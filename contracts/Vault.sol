@@ -6,29 +6,42 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Vault is Pausable, AccessControl {
-    bytes32 public constant minter = keccak256("MINTER");
-    // access control roles definition
-    // reward token
-    address public capl;
+    // stake tracking
+    mapping (address => Stake[]) Stakes;
+
+    struct Stake {
+        uint256 key;             // stake identifier
+        uint256 amount;          // quantity staked
+        uint256 startBlock;      // stake creation timestamp
+        uint256 timeLockEnd;     // The point at which the (4 yr, 4 mo, 4 day) timelock ends for a stake, and thus the funds can be withdrawn.
+        bool active;             // true = stake in vault, false = user withdrawn stake
+    }
+    // user position tracking
+    mapping(address => UserPosition[]) Users;
+
+    struct UserPosition {
+        address token;           // MRC20 associated with pool
+        uint256 totalAmount;     // total value staked by user in given pool
+        uint256 pendingRewards;  // total rewards pending for user 
+        uint256 rewardDebt;      // house fee (?)
+        uint256 claimedRewards;  // total rewards claimed by user for given pool
+        Stake[] stakes;          // list of user stakes in pool subject to timelock
+        bool staticLock;         // guarantees a users stake is locked, even after timelock expiration
+    }
+
     // pool tracking
-    /* 
-        I'm still undecided if I want to create one contract for all of the pools, or multiple contracts. 
-        I'm currently leaning towards a single contract. Open to suggestions and critique from anyone.
-    */
     mapping(address => Pool) Pools;
 
     struct Pool {
-        uint256 totalPooled;    // total generic token pooled in the contract
-        uint256 totalUsers;
-        bool active;
+        uint256 totalPooled;    // total token pooled in the contract
+        uint256 totalUsers;     // total number of active participants
+        uint256 rewardsPerDay;  // rate at which CAPL is minted for this pool
     }
     // TBD: Assume creation with one pool required (?)
-    constructor (address _capl) {
-        capl = _capl;
+    constructor () {
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(minter, msg.sender);
     }
     
     /*
@@ -48,7 +61,7 @@ contract Vault is Pausable, AccessControl {
     function getPools() external returns (Pool[] memory) {}
 
     function checkIfPoolExists(address _token) public view returns (bool) {
-        return Pools[_token].active;
+        return Pools[_token].totalUsers > 0;
     }
 
 
@@ -61,8 +74,6 @@ contract Vault is Pausable, AccessControl {
         Admin functions
         TODO: Add RBAC for all
     */
-    function mintCapl(address _to, uint256 _amount) external {}
-
     function addPool(address _token, uint256 _amount) external {
         require(!checkIfPoolExists(_token), "This pool already exists");
         Pools[_token] = Pool({

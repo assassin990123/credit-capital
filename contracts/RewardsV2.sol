@@ -92,31 +92,9 @@ contract RewardsV2 is Pausable, AccessControl {
     // timelock duration
     uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
 
-    // unique stake identifier
-    mapping (address => Stake[]) Stakes;
-
     address vault;
 
     IVault vaultInstance;
-
-    struct Stake {
-        uint256 key;
-        address token;
-        uint256 tokenAmount;
-        uint256 startBlock;
-        uint256 lastClaimBlock;
-        bool staticLock;
-        bool active;
-    }
-
-    mapping(address => User) Users;
-
-    struct User {
-        uint256 pendingRewards;
-        uint256 rewardDebt;     // house fee (?)
-        uint256 claimedRewards;
-        uint256[] stakeKeys;       // incrementing counter
-    }
 
     constructor (address _vault) {
         vault = _vault;
