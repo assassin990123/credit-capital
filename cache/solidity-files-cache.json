@@ -446,8 +446,8 @@
       ]
     },
     "/Users/elo/Code/cc-rewards-vault-contracts/contracts/Vault.sol": {
-      "lastModificationDate": 1641790935437,
-      "contentHash": "c710df6487753388680ed9a3d0cf899a",
+      "lastModificationDate": 1641793995261,
+      "contentHash": "bb8500b4b7097a82e9d581d756eabaf3",
       "sourceName": "contracts/Vault.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -476,7 +476,6 @@
         "@openzeppelin/contracts/access/AccessControl.sol",
         "@openzeppelin/contracts/security/Pausable.sol",
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/utils/Counters.sol",
         "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
       ],
       "versionPragmas": [

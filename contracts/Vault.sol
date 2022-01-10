@@ -4,10 +4,12 @@ pragma solidity 0.8.11;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract Vault is Pausable, AccessControl {
+    // creators can create new stakes, pools, etc
+    bytes32 public constant CREATOR_ROLE = keccak256("CREATOR");
+
     using SafeERC20 for IERC20;
     
     uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
@@ -43,11 +45,23 @@ contract Vault is Pausable, AccessControl {
         uint256 totalUsers;     // total number of active participants
         uint256 rewardsPerDay;  // rate at which CAPL is minted for this pool
     }
+
+    /// @dev Restricted to members of the user role.
+    modifier onlyUser()
+    {
+        require(isCreator(msg.sender), "Restricted to creators.");
+        _;
+    }
+
+    function isCreator(address account) public virtual view returns (bool) {
+        return hasRole(CREATOR_ROLE, account);
+    }   
     // TBD: Assume creation with one pool required (?)
     constructor () {
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(CREATOR_ROLE, msg.sender);
     }
     
     /*
@@ -63,6 +77,8 @@ contract Vault is Pausable, AccessControl {
      */
     function depositStakeNew(address _token, uint256 _amount, uint256 _rewardsPerDay) external {
         require(!checkIfPoolExists(_token), "This pool already exists.");
+        require(hasRole(CREATOR_ROLE, msg.sender));
+
         // create user & stake data
         Stake memory newStake = Stake({
             amount: _amount,                   // first stake
@@ -90,7 +106,7 @@ contract Vault is Pausable, AccessControl {
         Stakes[msg.sender][0].push(newStake);
 
         // transfer funds to the vault
-        IERC20(_token).safeTransfer(address(this), _amount);
+        IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
 
         addPool(_token, _amount, _rewardsPerDay);
     }
