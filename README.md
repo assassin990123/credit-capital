@@ -11,12 +11,11 @@ The stake struct represents a users position in a pool. A user can have multiple
 ```
 # subject to change
 struct Stake {
-    address lp;
-    uint256 lpAmount;
-    uint256 startBlock;
-    uint256 lastClaimBlock;
-    bool staticLock;
-    bool active;
+    uint256 key;             // stake identifier
+    uint256 amount;          // quantity staked
+    uint256 startBlock;      // stake creation timestamp
+    uint256 timeLockEnd;     // The point at which the (4 yr, 4 mo, 4 day) timelock ends for a stake, and thus the funds can be withdrawn.
+    bool active;             // true = stake in vault, false = user withdrawn stake
 }
 ```
 
@@ -27,19 +26,23 @@ Baked into the Stake struct is all of the logic required to calculate and read t
 ```
 # subject to change
 struct Pool {
-    uint256 totalPooled;    // total generic token pooled in the contract
-    uint256 totalUsers;
+    uint256 totalPooled;    // total token pooled in the contract
+    uint256 totalUsers;     // total number of active participants
+    uint256 rewardsPerDay;  // rate at which CAPL is minted for this pool
 }
 ```
 
 ### User Defintion
 ```
 # subject to change
-struct User {
-    uint256 pendingRewards;
-    uint256 rewardDebt;     // house fee (?)
-    uint256 claimedRewards;
-    Stake[] stakes;
+struct UserPosition {
+    address token;           // MRC20 associated with pool
+    uint256 totalAmount;     // total value staked by user in given pool
+    uint256 pendingRewards;  // total rewards pending for user 
+    uint256 rewardDebt;      // house fee (?)
+    uint256 claimedRewards;  // total rewards claimed by user for given pool
+    Stake[] stakes;          // list of user stakes in pool subject to timelock
+    bool staticLock;         // guarantees a users stake is locked, even after timelock expiration
 }
 ```
 
