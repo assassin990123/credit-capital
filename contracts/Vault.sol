@@ -31,6 +31,7 @@ contract Vault is Pausable, AccessControl {
         uint256 claimedRewards;  // total rewards claimed by user for given pool
         uint256[] sKey;          // list of user stakes in pool subject to timelock
         bool staticLock;         // guarantees a users stake is locked, even after timelock expiration
+        bool autocompounding;
     }
 
     // pool tracking
@@ -42,6 +43,8 @@ contract Vault is Pausable, AccessControl {
         uint256 rewardsPerDay;  // rate at which CAPL is minted for this pool
     }
 
+    event DepositVault(address user, address token, uint amount);
+
     // TBD: Assume creation with one pool required (?)
     constructor () {
         // Grant the contract deployer the default admin role: it will be able
@@ -51,8 +54,6 @@ contract Vault is Pausable, AccessControl {
     
     function depositVault(address _user, address _token, uint256 _amount) external {
         require(_amount > 0, "Amount 0");
-
-        Pool storage pool = Pools[_token];
 
         // stakes
         // // check if new stake should be created according to the timelockthreshold
@@ -69,20 +70,34 @@ contract Vault is Pausable, AccessControl {
 
         Stake storage lastStake = Stakes[_user][sKey];
 
-        if (lastStake.timeLockEnd > block.timestamp) {
+        if (lastStake.timeLockEnd < block.timestamp) {
             // create new stake
-            // return;
+            Stake memory newStake = Stake ({
+                amount: _amount,
+                startBlock: block.timestamp,
+                timeLockEnd: block.timestamp + timelock,
+                active: true
+            });
+
+            // add new Stake for the user
+            Stakes[_user].push(newStake);
+
+            // add stake for the current userposition
+            userPosition.sKey.push(userPosition.sKey.length);
+        } else {
+            // update the stake
+            lastStake.amount += _amount;
+            lastStake.startBlock = block.timestamp;
+            lastStake.timeLockEnd = block.timestamp + timelock;
         }
 
-        // update the stake
-        lastStake.amount += _amount;
-        lastStake.startBlock = block.timestamp;
-        lastStake.timeLockEnd = block.timestamp + timelock;
+        // pools
+        Pool storage pool = Pools[_token];
 
         // update the pool info
         pool.totalPooled += _amount;
 
-        if (!checkIfPoolExists(_token)) {
+        if (!checkIfPoolExists(_token, _user)) {
             pool.totalUsers += 1;
         }
 
@@ -90,7 +105,7 @@ contract Vault is Pausable, AccessControl {
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
 
         // trigger the depositVault event
-        // emit DepositVault(_user, _token, _amount);
+        emit DepositVault(_user, _token, _amount);
     }
 
     function withdrawVault(address _token, uint256 _amount) external {}
@@ -100,7 +115,7 @@ contract Vault is Pausable, AccessControl {
         @dev - here we can assume that there are no timelocks, since the vault has no knowledge of the pool.
      */
     function depositStakeNew(address _token, uint256 _amount, uint256 _rewardsPerDay) external {
-        require(!checkIfPoolExists(_token), "This pool already exists.");
+        require(!checkIfPoolExists(_token, msg.sender), "This pool already exists.");
 
         // create user & stake data
         Stake memory newStake = Stake({
@@ -119,7 +134,8 @@ contract Vault is Pausable, AccessControl {
             rewardDebt: 0,
             claimedRewards: 0,
             sKey: userStakeKeys,
-            staticLock: false
+            staticLock: false,
+            autocompounding: true
         });
         // persist user
         UserPositions[msg.sender][_token] = newUser;
@@ -143,8 +159,11 @@ contract Vault is Pausable, AccessControl {
 
     function getPools() external view returns (Pool[] memory) {}
 
-    function checkIfPoolExists(address _token) public view returns (bool) {
-        return Pools[_token].totalUsers > 0;
+    /**
+     * @dev Check if the user has stakes for the token - again, user has the token pool staked
+     */
+    function checkIfPoolExists(address _token, address _user) public view returns (bool) {
+        return UserPositions[_user][_token].sKey.length > 0;
     }
 
     /*  This function will check if a new stake needs to be created based on lockingThreshold.
@@ -157,7 +176,7 @@ contract Vault is Pausable, AccessControl {
     */
     
     function addPool(address _token, uint256 _amount, uint256 _rewardsPerDay) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(!checkIfPoolExists(_token), "This pool already exists");
+        require(!checkIfPoolExists(_token, msg.sender), "This pool already exists");
         Pools[_token] = Pool({
             totalPooled: _amount,
             totalUsers: 1,
