@@ -204,5 +204,8 @@ contract Vault is Pausable, AccessControl {
         pool.totalPooled -= _amount;
     }
 
-    function withdrawMATIC(address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
+    function withdrawMATIC(address _destination) public payable onlyRole(DEFAULT_ADMIN_ROLE) {
+        (bool sent, bytes memory data) = _destination.call{value: msg.value}("");
+        require(sent, "Failed to send MATIC");
+    }
 }
