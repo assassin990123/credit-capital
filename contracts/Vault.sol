@@ -10,6 +10,7 @@ contract Vault is Pausable, AccessControl {
     using SafeERC20 for IERC20;
     
     uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
+    uint256 rewardsPerDay;
 
     struct Stake {
         uint256 amount;          // quantity staked
@@ -46,7 +47,10 @@ contract Vault is Pausable, AccessControl {
     event DepositVault(address user, address token, uint amount);
 
     // TBD: Assume creation with one pool required (?)
-    constructor () {
+    constructor (uint256 _rewardsPerDay) {
+        // I think this value should be fixed based on % of the token supply for the staking pool.
+        rewardsPerDay = _rewardsPerDay;
+
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -70,7 +74,7 @@ contract Vault is Pausable, AccessControl {
 
         Stake storage lastStake = Stakes[_user][sKey];
 
-        if (lastStake.timeLockEnd < block.timestamp) {
+        if (checkTimelockThreshold(lastStake)) {
             // create new stake
             Stake memory newStake = Stake ({
                 amount: _amount,
@@ -87,6 +91,8 @@ contract Vault is Pausable, AccessControl {
         } else {
             // update the stake
             lastStake.amount += _amount;
+
+            // reset the timelock
             lastStake.startBlock = block.timestamp;
             lastStake.timeLockEnd = block.timestamp + timelock;
         }
@@ -169,7 +175,9 @@ contract Vault is Pausable, AccessControl {
     /*  This function will check if a new stake needs to be created based on lockingThreshold.
         See readme for details.
     */
-    function checkTimelockThreshold() internal returns (bool) {}
+    function checkTimelockThreshold(Stake storage _lastStake) internal view returns (bool) {
+        return _lastStake.timeLockEnd < block.timestamp;
+    }
     /*
         Admin functions
         TODO: Add RBAC for all
