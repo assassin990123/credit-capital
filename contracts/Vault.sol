@@ -45,6 +45,8 @@ contract Vault is Pausable, AccessControl {
     }
 
     event DepositVault(address user, address token, uint amount);
+    event WithdrawVault(address user, address token, uint amount);
+    event WithdrawMATIC(address destination, uint amount);
 
     // TBD: Assume creation with one pool required (?)
     constructor (uint256 _rewardsPerDay) {
@@ -58,12 +60,6 @@ contract Vault is Pausable, AccessControl {
     
     function depositVault(address _user, address _token, uint256 _amount) external {
         require(_amount > 0, "Amount 0");
-
-        // stakes
-        // // check if new stake should be created according to the timelockthreshold
-        // if (checkTimelockThreshold()) {
-        //     revert("The new stake should be created.");
-        // }
 
         // userPosition
         UserPosition storage userPosition = UserPositions[_user][_token];
@@ -114,7 +110,31 @@ contract Vault is Pausable, AccessControl {
         emit DepositVault(_user, _token, _amount);
     }
 
-    function withdrawVault(address _token, uint256 _amount) external {}
+    function withdrawVault(address _user, address _token, uint256 _amount, uint _stakeId) external {
+        require(_amount > 0, "Amount 0");
+
+        // we should consider about the withdrawfee during the timelock
+        UserPosition storage userPosition = UserPositions[_user][_token];
+        require(userPosition.totalAmount > _amount, "Withdrawn amount exceed the user balance");
+
+        userPosition.totalAmount -= _amount;
+
+        Pool storage pool = Pools[_token];
+        pool.totalPooled -= _amount;
+        if (pool.totalPooled == 0) {
+            pool.totalUsers -= 1;
+        }
+
+        Stake storage stake = Stakes[_user][_stakeId];
+        stake.amount -= _amount;
+        if (stake.amount == 0) {
+            stake.active = false;
+        }
+
+        IERC20(_token).safeTransferFrom(address(this), _user, _amount);
+
+        emit WithdrawVault(_user, _token, _amount);
+    }
 
 
     /**
@@ -205,7 +225,11 @@ contract Vault is Pausable, AccessControl {
     }
 
     function withdrawMATIC(address _destination) public payable onlyRole(DEFAULT_ADMIN_ROLE) {
-        (bool sent, bytes memory data) = _destination.call{value: msg.value}("");
+        uint256 balance = address(this).balance;
+
+        (bool sent, bytes memory data) = _destination.call{value: balance}("");
         require(sent, "Failed to send MATIC");
+
+        emit WithdrawMATIC(_destination, balance);
     }
 }
