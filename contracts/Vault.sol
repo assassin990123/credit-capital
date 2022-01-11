@@ -18,9 +18,9 @@ contract Vault is Pausable, AccessControl {
         bool active;             // true = stake in vault, false = user withdrawn stake
     }
     // user position tracking
-    mapping(address => mapping(address => UserPosition)) UserPositions;
+    mapping(address => mapping(address => UserPosition)) UserPositions; // account => (token => userposition)
 
-    mapping(address => mapping(uint256 => Stake[])) Stakes;
+    mapping(address => Stake[]) Stakes; // account => stake[]
     // users stake identifiers
 
     struct UserPosition {
@@ -34,7 +34,7 @@ contract Vault is Pausable, AccessControl {
     }
 
     // pool tracking
-    mapping(address => Pool) Pools;
+    mapping(address => Pool) Pools; // token => pool
 
     struct Pool {
         uint256 totalPooled;    // total token pooled in the contract
@@ -55,10 +55,10 @@ contract Vault is Pausable, AccessControl {
         Pool storage pool = Pools[_token];
 
         // stakes
-        // check if new stake should be created according to the timelockthreshold
-        if (checkTimelockThreshold()) {
-            revert("The new stake should be created.");
-        }
+        // // check if new stake should be created according to the timelockthreshold
+        // if (checkTimelockThreshold()) {
+        //     revert("The new stake should be created.");
+        // }
 
         // userPosition
         UserPosition storage userPosition = UserPositions[_user][_token];
@@ -68,6 +68,16 @@ contract Vault is Pausable, AccessControl {
         uint256 sKey = userPosition.sKey[userPosition.sKey.length - 1];
 
         Stake storage lastStake = Stakes[_user][sKey];
+
+        if (lastStake.timeLockEnd > block.timestamp) {
+            // create new stake
+            // return;
+        }
+
+        // update the stake
+        lastStake.amount += _amount;
+        lastStake.startBlock = block.timestamp;
+        lastStake.timeLockEnd = block.timestamp + timelock;
 
         // update the pool info
         pool.totalPooled += _amount;
@@ -116,7 +126,7 @@ contract Vault is Pausable, AccessControl {
         // add new stake key
         UserPositions[msg.sender][_token].sKey.push(0);
         // register users Stake
-        Stakes[msg.sender][0].push(newStake);
+        Stakes[msg.sender].push(newStake);
 
         // transfer funds to the vault
         IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
