@@ -49,10 +49,7 @@ contract Vault is Pausable, AccessControl {
     event WithdrawMATIC(address destination, uint amount);
 
     // TBD: Assume creation with one pool required (?)
-    constructor (uint256 _rewardsPerDay) {
-        // I think this value should be fixed based on % of the token supply for the staking pool.
-        rewardsPerDay = _rewardsPerDay;
-
+    constructor () {
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -71,6 +68,8 @@ contract Vault is Pausable, AccessControl {
         Stake storage lastStake = Stakes[_user][sKey];
 
         if (checkTimelockThreshold(lastStake)) {
+            require(!checkIfPoolExists(_token, _user), "This pool already exists.");
+
             // create new stake
             Stake memory newStake = Stake ({
                 amount: _amount,
@@ -137,7 +136,7 @@ contract Vault is Pausable, AccessControl {
     /**
         @dev - here we can assume that there are no timelocks, since the vault has no knowledge of the pool.
      */
-    function depositStakeNew(address _token, uint256 _amount, uint256 _rewardsPerDay) external {
+    function createNewPool(address _token, uint256 _amount, uint256 _rewardsPerDay) external {
         require(!checkIfPoolExists(_token, msg.sender), "This pool already exists.");
 
         // create user & stake data
@@ -170,7 +169,7 @@ contract Vault is Pausable, AccessControl {
         // transfer funds to the vault
         IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
 
-        addPool(_token, _amount, _rewardsPerDay);
+        registerPool(_token, _amount, _rewardsPerDay);
     }
    
     /*
@@ -198,7 +197,7 @@ contract Vault is Pausable, AccessControl {
         TODO: Add RBAC for all
     */
     
-    function addPool(address _token, uint256 _amount, uint256 _rewardsPerDay) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    function registerPool(address _token, uint256 _amount, uint256 _rewardsPerDay) public onlyRole(DEFAULT_ADMIN_ROLE) {
         require(!checkIfPoolExists(_token, msg.sender), "This pool already exists");
         Pools[_token] = Pool({
             totalPooled: _amount,
