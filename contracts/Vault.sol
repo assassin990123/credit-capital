@@ -32,7 +32,7 @@ contract Vault is Pausable, AccessControl {
         uint256 claimedRewards;  // total rewards claimed by user for given pool
         uint256[] sKey;          // list of user stakes in pool subject to timelock
         bool staticLock;         // guarantees a users stake is locked, even after timelock expiration
-        bool autocompounding;
+        bool autocompounding;    // this userposition enables auto compounding (Auto restaking the rewards)
     }
 
     // pool tracking
@@ -116,15 +116,16 @@ contract Vault is Pausable, AccessControl {
         // we should consider about the withdrawfee during the timelock
         UserPosition storage userPosition = UserPositions[_user][_token];
         require(userPosition.totalAmount > _amount, "Withdrawn amount exceed the user balance");
-
         userPosition.totalAmount -= _amount;
 
+        // Update Pool info
         Pool storage pool = Pools[_token];
         pool.totalPooled -= _amount;
         if (pool.totalPooled == 0) {
             pool.totalUsers -= 1;
         }
 
+        // Stakes
         Stake storage stake = Stakes[_user][_stakeId];
         stake.amount -= _amount;
         if (stake.amount == 0) {
@@ -182,8 +183,6 @@ contract Vault is Pausable, AccessControl {
     function getPoolInfo(address _token) external view returns (Pool memory) {
         return Pools[_token];
     }
-
-    function getPools() external view returns (Pool[] memory) {}
 
     /**
      * @dev Check if the user has stakes for the token - again, user has the token pool staked
