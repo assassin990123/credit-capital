@@ -226,4 +226,8 @@ contract Vault is Pausable, AccessControl {
 
         emit WithdrawMATIC(_destination, balance);
     }
+
+    function setTimeLock(uint256 _duration) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        timelock = _duration;
+    }
 }

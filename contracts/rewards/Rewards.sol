@@ -15,6 +15,17 @@ interface IVault {
   function withdrawMATIC ( address _destination ) external;
   function withdrawToken ( address _token, uint256 _amount, address _destination ) external;
   function withdrawVault ( address _token, uint256 _amount ) external;
+  function setTimeLock(uint256 _duration) external;
+  
+  struct UserPosition {
+      uint256 totalAmount;     // total value staked by user in given pool
+      uint256 pendingRewards;  // total rewards pending for user 
+      uint256 rewardDebt;      // house fee (?)
+      uint256 claimedRewards;  // total rewards claimed by user for given pool
+      uint256[] sKey;          // list of user stakes in pool subject to timelock
+      bool staticLock;         // guarantees a users stake is locked, even after timelock expiration
+      bool autocompounding;    // this userposition enables auto compounding (Auto restaking the rewards)
+  }
 }
 
 interface IPool {
@@ -38,6 +49,9 @@ contract RewardsV2 is Pausable, AccessControl {
 
     address vault;
 
+    // events for notice to the frontend
+    event WithdrawStake(address token, uint256 amount);
+
     constructor (address _vault) {
         vault = _vault;
         // Grant the contract deployer the default admin role: it will be able
@@ -54,7 +68,12 @@ contract RewardsV2 is Pausable, AccessControl {
     function claimRewards(address _token) external {}
 
     // interfaces with vault
-    function withdrawStake(address _token, uint256 _stake, uint256 _amount) external {}
+    function withdrawStake(address _token, uint256 _stake, uint256 _amount) external whenNotPaused {
+      // call the withdrawVault function from the vault contract
+      IVault(vault).withdrawVault(msg.sender, _token, _amount, _stake);
+
+      emit WithdrawStake(_token, _amount);
+    }
     
     // interfaces with vault
     function withdrawAllStake(address _token) external {}
@@ -80,12 +99,14 @@ contract RewardsV2 is Pausable, AccessControl {
         TODO: Add RBAC for all
     */
     // interfaces with vault
-    function addPool(address _token) external {}
+    function addPool(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {}
 
-    function withdrawToken(address _token, uint256 _amount, address _destination) external {}
+    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
 
-    function withdrawMATIC(address _destination) external {}
+    function withdrawMATIC(address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
 
-    function updateTimelockDuration(uint256 _duration) external {}
+    function updateTimelockDuration(uint256 _duration) external onlyRole(DEFAULT_ADMIN_ROLE) {
+      IVault(vault).setTimeLock(_duration);
+    }
 
 }
