@@ -91,11 +91,15 @@ contract RewardsV2 is Pausable, AccessControl {
         TODO: Add RBAC for all
     */
     // interfaces with vault
-    function addPool(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {}
+    function addPool(address _token, uint256 _amount, uint256 _rewardsPerDay) external {
+      IVault(vault).addPool(_token, _amount, _rewardsPerDay);
+    }
 
     function withdrawToken(address _token, uint256 _amount, address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
 
-    function withdrawMATIC(address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
+    function withdrawMATIC(address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {
+      IVault(vault).withdrawMATIC(_destination);
+    }
 
     function updateTimelockDuration(uint256 _duration) external onlyRole(DEFAULT_ADMIN_ROLE) {
       IVault(vault).setTimeLock(_duration);

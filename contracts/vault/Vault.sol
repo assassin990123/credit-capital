@@ -136,7 +136,7 @@ contract Vault is Pausable, AccessControl {
     /**
         @dev - here we can assume that there are no timelocks, since the vault has no knowledge of the pool.
      */
-    function createNewPool(address _token, uint256 _amount, uint256 _rewardsPerDay) external {
+    function addPool(address _token, uint256 _amount, uint256 _rewardsPerDay) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(!checkIfPoolExists(_token, msg.sender), "This pool already exists.");
 
         // create user & stake data
@@ -197,7 +197,7 @@ contract Vault is Pausable, AccessControl {
         TODO: Add RBAC for all
     */
     
-    function registerPool(address _token, uint256 _amount, uint256 _rewardsPerDay) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    function registerPool(address _token, uint256 _amount, uint256 _rewardsPerDay) public {
         require(!checkIfPoolExists(_token, msg.sender), "This pool already exists");
         Pools[_token] = Pool({
             totalPooled: _amount,
