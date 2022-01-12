@@ -86,14 +86,6 @@ contract RewardsV2 is Pausable, AccessControl {
 
     function unclaimedRewards(address _token) external {}
 
-    // TODO: move to vault
-    //function getUserInfo() external returns (User memory) {}
-
-    /*  This function will check if a new stake needs to be created based on lockingThreshold.
-        See readme for details.
-    */
-    function checkTimelockThreshold() internal returns (bool) {}
-   
     /*
         Admin functions
         TODO: Add RBAC for all
