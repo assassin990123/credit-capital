@@ -58,7 +58,7 @@ contract Vault is Pausable, AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
     
-    function depositVault(address _user, address _token, uint256 _amount) external {
+    function depositVault(address _user, address _token, uint256 _amount) external whenNotPaused {
         require(_amount > 0, "Amount 0");
 
         // userPosition
@@ -87,10 +87,6 @@ contract Vault is Pausable, AccessControl {
         } else {
             // update the stake
             lastStake.amount += _amount;
-
-            // reset the timelock
-            lastStake.startBlock = block.timestamp;
-            lastStake.timeLockEnd = block.timestamp + timelock;
         }
 
         // pools
@@ -110,7 +106,7 @@ contract Vault is Pausable, AccessControl {
         emit DepositVault(_user, _token, _amount);
     }
 
-    function withdrawVault(address _user, address _token, uint256 _amount, uint _stakeId) external {
+    function withdrawVault(address _user, address _token, uint256 _amount, uint _stakeId) external whenNotPaused {
         require(_amount > 0, "Amount 0");
 
         // we should consider about the withdrawfee during the timelock
