@@ -171,9 +171,6 @@ contract RewardsV2 is Pausable, AccessControl {
       emit Claim(_token, _user, pendingCapl);
     }
 
-    /**
-     we do this one directly in the vault because otherwise we would have a potentially large payload when a user has many stakes
-    */
     function pendingWithdrawals(address _token, address _user) public returns (uint256 _unlockedAmount) {
       _unlockedAmount = vault.getUnlockedAmount(_token, _user);
     }
