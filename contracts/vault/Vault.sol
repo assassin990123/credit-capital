@@ -39,9 +39,10 @@ contract Vault is Pausable, AccessControl {
     mapping(address => Pool) Pools; // token => pool
 
     struct Pool {
-        uint256 totalPooled;    // total token pooled in the contract
-        uint256 totalUsers;     // total number of active participants
-        uint256 rewardsPerDay;  // rate at which CAPL is minted for this pool
+        uint256 totalPooled;        // total token pooled in the contract
+        uint256 rewardsPerBlock;    // rate at which CAPL is minted for this pool
+        uint256 accCaplPerShare;    // weighted CAPL share in pool
+        uint256 lastRewardBlock;    // last time a claim was made
     }
 
     event DepositVault(address user, address token, uint amount);
@@ -94,10 +95,6 @@ contract Vault is Pausable, AccessControl {
         // update the pool info
         pool.totalPooled += _amount;
 
-        if (!checkIfPoolExists(_token, _user)) {
-            pool.totalUsers += 1;
-        }
-
         // _transferDepositFee(_user, _token, _amount);
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
 
@@ -116,9 +113,6 @@ contract Vault is Pausable, AccessControl {
         // Update Pool info
         Pool storage pool = Pools[_token];
         pool.totalPooled -= _amount;
-        if (pool.totalPooled == 0) {
-            pool.totalUsers -= 1;
-        }
 
         // Stakes
         Stake storage stake = Stakes[_user][_stakeId];
@@ -168,8 +162,6 @@ contract Vault is Pausable, AccessControl {
 
         // transfer funds to the vault
         IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
-
-        registerPool(_token, _amount, _rewardsPerDay);
     }
    
     /*
@@ -196,15 +188,7 @@ contract Vault is Pausable, AccessControl {
         Admin functions
         TODO: Add RBAC for all
     */
-    
-    function registerPool(address _token, uint256 _amount, uint256 _rewardsPerDay) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(!checkIfPoolExists(_token, msg.sender), "This pool already exists");
-        Pools[_token] = Pool({
-            totalPooled: _amount,
-            totalUsers: 1,
-            rewardsPerDay: _rewardsPerDay
-        });
-    }
+
 
     function withdrawToken(address _token, uint256 _amount, address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {
         Pool storage pool = Pools[_token];

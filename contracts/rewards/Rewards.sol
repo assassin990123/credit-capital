@@ -8,72 +8,127 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IVault {
-  function addPool ( address _token, uint256 _amount, uint256 _rewardsPerDay ) external;
+  function addPool ( address _token, uint256 _rewardsPerDay ) external;
   function checkIfPoolExists ( address _token ) external view returns ( bool );
+  function checkIfUserPositionExists(address _token) external view returns (bool);
   function depositVault ( address _token, uint256 _amount ) external;
   function getPoolInfo ( address _token ) external view returns ( IPool.Pool memory );
   function withdrawMATIC ( address _destination ) external;
   function withdrawToken ( address _token, uint256 _amount, address _destination ) external;
   function withdrawVault ( address _token, uint256 _amount ) external;
-  function setTimeLock(uint256 _duration) external;
-  
+  function addUserPosition(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
+  function updateUserPosition(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
+  function getUsersInPool(address _token) external returns (IUserPositions.UserPosition[] memory);
+  function addStake(address _user, uint256 _amount) external;
+  function getLastStake(address _token, address _user) external returns (IStake.Stake memory);
+  function updatePool(address _token, uint256 _accCaplPerShare, uint256 _lastRewardBlock) external returns (IPool.Pool memory);
+  function updateStake(address _token, address _user, uint256 _amount) external;
+  function getPool(address _token) external returns (IPool.Pool memory);
+}
+
+interface IPool {
+  struct Pool {
+      uint256 totalPooled;        // total token pooled in the contract
+      uint256 rewardsPerBlock;    // rate at which CAPL is minted for this pool
+      uint256 accCaplPerShare;    // weighted CAPL share in pool
+      uint256 lastRewardBlock;    // last time a claim was made
+  }
+}
+
+interface IUserPositions {
   struct UserPosition {
+      address token;           // MRC20 associated with pool
       uint256 totalAmount;     // total value staked by user in given pool
       uint256 pendingRewards;  // total rewards pending for user 
       uint256 rewardDebt;      // house fee (?)
       uint256 claimedRewards;  // total rewards claimed by user for given pool
       uint256[] sKey;          // list of user stakes in pool subject to timelock
       bool staticLock;         // guarantees a users stake is locked, even after timelock expiration
-      bool autocompounding;    // this userposition enables auto compounding (Auto restaking the rewards)
   }
 }
 
-interface IPool {
-  struct Pool {
-    uint256 totalPooled;    // total token pooled in the contract
-    uint256 totalUsers;     // total number of active participants
-    uint256 rewardsPerDay;  // rate at which CAPL is minted for this pool
+interface IStake {
+  struct Stake {
+      uint256 amount;          // quantity staked
+      uint256 startBlock;      // stake creation timestamp
+      uint256 timeLockEnd;     // The point at which the (4 yr, 4 mo, 4 day) timelock ends for a stake, and thus the funds can be withdrawn.
+      bool active;             // true = stake in vault, false = user withdrawn stake
   }
 }
 
 contract RewardsV2 is Pausable, AccessControl {
 
     using SafeERC20 for IERC20;
-    // reward token
-    address public capl;
 
-    // If a user adds a deposit below the locking threshold, the lp is absorbed into the previous lock.
-    // else, a new stake is created.
-    uint256 public lockingThreshold;
-    // timelock duration
+    IVault vault;
 
-    address vault;
-
-    // events for notice to the frontend
-    event WithdrawStake(address token, uint256 amount);
+    uint256 CAPL_PRECISION = 1e18;
 
     constructor (address _vault) {
-        vault = _vault;
+        vault = IVault(_vault);
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
     
     /*
-        Write functions
+      Write functions
     */
+    // TODO: Implement functions in vault
+    function deposit(address _token, uint256 _amount) external {
+      require(vault.checkIfPoolExists(_token), "Pool does not exist");
+
+      // update pool to current block 
+      IPool.Pool memory pool = updatePool(_token);
+
+      uint256 rewardDebt = _amount * pool.accCaplPerShare / CAPL_PRECISION;
+
+      if (!vault.checkIfUserPositionExists(_token)) {
+        // new user position & new stake
+        // no timelock
+        vault.addUserPosition(_token, msg.sender, _amount, rewardDebt);
+      } else {
+        // only update the position
+        vault.updateUserPosition(_token, msg.sender, _amount, rewardDebt);
+        // check timelock
+        IStake.Stake memory lastStake = vault.getLastStake(_token, msg.sender);
+
+        if (checkTimelockThreshold(lastStake.startBlock)) {
+          // add a new stake for the user
+          // this function adds a new stake, and a new stake key in the user position instance
+          vault.addStake(msg.sender, _amount);
+        } else {
+          // Update the last stake
+          vault.updateStake(_token, msg.sender, _amount);
+        }
+      }
+    }
+
+    function updatePool(address _token) public returns (IPool.Pool memory pool) {
+      IPool.Pool memory cpool = vault.getPool(_token);
+      uint256 accCaplPerShare;
+      if (block.number > cpool.lastRewardBlock) {
+        if (cpool.totalPooled > 0) {
+          uint256 blocks = block.number - cpool.lastRewardBlock;
+          uint256 caplReward = blocks * cpool.rewardsPerBlock;
+          accCaplPerShare = cpool.accCaplPerShare + (caplReward * CAPL_PRECISION) / cpool.totalPooled;
+        }
+        uint256 lastRewardBlock = block.number;
+        return vault.updatePool(_token, accCaplPerShare, lastRewardBlock);
+      }
+    }
+    /*
+      _userPosition: actualized values,
+      _pool: actualized values
+     */
+
     function unclaimedRewards(address _token, uint256 _amount) external {}
 
     // compounding: autocompound by default
     function claimRewards(address _token) external {}
 
     // interfaces with vault
-    function withdrawStake(address _token, uint256 _stake, uint256 _amount) external whenNotPaused {
-      // call the withdrawVault function from the vault contract
-      IVault(vault).withdrawVault(msg.sender, _token, _amount, _stake);
-
-      emit WithdrawStake(_token, _amount);
-    }
+    function withdrawStake(address _token, uint256 _stake, uint256 _amount) external {}
     
     // interfaces with vault
     function withdrawAllStake(address _token) external {}
@@ -86,19 +141,25 @@ contract RewardsV2 is Pausable, AccessControl {
 
     function unclaimedRewards(address _token) external {}
 
+    // TODO: move to vault
+    //function getUserInfo() external returns (User memory) {}
+
+    /*  This function will check if a new stake needs to be created based on lockingThreshold.
+        See readme for details.
+    */
+    function checkTimelockThreshold(uint256 _timelock) internal returns (bool) {}
+   
     /*
         Admin functions
         TODO: Add RBAC for all
     */
-    // interfaces with vault
-    function addPool(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {}
-
-    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
-
-    function withdrawMATIC(address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
-
-    function updateTimelockDuration(uint256 _duration) external onlyRole(DEFAULT_ADMIN_ROLE) {
-      IVault(vault).setTimeLock(_duration);
+    function addPool(address _token, uint256 _rewardsPerBlock) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        vault.addPool(_token, _rewardsPerBlock);
     }
+    function withdrawToken(address _token, uint256 _amount, address _destination) external {}
+
+    function withdrawMATIC(address _destination) external {}
+
+    function updateTimelockDuration(uint256 _duration) external {}
 
 }

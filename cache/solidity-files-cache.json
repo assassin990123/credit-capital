@@ -1,50 +1,10 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/Users/elo/Code/cc-rewards-vault-contracts/contracts/CAPL.sol": {
-      "lastModificationDate": 1641454078025,
-      "contentHash": "9e83b4f3b845d684260b347f8e633050",
-      "sourceName": "contracts/CAPL.sol",
-      "solcConfig": {
-        "version": "0.8.11",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "CAPL",
-        "Context",
-        "ERC20",
-        "IERC20",
-        "IERC20Metadata",
-        "Ownable"
-      ]
-    },
-    "/Users/elo/Code/cc-rewards-vault-contracts/contracts/RewardsV2.sol": {
-      "lastModificationDate": 1641789874206,
-      "contentHash": "2fa2f6046484328c3fd869d31b0cf121",
-      "sourceName": "contracts/RewardsV2.sol",
+    "/Users/elo/Code/credit-capital/contracts/rewards/Rewards.sol": {
+      "lastModificationDate": 1642060355005,
+      "contentHash": "9e32064033cd26c8df6bd21fff60cc51",
+      "sourceName": "contracts/rewards/Rewards.sol",
       "solcConfig": {
         "version": "0.8.11",
         "settings": {
@@ -79,12 +39,14 @@
       ],
       "artifacts": [
         "IPool",
+        "IStake",
+        "IUserPositions",
         "IVault",
         "RewardsV2"
       ]
     },
-    "/Users/elo/Code/cc-rewards-vault-contracts/node_modules/@openzeppelin/contracts/access/AccessControl.sol": {
-      "lastModificationDate": 1641454516662,
+    "/Users/elo/Code/credit-capital/node_modules/@openzeppelin/contracts/access/AccessControl.sol": {
+      "lastModificationDate": 1642059372722,
       "contentHash": "79af4d35ce7918696f13f0cb6653ec99",
       "sourceName": "@openzeppelin/contracts/access/AccessControl.sol",
       "solcConfig": {
@@ -123,8 +85,8 @@
         "AccessControl"
       ]
     },
-    "/Users/elo/Code/cc-rewards-vault-contracts/node_modules/@openzeppelin/contracts/security/Pausable.sol": {
-      "lastModificationDate": 1641454516687,
+    "/Users/elo/Code/credit-capital/node_modules/@openzeppelin/contracts/security/Pausable.sol": {
+      "lastModificationDate": 1642059372748,
       "contentHash": "9c2dccab8e3a43a18c41e358763fe4d8",
       "sourceName": "@openzeppelin/contracts/security/Pausable.sol",
       "solcConfig": {
@@ -160,8 +122,8 @@
         "Pausable"
       ]
     },
-    "/Users/elo/Code/cc-rewards-vault-contracts/node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
-      "lastModificationDate": 1641454519500,
+    "/Users/elo/Code/credit-capital/node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
+      "lastModificationDate": 1642059375523,
       "contentHash": "76814c83c32552ed2b521c816b4d801a",
       "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
       "solcConfig": {
@@ -198,8 +160,8 @@
         "SafeERC20"
       ]
     },
-    "/Users/elo/Code/cc-rewards-vault-contracts/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1641454518663,
+    "/Users/elo/Code/credit-capital/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+      "lastModificationDate": 1642059374564,
       "contentHash": "302d9755e46bc69d7058b0cbe7185e37",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
@@ -233,8 +195,8 @@
         "IERC20"
       ]
     },
-    "/Users/elo/Code/cc-rewards-vault-contracts/node_modules/@openzeppelin/contracts/access/IAccessControl.sol": {
-      "lastModificationDate": 1641454516663,
+    "/Users/elo/Code/credit-capital/node_modules/@openzeppelin/contracts/access/IAccessControl.sol": {
+      "lastModificationDate": 1642059372722,
       "contentHash": "57c84298234411cea19c7c284d86be8b",
       "sourceName": "@openzeppelin/contracts/access/IAccessControl.sol",
       "solcConfig": {
@@ -268,8 +230,8 @@
         "IAccessControl"
       ]
     },
-    "/Users/elo/Code/cc-rewards-vault-contracts/node_modules/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1641454516679,
+    "/Users/elo/Code/credit-capital/node_modules/@openzeppelin/contracts/utils/Context.sol": {
+      "lastModificationDate": 1642059372742,
       "contentHash": "5f2c5c4b6af2dd4551027144797bc8be",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
@@ -303,8 +265,8 @@
         "Context"
       ]
     },
-    "/Users/elo/Code/cc-rewards-vault-contracts/node_modules/@openzeppelin/contracts/utils/Strings.sol": {
-      "lastModificationDate": 1641454516686,
+    "/Users/elo/Code/credit-capital/node_modules/@openzeppelin/contracts/utils/Strings.sol": {
+      "lastModificationDate": 1642059372743,
       "contentHash": "9c54c6c065d9e590fdcdd72c451425b9",
       "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
       "solcConfig": {
@@ -338,8 +300,8 @@
         "Strings"
       ]
     },
-    "/Users/elo/Code/cc-rewards-vault-contracts/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
-      "lastModificationDate": 1641454518671,
+    "/Users/elo/Code/credit-capital/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
+      "lastModificationDate": 1642059374563,
       "contentHash": "0e7db055ce108f9da7bb6686a00287c0",
       "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
       "solcConfig": {
@@ -375,8 +337,8 @@
         "ERC165"
       ]
     },
-    "/Users/elo/Code/cc-rewards-vault-contracts/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
-      "lastModificationDate": 1641454518672,
+    "/Users/elo/Code/credit-capital/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+      "lastModificationDate": 1642059374564,
       "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
       "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
@@ -410,8 +372,8 @@
         "IERC165"
       ]
     },
-    "/Users/elo/Code/cc-rewards-vault-contracts/node_modules/@openzeppelin/contracts/utils/Address.sol": {
-      "lastModificationDate": 1641454516670,
+    "/Users/elo/Code/credit-capital/node_modules/@openzeppelin/contracts/utils/Address.sol": {
+      "lastModificationDate": 1642059372741,
       "contentHash": "4cff8b2ea0d958750786b4e3ca308445",
       "sourceName": "@openzeppelin/contracts/utils/Address.sol",
       "solcConfig": {
@@ -445,10 +407,10 @@
         "Address"
       ]
     },
-    "/Users/elo/Code/cc-rewards-vault-contracts/contracts/Vault.sol": {
-      "lastModificationDate": 1641793995261,
-      "contentHash": "bb8500b4b7097a82e9d581d756eabaf3",
-      "sourceName": "contracts/Vault.sol",
+    "/Users/elo/Code/credit-capital/contracts/vault/Vault.sol": {
+      "lastModificationDate": 1642060413307,
+      "contentHash": "d6537424fa7b57c05119eb92ed5a9ac7",
+      "sourceName": "contracts/vault/Vault.sol",
       "solcConfig": {
         "version": "0.8.11",
         "settings": {
@@ -485,9 +447,9 @@
         "Vault"
       ]
     },
-    "/Users/elo/Code/cc-rewards-vault-contracts/contracts/tokenController/Controller.sol": {
-      "lastModificationDate": 1641778426303,
-      "contentHash": "021349dc79068d854546ec8d935c6fc9",
+    "/Users/elo/Code/credit-capital/contracts/tokenController/Controller.sol": {
+      "lastModificationDate": 1642014533603,
+      "contentHash": "411370a2d559a66945401d830d61f994",
       "sourceName": "contracts/tokenController/Controller.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -514,17 +476,21 @@
       },
       "imports": [
         "@openzeppelin/contracts/access/AccessControl.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
       ],
-      "versionPragmas": [],
+      "versionPragmas": [
+        "0.8.11"
+      ],
       "artifacts": [
+        "ICAPL",
         "controller"
       ]
     },
-    "/Users/elo/Code/cc-rewards-vault-contracts/node_modules/@openzeppelin/contracts/utils/Counters.sol": {
-      "lastModificationDate": 1641454516680,
-      "contentHash": "74654e3ae5d7f39555055dfe244dab7a",
-      "sourceName": "@openzeppelin/contracts/utils/Counters.sol",
+    "/Users/elo/Code/credit-capital/contracts/tokens/CAPL.sol": {
+      "lastModificationDate": 1642014533604,
+      "contentHash": "9e83b4f3b845d684260b347f8e633050",
+      "sourceName": "contracts/tokens/CAPL.sol",
       "solcConfig": {
         "version": "0.8.11",
         "settings": {
@@ -553,7 +519,12 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "Counters"
+        "CAPL",
+        "Context",
+        "ERC20",
+        "IERC20",
+        "IERC20Metadata",
+        "Ownable"
       ]
     }
   }
