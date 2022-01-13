@@ -26,6 +26,8 @@ interface IVault {
 
   function getTokenSupply(address _token) external returns (uint256);
   function withdraw(address _token, address _user, uint256 _amount, uint256 _newRewardDebt) external;
+  //     function setAutoCompound(address _token, address _user, bool _active) external {
+  function setAutoCompound(address _token, uint256 _amount, bool active) external;
 }
 
 interface IPool {
@@ -193,6 +195,7 @@ contract RewardsV2 is Pausable, AccessControl {
 
     function setAutoCompound(address _token, address _user, bool _active) external {
       require(msg.sender == _user, "incorrect user");
+      vault.setAutoCompound(_token, _user, _active);
     }
 
     function setController(address _controller) external onlyRole(DEFAULT_ADMIN_ROLE){
