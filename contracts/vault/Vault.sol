@@ -18,14 +18,11 @@ contract Vault is Pausable, Ownable {
         uint256 timeLockEnd;     // The point at which the (4 yr, 4 mo, 4 day) timelock ends for a stake, and thus the funds can be withdrawn.
         bool active;             // true = stake in vault, false = user withdrawn stake
     }
-    // user position tracking
-    mapping(address => mapping(address => UserPosition)) UserPositions; // account => (token => userposition)
 
-    mapping(address => Stake[]) Stakes; // account => stake[]
     // users stake identifiers
+    mapping(address => Stake[]) Stakes; // account => stake[]
 
     struct UserPosition {
-        // address token;           // MRC20 associated with pool
         uint256 totalAmount;     // total value staked by user in given pool
         uint256 pendingRewards;  // total rewards pending for user 
         uint256 rewardDebt;      // house fee (?)
@@ -35,14 +32,18 @@ contract Vault is Pausable, Ownable {
         bool autocompounding;    // this userposition enables auto compounding (Auto restaking the rewards)
     }
 
-    // pool tracking
-    mapping(address => Pool) Pools; // token => pool
+    // user position tracking
+    mapping(address => mapping(address => UserPosition)) UserPositions; // account => (token => userposition)
 
     struct Pool {
         uint256 totalPooled;    // total token pooled in the contract
         uint256 totalUsers;     // total number of active participants
         uint256 rewardsPerDay;  // rate at which CAPL is minted for this pool
     }
+
+    // pool tracking
+    mapping(address => Pool) Pools; // token => pool
+    mapping(address => UserPosition[]) PoolUsers; // token => userPosition
 
     event DepositVault(address user, address token, uint amount);
     event WithdrawVault(address user, address token, uint amount);
@@ -127,11 +128,10 @@ contract Vault is Pausable, Ownable {
             stake.active = false;
         }
 
+        // transfer token to the user's wallet
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
-
         emit WithdrawVault(_user, _token, _amount);
     }
-
 
     /**
         @dev - here we can assume that there are no timelocks, since the vault has no knowledge of the pool.
@@ -147,20 +147,8 @@ contract Vault is Pausable, Ownable {
             active: true
         });
 
-        uint256[] memory userStakeKeys;
+        addUserPosition(_token, _user, _amount, 0);
 
-        UserPosition memory newUser = UserPosition ({
-            // token: _token,
-            totalAmount: _amount,
-            pendingRewards: 0,
-            rewardDebt: 0,
-            claimedRewards: 0,
-            sKey: userStakeKeys,
-            staticLock: false,
-            autocompounding: true
-        });
-        // persist user
-        UserPositions[msg.sender][_token] = newUser;
         // add new stake key
         UserPositions[msg.sender][_token].sKey.push(0);
         // register users Stake
@@ -185,7 +173,7 @@ contract Vault is Pausable, Ownable {
     function checkIfPoolExists(address _toke) public view returns (bool) {
         return Pools[_token].totalUsers > 0;
     }
-
+    
     /*
         Admin functions
         TODO: Add RBAC for all
@@ -199,11 +187,45 @@ contract Vault is Pausable, Ownable {
             rewardsPerDay: _rewardsPerDay
         });
     }
+    
+    function addUserPosition(address _token, address _user, uint256 _amount, uint _rewardDebt) external onlyOwner {
+        uint256[] memory userStakeKeys;
+
+        UserPosition memory newUser = new UserPosition {(
+            totalAmount: _amount,
+            pendingRewards: 0,
+            rewardDebt: _rewardDebt,
+            claimedRewards: 0,
+            sKey: userStakeKeys,
+            staticLock: false,
+            autocompounding: true
+        )};
+
+        // create new userPosition
+        UserPositions[_user][_token] = newUser;
+    }
+
+    /*  This function will check if a new stake needs to be created based on lockingThreshold.
+        See readme for details.
+    */
+    function checkTimelockThreshold(Stake storage _lastStake) internal view returns (bool) {
+        return _lastStake.timeLockEnd < block.timestamp;
+    }
+
+    function addStake(address _token, address _user, uint256 _amount) {
+        // create user & stake data
+        Stake memory newStake = Stake({
+            amount: _amount,                   // first stake
+            startBlock: block.timestamp,
+            timeLockEnd: block.timestamp + timelock,
+            active: true
+        });
+    }
 
     /**
      * Update stake - called from rewards contract
      */
-    function updateStake(address _token, address _user, address _amount, uint256 _stakeId) external {
+    function updateStake(address _token, address _user, uint _amount, uint256 _stakeId) external {
         Stake storage stake = Stakes[_user][_stakeId];
 
         // update stake
@@ -236,25 +258,5 @@ contract Vault is Pausable, Ownable {
 
     function setTimeLock(uint256 _duration) external onlyOwner {
         timelock = _duration;
-    }
-
-    function addUserPosition(address _token, address _user, uint256 _amount, uint _rewardDebt) external onlyOwner {
-        uint256[] memory userStakeKeys;
-
-        UserPosition memory newUser = new UserPosition {(
-            totalAmount: _amount,
-            pendingRewards: 0,
-            rewardDebt: _rewardDebt,
-            claimedRewards: 0,
-            sKey: userStakeKeys,
-            staticLock: false,
-            autocompounding: true
-        )};
-
-        // create new userPosition
-        UserPositions[_user][_token] = newUser;
-
-        // transfer funds to the vault
-        IERC20(_token).safeTransferFrom(_user, address(this), _amount);
     }
 }
