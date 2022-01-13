@@ -18,12 +18,18 @@ interface IVault {
   function withdrawVault ( address _token, uint256 _amount ) external;
   function addUserPosition(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
   function updateUserPosition(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
-  function getUsersInPool(address _token) external returns (IUserPositions.UserPosition[] memory);
+  function getUserPosition(address _token, address _user) external returns (IUserPositions.UserPosition memory);
   function addStake(address _user, uint256 _amount) external;
   function getLastStake(address _token, address _user) external returns (IStake.Stake memory);
+  function getUserStakes(address _token, address _user) external returns (IStake.Stake[] memory);
   function updatePool(address _token, uint256 _accCaplPerShare, uint256 _lastRewardBlock) external returns (IPool.Pool memory);
   function updateStake(address _token, address _user, uint256 _amount) external;
   function getPool(address _token) external returns (IPool.Pool memory);
+  function getTokenSupply(address _token) external returns (uint256);
+  function updateUserDebt(address _token, address _user, uint256 rewardDebt) external;
+  function getUnlockedAmount(address _token, address _user) external returns (uint256 _unlockedAmount);
+  function withdraw(address _token, address _user, uint256 _amount, uint256 _newUserAmount, uint256 _newRewardDebt) external;
+
 }
 
 interface IPool {
@@ -56,6 +62,10 @@ interface IStake {
   }
 }
 
+interface IController {
+  function mint ( address destination, uint256 amount ) external;
+}
+
 contract RewardsV2 is Pausable, AccessControl {
 
     using SafeERC20 for IERC20;
@@ -63,6 +73,8 @@ contract RewardsV2 is Pausable, AccessControl {
     IVault vault;
 
     uint256 CAPL_PRECISION = 1e18;
+
+    IController controller;
 
     constructor (address _vault) {
         vault = IVault(_vault);
@@ -106,12 +118,13 @@ contract RewardsV2 is Pausable, AccessControl {
 
     function updatePool(address _token) public returns (IPool.Pool memory pool) {
       IPool.Pool memory cpool = vault.getPool(_token);
+      uint256 totalSupply = vault.getTokenSupply(_token);
       uint256 accCaplPerShare;
       if (block.number > cpool.lastRewardBlock) {
-        if (cpool.totalPooled > 0) {
+        if (totalSupply > 0) {
           uint256 blocks = block.number - cpool.lastRewardBlock;
           uint256 caplReward = blocks * cpool.rewardsPerBlock;
-          accCaplPerShare = cpool.accCaplPerShare + (caplReward * CAPL_PRECISION) / cpool.totalPooled;
+          accCaplPerShare = cpool.accCaplPerShare + (caplReward * CAPL_PRECISION) / totalSupply;
         }
         uint256 lastRewardBlock = block.number;
         return vault.updatePool(_token, accCaplPerShare, lastRewardBlock);
@@ -122,18 +135,53 @@ contract RewardsV2 is Pausable, AccessControl {
       _pool: actualized values
      */
 
-    function unclaimedRewards(address _token, uint256 _amount) external {}
+    function pendingRewards(address _token, address _user) external returns (uint256 pending){
+      IPool.Pool memory pool = vault.getPool(_token);
+      IUserPositions.UserPosition memory user = vault.getUserPosition(_token, _user);
 
-    // compounding: autocompound by default
-    function claimRewards(address _token) external {}
+      uint256 accCaplPerShare = pool.accCaplPerShare;
+      uint256 tokenSupply = vault.getTokenSupply(_token);
 
-    // interfaces with vault
-    function withdrawStake(address _token, uint256 _stake, uint256 _amount) external {}
-    
-    // interfaces with vault
-    function withdrawAllStake(address _token) external {}
+      if (block.number > pool.lastRewardBlock && tokenSupply != 0) {
+        uint256 blocks = block.number - pool.lastRewardBlock;
+        uint256 caplReward = blocks * pool.rewardsPerBlock;
+        accCaplPerShare = accCaplPerShare + (caplReward * CAPL_PRECISION) / tokenSupply;
+      }
+      pending = (user.totalAmount * accCaplPerShare / CAPL_PRECISION) - user.rewardDebt;
+    }
 
-    function setStaticLock(address _token, uint256 _stakeId) external {}
+    function claim(address _token, address _user) external {
+      IPool.Pool memory pool = updatePool(_token);
+      IUserPositions.UserPosition memory user = vault.getUserPosition(_token, _user);
+
+      uint256 accumulatedCapl = user.totalAmount * pool.accCaplPerShare / CAPL_PRECISION;
+      uint256 pendingCapl = accumulatedCapl - user.rewardDebt;
+
+      // _user.rewardDebt = accumulatedCapl
+      vault.updateUserDebt(_token, _user, accumulatedCapl);
+
+      if (pendingCapl > 0) {
+        controller.mint(_user, pendingCapl);
+      }
+    }
+
+    /**
+     we do this one directly in the vault because otherwise we would have a potentially large payload when a user has many stakes
+    */
+    function pendingWithdrawals(address _token, address _user) public returns (uint256 _unlockedAmount) {
+      _unlockedAmount = vault.getUnlockedAmount(_token, _user);
+    }
+
+    function withdraw(address _token, address _user) external {
+      IPool.Pool memory pool = updatePool(_token);
+      IUserPositions.UserPosition memory user = vault.getUserPosition(_token, _user);
+
+      uint256 amount = pendingWithdrawals(_token, _user);
+      uint256 newRewardDebt = user.rewardDebt - amount * pool.accCaplPerShare / CAPL_PRECISION;
+      uint256 newUserAmount = user.totalAmount - amount;
+
+      vault.withdraw(_token, _user, amount, newUserAmount, newRewardDebt);
+    }
    
     /*
         Read functions
@@ -156,10 +204,12 @@ contract RewardsV2 is Pausable, AccessControl {
     function addPool(address _token, uint256 _rewardsPerBlock) external onlyRole(DEFAULT_ADMIN_ROLE) {
         vault.addPool(_token, _rewardsPerBlock);
     }
-    function withdrawToken(address _token, uint256 _amount, address _destination) external {}
+    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
 
-    function withdrawMATIC(address _destination) external {}
+    function withdrawMATIC(address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
 
-    function updateTimelockDuration(uint256 _duration) external {}
+    function setController(address _controller) external onlyRole(DEFAULT_ADMIN_ROLE){
+      controller = IController(_controller);
+    }
 
 }
