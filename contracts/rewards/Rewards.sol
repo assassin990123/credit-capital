@@ -25,7 +25,7 @@ interface IVault {
   function getLastStakeKey(address _token, address _user) external returns (uint256);
 
   function getTokenSupply(address _token) external returns (uint256);
-  function withdraw(address _token, address _user, uint256 _amount, uint256 _newUserAmount, uint256 _newRewardDebt) external;
+  function withdraw(address _token, address _user, uint256 _amount, uint256 _newRewardDebt) external;
 }
 
 interface IPool {
@@ -41,9 +41,7 @@ interface IUserPositions {
   struct UserPosition {
       address token;           // MRC20 associated with pool
       uint256 totalAmount;     // total value staked by user in given pool
-      uint256 pendingRewards;  // total rewards pending for user 
       uint256 rewardDebt;      // house fee (?)
-      uint256 claimedRewards;  // total rewards claimed by user for given pool
       uint256[] sKey;          // list of user stakes in pool subject to timelock
       bool staticLock;         // guarantees a users stake is locked, even after timelock expiration
   }
@@ -78,6 +76,8 @@ contract RewardsV2 is Pausable, AccessControl {
     event Withdraw(address indexed _token, address indexed _user, uint256 _amount);
     event SetController(address _controller);
     event AddPool(address _token, uint256 _rewardsPerBlock);
+
+    mapping(address => mapping(address => bool)) autoCompoudLocks;
 
     constructor (address _vault) {
         vault = IVault(_vault);
@@ -152,6 +152,7 @@ contract RewardsV2 is Pausable, AccessControl {
     }
 
     function claim(address _token, address _user) external {
+      require(!autoCompoudLocks[_token][_user], "autocompounding is on");
       IPool.Pool memory pool = setPool(_token);
       IUserPositions.UserPosition memory user = vault.getUserPosition(_token, _user);
 
@@ -181,15 +182,18 @@ contract RewardsV2 is Pausable, AccessControl {
 
       uint256 amount = pendingWithdrawals(_token, _user);
       uint256 newRewardDebt = user.rewardDebt - amount * pool.accCaplPerShare / CAPL_PRECISION;
-      uint256 newUserAmount = user.totalAmount - amount;
 
-      vault.withdraw(_token, _user, amount, newUserAmount, newRewardDebt);
+      vault.withdraw(_token, _user, amount, newRewardDebt);
 
       emit Withdraw(_token, _user, amount);
     }
 
     // TODO: Implement
     function checkTimelockThreshold(uint256 _timelock) internal returns (bool) {}
+
+    function setAutoCompound(address _token, address _user, bool _active) external {
+      require(msg.sender == _user, "incorrect user");
+    }
 
     function setController(address _controller) external onlyRole(DEFAULT_ADMIN_ROLE){
       controller = IController(_controller);

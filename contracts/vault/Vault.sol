@@ -27,9 +27,7 @@ contract Vault is Pausable, AccessControl {
     struct UserPosition {
         // address token;           // MRC20 associated with pool
         uint256 totalAmount;     // total value staked by user in given pool
-        uint256 pendingRewards;  // total rewards pending for user 
         uint256 rewardDebt;      // house fee (?)
-        uint256 claimedRewards;  // total rewards claimed by user for given pool
         uint256[] sKey;          // list of user stakes in pool subject to timelock
         bool staticLock;         // guarantees a users stake is locked, even after timelock expiration
         bool autocompounding;    // this userposition enables auto compounding (Auto restaking the rewards)
@@ -146,9 +144,7 @@ contract Vault is Pausable, AccessControl {
         UserPosition memory newUser = UserPosition ({
             // token: _token,
             totalAmount: _amount,
-            pendingRewards: 0,
             rewardDebt: 0,
-            claimedRewards: 0,
             sKey: userStakeKeys,
             staticLock: false,
             autocompounding: true
