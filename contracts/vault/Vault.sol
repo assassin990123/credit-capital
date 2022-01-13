@@ -1,12 +1,12 @@
 //SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.11;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract Vault is Pausable, AccessControl {
+contract Vault is Pausable, Ownable {
     using SafeERC20 for IERC20;
     
     uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
@@ -136,7 +136,7 @@ contract Vault is Pausable, AccessControl {
     /**
         @dev - here we can assume that there are no timelocks, since the vault has no knowledge of the pool.
      */
-    function addPool(address _token, uint256 _amount, uint256 _rewardsPerDay) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function addPool(address _token, uint256 _amount, uint256 _rewardsPerDay) external onlyOwner {
         require(!checkIfPoolExists(_token, msg.sender), "This pool already exists.");
 
         // create user & stake data
@@ -206,7 +206,20 @@ contract Vault is Pausable, AccessControl {
         });
     }
 
-    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    /**
+     * Update stake - called from rewards contract
+     */
+    function updateStake(address _token, address _user, address _amount, uint256 _stakeId) external {
+        Stake storage stake = Stakes[_user][_stakeId];
+
+        // update stake
+        stake.amount = _amount; // ? how can I send transfer the amount from the user? what about the previous amount?
+
+        // transfer the updated account
+        
+    }
+
+    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyOwner {
         Pool storage pool = Pools[_token];
         
         require(_amount > 0 && pool.totalPooled >= _amount);
@@ -218,7 +231,7 @@ contract Vault is Pausable, AccessControl {
         pool.totalPooled -= _amount;
     }
 
-    function withdrawMATIC(address _destination) public payable onlyRole(DEFAULT_ADMIN_ROLE) {
+    function withdrawMATIC(address _destination) public payable onlyOwner {
         uint256 balance = address(this).balance;
 
         (bool sent, bytes memory data) = _destination.call{value: balance}("");
@@ -227,7 +240,27 @@ contract Vault is Pausable, AccessControl {
         emit WithdrawMATIC(_destination, balance);
     }
 
-    function setTimeLock(uint256 _duration) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setTimeLock(uint256 _duration) external onlyOwner {
         timelock = _duration;
+    }
+
+    function addUserPosition(address _token, address _user, uint256 _amount, uint _rewardDebt) external onlyOwner {
+        uint256[] memory userStakeKeys;
+
+        UserPosition memory newUser = new UserPosition {(
+            totalAmount: _amount,
+            pendingRewards: 0,
+            rewardDebt: _rewardDebt,
+            claimedRewards: 0,
+            sKey: userStakeKeys,
+            staticLock: false,
+            autocompounding: true
+        )};
+
+        // create new userPosition
+        UserPositions[_user][_token] = newUser;
+
+        // transfer funds to the vault
+        IERC20(_token).safeTransferFrom(_user, address(this), _amount);
     }
 }
