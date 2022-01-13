@@ -22,7 +22,7 @@ interface IVault {
 
   function addStake(address _user, uint256 _amount) external;
   function getLastStake(address _token, address _user) external returns (IStake.Stake memory);
-  function updateStake(address _token, address _user, uint256 _amount) external;
+  function updateStake(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
   function getLastStakeKey(address _token, address _user) external returns (uint256);
 
   function getTokenSupply(address _token) external returns (uint256);
@@ -73,6 +73,10 @@ contract RewardsV2 is Pausable, AccessControl {
     uint256 CAPL_PRECISION = 1e18;
 
     IController controller;
+
+    event Deposit(address indexed _token, address indexed _user, uint256 _amount);
+    event PoolUpdated();
+
 
     constructor (address _vault) {
         vault = IVault(_vault);

@@ -113,24 +113,6 @@
           "type": "address"
         },
         {
-          "internalType": "uint256",
-          "name": "_amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "depositVault",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        },
-        {
           "internalType": "address",
           "name": "_user",
           "type": "address"
@@ -164,6 +146,30 @@
           "internalType": "struct IStake.Stake",
           "name": "",
           "type": "tuple"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "getLastStakeKey",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         }
       ],
       "stateMutability": "nonpayable",
@@ -218,47 +224,6 @@
           "type": "address"
         }
       ],
-      "name": "getPoolInfo",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "uint256",
-              "name": "totalPooled",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "rewardsPerBlock",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "accCaplPerShare",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "lastRewardBlock",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct IPool.Pool",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        }
-      ],
       "name": "getTokenSupply",
       "outputs": [
         {
@@ -287,7 +252,7 @@
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "_unlockedAmount",
+          "name": "",
           "type": "uint256"
         }
       ],
@@ -363,52 +328,6 @@
           "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "_user",
-          "type": "address"
-        }
-      ],
-      "name": "getUserStakes",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "startBlock",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "timeLockEnd",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bool",
-              "name": "active",
-              "type": "bool"
-            }
-          ],
-          "internalType": "struct IStake.Stake[]",
-          "name": "",
-          "type": "tuple[]"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        },
-        {
           "internalType": "uint256",
           "name": "_accCaplPerShare",
           "type": "uint256"
@@ -467,6 +386,11 @@
         {
           "internalType": "uint256",
           "name": "_amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_rewardDebt",
           "type": "uint256"
         }
       ],
@@ -555,60 +479,6 @@
         }
       ],
       "name": "withdraw",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_destination",
-          "type": "address"
-        }
-      ],
-      "name": "withdrawMATIC",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_amount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "_destination",
-          "type": "address"
-        }
-      ],
-      "name": "withdrawToken",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "withdrawVault",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
