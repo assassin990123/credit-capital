@@ -68,7 +68,7 @@ contract Vault is Pausable, Ownable {
         Stake storage lastStake = Stakes[_user][sKey];
 
         if (checkTimelockThreshold(lastStake)) {
-            require(!checkIfPoolExists(_token, _user), "This pool already exists.");
+            require(!checkIfPoolExists(_token), "This pool already exists.");
 
             // create new stake
             Stake memory newStake = Stake ({
@@ -94,7 +94,7 @@ contract Vault is Pausable, Ownable {
         // update the pool info
         pool.totalPooled += _amount;
 
-        if (!checkIfPoolExists(_token, _user)) {
+        if (!checkIfPoolExists(_token)) {
             pool.totalUsers += 1;
         }
 
@@ -137,7 +137,7 @@ contract Vault is Pausable, Ownable {
         @dev - here we can assume that there are no timelocks, since the vault has no knowledge of the pool.
      */
     function addPool(address _token, uint256 _amount, uint256 _rewardsPerDay) external onlyOwner {
-        require(!checkIfPoolExists(_token, msg.sender), "This pool already exists.");
+        require(!checkIfPoolExists(_token.sender), "This pool already exists.");
 
         // create user & stake data
         Stake memory newStake = Stake({
@@ -182,23 +182,17 @@ contract Vault is Pausable, Ownable {
     /**
      * @dev Check if the user has stakes for the token - again, user has the token pool staked
      */
-    function checkIfPoolExists(address _token, address _user) public view returns (bool) {
-        return UserPositions[_user][_token].sKey.length > 0;
+    function checkIfPoolExists(address _toke) public view returns (bool) {
+        return Pools[_token].totalUsers > 0;
     }
 
-    /*  This function will check if a new stake needs to be created based on lockingThreshold.
-        See readme for details.
-    */
-    function checkTimelockThreshold(Stake storage _lastStake) internal view returns (bool) {
-        return _lastStake.timeLockEnd < block.timestamp;
-    }
     /*
         Admin functions
         TODO: Add RBAC for all
     */
     
     function registerPool(address _token, uint256 _amount, uint256 _rewardsPerDay) public {
-        require(!checkIfPoolExists(_token, msg.sender), "This pool already exists");
+        require(!checkIfPoolExists(_token.sender), "This pool already exists");
         Pools[_token] = Pool({
             totalPooled: _amount,
             totalUsers: 1,
