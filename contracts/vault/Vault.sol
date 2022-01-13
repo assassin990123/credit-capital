@@ -36,9 +36,10 @@ contract Vault is Pausable, Ownable {
     mapping(address => mapping(address => UserPosition)) UserPositions; // account => (token => userposition)
 
     struct Pool {
-        uint256 totalPooled;    // total token pooled in the contract
-        uint256 totalUsers;     // total number of active participants
-        uint256 rewardsPerDay;  // rate at which CAPL is minted for this pool
+        uint256 totalPooled;        // total token pooled in the contract
+        uint256 rewardsPerBlock;    // rate at which CAPL is minted for this pool
+        uint256 accCaplPerShare;    // weighted CAPL share in pool
+        uint256 lastRewardBlock;    // last time a claim was made
     }
 
     // pool tracking
@@ -95,10 +96,6 @@ contract Vault is Pausable, Ownable {
         // update the pool info
         pool.totalPooled += _amount;
 
-        if (!checkIfPoolExists(_token)) {
-            pool.totalUsers += 1;
-        }
-
         // _transferDepositFee(_user, _token, _amount);
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
 
@@ -117,9 +114,6 @@ contract Vault is Pausable, Ownable {
         // Update Pool info
         Pool storage pool = Pools[_token];
         pool.totalPooled -= _amount;
-        if (pool.totalPooled == 0) {
-            pool.totalUsers -= 1;
-        }
 
         // Stakes
         Stake storage stake = Stakes[_user][_stakeId];
@@ -156,8 +150,6 @@ contract Vault is Pausable, Ownable {
 
         // transfer funds to the vault
         IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
-
-        registerPool(_token, _amount, _rewardsPerDay);
     }
    
     /*
