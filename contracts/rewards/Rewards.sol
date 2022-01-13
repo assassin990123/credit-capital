@@ -26,8 +26,8 @@ interface IVault {
 
   function getTokenSupply(address _token) external returns (uint256);
   function withdraw(address _token, address _user, uint256 _amount, uint256 _newRewardDebt) external;
-  //     function setAutoCompound(address _token, address _user, bool _active) external {
-  function setAutoCompound(address _token, uint256 _amount, bool active) external;
+  // function setAutoCompound(address _token, address _user, bool _active) external {
+  function setAutoCompound(address _token, address _user, bool active) external;
 }
 
 interface IPool {
