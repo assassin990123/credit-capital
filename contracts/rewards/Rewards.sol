@@ -10,24 +10,22 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 interface IVault {
   function addPool ( address _token, uint256 _rewardsPerDay ) external;
   function checkIfPoolExists ( address _token ) external view returns ( bool );
+  function updatePool(address _token, uint256 _accCaplPerShare, uint256 _lastRewardBlock) external returns (IPool.Pool memory);
+  function getPool(address _token) external returns (IPool.Pool memory);
+
   function checkIfUserPositionExists(address _token) external view returns (bool);
-  function depositVault ( address _token, uint256 _amount ) external;
-  function getPoolInfo ( address _token ) external view returns ( IPool.Pool memory );
-  function withdrawMATIC ( address _destination ) external;
-  function withdrawToken ( address _token, uint256 _amount, address _destination ) external;
-  function withdrawVault ( address _token, uint256 _amount ) external;
   function addUserPosition(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
   function updateUserPosition(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
   function getUserPosition(address _token, address _user) external returns (IUserPositions.UserPosition memory);
+  function updateUserDebt(address _token, address _user, uint256 rewardDebt) external;
+  function getUnlockedAmount(address _token, address _user) external returns (uint256);
+
   function addStake(address _user, uint256 _amount) external;
   function getLastStake(address _token, address _user) external returns (IStake.Stake memory);
-  function getUserStakes(address _token, address _user) external returns (IStake.Stake[] memory);
-  function updatePool(address _token, uint256 _accCaplPerShare, uint256 _lastRewardBlock) external returns (IPool.Pool memory);
   function updateStake(address _token, address _user, uint256 _amount) external;
-  function getPool(address _token) external returns (IPool.Pool memory);
+  function getLastStakeKey(address _token, address _user) external returns (uint256);
+
   function getTokenSupply(address _token) external returns (uint256);
-  function updateUserDebt(address _token, address _user, uint256 rewardDebt) external;
-  function getUnlockedAmount(address _token, address _user) external returns (uint256 _unlockedAmount);
   function withdraw(address _token, address _user, uint256 _amount, uint256 _newUserAmount, uint256 _newRewardDebt) external;
 
 }
@@ -83,13 +81,8 @@ contract RewardsV2 is Pausable, AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
     
-    /*
-      Write functions
-    */
-    // TODO: Implement functions in vault
     function deposit(address _token, uint256 _amount) external {
       require(vault.checkIfPoolExists(_token), "Pool does not exist");
-
       // update pool to current block 
       IPool.Pool memory pool = updatePool(_token);
 
@@ -110,8 +103,9 @@ contract RewardsV2 is Pausable, AccessControl {
           // this function adds a new stake, and a new stake key in the user position instance
           vault.addStake(msg.sender, _amount);
         } else {
+          uint256 lastStakeKey = vault.getLastStakeKey(_token, msg.sender);
           // Update the last stake
-          vault.updateStake(_token, msg.sender, _amount);
+          vault.updateStake(_token, msg.sender, _amount, lastStakeKey);
         }
       }
     }
