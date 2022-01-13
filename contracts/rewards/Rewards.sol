@@ -8,26 +8,24 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IVault {
-  function addPool ( address _token, uint256 _rewardsPerDay ) external;
   function checkIfPoolExists ( address _token ) external view returns ( bool );
-  function updatePool(address _token, uint256 _accCaplPerShare, uint256 _lastRewardBlock) external returns (IPool.Pool memory);
+  function setPool(address _token, uint256 _accCaplPerShare, uint256 _lastRewardBlock) external returns (IPool.Pool memory);
   function getPool(address _token) external returns (IPool.Pool memory);
 
   function checkIfUserPositionExists(address _token) external view returns (bool);
   function addUserPosition(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
-  function updateUserPosition(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
+  function setUserPosition(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
   function getUserPosition(address _token, address _user) external returns (IUserPositions.UserPosition memory);
-  function updateUserDebt(address _token, address _user, uint256 rewardDebt) external;
+  function setUserDebt(address _token, address _user, uint256 rewardDebt) external;
   function getUnlockedAmount(address _token, address _user) external returns (uint256);
 
   function addStake(address _user, uint256 _amount) external;
   function getLastStake(address _token, address _user) external returns (IStake.Stake memory);
-  function updateStake(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
+  function setStake(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
   function getLastStakeKey(address _token, address _user) external returns (uint256);
 
   function getTokenSupply(address _token) external returns (uint256);
   function withdraw(address _token, address _user, uint256 _amount, uint256 _newUserAmount, uint256 _newRewardDebt) external;
-
 }
 
 interface IPool {
@@ -74,9 +72,12 @@ contract RewardsV2 is Pausable, AccessControl {
 
     IController controller;
 
+    event Claim(address indexed _token, address indexed _user, uint256 _amount);
     event Deposit(address indexed _token, address indexed _user, uint256 _amount);
-    event PoolUpdated();
-
+    event PoolUpdated(address indexed _token, uint256 _block);
+    event Withdraw(address indexed _token, address indexed _user, uint256 _amount);
+    event SetController(address _controller);
+    event AddPool(address _token, uint256 _rewardsPerBlock);
 
     constructor (address _vault) {
         vault = IVault(_vault);
@@ -88,7 +89,7 @@ contract RewardsV2 is Pausable, AccessControl {
     function deposit(address _token, uint256 _amount) external {
       require(vault.checkIfPoolExists(_token), "Pool does not exist");
       // update pool to current block 
-      IPool.Pool memory pool = updatePool(_token);
+      IPool.Pool memory pool = setPool(_token);
 
       uint256 rewardDebt = _amount * pool.accCaplPerShare / CAPL_PRECISION;
 
@@ -97,8 +98,7 @@ contract RewardsV2 is Pausable, AccessControl {
         // no timelock
         vault.addUserPosition(_token, msg.sender, _amount, rewardDebt);
       } else {
-        // only update the position
-        vault.updateUserPosition(_token, msg.sender, _amount, rewardDebt);
+        vault.setUserPosition(_token, msg.sender, _amount, rewardDebt);
         // check timelock
         IStake.Stake memory lastStake = vault.getLastStake(_token, msg.sender);
 
@@ -108,13 +108,13 @@ contract RewardsV2 is Pausable, AccessControl {
           vault.addStake(msg.sender, _amount);
         } else {
           uint256 lastStakeKey = vault.getLastStakeKey(_token, msg.sender);
-          // Update the last stake
-          vault.updateStake(_token, msg.sender, _amount, lastStakeKey);
+          vault.setStake(_token, msg.sender, _amount, lastStakeKey);
         }
+        emit Deposit(_token, msg.sender, _amount);
       }
     }
 
-    function updatePool(address _token) public returns (IPool.Pool memory pool) {
+    function setPool(address _token) public returns (IPool.Pool memory pool) {
       IPool.Pool memory cpool = vault.getPool(_token);
       uint256 totalSupply = vault.getTokenSupply(_token);
       uint256 accCaplPerShare;
@@ -125,7 +125,10 @@ contract RewardsV2 is Pausable, AccessControl {
           accCaplPerShare = cpool.accCaplPerShare + (caplReward * CAPL_PRECISION) / totalSupply;
         }
         uint256 lastRewardBlock = block.number;
-        return vault.updatePool(_token, accCaplPerShare, lastRewardBlock);
+        IPool.Pool memory npool = vault.setPool(_token, accCaplPerShare, lastRewardBlock);
+
+        emit PoolUpdated(_token, lastRewardBlock);
+        return npool;
       }
     }
     /*
@@ -149,18 +152,20 @@ contract RewardsV2 is Pausable, AccessControl {
     }
 
     function claim(address _token, address _user) external {
-      IPool.Pool memory pool = updatePool(_token);
+      IPool.Pool memory pool = setPool(_token);
       IUserPositions.UserPosition memory user = vault.getUserPosition(_token, _user);
 
       uint256 accumulatedCapl = user.totalAmount * pool.accCaplPerShare / CAPL_PRECISION;
       uint256 pendingCapl = accumulatedCapl - user.rewardDebt;
 
       // _user.rewardDebt = accumulatedCapl
-      vault.updateUserDebt(_token, _user, accumulatedCapl);
+      vault.setUserDebt(_token, _user, accumulatedCapl);
 
       if (pendingCapl > 0) {
         controller.mint(_user, pendingCapl);
       }
+
+      emit Claim(_token, _user, pendingCapl);
     }
 
     /**
@@ -171,7 +176,7 @@ contract RewardsV2 is Pausable, AccessControl {
     }
 
     function withdraw(address _token, address _user) external {
-      IPool.Pool memory pool = updatePool(_token);
+      IPool.Pool memory pool = setPool(_token);
       IUserPositions.UserPosition memory user = vault.getUserPosition(_token, _user);
 
       uint256 amount = pendingWithdrawals(_token, _user);
@@ -179,35 +184,19 @@ contract RewardsV2 is Pausable, AccessControl {
       uint256 newUserAmount = user.totalAmount - amount;
 
       vault.withdraw(_token, _user, amount, newUserAmount, newRewardDebt);
+
+      emit Withdraw(_token, _user, amount);
     }
-   
-    /*
-        Read functions
-    */
 
-    function unclaimedRewards(address _token) external {}
-
-    // TODO: move to vault
-    //function getUserInfo() external returns (User memory) {}
-
-    /*  This function will check if a new stake needs to be created based on lockingThreshold.
-        See readme for details.
-    */
+    // TODO: Implement
     function checkTimelockThreshold(uint256 _timelock) internal returns (bool) {}
-   
-    /*
-        Admin functions
-        TODO: Add RBAC for all
-    */
-    function addPool(address _token, uint256 _rewardsPerBlock) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        vault.addPool(_token, _rewardsPerBlock);
-    }
-    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
-
-    function withdrawMATIC(address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
 
     function setController(address _controller) external onlyRole(DEFAULT_ADMIN_ROLE){
       controller = IController(_controller);
     }
+    // fallback functions
+    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
+
+    function withdrawMATIC(address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {}
 
 }

@@ -7,24 +7,6 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_rewardsPerDay",
-          "type": "uint256"
-        }
-      ],
-      "name": "addPool",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
           "name": "_user",
           "type": "address"
         },
@@ -338,7 +320,7 @@
           "type": "uint256"
         }
       ],
-      "name": "updatePool",
+      "name": "setPool",
       "outputs": [
         {
           "components": [
@@ -394,7 +376,7 @@
           "type": "uint256"
         }
       ],
-      "name": "updateStake",
+      "name": "setStake",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -417,7 +399,7 @@
           "type": "uint256"
         }
       ],
-      "name": "updateUserDebt",
+      "name": "setUserDebt",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -445,7 +427,7 @@
           "type": "uint256"
         }
       ],
-      "name": "updateUserPosition",
+      "name": "setUserPosition",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
