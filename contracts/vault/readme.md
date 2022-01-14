@@ -12,16 +12,14 @@ struct Stake {
 }
 ```
 
-### Timelocks
-Baked into the Stake struct is all of the logic required to calculate and read timelocks. All deposits into a given pool are subject to a one year timelock. However, a user that creates multiple deposits in a short amount of time will not be subject to multiple timelocks. If the user deposits multiple positions below the ``timelockThreshold`` (see contract) that deposit gets absorbed into the most recent position. Otherwise, a new position is created subject to its own, one year timelock.
-
 ### Pool Definition
 ```
 # subject to change
 struct Pool {
-    uint256 totalPooled;    // total token pooled in the contract
-    uint256 totalUsers;     // total number of active participants
-    uint256 rewardsPerDay;  // rate at which CAPL is minted for this pool
+    uint256 totalPooled;        // total token pooled in the contract
+    uint256 rewardsPerBlock;    // rate at which CAPL is minted for this pool
+    uint256 accCaplPerShare;    // weighted CAPL share in pool
+    uint256 lastRewardBlock;    // last time a claim was made
 }
 ```
 
@@ -29,13 +27,12 @@ struct Pool {
 ```
 # subject to change
 struct UserPosition {
-    address token;           // MRC20 associated with pool
+    // address token;           // MRC20 associated with pool
     uint256 totalAmount;     // total value staked by user in given pool
-    uint256 pendingRewards;  // total rewards pending for user 
     uint256 rewardDebt;      // house fee (?)
-    uint256 claimedRewards;  // total rewards claimed by user for given pool
     uint256[] sKey;          // list of user stakes in pool subject to timelock
     bool staticLock;         // guarantees a users stake is locked, even after timelock expiration
+    bool autocompounding;    // this userposition enables auto compounding (Auto restaking the rewards)
 }
 ```
 
