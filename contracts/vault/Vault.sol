@@ -1,14 +1,17 @@
 //SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.11;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract Vault is Pausable, Ownable {
+contract Vault is AccessControl, Pausable {
     using SafeERC20 for IERC20;
     
+    // MINTER = mint & burn role
+    bytes32 public constant MINTER = keccak256("MINTER");
+
     uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
     uint256 rewardsPerDay;
 
@@ -128,8 +131,8 @@ contract Vault is Pausable, Ownable {
     /**
         @dev - here we can assume that there are no timelocks, since the vault has no knowledge of the pool.
      */
-    function addPool(address _token, uint256 _amount, uint256 _rewardsPerDay) external onlyOwner {
-        require(!checkIfPoolExists(_token.sender), "This pool already exists.");
+    function addPool(address _token, uint256 _amount, uint256 _rewardsPerDay) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(!checkIfPoolExists(_token), "This pool already exists.");
 
         // create user & stake data
         Stake memory newStake = Stake({
@@ -139,7 +142,7 @@ contract Vault is Pausable, Ownable {
             active: true
         });
 
-        addUserPosition(_token, _user, _amount, 0);
+        addUserPosition(_token, msg.sender, _amount, 0);
 
         // add new stake key
         UserPositions[msg.sender][_token].sKey.push(0);
@@ -153,46 +156,15 @@ contract Vault is Pausable, Ownable {
     /*
         Read functions
     */
-    function getPoolInfo(address _token) external view returns (Pool memory) {
+    function getPool(address _token) external view returns (Pool memory) {
         return Pools[_token];
     }
 
     /**
-     * @dev Check if the user has stakes for the token - again, user has the token pool staked
+     * @dev Check if there are users who stakes in the token pool
      */
-    function checkIfPoolExists(address _toke) public view returns (bool) {
+    function checkIfPoolExists(address _token) public view returns (bool) {
         return Pools[_token].totalUsers > 0;
-    }
-    
-    /*
-        Admin functions
-        TODO: Add RBAC for all
-    */
-    
-    function registerPool(address _token, uint256 _amount, uint256 _rewardsPerDay) public {
-        require(!checkIfPoolExists(_token.sender), "This pool already exists");
-        Pools[_token] = Pool({
-            totalPooled: _amount,
-            totalUsers: 1,
-            rewardsPerDay: _rewardsPerDay
-        });
-    }
-    
-    function addUserPosition(address _token, address _user, uint256 _amount, uint _rewardDebt) external onlyOwner {
-        uint256[] memory userStakeKeys;
-
-        UserPosition memory newUser = new UserPosition {(
-            totalAmount: _amount,
-            pendingRewards: 0,
-            rewardDebt: _rewardDebt,
-            claimedRewards: 0,
-            sKey: userStakeKeys,
-            staticLock: false,
-            autocompounding: true
-        )};
-
-        // create new userPosition
-        UserPositions[_user][_token] = newUser;
     }
 
     /*  This function will check if a new stake needs to be created based on lockingThreshold.
@@ -202,7 +174,66 @@ contract Vault is Pausable, Ownable {
         return _lastStake.timeLockEnd < block.timestamp;
     }
 
-    function addStake(address _token, address _user, uint256 _amount) {
+    function checkIfUserPositionExists(address _token) external view returns (bool);    
+    function getUserPosition(address _token, address _user) external returns (UserPosition memory) {
+
+    }
+    function getUnlockedAmount(address _token, address _user) external returns (uint256);
+
+    function getLastStake(address _token, address _user) external returns (Stake memory) {
+        UserPosition memory userPosition = UserPositions[_user][_token];
+        uint256 lastStakeKey = userPosition.sKey.length - 1;
+
+        return Stakes[_user][userPosition];
+    }
+
+    function getLastStakeKey(address _token, address _user) external returns (uint256);
+
+    /*
+        Admin functions
+    */
+    
+    function registerPool(address _token, uint256 _amount, uint256 _rewardsPerDay) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(!checkIfPoolExists(_token.sender), "This pool already exists");
+        Pools[_token] = Pool({
+            totalPooled: _amount,
+            totalUsers: 1,
+            rewardsPerDay: _rewardsPerDay
+        });
+    }
+    
+    function setPool(address _token, uint256 _accCaplPerShare, uint256 _lastRewardBlock) external onlyRole(DEFAULT_ADMIN_ROLE) returns (Pool memory) {
+        Pool memory pool = Pools[_token];
+        pool._accCaplPerShare = _accCaplPerShare;
+        pool._lastRewardBlock = _lastRewardBlock;
+        Pools[_token] = pool;
+
+        return pool;
+    }
+
+    function addUserPosition(address _token, address _user, uint256 _amount, uint _rewardDebt) internal onlyRole(DEFAULT_ADMIN_ROLE) {
+        uint256[] memory userStakeKeys;
+
+        UserPosition memory newUser = UserPosition ({
+            totalAmount: _amount,
+            pendingRewards: 0,
+            rewardDebt: _rewardDebt,
+            claimedRewards: 0,
+            sKey: userStakeKeys,
+            staticLock: false,
+            autocompounding: true
+        });
+
+        // create new userPosition
+        UserPositions[_user][_token] = newUser;
+    }
+
+    function setUserPosition(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
+    function setUserDebt(address _token, address _user, uint256 rewardDebt) external onlyRole(DEFAULT_ADMIN_ROLE) {
+
+    }
+
+    function addStake(address _token, address _user, uint256 _amount) public onlyRole(DEFAULT_ADMIN_ROLE) {
         // create user & stake data
         Stake memory newStake = Stake({
             amount: _amount,                   // first stake
@@ -215,7 +246,7 @@ contract Vault is Pausable, Ownable {
     /**
      * Update stake - called from rewards contract
      */
-    function updateStake(address _token, address _user, uint _amount, uint256 _stakeId) external {
+    function setStake(address _token, address _user, uint _amount, uint256 _stakeId) external onlyRole(DEFAULT_ADMIN_ROLE) {
         Stake storage stake = Stakes[_user][_stakeId];
 
         // update stake
@@ -225,7 +256,7 @@ contract Vault is Pausable, Ownable {
         
     }
 
-    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyOwner {
+    function withdrawToken(address _token, uint256 _amount, address _destination) external onlyRole(DEFAULT_ADMIN_ROLE) {
         Pool storage pool = Pools[_token];
         
         require(_amount > 0 && pool.totalPooled >= _amount);
@@ -237,7 +268,7 @@ contract Vault is Pausable, Ownable {
         pool.totalPooled -= _amount;
     }
 
-    function withdrawMATIC(address _destination) public payable onlyOwner {
+    function withdrawMATIC(address _destination) public payable onlyRole(DEFAULT_ADMIN_ROLE) {
         uint256 balance = address(this).balance;
 
         (bool sent, bytes memory data) = _destination.call{value: balance}("");
@@ -246,7 +277,10 @@ contract Vault is Pausable, Ownable {
         emit WithdrawMATIC(_destination, balance);
     }
 
-    function setTimeLock(uint256 _duration) external onlyOwner {
+    function setTimeLock(uint256 _duration) external onlyRole(DEFAULT_ADMIN_ROLE) {
         timelock = _duration;
+        
     }
+
+
 }
