@@ -32,17 +32,21 @@ contract controller is AccessControl {
     }
 
     // Add RBAC
-    function mint(address destination, uint256 amount) external onlyRole(MINTER) {
+    function mint(address destination, uint256 amount)
+        external
+        onlyRole(MINTER)
+    {
         ICAPL(CAPL).mint(destination, amount);
     }
+
     // Add RBAC
     function burn(uint256 amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
         IERC20(CAPL).safeTransfer(burner, amount);
     }
 
     /**
-    * @param _account The role that would be added to the MINTER role
-    */
+     * @param _account The role that would be added to the MINTER role
+     */
     function addMinter(address _account) public onlyRole(getRoleAdmin(MINTER)) {
         grantRole(MINTER, _account);
     }

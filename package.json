@@ -10,7 +10,12 @@
     "hardhat-interface-generator": "^0.0.6",
     "npm": "^8.3.0"
   },
+  "scripts": {
+    "lint": "prettier --write 'contracts/**/*.sol'"
+  },
   "devDependencies": {
-    "@nomiclabs/hardhat-waffle": "^2.0.1"
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "prettier": "^2.5.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.19"
   }
 }

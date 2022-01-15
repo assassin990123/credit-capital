@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/elo/Code/credit-capital/contracts/rewards/Rewards.sol": {
-      "lastModificationDate": 1642225425145,
-      "contentHash": "92a664905cd4ced854369984f3166339",
+      "lastModificationDate": 1642227302711,
+      "contentHash": "c1fa0a0e23937b23b896a29a14a23844",
       "sourceName": "contracts/rewards/Rewards.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -409,8 +409,8 @@
       ]
     },
     "/Users/elo/Code/credit-capital/contracts/vault/Vault.sol": {
-      "lastModificationDate": 1642226642113,
-      "contentHash": "190b797c7d963754cc82c0317203c224",
+      "lastModificationDate": 1642227043399,
+      "contentHash": "eddcc39dbb51bd145bfa7f17615ab0c1",
       "sourceName": "contracts/vault/Vault.sol",
       "solcConfig": {
         "version": "0.8.11",
