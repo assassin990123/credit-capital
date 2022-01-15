@@ -229,7 +229,12 @@ contract Vault is AccessControl, Pausable {
         uint256 _accCaplPerShare,
         uint256 _lastRewardBlock
     ) external onlyRole(REWARDS) returns (Pool memory) {
+        require(checkIfPoolExists(_token), "Pool does not exist");
 
+        Pools[_token].accCaplPerShare = _accCaplPerShare;
+        Pools[_token].lastRewardBlock = _lastRewardBlock;
+
+        return Pools[_token];
     }
 
     function addUserPosition(
