@@ -12,15 +12,15 @@ contract Vault is Pausable, Ownable {
     uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
     uint256 rewardsPerDay;
 
+    // map a users stakes to a specific pool
+    mapping(address => mapping(address => Stake[])) Stakes;
+
     struct Stake {
         uint256 amount;          // quantity staked
         uint256 startBlock;      // stake creation timestamp
         uint256 timeLockEnd;     // The point at which the (4 yr, 4 mo, 4 day) timelock ends for a stake, and thus the funds can be withdrawn.
         bool active;             // true = stake in vault, false = user withdrawn stake
     }
-
-    // users stake identifiers
-    mapping(address => Stake[]) Stakes; // account => stake[]
 
     struct UserPosition {
         uint256 totalAmount;     // total value staked by user in given pool
@@ -49,13 +49,9 @@ contract Vault is Pausable, Ownable {
     event WithdrawMATIC(address destination, uint amount);
 
     // TBD: Assume creation with one pool required (?)
-    constructor () {
-        // Grant the contract deployer the default admin role: it will be able
-        // to grant and revoke any roles
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-    }
+    constructor () {}
     
-    function depositVault(address _user, address _token, uint256 _amount) external whenNotPaused {
+    function depositVault(address _token, address _user, uint256 _amount) external whenNotPaused {
         require(_amount > 0, "Amount 0");
 
         // userPosition
@@ -65,7 +61,7 @@ contract Vault is Pausable, Ownable {
         // check the last stake's timeLock
         uint256 sKey = userPosition.sKey[userPosition.sKey.length - 1];
 
-        Stake storage lastStake = Stakes[_user][sKey];
+        Stake storage lastStake = Stakes[_user][_token][sKey];
 
         if (checkTimelockThreshold(lastStake)) {
             require(!checkIfPoolExists(_token), "This pool already exists.");
@@ -79,7 +75,7 @@ contract Vault is Pausable, Ownable {
             });
 
             // add new Stake for the user
-            Stakes[_user].push(newStake);
+            Stakes[_user][_token].push(newStake);
 
             // add stake for the current userposition
             userPosition.sKey.push(userPosition.sKey.length);
@@ -114,7 +110,8 @@ contract Vault is Pausable, Ownable {
         pool.totalPooled -= _amount;
 
         // Stakes
-        Stake storage stake = Stakes[_user][_stakeId];
+        Stake storage stake = Stakes[_user][_token][_stakeId];
+
         stake.amount -= _amount;
         if (stake.amount == 0) {
             stake.active = false;
@@ -123,31 +120,6 @@ contract Vault is Pausable, Ownable {
         // transfer token to the user's wallet
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
         emit WithdrawVault(_user, _token, _amount);
-    }
-
-    /**
-        @dev - here we can assume that there are no timelocks, since the vault has no knowledge of the pool.
-     */
-    function addPool(address _token, uint256 _amount, uint256 _rewardsPerDay) external onlyOwner {
-        require(!checkIfPoolExists(_token.sender), "This pool already exists.");
-
-        // create user & stake data
-        Stake memory newStake = Stake({
-            amount: _amount,                   // first stake
-            startBlock: block.timestamp,
-            timeLockEnd: block.timestamp + timelock,
-            active: true
-        });
-
-        addUserPosition(_token, _user, _amount, 0);
-
-        // add new stake key
-        UserPositions[msg.sender][_token].sKey.push(0);
-        // register users Stake
-        Stakes[msg.sender].push(newStake);
-
-        // transfer funds to the vault
-        IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
     }
    
     /*
@@ -160,36 +132,38 @@ contract Vault is Pausable, Ownable {
     /**
      * @dev Check if the user has stakes for the token - again, user has the token pool staked
      */
-    function checkIfPoolExists(address _toke) public view returns (bool) {
-        return Pools[_token].totalUsers > 0;
+    function checkIfPoolExists(address _token) public view returns (bool) {
+        return Pools[_token].totalPooled > 0;
     }
     
     /*
         Admin functions
         TODO: Add RBAC for all
     */
-    
-    function registerPool(address _token, uint256 _amount, uint256 _rewardsPerDay) public {
-        require(!checkIfPoolExists(_token.sender), "This pool already exists");
-        Pools[_token] = Pool({
-            totalPooled: _amount,
-            totalUsers: 1,
-            rewardsPerDay: _rewardsPerDay
+
+    function addPool(address _token, uint256 _rewardsPerBlock) external onlyOwner {
+        require(!checkIfPoolExists(_token), "This pool already exists.");
+
+        Pool memory pool = Pool({
+            totalPooled: 0,
+            rewardsPerBlock: _rewardsPerBlock,
+            accCaplPerShare: 0,
+            lastRewardBlock: block.number
         });
+
+        Pools[_token] = pool;
     }
     
-    function addUserPosition(address _token, address _user, uint256 _amount, uint _rewardDebt) external onlyOwner {
+    function addUserPosition(address _token, address _user, uint256 _amount, uint _rewardDebt) public onlyOwner {
         uint256[] memory userStakeKeys;
 
-        UserPosition memory newUser = new UserPosition {(
+        UserPosition memory newUser = UserPosition ({
             totalAmount: _amount,
-            pendingRewards: 0,
             rewardDebt: _rewardDebt,
-            claimedRewards: 0,
             sKey: userStakeKeys,
             staticLock: false,
             autocompounding: true
-        )};
+        });
 
         // create new userPosition
         UserPositions[_user][_token] = newUser;
@@ -202,27 +176,25 @@ contract Vault is Pausable, Ownable {
         return _lastStake.timeLockEnd < block.timestamp;
     }
 
-    function addStake(address _token, address _user, uint256 _amount) {
+    function addStake(address _token, address _user, uint256 _amount) external {
         // create user & stake data
-        Stake memory newStake = Stake({
+        Stake memory stake = Stake({
             amount: _amount,                   // first stake
             startBlock: block.timestamp,
             timeLockEnd: block.timestamp + timelock,
             active: true
         });
+
+        Stakes[_user][_token].push(stake);
     }
 
     /**
      * Update stake - called from rewards contract
      */
-    function updateStake(address _token, address _user, uint _amount, uint256 _stakeId) external {
-        Stake storage stake = Stakes[_user][_stakeId];
+    function setStake(address _token, address _user, uint _amount, uint256 _stakeId) external {
+        Stake storage stake = Stakes[_user][_token][_stakeId];
 
-        // update stake
-        stake.amount = _amount; // ? how can I send transfer the amount from the user? what about the previous amount?
-
-        // transfer the updated account
-        
+        stake.amount += _amount; // ? how can I send transfer the amount from the user? what about the previous amount?
     }
 
     function withdrawToken(address _token, uint256 _amount, address _destination) external onlyOwner {
@@ -237,13 +209,13 @@ contract Vault is Pausable, Ownable {
         pool.totalPooled -= _amount;
     }
 
-    function withdrawMATIC(address _destination) public payable onlyOwner {
+    function withdrawMATIC() public payable onlyOwner {
+        require(address(this).balance > 0, "no matic to withdraw");
         uint256 balance = address(this).balance;
 
-        (bool sent, bytes memory data) = _destination.call{value: balance}("");
-        require(sent, "Failed to send MATIC");
+        payable(msg.sender).transfer(balance);
 
-        emit WithdrawMATIC(_destination, balance);
+        emit WithdrawMATIC(msg.sender, balance);
     }
 
     function setTimeLock(uint256 _duration) external onlyOwner {

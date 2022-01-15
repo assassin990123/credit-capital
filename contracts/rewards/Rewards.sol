@@ -19,7 +19,7 @@ interface IVault {
   function setUserDebt(address _token, address _user, uint256 rewardDebt) external;
   function getUnlockedAmount(address _token, address _user) external returns (uint256);
 
-  function addStake(address _user, uint256 _amount) external;
+  function addStake(address _token, address _user, uint256 _amount) external;
   function getLastStake(address _token, address _user) external returns (IStake.Stake memory);
   function setStake(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external;
   function getLastStakeKey(address _token, address _user) external returns (uint256);
@@ -107,7 +107,7 @@ contract RewardsV2 is Pausable, AccessControl {
         if (checkTimelockThreshold(lastStake.startBlock)) {
           // add a new stake for the user
           // this function adds a new stake, and a new stake key in the user position instance
-          vault.addStake(msg.sender, _amount);
+          vault.addStake(_token, msg.sender, _amount);
         } else {
           uint256 lastStakeKey = vault.getLastStakeKey(_token, msg.sender);
           vault.setStake(_token, msg.sender, _amount, lastStakeKey);

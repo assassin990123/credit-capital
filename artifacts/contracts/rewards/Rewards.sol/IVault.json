@@ -7,6 +7,11 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
           "name": "_user",
           "type": "address"
         },
@@ -289,6 +294,29 @@
           "type": "tuple"
         }
       ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "active",
+          "type": "bool"
+        }
+      ],
+      "name": "setAutoCompound",
+      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
