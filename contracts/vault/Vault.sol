@@ -183,7 +183,7 @@ contract Vault is AccessControl, Pausable {
     }
 
     function checkIfUserPositionExists(address _token) external view returns (bool) {
-
+        return UserPositions[msg.sender][_token].totalAmount > 0;
     }
 
     function getUserPosition(address _token, address _user) external returns (UserPosition memory) {
