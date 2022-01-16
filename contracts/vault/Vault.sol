@@ -208,9 +208,27 @@ contract Vault is AccessControl, Pausable {
 
     function getUnlockedAmount(address _token, address _user)
         external
+        view
         onlyRole(REWARDS)
         returns (uint256)
-    {}
+    {
+        Stake[] memory stakes = Stakes[_user][_token];
+
+        if (stakes.length != 0) {
+            return 0;
+        }
+
+        uint256 unlockedAmount = 0;
+
+        for (uint256 i = 0; i < stakes.length; i++) {
+            if (stakes[i].timeLockEnd > block.timestamp) {
+                continue;
+            }
+            unlockedAmount += stakes[i].amount;
+        }
+
+        return unlockedAmount;
+    }
 
     function getLastStake(address _token, address _user)
         external
