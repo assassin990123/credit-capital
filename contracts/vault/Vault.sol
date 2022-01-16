@@ -162,6 +162,17 @@ contract Vault is AccessControl, Pausable {
     }
 
 
+    function updatePool(
+        address _token,
+        uint256 _accCaplPerShare,
+        uint256 _lastRewardBlock
+    ) external onlyRole(REWARDS) returns (Pool memory) {
+        Pools[_token].accCaplPerShare = _accCaplPerShare;
+        Pools[_token].lastRewardBlock = _lastRewardBlock;
+
+        return Pools[_token];
+    }
+
     /*
         Read functions
     */
@@ -173,7 +184,7 @@ contract Vault is AccessControl, Pausable {
      * @dev Check if there are users who stakes in the token pool
      */
     function checkIfPoolExists(address _token) public view returns (bool) {
-        return Pools[_token].totalPooled > 0;
+        return Pools[_token].rewardsPerBlock > 0;
     }
     /*  This function will check if a new stake needs to be created based on lockingThreshold.
         See readme for details.

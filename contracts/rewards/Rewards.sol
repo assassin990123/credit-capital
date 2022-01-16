@@ -8,10 +8,13 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IVault {
+
+    function addPool(address _token, uint256 _rewardsPerBlock) external;
+
     function checkIfPoolExists(address _token) external view returns (bool);
 
     /* add */
-    function setPool(
+    function updatePool(
         address _token,
         uint256 _accCaplPerShare,
         uint256 _lastRewardBlock
@@ -135,6 +138,8 @@ contract RewardsV2 is Pausable, AccessControl {
 
     IController controller;
 
+    uint256 timelockThreshold = 1 weeks;
+
     event Claim(address indexed _token, address indexed _user, uint256 _amount);
     event Deposit(
         address indexed _token,
@@ -149,6 +154,7 @@ contract RewardsV2 is Pausable, AccessControl {
     );
     event SetController(address _controller);
     event AddPool(address _token, uint256 _rewardsPerBlock);
+    event WithdrawMATIC(address destination, uint256 amount);
 
     mapping(address => mapping(address => bool)) autoCompoudLocks;
 
@@ -162,7 +168,7 @@ contract RewardsV2 is Pausable, AccessControl {
     function deposit(address _token, uint256 _amount) external {
         require(vault.checkIfPoolExists(_token), "Pool does not exist");
         // update pool to current block
-        IPool.Pool memory pool = setPool(_token);
+        IPool.Pool memory pool = updatePool(_token);
 
         uint256 rewardDebt = (_amount * pool.accCaplPerShare) / CAPL_PRECISION;
 
@@ -193,7 +199,7 @@ contract RewardsV2 is Pausable, AccessControl {
         }
     }
 
-    function setPool(address _token) public returns (IPool.Pool memory pool) {
+    function updatePool(address _token) public returns (IPool.Pool memory pool) {
         IPool.Pool memory cpool = vault.getPool(_token);
         uint256 totalSupply = vault.getTokenSupply(_token);
         uint256 accCaplPerShare;
@@ -207,7 +213,7 @@ contract RewardsV2 is Pausable, AccessControl {
                     totalSupply;
             }
             uint256 lastRewardBlock = block.number;
-            IPool.Pool memory npool = vault.setPool(
+            IPool.Pool memory npool = vault.updatePool(
                 _token,
                 accCaplPerShare,
                 lastRewardBlock
@@ -250,8 +256,7 @@ contract RewardsV2 is Pausable, AccessControl {
     }
 
     function claim(address _token, address _user) external {
-        require(!autoCompoudLocks[_token][_user], "autocompounding is on");
-        IPool.Pool memory pool = setPool(_token);
+        IPool.Pool memory pool = updatePool(_token);
         IUserPositions.UserPosition memory user = vault.getUserPosition(
             _token,
             _user
@@ -279,13 +284,14 @@ contract RewardsV2 is Pausable, AccessControl {
     }
 
     function withdraw(address _token, address _user) external {
-        IPool.Pool memory pool = setPool(_token);
+        IPool.Pool memory pool = updatePool(_token);
         IUserPositions.UserPosition memory user = vault.getUserPosition(
             _token,
             _user
         );
 
         uint256 amount = pendingWithdrawals(_token, _user);
+
         uint256 newRewardDebt = user.rewardDebt -
             (amount * pool.accCaplPerShare) /
             CAPL_PRECISION;
@@ -296,10 +302,12 @@ contract RewardsV2 is Pausable, AccessControl {
     }
 
     // TODO: Implement
-    function checkTimelockThreshold(uint256 _timelock)
+    function checkTimelockThreshold(uint256 _startBlock)
         internal
         returns (bool)
-    {}
+    {
+        return _startBlock + timelockThreshold < block.number;
+    }
 
     function setController(address _controller)
         external
@@ -318,5 +326,15 @@ contract RewardsV2 is Pausable, AccessControl {
     function withdrawMATIC(address _destination)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
-    {}
+    {
+        require(address(this).balance > 0, "no matic to withdraw");
+        uint256 balance = address(this).balance;
+
+        payable(msg.sender).transfer(balance);
+
+        emit WithdrawMATIC(msg.sender, balance);
+    }
+    function addPool(address _token, uint256 _rewardsPerBlock) external onlyRole(DEFAULT_ADMIN_ROLE){
+        vault.addPool(_token, _rewardsPerBlock);
+    }
 }
