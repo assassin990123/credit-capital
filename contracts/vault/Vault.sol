@@ -11,7 +11,7 @@ contract Vault is AccessControl, Pausable {
 
     bytes32 public constant REWARDS = keccak256("REWARDS");
 
-    uint256 timelock = 137092276;   // 4 years, 4 months, 4 days ...
+    uint256 timelock = 137092276; // 4 years, 4 months, 4 days ...
     uint256 rewardsPerDay;
     struct Stake {
         uint256 amount; // quantity staked
@@ -170,54 +170,81 @@ contract Vault is AccessControl, Pausable {
     */
     function getPool(address _token) external view returns (Pool memory) {
         require(checkIfPoolExists(_token), "The pool does not exists.");
-        
+
         return Pools[_token];
     }
 
     function checkIfPoolExists(address _token) public view returns (bool) {
         return Pools[_token].rewardsPerBlock > 0;
     }
+
     /*  This function will check if a new stake needs to be created based on lockingThreshold.
         See readme for details.
     */
-    function checkTimelockThreshold(Stake storage _lastStake) internal view returns (bool) {
+    function checkTimelockThreshold(Stake storage _lastStake)
+        internal
+        view
+        returns (bool)
+    {
         return _lastStake.timeLockEnd < block.timestamp;
     }
 
-    function checkIfUserPositionExists(address _token) external view returns (bool) {
+    function checkIfUserPositionExists(address _token)
+        external
+        view
+        returns (bool)
+    {
         return UserPositions[msg.sender][_token].totalAmount > 0;
     }
 
-    function getUserPosition(address _token, address _user) external view onlyRole(REWARDS) returns (UserPosition memory) {
+    function getUserPosition(address _token, address _user)
+        external
+        view
+        onlyRole(REWARDS)
+        returns (UserPosition memory)
+    {
         return UserPositions[_user][_token];
     }
 
-    function getUnlockedAmount(address _token, address _user) external onlyRole(REWARDS) returns (uint256) {
-        
-    }
+    function getUnlockedAmount(address _token, address _user)
+        external
+        onlyRole(REWARDS)
+        returns (uint256)
+    {}
 
-    function getLastStake(address _token, address _user) external view onlyRole(REWARDS) returns (Stake memory) {
+    function getLastStake(address _token, address _user)
+        external
+        view
+        onlyRole(REWARDS)
+        returns (Stake memory)
+    {
         UserPosition memory userPosition = UserPositions[_user][_token];
         uint256 lastStakeKey = userPosition.sKey.length - 1;
 
         return Stakes[_user][_token][lastStakeKey];
     }
 
-    function getLastStakeKey(address _token, address _user) external view onlyRole(REWARDS) returns (uint256) {
+    function getLastStakeKey(address _token, address _user)
+        external
+        view
+        onlyRole(REWARDS)
+        returns (uint256)
+    {
         return UserPositions[_user][_token].sKey.length - 1;
     }
 
     function getTokenSupply(address _token) external view returns (uint256) {
         return IERC20(_token).balanceOf(address(this));
     }
+
     /*
         Admin functions
     */
 
-    function addPool(
-        address _token, 
-        uint256 _rewardsPerBlock
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function addPool(address _token, uint256 _rewardsPerBlock)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         require(!checkIfPoolExists(_token), "This pool already exists.");
 
         Pool memory pool = Pool({
@@ -262,9 +289,9 @@ contract Vault is AccessControl, Pausable {
     }
 
     function setUserPosition(
-        address _token, 
-        address _user, 
-        uint256 _amount, 
+        address _token,
+        address _user,
+        uint256 _amount,
         uint256 _rewardDebt
     ) external onlyRole(REWARDS) {
         // create new userPosition
@@ -273,8 +300,8 @@ contract Vault is AccessControl, Pausable {
     }
 
     function setUserDebt(
-        address _token, 
-        address _user, 
+        address _token,
+        address _user,
         uint256 rewardDebt
     ) external onlyRole(REWARDS) {
         UserPositions[_user][_token].rewardDebt = rewardDebt;

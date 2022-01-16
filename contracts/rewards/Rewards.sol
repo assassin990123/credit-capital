@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IVault {
-
     function addPool(address _token, uint256 _rewardsPerBlock) external;
 
     function checkIfPoolExists(address _token) external view returns (bool);
@@ -199,7 +198,10 @@ contract RewardsV2 is Pausable, AccessControl {
         }
     }
 
-    function updatePool(address _token) public returns (IPool.Pool memory pool) {
+    function updatePool(address _token)
+        public
+        returns (IPool.Pool memory pool)
+    {
         IPool.Pool memory cpool = vault.getPool(_token);
         uint256 totalSupply = vault.getTokenSupply(_token);
         uint256 accCaplPerShare;
@@ -334,7 +336,11 @@ contract RewardsV2 is Pausable, AccessControl {
 
         emit WithdrawMATIC(msg.sender, balance);
     }
-    function addPool(address _token, uint256 _rewardsPerBlock) external onlyRole(DEFAULT_ADMIN_ROLE){
+
+    function addPool(address _token, uint256 _rewardsPerBlock)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         vault.addPool(_token, _rewardsPerBlock);
     }
 }
