@@ -117,7 +117,6 @@ contract Vault is AccessControl, Pausable {
         return Pools[_token];
     }
 
-    /* add */
     function withdraw(
         address _token,
         address _user,
