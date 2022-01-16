@@ -9,7 +9,7 @@ interface ICAPL {
     function mint(address _to, uint256 _amount) external;
 }
 
-contract controller is AccessControl {
+contract Controller is AccessControl {
     using SafeERC20 for IERC20;
 
     // MINTER = mint & burn role
@@ -21,9 +21,8 @@ contract controller is AccessControl {
     // address of burner
     address public burner;
 
-    constructor(address _CAPL, address _burner) {
+    constructor(address _CAPL) {
         CAPL = _CAPL;
-        burner = _burner;
 
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles

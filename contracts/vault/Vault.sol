@@ -134,10 +134,21 @@ contract Vault is Pausable, Ownable {
         emit WithdrawVault(_user, _token, _amount);
     }
 
+    function updatePool(
+        address _token,
+        uint256 _accCaplPerShare,
+        uint256 _lastRewardBlock
+    ) external returns (Pool memory) {
+        Pools[_token].accCaplPerShare = _accCaplPerShare;
+        Pools[_token].lastRewardBlock = _lastRewardBlock;
+
+        return Pools[_token];
+    }
+
     /*
         Read functions
     */
-    function getPoolInfo(address _token) external view returns (Pool memory) {
+    function getPool(address _token) external view returns (Pool memory) {
         return Pools[_token];
     }
 
@@ -145,7 +156,7 @@ contract Vault is Pausable, Ownable {
      * @dev Check if the user has stakes for the token - again, user has the token pool staked
      */
     function checkIfPoolExists(address _token) public view returns (bool) {
-        return Pools[_token].totalPooled > 0;
+        return Pools[_token].rewardsPerBlock > 0;
     }
 
     /*
