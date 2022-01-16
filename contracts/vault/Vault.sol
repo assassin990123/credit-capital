@@ -222,7 +222,7 @@ contract Vault is AccessControl, Pausable {
 
         for (uint256 i = 0; i < stakes.length; i++) {
             if (stakes[i].timeLockEnd > block.timestamp) {
-                continue;
+                return unlockedAmount;
             }
             unlockedAmount += stakes[i].amount;
         }
