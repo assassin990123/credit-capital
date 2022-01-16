@@ -278,13 +278,6 @@ contract RewardsV2 is Pausable, AccessControl {
         emit Claim(_token, _user, pendingCapl);
     }
 
-    function pendingWithdrawals(address _token, address _user)
-        public
-        returns (uint256 _unlockedAmount)
-    {
-        _unlockedAmount = vault.getUnlockedAmount(_token, _user);
-    }
-
     function withdraw(address _token, address _user) external {
         IPool.Pool memory pool = updatePool(_token);
         IUserPositions.UserPosition memory user = vault.getUserPosition(
@@ -292,7 +285,7 @@ contract RewardsV2 is Pausable, AccessControl {
             _user
         );
 
-        uint256 amount = pendingWithdrawals(_token, _user);
+        uint256 amount = vault.getUnlockedAmount(_token, _user);
 
         uint256 newRewardDebt = user.rewardDebt -
             (amount * pool.accCaplPerShare) /
