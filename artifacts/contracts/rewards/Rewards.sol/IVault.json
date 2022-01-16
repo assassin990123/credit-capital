@@ -334,7 +334,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_rewardDebt",
+          "name": "_stakeId",
           "type": "uint256"
         }
       ],

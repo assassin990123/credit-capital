@@ -33,6 +33,9 @@ contract Vault is AccessControl, Pausable {
     // user position tracking
     mapping(address => mapping(address => UserPosition)) UserPositions; // account => (token => userposition)
 
+    // track the last unlocked index for each user's position in a pool, so that withdrawal iteration is less expensive
+    mapping(address => mapping(address => uint256)) UserLastWithdrawnStakeIndex;
+
     struct Pool {
         uint256 totalPooled; // total token pooled in the contract
         uint256 rewardsPerBlock; // rate at which CAPL is minted for this pool
@@ -114,38 +117,29 @@ contract Vault is AccessControl, Pausable {
         return Pools[_token];
     }
 
+    /* add */
     function withdraw(
-        address _user,
         address _token,
+        address _user,
         uint256 _amount,
-        uint256 _stakeId
-    ) external whenNotPaused {
+        uint256 _newRewardDebt
+    ) external whenNotPaused onlyRole(REWARDS) {
         require(_amount > 0, "Amount 0");
 
-        // we should consider about the withdrawfee during the timelock
         UserPosition storage userPosition = UserPositions[_user][_token];
         require(
             userPosition.totalAmount > _amount,
             "Withdrawn amount exceed the user balance"
         );
-        userPosition.totalAmount -= _amount;
 
-        // Update Pool info
+        userPosition.totalAmount -= _amount;
+        userPosition.rewardDebt -= _newRewardDebt;
+
         Pool storage pool = Pools[_token];
         pool.totalPooled -= _amount;
 
-        // Stakes
-        Stake storage stake = Stakes[_user][_token][_stakeId];
+        IERC20(_token).safeTransfer(_user, _amount);
 
-        stake.amount -= _amount;
-        if (stake.amount == 0) {
-            stake.active = false;
-        }
-
-        // transfer token to the user's wallet
-        IERC20(_token).safeTransferFrom(address(this), _user, _amount);
-
-        // trigger the Withdraw event
         emit Withdraw(_user, _token, _amount);
     }
 
@@ -219,7 +213,6 @@ contract Vault is AccessControl, Pausable {
 
     function getUnlockedAmount(address _token, address _user)
         external
-        view
         onlyRole(REWARDS)
         returns (uint256)
     {
@@ -230,13 +223,21 @@ contract Vault is AccessControl, Pausable {
         }
 
         uint256 unlockedAmount = 0;
+        uint256 lastUnlockedIndex;
 
-        for (uint256 i = 0; i < stakes.length; i++) {
+        for (
+            uint256 i = UserLastWithdrawnStakeIndex[_user][_token];
+            i < stakes.length;
+            i++
+        ) {
             if (stakes[i].timeLockEnd > block.timestamp) {
-                return unlockedAmount;
+                lastUnlockedIndex = i;
+                break;
             }
             unlockedAmount += stakes[i].amount;
         }
+
+        UserLastWithdrawnStakeIndex[_user][_token] = lastUnlockedIndex;
 
         return unlockedAmount;
     }

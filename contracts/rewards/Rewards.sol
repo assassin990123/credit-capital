@@ -25,7 +25,7 @@ interface IVault {
         view
         returns (bool);
 
-    /* update*/
+    /* update */
     function addUserPosition(
         address _token,
         address _user,
@@ -33,7 +33,6 @@ interface IVault {
         uint256 _rewardDebt
     ) external;
 
-    /* add */
     function setUserPosition(
         address _token,
         address _user,
@@ -41,19 +40,17 @@ interface IVault {
         uint256 _rewardDebt
     ) external;
 
-    /* add */
     function getUserPosition(address _token, address _user)
         external
         returns (IUserPositions.UserPosition memory);
 
-    /* add */
     function setUserDebt(
         address _token,
         address _user,
         uint256 rewardDebt
     ) external;
 
-    /* add */
+    /* update */
     function getUnlockedAmount(address _token, address _user)
         external
         returns (uint256);
@@ -64,7 +61,6 @@ interface IVault {
         uint256 _amount
     ) external;
 
-    /* add */
     function getLastStake(address _token, address _user)
         external
         returns (IStake.Stake memory);
@@ -74,15 +70,13 @@ interface IVault {
         address _token,
         address _user,
         uint256 _amount,
-        uint256 _rewardDebt
+        uint256 _stakeId
     ) external;
 
-    /* add */
     function getLastStakeKey(address _token, address _user)
         external
         returns (uint256);
 
-    /* add */
     function getTokenSupply(address _token) external returns (uint256);
 
     /* add */
