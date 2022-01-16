@@ -138,7 +138,7 @@ contract Vault is Pausable, Ownable {
         address _token,
         uint256 _accCaplPerShare,
         uint256 _lastRewardBlock
-    ) external returns (Pool memory) {
+    ) external onlyOwner returns (Pool memory) {
         Pools[_token].accCaplPerShare = _accCaplPerShare;
         Pools[_token].lastRewardBlock = _lastRewardBlock;
 
