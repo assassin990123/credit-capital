@@ -110,6 +110,8 @@ contract Vault is AccessControl, Pausable {
     ) external returns (Pool memory) {
         Pools[_token].lastRewardBlock = _lastRewardBlock;
         Pools[_token].accCaplPerShare = _accCaplPerShare;
+
+        return Pools[_token];
     }
 
     function withdraw(
