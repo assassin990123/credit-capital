@@ -103,6 +103,15 @@ contract Vault is AccessControl, Pausable {
         emit Deposit(_user, _token, _amount);
     }
 
+    function updatePool(
+        address _token,
+        uint256 _accCaplPerShare,
+        uint256 _lastRewardBlock
+    ) external returns (Pool memory) {
+        Pools[_token].lastRewardBlock = _lastRewardBlock;
+        Pools[_token].accCaplPerShare = _accCaplPerShare;
+    }
+
     function withdraw(
         address _user,
         address _token,

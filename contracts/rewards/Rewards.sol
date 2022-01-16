@@ -12,7 +12,6 @@ interface IVault {
 
     function checkIfPoolExists(address _token) external view returns (bool);
 
-    /* add */
     function updatePool(
         address _token,
         uint256 _accCaplPerShare,
@@ -21,7 +20,6 @@ interface IVault {
 
     function getPool(address _token) external returns (IPool.Pool memory);
 
-    /* add */
     function checkIfUserPositionExists(address _token)
         external
         view
