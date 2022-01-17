@@ -20,15 +20,13 @@ contract Vault is AccessControl, Pausable {
         bool active; // true = stake in vault, false = user withdrawn stake
     }
 
-    mapping(address => mapping(address => Stake[])) Stakes; // user => (token => stakes)
-
     struct UserPosition {
         uint256 totalAmount; // total value staked by user in given pool
         uint256 rewardDebt; // house fee (?)
-        uint256[] sKey; // list of user stakes in pool subject to timelock
         uint256 userLastWithdrawnStakeIndex; // track the last unlocked index for each user's position in a pool, so that withdrawal iteration is less expensive
         bool staticLock; // guarantees a users stake is locked, even after timelock expiration
         bool autocompounding; // this userposition enables auto compounding (Auto restaking the rewards)
+        Stake[] stakes; // list of user stakes in pool subject to timelock
     }
 
     // user position tracking
@@ -43,7 +41,6 @@ contract Vault is AccessControl, Pausable {
 
     // pool tracking
     mapping(address => Pool) Pools; // token => pool
-    mapping(address => UserPosition[]) PoolUsers; // token => userPosition
 
     event Deposit(address user, address token, uint256 amount);
     event Withdraw(address user, address token, uint256 amount);
@@ -68,9 +65,9 @@ contract Vault is AccessControl, Pausable {
         userPosition.totalAmount += _amount;
 
         // check the last stake's timeLock
-        uint256 sKey = userPosition.sKey[userPosition.sKey.length - 1];
+        uint256 sKey = userPosition.stakes.length - 1;
 
-        Stake storage lastStake = Stakes[_user][_token][sKey];
+        Stake storage lastStake = UserPositions[_user][_token].stakes[sKey];
 
         if (checkTimelockThreshold(lastStake)) {
             require(!checkIfPoolExists(_token), "This pool already exists.");
@@ -84,8 +81,7 @@ contract Vault is AccessControl, Pausable {
             });
 
             // add new Stake for the user
-            Stakes[_user][_token].push(newStake);
-            userPosition.sKey.push(userPosition.sKey.length);
+            UserPositions[_user][_token].stakes.push(newStake);
         } else {
             // update the stake
             lastStake.amount += _amount;
@@ -130,13 +126,13 @@ contract Vault is AccessControl, Pausable {
         );
 
         userPosition.totalAmount -= _amount;
-        userPosition.rewardDebt -= _newRewardDebt;
+        userPosition.rewardDebt = _newRewardDebt;
 
         Pool storage pool = Pools[_token];
         pool.totalPooled -= _amount;
 
         // reset the stakes to the default value related to the unlocked amount
-        Stake[] storage stakes = Stakes[_user][_token];
+        Stake[] storage stakes = UserPositions[_user][_token].stakes;
         for (
             uint256 i = 0;
             i <= userPosition.userLastWithdrawnStakeIndex;
@@ -146,7 +142,7 @@ contract Vault is AccessControl, Pausable {
             delete stakes[i];
         }
 
-        IERC20(_token).safeTransfer(_user, _amount);
+        IERC20(_token).safeTransferFrom(address(this), _user, _amount);
 
         emit Withdraw(_user, _token, _amount);
     }
@@ -164,7 +160,7 @@ contract Vault is AccessControl, Pausable {
             active: true
         });
 
-        Stakes[_user][_token].push(stake);
+        UserPositions[_user][_token].stakes.push(stake);
     }
 
     function setStake(
@@ -173,7 +169,7 @@ contract Vault is AccessControl, Pausable {
         uint256 _amount,
         uint256 _stakeId
     ) external onlyRole(REWARDS) {
-        Stake storage stake = Stakes[_user][_token][_stakeId];
+        Stake storage stake = UserPositions[_user][_token].stakes[_stakeId];
 
         stake.amount += _amount;
     }
@@ -225,7 +221,7 @@ contract Vault is AccessControl, Pausable {
         returns (uint256)
     {
         UserPosition storage userPosition = UserPositions[_user][_token];
-        Stake[] memory stakes = Stakes[_user][_token];
+        Stake[] memory stakes = UserPositions[_user][_token].stakes;
 
         if (stakes.length != 0) {
             return 0;
@@ -258,9 +254,9 @@ contract Vault is AccessControl, Pausable {
         returns (Stake memory)
     {
         UserPosition memory userPosition = UserPositions[_user][_token];
-        uint256 lastStakeKey = userPosition.sKey.length - 1;
+        uint256 lastStakeKey = userPosition.stakes.length - 1;
 
-        return Stakes[_user][_token][lastStakeKey];
+        return UserPositions[_user][_token].stakes[lastStakeKey];
     }
 
     function getLastStakeKey(address _token, address _user)
@@ -269,7 +265,7 @@ contract Vault is AccessControl, Pausable {
         onlyRole(REWARDS)
         returns (uint256)
     {
-        return UserPositions[_user][_token].sKey.length - 1;
+        return UserPositions[_user][_token].stakes.length - 1;
     }
 
     function getTokenSupply(address _token) external view returns (uint256) {
@@ -315,13 +311,13 @@ contract Vault is AccessControl, Pausable {
         uint256 _amount,
         uint256 _rewardDebt
     ) public onlyRole(REWARDS) {
-        uint256[] memory userStakeKeys;
+        Stake[] memory userStakes;
 
         // create new userPosition
         UserPositions[_user][_token] = UserPosition({
             totalAmount: _amount,
             rewardDebt: _rewardDebt,
-            sKey: userStakeKeys,
+            stakes: userStakes,
             userLastWithdrawnStakeIndex: 0,
             staticLock: false,
             autocompounding: true
