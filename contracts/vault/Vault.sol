@@ -26,15 +26,13 @@ contract Vault is AccessControl, Pausable {
         uint256 totalAmount; // total value staked by user in given pool
         uint256 rewardDebt; // house fee (?)
         uint256[] sKey; // list of user stakes in pool subject to timelock
+        uint256 userLastWithdrawnStakeIndex; // track the last unlocked index for each user's position in a pool, so that withdrawal iteration is less expensive
         bool staticLock; // guarantees a users stake is locked, even after timelock expiration
         bool autocompounding; // this userposition enables auto compounding (Auto restaking the rewards)
     }
 
     // user position tracking
     mapping(address => mapping(address => UserPosition)) UserPositions; // account => (token => userposition)
-
-    // track the last unlocked index for each user's position in a pool, so that withdrawal iteration is less expensive
-    mapping(address => mapping(address => uint256)) UserLastWithdrawnStakeIndex;
 
     struct Pool {
         uint256 totalPooled; // total token pooled in the contract
@@ -137,6 +135,17 @@ contract Vault is AccessControl, Pausable {
         Pool storage pool = Pools[_token];
         pool.totalPooled -= _amount;
 
+        // reset the stakes to the default value related to the unlocked amount
+        Stake[] storage stakes = Stakes[_user][_token];
+        for (
+            uint256 i = 0;
+            i <= userPosition.userLastWithdrawnStakeIndex;
+            i++
+        ) {
+            // reset the stake to the default value - in this case 0
+            delete stakes[i];
+        }
+
         IERC20(_token).safeTransfer(_user, _amount);
 
         emit Withdraw(_user, _token, _amount);
@@ -166,7 +175,7 @@ contract Vault is AccessControl, Pausable {
     ) external onlyRole(REWARDS) {
         Stake storage stake = Stakes[_user][_token][_stakeId];
 
-        stake.amount += _amount; // ? how can I send transfer the amount from the user? what about the previous amount?
+        stake.amount += _amount;
     }
 
     /*
@@ -215,6 +224,7 @@ contract Vault is AccessControl, Pausable {
         onlyRole(REWARDS)
         returns (uint256)
     {
+        UserPosition storage userPosition = UserPositions[_user][_token];
         Stake[] memory stakes = Stakes[_user][_token];
 
         if (stakes.length != 0) {
@@ -225,7 +235,7 @@ contract Vault is AccessControl, Pausable {
         uint256 lastUnlockedIndex;
 
         for (
-            uint256 i = UserLastWithdrawnStakeIndex[_user][_token];
+            uint256 i = userPosition.userLastWithdrawnStakeIndex;
             i < stakes.length;
             i++
         ) {
@@ -236,7 +246,7 @@ contract Vault is AccessControl, Pausable {
             unlockedAmount += stakes[i].amount;
         }
 
-        UserLastWithdrawnStakeIndex[_user][_token] = lastUnlockedIndex;
+        userPosition.userLastWithdrawnStakeIndex = lastUnlockedIndex;
 
         return unlockedAmount;
     }
@@ -312,6 +322,7 @@ contract Vault is AccessControl, Pausable {
             totalAmount: _amount,
             rewardDebt: _rewardDebt,
             sKey: userStakeKeys,
+            userLastWithdrawnStakeIndex: 0,
             staticLock: false,
             autocompounding: true
         });
