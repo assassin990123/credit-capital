@@ -61,44 +61,8 @@ contract Vault is AccessControl, Pausable {
     ) external whenNotPaused {
         require(_amount > 0, "Amount 0");
 
-        // userPosition
-        UserPosition storage userPosition = UserPositions[_user][_token];
-        userPosition.totalAmount += _amount;
-
-        // check the last stake's timeLock
-        uint256 sKey = userPosition.stakes.length - 1;
-
-        Stake storage lastStake = UserPositions[_user][_token].stakes[sKey];
-
-        if (checkTimelockThreshold(lastStake)) {
-            require(!checkIfPoolExists(_token), "This pool already exists.");
-
-            // create new stake
-            Stake memory newStake = Stake({
-                amount: _amount,
-                startBlock: block.timestamp,
-                timeLockEnd: block.timestamp + timelock,
-                active: true
-            });
-
-            // add new Stake for the user
-            UserPositions[_user][_token].stakes.push(newStake);
-        } else {
-            // update the stake
-            lastStake.amount += _amount;
-        }
-
-        // pools
-        Pool storage pool = Pools[_token];
-
-        // update the pool info
-        pool.totalPooled += _amount;
-
         // _transferDepositFee(_user, _token, _amount);
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
-
-        // trigger the deposit event
-        emit Deposit(_user, _token, _amount);
     }
 
     function updatePool(
