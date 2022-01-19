@@ -6,14 +6,22 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract CreditCapitalPlatformToken is ERC20, ERC20Burnable, ERC20Capped, AccessControl {
+contract CreditCapitalPlatformToken is
+    ERC20,
+    ERC20Burnable,
+    ERC20Capped,
+    AccessControl
+{
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     /**
      * @dev Sets the value of the `cap`. This value is immutable, it can only be
      * set once during construction.
      */
-    constructor(uint256 cap_) ERC20("CreditCapital Platform Token", "CAPL") ERC20Capped(cap_) {
+    constructor(uint256 cap_)
+        ERC20("CreditCapital Platform Token", "CAPL")
+        ERC20Capped(cap_)
+    {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
     }
@@ -25,7 +33,11 @@ contract CreditCapitalPlatformToken is ERC20, ERC20Burnable, ERC20Capped, Access
     /**
      * @dev See {ERC20-_mint}.
      */
-    function _mint(address account, uint256 amount) internal virtual override(ERC20, ERC20Capped) {
+    function _mint(address account, uint256 amount)
+        internal
+        virtual
+        override(ERC20, ERC20Capped)
+    {
         super._mint(account, amount);
     }
 }

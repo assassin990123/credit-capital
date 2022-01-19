@@ -106,7 +106,6 @@ interface IUserPositions {
         bool autocompounding; // this userposition enables auto compounding (Auto restaking the rewards)
         IStake.Stake[] stakes; // list of user stakes in pool subject to timelock
     }
-
 }
 
 interface IStake {
