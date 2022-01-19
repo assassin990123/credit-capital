@@ -80,6 +80,12 @@ interface IVault {
     function getTokenSupply(address _token) external returns (uint256);
 
     /* add */
+    function deposit(
+        address _token,
+        address _user,
+        uint _amount
+    ) external;
+
     function withdraw(
         address _token,
         address _user,
@@ -187,8 +193,10 @@ contract RewardsV2 is Pausable, AccessControl {
                 );
                 vault.setStake(_token, msg.sender, _amount, lastStakeKey);
             }
-            emit Deposit(_token, msg.sender, _amount);
         }
+
+        vault.deposit(_token, msg.sender, _amount);
+        emit Deposit(_token, msg.sender, _amount);
     }
 
     function updatePool(address _token)
@@ -292,6 +300,7 @@ contract RewardsV2 is Pausable, AccessControl {
     // TODO: Implement
     function checkTimelockThreshold(uint256 _startBlock)
         internal
+        view
         returns (bool)
     {
         return _startBlock + timelockThreshold < block.number;
@@ -311,7 +320,7 @@ contract RewardsV2 is Pausable, AccessControl {
         address _destination
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {}
 
-    function withdrawMATIC(address _destination)
+    function withdrawMATIC()
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {

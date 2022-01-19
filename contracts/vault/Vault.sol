@@ -58,7 +58,7 @@ contract Vault is AccessControl, Pausable {
         address _token,
         address _user,
         uint256 _amount
-    ) external whenNotPaused {
+    ) external whenNotPaused onlyRole(REWARDS) {
         require(_amount > 0, "Amount 0");
 
         // _transferDepositFee(_user, _token, _amount);
