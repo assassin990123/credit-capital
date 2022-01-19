@@ -61,44 +61,8 @@ contract Vault is AccessControl, Pausable {
     ) external whenNotPaused {
         require(_amount > 0, "Amount 0");
 
-        // userPosition
-        UserPosition storage userPosition = UserPositions[_user][_token];
-        userPosition.totalAmount += _amount;
-
-        // check the last stake's timeLock
-        uint256 sKey = userPosition.stakes.length - 1;
-
-        Stake storage lastStake = UserPositions[_user][_token].stakes[sKey];
-
-        if (checkTimelockThreshold(lastStake)) {
-            require(!checkIfPoolExists(_token), "This pool already exists.");
-
-            // create new stake
-            Stake memory newStake = Stake({
-                amount: _amount,
-                startBlock: block.timestamp,
-                timeLockEnd: block.timestamp + timelock,
-                active: true
-            });
-
-            // add new Stake for the user
-            UserPositions[_user][_token].stakes.push(newStake);
-        } else {
-            // update the stake
-            lastStake.amount += _amount;
-        }
-
-        // pools
-        Pool storage pool = Pools[_token];
-
-        // update the pool info
-        pool.totalPooled += _amount;
-
         // _transferDepositFee(_user, _token, _amount);
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
-
-        // trigger the deposit event
-        emit Deposit(_user, _token, _amount);
     }
 
     function updatePool(
@@ -171,7 +135,6 @@ contract Vault is AccessControl, Pausable {
         uint256 _stakeId
     ) external onlyRole(REWARDS) {
         Stake storage stake = UserPositions[_user][_token].stakes[_stakeId];
-
         stake.amount += _amount;
     }
 
@@ -312,17 +275,22 @@ contract Vault is AccessControl, Pausable {
         uint256 _amount,
         uint256 _rewardDebt
     ) public onlyRole(REWARDS) {
-        Stake[] memory userStakes;
-
-        // create new userPosition
-        UserPositions[_user][_token] = UserPosition({
-            totalAmount: _amount,
-            rewardDebt: _rewardDebt,
-            stakes: userStakes,
-            userLastWithdrawnStakeIndex: 0,
-            staticLock: false,
-            autocompounding: true
+        // add new stake
+        Stake memory userStake = Stake({
+            amount: _amount, // first stake
+            startBlock: block.timestamp,
+            timeLockEnd: block.timestamp + timelock,
+            active: true
         });
+
+        UserPosition storage userPosition = UserPositions[_user][_token];
+
+        userPosition.totalAmount = _amount;
+        userPosition.rewardDebt = _rewardDebt;
+        userPosition.userLastWithdrawnStakeIndex = 0;
+        userPosition.staticLock = false;
+        userPosition.autocompounding = true;
+        userPosition.stakes.push(userStake);
     }
 
     function setUserPosition(

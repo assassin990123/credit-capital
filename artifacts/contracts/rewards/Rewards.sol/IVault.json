@@ -282,11 +282,6 @@
         {
           "components": [
             {
-              "internalType": "address",
-              "name": "token",
-              "type": "address"
-            },
-            {
               "internalType": "uint256",
               "name": "totalAmount",
               "type": "uint256"
@@ -297,14 +292,46 @@
               "type": "uint256"
             },
             {
-              "internalType": "uint256[]",
-              "name": "sKey",
-              "type": "uint256[]"
+              "internalType": "uint256",
+              "name": "userLastWithdrawnStakeIndex",
+              "type": "uint256"
             },
             {
               "internalType": "bool",
               "name": "staticLock",
               "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "autocompounding",
+              "type": "bool"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "startBlock",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timeLockEnd",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "active",
+                  "type": "bool"
+                }
+              ],
+              "internalType": "struct IStake.Stake[]",
+              "name": "stakes",
+              "type": "tuple[]"
             }
           ],
           "internalType": "struct IUserPositions.UserPosition",
