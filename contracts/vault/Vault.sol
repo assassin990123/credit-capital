@@ -135,7 +135,6 @@ contract Vault is AccessControl, Pausable {
         uint256 _stakeId
     ) external onlyRole(REWARDS) {
         Stake storage stake = UserPositions[_user][_token].stakes[_stakeId];
-
         stake.amount += _amount;
     }
 
@@ -276,17 +275,22 @@ contract Vault is AccessControl, Pausable {
         uint256 _amount,
         uint256 _rewardDebt
     ) public onlyRole(REWARDS) {
-        Stake[] memory userStakes;
-
-        // create new userPosition
-        UserPositions[_user][_token] = UserPosition({
-            totalAmount: _amount,
-            rewardDebt: _rewardDebt,
-            stakes: userStakes,
-            userLastWithdrawnStakeIndex: 0,
-            staticLock: false,
-            autocompounding: true
+        // add new stake
+        Stake memory userStake = Stake({
+            amount: _amount, // first stake
+            startBlock: block.timestamp,
+            timeLockEnd: block.timestamp + timelock,
+            active: true
         });
+
+        UserPosition storage userPosition = UserPositions[_user][_token];
+
+        userPosition.totalAmount = _amount;
+        userPosition.rewardDebt = _rewardDebt;
+        userPosition.userLastWithdrawnStakeIndex = 0;
+        userPosition.staticLock = false;
+        userPosition.autocompounding = true;
+        userPosition.stakes.push(userStake);
     }
 
     function setUserPosition(
