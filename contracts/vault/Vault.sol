@@ -13,7 +13,7 @@ contract Vault is AccessControl, Pausable {
     bytes32 public constant REWARDS = keccak256("REWARDS");
 
     uint256 timelock = 137092276; // 4 years, 4 months, 4 days ...
-    
+
     struct Stake {
         uint256 amount; // quantity staked
         uint256 startBlock; // stake creation timestamp

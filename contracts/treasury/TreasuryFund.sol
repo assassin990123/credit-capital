@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract TreasuryFund is AccessControl {
-
     using SafeERC20 for IERC20;
 
     IERC20 capl;
@@ -31,16 +30,16 @@ contract TreasuryFund is AccessControl {
     /**
         @dev - this funciton withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
      */
-     function withdraw(address _token, uint256 _amount) external {}
+    function withdraw(address _token, uint256 _amount) external {}
 
     /**
         @dev - this function reads this contracts CAPL balance, and then (similar to rewards), calculates the pending revenue based on revenue share weight.
              - user treasury share percentage * contract CAPL balance = pending revenue
              - almost exact logic same as rewards 
      */
-     function pendingRevenue() external {}
+    function pendingRevenue() external {}
 
-     /**
+    /**
         @dev - claim revenue, similar to rewards contract, will calculate the pending rewards and then safeTransfer from here, to the user.
              - almost exact logic same as rewards
       */

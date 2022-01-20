@@ -2,14 +2,12 @@
 pragma solidity 0.8.11;
 pragma experimental ABIEncoderV2;
 
-
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract TreasuryStorage is AccessControl {
-
     using SafeERC20 for IERC20;
 
     struct UserPosition {
@@ -32,9 +30,7 @@ contract TreasuryStorage is AccessControl {
              - these shares will be held here, in this contract.
              - 100% share is assumed by one user.
      */
-    function deposit(uint256 _amount) external {
-
-    }
+    function deposit(uint256 _amount) external {}
 
     function addUserPosition(address _token, uint256 _totalAmount) external {}
 
@@ -43,7 +39,7 @@ contract TreasuryStorage is AccessControl {
      */
     function loan(address _token, uint256 _amount) external {}
 
-    function getTokenSupply(address _token ) external view returns (uint256) {
+    function getTokenSupply(address _token) external view returns (uint256) {
         return IERC20(_token).balanceOf(address(this));
     }
 }
