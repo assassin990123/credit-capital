@@ -79,13 +79,6 @@ interface IVault {
 
     function getTokenSupply(address _token) external returns (uint256);
 
-    /* add */
-    function deposit(
-        address _token,
-        address _user,
-        uint _amount
-    ) external;
-
     function withdraw(
         address _token,
         address _user,
@@ -195,7 +188,7 @@ contract RewardsV2 is Pausable, AccessControl {
             }
         }
 
-        vault.deposit(_token, msg.sender, _amount);
+        IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
         emit Deposit(_token, msg.sender, _amount);
     }
 
@@ -226,11 +219,6 @@ contract RewardsV2 is Pausable, AccessControl {
             return npool;
         }
     }
-
-    /*
-      _userPosition: actualized values,
-      _pool: actualized values
-     */
 
     function pendingRewards(address _token, address _user)
         external
@@ -320,10 +308,7 @@ contract RewardsV2 is Pausable, AccessControl {
         address _destination
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {}
 
-    function withdrawMATIC()
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function withdrawMATIC() external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(address(this).balance > 0, "no matic to withdraw");
         uint256 balance = address(this).balance;
 

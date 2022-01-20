@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: UNLICENSED
+//SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 pragma experimental ABIEncoderV2;
 
@@ -13,7 +13,7 @@ contract Vault is AccessControl, Pausable {
     bytes32 public constant REWARDS = keccak256("REWARDS");
 
     uint256 timelock = 137092276; // 4 years, 4 months, 4 days ...
-    uint256 rewardsPerDay;
+    
     struct Stake {
         uint256 amount; // quantity staked
         uint256 startBlock; // stake creation timestamp
@@ -52,17 +52,6 @@ contract Vault is AccessControl, Pausable {
         // RBAC
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(REWARDS, msg.sender);
-    }
-
-    function deposit(
-        address _token,
-        address _user,
-        uint256 _amount
-    ) external whenNotPaused onlyRole(REWARDS) {
-        require(_amount > 0, "Amount 0");
-
-        // _transferDepositFee(_user, _token, _amount);
-        IERC20(_token).safeTransferFrom(_user, address(this), _amount);
     }
 
     function updatePool(
