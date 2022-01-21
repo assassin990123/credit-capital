@@ -289,7 +289,7 @@ contract Vault is AccessControl, Pausable {
         uint256 _rewardDebt
     ) external onlyRole(REWARDS) {
         // create new userPosition
-        UserPositions[_user][_token].totalAmount = _amount;
+        UserPositions[_user][_token].totalAmount += _amount;
         UserPositions[_user][_token].rewardDebt = _rewardDebt;
     }
 
