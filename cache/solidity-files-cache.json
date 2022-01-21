@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\rewards\\Rewards.sol": {
-      "lastModificationDate": 1642700561292,
+      "lastModificationDate": 1642781541456,
       "contentHash": "598497e9a7810ca625a1c2ceb130742a",
       "sourceName": "contracts/rewards/Rewards.sol",
       "solcConfig": {
@@ -409,8 +409,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\vault\\Vault.sol": {
-      "lastModificationDate": 1642700562799,
-      "contentHash": "810f688d62b9e01572e41c956ea74cc5",
+      "lastModificationDate": 1642781542565,
+      "contentHash": "88018e235ca4b3b31fdaacc8ff6fda14",
       "sourceName": "contracts/vault/Vault.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -449,8 +449,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\TreasuryStorage.sol": {
-      "lastModificationDate": 1642700562535,
-      "contentHash": "8384ec682a24f7c87e9f0524935e98d0",
+      "lastModificationDate": 1642783957275,
+      "contentHash": "2e182a199ae21ec998d301cecf57caeb",
       "sourceName": "contracts/treasury/TreasuryStorage.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -485,6 +485,7 @@
         "0.8.11"
       ],
       "artifacts": [
+        "ITreasuryShares",
         "TreasuryStorage"
       ]
     },
@@ -680,8 +681,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\TreasuryFund.sol": {
-      "lastModificationDate": 1642700562336,
-      "contentHash": "ba6382b3a611a1cef5660b7de471be4d",
+      "lastModificationDate": 1642783741962,
+      "contentHash": "fa267c1cd347b15a74f8ad136dda5fd5",
       "sourceName": "contracts/treasury/TreasuryFund.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -709,7 +710,8 @@
       "imports": [
         "@openzeppelin/contracts/access/AccessControl.sol",
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "../../interfaces/ITreasuryStorage.sol"
       ],
       "versionPragmas": [
         "0.8.11"
@@ -719,7 +721,7 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\RevenueController.sol": {
-      "lastModificationDate": 1642700562191,
+      "lastModificationDate": 1642781542148,
       "contentHash": "e294fe22b9a5bf54ce003b899f2bd6a5",
       "sourceName": "contracts/treasury/RevenueController.sol",
       "solcConfig": {
@@ -868,6 +870,41 @@
         "IERC20",
         "IERC20Metadata",
         "Ownable"
+      ]
+    },
+    "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\interfaces\\ITreasuryStorage.sol": {
+      "lastModificationDate": 1642784115143,
+      "contentHash": "e29c4555c50e4e3af51f849bfccdabdc",
+      "sourceName": "interfaces/ITreasuryStorage.sol",
+      "solcConfig": {
+        "version": "0.8.11",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.8.11"
+      ],
+      "artifacts": [
+        "ITreasuryStorage"
       ]
     }
   }
