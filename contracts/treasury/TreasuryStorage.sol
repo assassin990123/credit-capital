@@ -38,19 +38,41 @@ contract TreasuryStorage is AccessControl {
              - these shares will be held here, in this contract.
              - 100% share is assumed by one user.
      */
-    function deposit(address _user, uint256 _amount, uint256 _rewardDebt) external {
+    function deposit(
+        address _user,
+        uint256 _amount,
+        uint256 _rewardDebt
+    ) external {
         if (this.checkIfUserPositionExists(_user, address(treasuryShares))) {
-            this.addUserPosition(address(treasuryShares), _user, _amount, _rewardDebt);
+            this.addUserPosition(
+                address(treasuryShares),
+                _user,
+                _amount,
+                _rewardDebt
+            );
         } else {
-            this.setUserPosition(address(treasuryShares), _user, _amount, _rewardDebt);
+            this.setUserPosition(
+                address(treasuryShares),
+                _user,
+                _amount,
+                _rewardDebt
+            );
         }
 
         // assume that the treasuryShares token overrides the mint function
         treasuryShares.mint(_user, _amount);
     }
 
-    function addUserPosition(address _token, address _user, uint256 _totalAmount, uint256 _rewardDebt) external {
-        require(!this.checkIfUserPositionExists(_user, _token), "The user position is already exists");
+    function addUserPosition(
+        address _token,
+        address _user,
+        uint256 _totalAmount,
+        uint256 _rewardDebt
+    ) external {
+        require(
+            !this.checkIfUserPositionExists(_user, _token),
+            "The user position is already exists"
+        );
 
         UserPositions[_user][_token] = UserPosition({
             totalAmount: _totalAmount,
@@ -59,7 +81,12 @@ contract TreasuryStorage is AccessControl {
         });
     }
 
-    function setUserPosition(address _token, address _user, uint256 _amount, uint256 _rewardDebt) external {
+    function setUserPosition(
+        address _token,
+        address _user,
+        uint256 _amount,
+        uint256 _rewardDebt
+    ) external {
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.totalAmount += _amount;
         userPosition.rewardDebt = _rewardDebt;
@@ -73,11 +100,14 @@ contract TreasuryStorage is AccessControl {
         address _user,
         uint256 _amount
     ) external onlyRole(TREASURY_FUND) {
-        require(IERC20(_token).balanceOf(address(this)) > _amount, "The amount exceed the treasury balance.");
+        require(
+            IERC20(_token).balanceOf(address(this)) > _amount,
+            "The amount exceed the treasury balance."
+        );
 
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.loanedAmount += _amount;
-        
+
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
     }
 
