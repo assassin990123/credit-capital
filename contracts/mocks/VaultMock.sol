@@ -176,7 +176,7 @@ contract VaultMock is AccessControl, Pausable {
         UserPosition storage userPosition = UserPositions[_user][_token];
         Stake[] memory stakes = UserPositions[_user][_token].stakes;
 
-       if (stakes.length != 0) {
+        if (stakes.length != 0) {
             return 10;
         }
         if (stakes.length == 0) {
