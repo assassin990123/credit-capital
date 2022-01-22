@@ -110,6 +110,14 @@ contract TreasuryStorage is AccessControl {
 
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
     }
+    
+    function returnPrincipal(
+        address _user,
+        address _token,
+        uint256 _principal
+    ) external {
+        
+    }
 
     function getTokenSupply(address _token) external view returns (uint256) {
         return IERC20(_token).balanceOf(address(this));
