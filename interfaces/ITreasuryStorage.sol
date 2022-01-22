@@ -37,4 +37,9 @@ interface ITreasuryStorage {
     function getTokenSupply(
         address _token
     ) external;
+
+    function checkIfUserPositionExists(
+        address _user,
+        address _token
+    ) external returns(bool);
 }

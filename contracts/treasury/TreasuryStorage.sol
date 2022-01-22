@@ -60,7 +60,7 @@ contract TreasuryStorage is AccessControl {
         }
 
         // assume that the treasuryShares token overrides the mint function
-        treasuryShares.mint(_user, _amount);
+        treasuryShares.mint(address(this), _amount);
     }
 
     function addUserPosition(

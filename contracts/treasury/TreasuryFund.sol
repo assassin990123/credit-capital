@@ -20,6 +20,8 @@ contract TreasuryFund is AccessControl {
     // treasury storage, TBD, will eventually interface similar to the vault in the rewards contract
     address treasuryStorage;
 
+    event Deposit(address _token, address _user, uint256 _amount);
+
     constructor(address _capl, address _treasuryStorage) {
         capl = IERC20(_capl);
         treasuryStorage = _treasuryStorage;
@@ -28,12 +30,35 @@ contract TreasuryFund is AccessControl {
     /**
         @dev - this function deposits eligible token amounts to the treasury storage, updating the corresponding storage state (to be implemented)
      */
-    function deposit(address _token, uint256 _amount) external {}
+    function deposit(address _token, uint256 _amount, uint256 _rewardDebt) external {
+        ITreasuryStorage TreasuryStorage = ITreasuryStorage(treasuryStorage);
+
+        if (TreasuryStorage.checkIfUserPositionExists(msg.sender, _token)) {
+            TreasuryStorage.addUserPosition(
+                _token,
+                msg.sender,
+                _amount,
+                _rewardDebt
+            );
+        } else {
+            TreasuryStorage.setUserPosition(
+                _token,
+                msg.sender,
+                _amount,
+                _rewardDebt
+            );
+        }
+
+        IERC20(_token).safeTransfer(treasuryStorage, _amount);
+        emit Deposit(_token, msg.sender, _amount);
+    }
 
     /**
         @dev - this funciton withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
      */
-    function withdraw(address _token, uint256 _amount) external {}
+    function withdraw(address _token, uint256 _amount) external {
+        
+    }
 
     /**
         @dev - this function reads this contracts CAPL balance, and then (similar to rewards), calculates the pending revenue based on revenue share weight.
