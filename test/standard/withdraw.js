@@ -58,10 +58,11 @@ describe("Rewards Vault", function () {
     await network.provider.send("evm_mine") // this one will have 02:00 PM as its timestamp
 
     const latestBlock = await hre.ethers.provider.getBlock("latest")
-    console.log(Number(latestBlock.timestamp.toString()) - Number(userPosition.stakes[0].timeLockEnd.toString()))
     // with mock, in 60 seconds the funds are unlocked for withdrawals
     // simulate call
     const unlockedAmount = await vault.callStatic.getUnlockedAmount(capl.address, deployer.address)
     expect(Number(unlockedAmount.toString())).to.equal(10)
+
+    //
   })
 });

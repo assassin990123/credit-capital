@@ -35,7 +35,7 @@ describe("Rewards Vault", function () {
     const accounts = await hre.ethers.getSigners();
     const { deployer, user, user2 } = await setupAccounts(accounts);
 
-    const { capl, vault, rewards, lp } = await deployContracts(deployer)
+    const { capl, vault, rewards, lp, controller } = await deployContracts(deployer)
 
     await vault.addPool(lp.address, 10)  // 10 CAPL per block
 
@@ -78,5 +78,26 @@ describe("Rewards Vault", function () {
     expect(Number(userPosition2.rewardDebt.toString())).to.equal(15)    // math makes sense, 3 blocks have passed @ 10 CAPL / block.
     expect(userPosition2.stakes.length).to.equal(1)
     expect(Number(userPosition2.stakes[0].amount.toString())).to.equal(250_000)
+
+    // fast forward
+    await network.provider.send("evm_increaseTime", [3600])
+    await network.provider.send("evm_mine") // this one will have 02:00 PM as its timestamp
+
+    //console.log(await rewards.connect(user).callStatic.pendingRewards(lp.address, user.address))
+    //console.log(await rewards.connect(user2).callStatic.pendingRewards(lp.address, user2.address))
+
+    // set controller in rewards contract
+    await rewards.setController(controller.address)
+    // transfer ownership of capl to token controller
+    await capl.transferOwnership(controller.address)
+    // set rewards as MINTER role in controller
+    await controller.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('MINTER')), rewards.address)
+
+    expect(await rewards.connect(user).claim(lp.address, user.address)).to.emit(rewards, "Claim").withArgs(lp.address, user.address, 63)
+    expect(await rewards.connect(user).claim(lp.address, user2.address)).to.emit(rewards, "Claim").withArgs(lp.address, user2.address, 19)
+
+    expect(await capl.balanceOf(user.address)).to.equal(63)
+    expect(await capl.balanceOf(user2.address)).to.equal(19)
+
   })
 });
