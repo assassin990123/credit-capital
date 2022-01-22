@@ -151,12 +151,12 @@ contract Vault is AccessControl, Pausable {
         return _lastStake.timeLockEnd < block.timestamp;
     }
 
-    function checkIfUserPositionExists(address _token)
+    function checkIfUserPositionExists(address _token, address _user)
         external
         view
         returns (bool)
     {
-        return UserPositions[msg.sender][_token].totalAmount > 0;
+        return UserPositions[_user][_token].totalAmount > 0;
     }
 
     function getUserPosition(address _token, address _user)
@@ -176,7 +176,7 @@ contract Vault is AccessControl, Pausable {
         UserPosition storage userPosition = UserPositions[_user][_token];
         Stake[] memory stakes = UserPositions[_user][_token].stakes;
 
-        if (stakes.length != 0) {
+        if (stakes.length == 0) {
             return 0;
         }
 

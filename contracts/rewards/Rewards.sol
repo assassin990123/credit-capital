@@ -20,7 +20,7 @@ interface IVault {
 
     function getPool(address _token) external returns (IPool.Pool memory);
 
-    function checkIfUserPositionExists(address _token)
+    function checkIfUserPositionExists(address _token, address _user)
         external
         view
         returns (bool);
@@ -124,6 +124,7 @@ contract RewardsV2 is Pausable, AccessControl {
     using SafeERC20 for IERC20;
 
     IVault vault;
+    address vaultAddress;
 
     uint256 CAPL_PRECISION = 1e18;
 
@@ -151,6 +152,7 @@ contract RewardsV2 is Pausable, AccessControl {
 
     constructor(address _vault) {
         vault = IVault(_vault);
+        vaultAddress = _vault;
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -163,7 +165,7 @@ contract RewardsV2 is Pausable, AccessControl {
 
         uint256 rewardDebt = (_amount * pool.accCaplPerShare) / CAPL_PRECISION;
 
-        if (!vault.checkIfUserPositionExists(_token)) {
+        if (!vault.checkIfUserPositionExists(_token, msg.sender)) {
             // new user position & new stake
             // no timelock
             vault.addUserPosition(_token, msg.sender, _amount, rewardDebt);
@@ -188,7 +190,7 @@ contract RewardsV2 is Pausable, AccessControl {
             }
         }
 
-        IERC20(_token).safeTransfer(address(this), _amount);
+        IERC20(_token).safeTransferFrom(msg.sender, vaultAddress, _amount);
         emit Deposit(_token, msg.sender, _amount);
     }
 
