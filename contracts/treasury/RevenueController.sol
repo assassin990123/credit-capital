@@ -38,7 +38,11 @@ contract RevenueController is AccessControl {
         uint256 _profit
     ) external {
         // call the treasuryStorage's returnPrincipal function
-        ITreasuryStorage(treasuryStorage).returnPrincipal(msg.sender, _token, _principal);
+        ITreasuryStorage(treasuryStorage).returnPrincipal(
+            msg.sender,
+            _token,
+            _principal
+        );
         IERC20(_token).safeTransfer(address(this), _profit);
     }
 

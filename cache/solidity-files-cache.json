@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\rewards\\Rewards.sol": {
-      "lastModificationDate": 1642781541456,
-      "contentHash": "598497e9a7810ca625a1c2ceb130742a",
+      "lastModificationDate": 1642788027135,
+      "contentHash": "bab61d5b7321f0836c2ee4aa491998a1",
       "sourceName": "contracts/rewards/Rewards.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -449,8 +449,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\TreasuryStorage.sol": {
-      "lastModificationDate": 1642783957275,
-      "contentHash": "2e182a199ae21ec998d301cecf57caeb",
+      "lastModificationDate": 1642819360211,
+      "contentHash": "d48af1f42d484f31db337effc48b8bad",
       "sourceName": "contracts/treasury/TreasuryStorage.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -721,8 +721,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\RevenueController.sol": {
-      "lastModificationDate": 1642781542148,
-      "contentHash": "e294fe22b9a5bf54ce003b899f2bd6a5",
+      "lastModificationDate": 1642819360091,
+      "contentHash": "3d6fb1aabc19a58c88d03f4c61213d4d",
       "sourceName": "contracts/treasury/RevenueController.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -750,7 +750,8 @@
       "imports": [
         "@openzeppelin/contracts/access/AccessControl.sol",
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "../../interfaces/ITreasuryStorage.sol"
       ],
       "versionPragmas": [
         "0.8.11"
@@ -873,8 +874,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\interfaces\\ITreasuryStorage.sol": {
-      "lastModificationDate": 1642784115143,
-      "contentHash": "e29c4555c50e4e3af51f849bfccdabdc",
+      "lastModificationDate": 1642818800908,
+      "contentHash": "552bdf2d996ba075a2f68a0c01d798fa",
       "sourceName": "interfaces/ITreasuryStorage.sol",
       "solcConfig": {
         "version": "0.8.11",
