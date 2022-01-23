@@ -482,8 +482,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\TreasuryStorage.sol": {
-      "lastModificationDate": 1642955964654,
-      "contentHash": "804cd0712e1915c32cc1d14b690584c5",
+      "lastModificationDate": 1642962283429,
+      "contentHash": "b1b4d5c98890c0b14e9044893d25a8a8",
       "sourceName": "contracts/treasury/TreasuryStorage.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -633,8 +633,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\TreasuryFund.sol": {
-      "lastModificationDate": 1642955964574,
-      "contentHash": "b6160287b86ec2d2987a4527d763b0d4",
+      "lastModificationDate": 1642962283208,
+      "contentHash": "c5dee2077cddaf207d2ed8b8e80e554e",
       "sourceName": "contracts/treasury/TreasuryFund.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -711,7 +711,7 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\interfaces\\IController.sol": {
-      "lastModificationDate": 1642956000808,
+      "lastModificationDate": 1642958634782,
       "contentHash": "e4c84de4806ddbc9e33660b3e950ea22",
       "sourceName": "interfaces/IController.sol",
       "solcConfig": {
@@ -746,8 +746,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\RevenueController.sol": {
-      "lastModificationDate": 1642955964472,
-      "contentHash": "3d6fb1aabc19a58c88d03f4c61213d4d",
+      "lastModificationDate": 1642962283016,
+      "contentHash": "908836f4ba5ea7606e867bc0aeaeba3e",
       "sourceName": "contracts/treasury/RevenueController.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -786,7 +786,7 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\standard\\vault\\Vault.sol": {
-      "lastModificationDate": 1642955964043,
+      "lastModificationDate": 1642961913004,
       "contentHash": "b96f66a285652250c3028b10714b792b",
       "sourceName": "contracts/standard/vault/Vault.sol",
       "solcConfig": {
@@ -951,7 +951,7 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\standard\\tokenController\\IController.sol": {
-      "lastModificationDate": 1642956188222,
+      "lastModificationDate": 1642956409824,
       "contentHash": "78999b1ac2d3b6bac18ed0ccfaf0c6e8",
       "sourceName": "contracts/standard/tokenController/IController.sol",
       "solcConfig": {

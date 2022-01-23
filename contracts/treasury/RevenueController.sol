@@ -62,11 +62,17 @@ contract RevenueController is AccessControl {
         TODO: Add RBAC @dev
     */
 
-    function setTreasuryStorage(address _destination) external {
+    function setTreasuryStorage(address _destination)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         treasuryStorage = _destination;
     }
 
-    function setTreasuryFund(address _destination) external {
+    function setTreasuryFund(address _destination)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         treasuryFund = _destination;
     }
 }

@@ -184,11 +184,15 @@ contract TreasuryFund is AccessControl {
         @dev - this function gets the total amount of access tokens in the treasury storage.
              - then, the liquidity pool is read (CAPL-USDC) and a USD value is determined.
      */
-    function getTotalManagedValue() external returns(uint256 totalManagedValue) {
+    function getTotalManagedValue()
+        external
+        returns (uint256 totalManagedValue)
+    {
         totalManagedValue = 0;
 
         for (uint256 i = 0; i < accessTokens.length; i++) {
-            totalManagedValue += ITreasuryStorage(treasuryStorage).getTokenSupply(accessTokens[i]);
+            totalManagedValue += ITreasuryStorage(treasuryStorage)
+                .getTokenSupply(accessTokens[i]);
         }
     }
 
@@ -196,7 +200,10 @@ contract TreasuryFund is AccessControl {
         ADMIN FUNCTIONS
         TODO: Add RBAC @dev
     */
-    function setRevenueController(address _destination) external {
+    function setRevenueController(address _destination)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         revenueController = _destination;
     }
 }
