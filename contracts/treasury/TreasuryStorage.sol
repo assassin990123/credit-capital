@@ -154,6 +154,14 @@ contract TreasuryStorage is AccessControl {
         return Pools[_token];
     }
 
+    function getUserPosition(address _token, address _user)
+        external
+        view
+        returns (UserPosition memory)
+    {
+        return UserPositions[_user][_token];
+    }
+
     function checkIfPoolExists(address _token) external view returns (bool) {
         return Pools[_token].rewardsPerBlock > 0;
     }

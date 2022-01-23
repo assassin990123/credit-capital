@@ -103,7 +103,28 @@ contract TreasuryFund is AccessControl {
              - user treasury share percentage * contract CAPL balance = pending revenue
              - almost exact logic same as rewards 
      */
-    function pendingRevenue() external {}
+    function pendingRevenue() external returns(uint256 pending){
+        IPool.Pool memory pool = ITreasuryStorage(treasuryStorage).getPool(address(capl));
+        IUserPositions.UserPosition memory user = ITreasuryStorage(treasuryStorage).getUserPosition(
+            address(capl),
+            msg.sender
+        );
+
+        uint256 accCaplPerShare = pool.accCaplPerShare;
+        uint256 tokenSupply = ITreasuryStorage(treasuryStorage).getTokenSupply(address(capl));
+
+        if (block.number > pool.lastRewardBlock && tokenSupply != 0) {
+            uint256 blocks = block.number - pool.lastRewardBlock;
+            uint256 caplReward = blocks * pool.rewardsPerBlock;
+            accCaplPerShare =
+                accCaplPerShare +
+                (caplReward * CAPL_PRECISION) /
+                tokenSupply;
+        }
+        pending =
+            ((user.totalAmount * accCaplPerShare) / CAPL_PRECISION) -
+            user.rewardDebt;
+    }
 
     /**
         @dev - claim revenue, similar to rewards contract, will calculate the pending rewards and then safeTransfer from here, to the user.
