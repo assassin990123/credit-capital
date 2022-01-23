@@ -47,6 +47,12 @@ interface ITreasuryStorage {
         uint256 _rewardDebt
     ) external;
 
+    function setUserDebt(
+        address _token,
+        address _user,
+        uint256 rewardDebt
+    ) external;
+
     function loan(
         address _token,
         address _user,

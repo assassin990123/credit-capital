@@ -7,12 +7,16 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 // TreasurySotrage
 import "../../interfaces/ITreasuryStorage.sol";
+import "../../interfaces/IController.sol";
 
 contract TreasuryFund is AccessControl {
     using SafeERC20 for IERC20;
 
     IERC20 capl;
     uint256 CAPL_PRECISION = 1e18;
+
+    IController controller;
+    ITreasuryStorage TreasuryStorage;
 
     // tokens allowed to be deposited into the treasury, must be updatable
     address[] accessTokens;
@@ -23,6 +27,7 @@ contract TreasuryFund is AccessControl {
 
     event Deposit(address _token, address _user, uint256 _amount);
     event PoolUpdated(address indexed _token, uint256 _block);
+    event Claim(address indexed _token, address indexed _user, uint256 _amount);
 
     constructor(address _capl, address _treasuryStorage) {
         capl = IERC20(_capl);
@@ -33,7 +38,7 @@ contract TreasuryFund is AccessControl {
         @dev - this function deposits eligible token amounts to the treasury storage, updating the corresponding storage state (to be implemented)
      */
     function deposit(address _token, uint256 _amount) external {
-        ITreasuryStorage TreasuryStorage = ITreasuryStorage(treasuryStorage);
+        TreasuryStorage = ITreasuryStorage(treasuryStorage);
 
         require(TreasuryStorage.checkIfPoolExists(_token), "Pool does not exist");
         // update pool to current block
@@ -65,7 +70,7 @@ contract TreasuryFund is AccessControl {
         public
         returns (IPool.Pool memory pool)
     {
-        ITreasuryStorage TreasuryStorage = ITreasuryStorage(treasuryStorage);
+        TreasuryStorage = ITreasuryStorage(treasuryStorage);
 
         IPool.Pool memory cpool = TreasuryStorage.getPool(_token);
         uint256 totalSupply = TreasuryStorage.getTokenSupply(_token);
@@ -130,7 +135,26 @@ contract TreasuryFund is AccessControl {
         @dev - claim revenue, similar to rewards contract, will calculate the pending rewards and then safeTransfer from here, to the user.
              - almost exact logic same as rewards
       */
-    function claimRevenue() external {}
+    function claimRevenue() external {
+        IPool.Pool memory pool = updatePool(address(capl));
+        IUserPositions.UserPosition memory user = TreasuryStorage.getUserPosition(
+            address(capl),
+            msg.sender
+        );
+
+        uint256 accumulatedCapl = (user.totalAmount * pool.accCaplPerShare) /
+            CAPL_PRECISION;
+        uint256 pendingCapl = accumulatedCapl - user.rewardDebt;
+
+        // _user.rewardDebt = accumulatedCapl
+        TreasuryStorage.setUserDebt(address(capl), msg.sender, accumulatedCapl);
+
+        if (pendingCapl > 0) {
+            controller.mint(msg.sender, pendingCapl);
+        }
+
+        emit Claim(address(capl), msg.sender, pendingCapl);
+    }
 
     /**
         @dev - this function gets the total amount of access tokens in the treasury storage.
