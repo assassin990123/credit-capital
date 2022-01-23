@@ -70,6 +70,8 @@ contract TreasuryFund is AccessControl {
             );
         }
 
+        accessTokens.push(_token);
+
         IERC20(_token).safeTransfer(treasuryStorage, _amount);
         emit Deposit(_token, msg.sender, _amount);
     }
@@ -182,7 +184,13 @@ contract TreasuryFund is AccessControl {
         @dev - this function gets the total amount of access tokens in the treasury storage.
              - then, the liquidity pool is read (CAPL-USDC) and a USD value is determined.
      */
-    function getTotalManagedValue() external {}
+    function getTotalManagedValue() external returns(uint256 totalManagedValue) {
+        totalManagedValue = 0;
+
+        for (uint256 i = 0; i < accessTokens.length; i++) {
+            totalManagedValue += ITreasuryStorage(treasuryStorage).getTokenSupply(accessTokens[i]);
+        }
+    }
 
     /**
         ADMIN FUNCTIONS

@@ -50,7 +50,12 @@ contract RevenueController is AccessControl {
         @dev - this function calculates the amount of CAPL to distribute to the treasury fund contract:
              -  current CAPL balance / 30 days = transfer amount.
      */
-    function getCAPLAlloc() external {}
+    function getCAPLAlloc() external {
+        uint256 amount = capl.balanceOf(address(this)) / 30;
+
+        // get the distributable CAPL amount
+        capl.safeTransferFrom(address(this), treasuryFund, amount);
+    }
 
     /**
         ADMIN FUNCTIONS
