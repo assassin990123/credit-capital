@@ -59,35 +59,36 @@ interface ITreasuryStorage {
         uint256 _amount
     ) external;
 
+    function withdraw(
+        address _token,
+        address _user,
+        uint256 _amount,
+        uint256 _newRewardDebt
+    ) external;
+
     function returnPrincipal(
         address _user,
         address _token,
         uint256 _principal
     ) external;
 
-    function getTokenSupply(
-        address _token
-    ) external returns (uint256);
+    function getTokenSupply(address _token) external returns (uint256);
 
-    function getPool(
-        address _token
-    ) external returns (IPool.Pool memory);
+    function getPool(address _token) external returns (IPool.Pool memory);
 
-    function getUserPosition(
-        address _token,
-        address _user
-    )
+    function getUserPosition(address _token, address _user)
         external
         view
         returns (IUserPositions.UserPosition memory);
 
-    function checkIfPoolExists(
-        address _token
-    ) external returns (bool);
-    
-    function checkIfUserPositionExists(
-        address _user,
-        address _token
-    ) external returns(bool);
+    function getUnlockedAmount(address _token, address _user)
+        external
+        view
+        returns (uint256);
 
+    function checkIfPoolExists(address _token) external returns (bool);
+
+    function checkIfUserPositionExists(address _user, address _token)
+        external
+        returns (bool);
 }

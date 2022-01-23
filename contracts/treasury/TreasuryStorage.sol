@@ -19,7 +19,7 @@ contract TreasuryStorage is AccessControl {
 
     // treasury shares represent a users percentage amount in the treasury pot
     ITreasuryShares treasuryShares;
-    
+
     struct UserPosition {
         uint256 totalAmount;
         uint256 rewardDebt;
@@ -132,6 +132,25 @@ contract TreasuryStorage is AccessControl {
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
     }
 
+    function withdraw(
+        address _token,
+        address _user,
+        uint256 _amount,
+        uint256 _newRewardDebt
+    ) external {
+        require(
+            this.getUnlockedAmount(_token, _user) > _amount,
+            "Withdrawn amount exceed the user balance"
+        );
+
+        this.setUserPosition(_token, _user, _amount, _newRewardDebt);
+
+        Pool storage pool = Pools[_token];
+        pool.totalPooled -= _amount;
+
+        IERC20(_token).safeTransferFrom(address(this), _user, _amount);
+    }
+
     function returnPrincipal(
         address _user,
         address _token,
@@ -160,6 +179,15 @@ contract TreasuryStorage is AccessControl {
         returns (UserPosition memory)
     {
         return UserPositions[_user][_token];
+    }
+
+    function getUnlockedAmount(address _token, address _user)
+        external
+        view
+        returns (uint256 unlockedAmount)
+    {
+        UserPosition storage userPosition = UserPositions[_user][_token];
+        unlockedAmount = userPosition.totalAmount - userPosition.loanedAmount;
     }
 
     function checkIfPoolExists(address _token) external view returns (bool) {

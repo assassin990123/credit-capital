@@ -28,6 +28,11 @@ contract TreasuryFund is AccessControl {
     event Deposit(address _token, address _user, uint256 _amount);
     event PoolUpdated(address indexed _token, uint256 _block);
     event Claim(address indexed _token, address indexed _user, uint256 _amount);
+    event Withdraw(
+        address indexed _token,
+        address indexed _user,
+        uint256 _amount
+    );
 
     constructor(address _capl, address _treasuryStorage) {
         capl = IERC20(_capl);
@@ -40,7 +45,10 @@ contract TreasuryFund is AccessControl {
     function deposit(address _token, uint256 _amount) external {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
 
-        require(TreasuryStorage.checkIfPoolExists(_token), "Pool does not exist");
+        require(
+            TreasuryStorage.checkIfPoolExists(_token),
+            "Pool does not exist"
+        );
         // update pool to current block
         IPool.Pool memory pool = updatePool(_token);
 
@@ -99,8 +107,21 @@ contract TreasuryFund is AccessControl {
     /**
         @dev - this funciton withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
      */
-    function withdraw(address _token, uint256 _amount) external {
-        
+    function withdraw(address _token) external {
+        IPool.Pool memory pool = updatePool(_token);
+        IUserPositions.UserPosition memory user = TreasuryStorage
+            .getUserPosition(_token, msg.sender);
+
+        uint256 amount = TreasuryStorage.getUnlockedAmount(_token, msg.sender);
+
+        uint256 newRewardDebt = user.rewardDebt -
+            (amount * pool.accCaplPerShare) /
+            CAPL_PRECISION;
+
+        IERC20(_token).approve(address(TreasuryStorage), amount);
+        TreasuryStorage.withdraw(_token, msg.sender, amount, newRewardDebt);
+
+        emit Withdraw(_token, msg.sender, amount);
     }
 
     /**
@@ -108,15 +129,18 @@ contract TreasuryFund is AccessControl {
              - user treasury share percentage * contract CAPL balance = pending revenue
              - almost exact logic same as rewards 
      */
-    function pendingRevenue() external returns(uint256 pending){
-        IPool.Pool memory pool = ITreasuryStorage(treasuryStorage).getPool(address(capl));
-        IUserPositions.UserPosition memory user = ITreasuryStorage(treasuryStorage).getUserPosition(
-            address(capl),
-            msg.sender
+    function pendingRevenue() external returns (uint256 pending) {
+        IPool.Pool memory pool = ITreasuryStorage(treasuryStorage).getPool(
+            address(capl)
         );
+        IUserPositions.UserPosition memory user = ITreasuryStorage(
+            treasuryStorage
+        ).getUserPosition(address(capl), msg.sender);
 
         uint256 accCaplPerShare = pool.accCaplPerShare;
-        uint256 tokenSupply = ITreasuryStorage(treasuryStorage).getTokenSupply(address(capl));
+        uint256 tokenSupply = ITreasuryStorage(treasuryStorage).getTokenSupply(
+            address(capl)
+        );
 
         if (block.number > pool.lastRewardBlock && tokenSupply != 0) {
             uint256 blocks = block.number - pool.lastRewardBlock;
@@ -137,10 +161,8 @@ contract TreasuryFund is AccessControl {
       */
     function claimRevenue() external {
         IPool.Pool memory pool = updatePool(address(capl));
-        IUserPositions.UserPosition memory user = TreasuryStorage.getUserPosition(
-            address(capl),
-            msg.sender
-        );
+        IUserPositions.UserPosition memory user = TreasuryStorage
+            .getUserPosition(address(capl), msg.sender);
 
         uint256 accumulatedCapl = (user.totalAmount * pool.accCaplPerShare) /
             CAPL_PRECISION;
