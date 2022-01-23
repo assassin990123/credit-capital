@@ -17,6 +17,9 @@ contract TreasuryStorage is AccessControl {
     // user Roles for RBAC
     bytes32 public constant TREASURY_FUND = keccak256("TREASURY_FUND");
 
+    // treasury shares represent a users percentage amount in the treasury pot
+    ITreasuryShares treasuryShares;
+    
     struct UserPosition {
         uint256 totalAmount;
         uint256 rewardDebt;
@@ -26,8 +29,15 @@ contract TreasuryStorage is AccessControl {
     // Mapping from user to userpostion of the token
     mapping(address => mapping(address => UserPosition)) UserPositions;
 
-    // treasury shares represent a users percentage amount in the treasury pot
-    ITreasuryShares treasuryShares;
+    struct Pool {
+        uint256 totalPooled; // total token pooled in the contract
+        uint256 rewardsPerBlock; // rate at which CAPL is minted for this pool
+        uint256 accCaplPerShare; // weighted CAPL share in pool
+        uint256 lastRewardBlock; // last time a claim was made
+    }
+
+    // pool tracking
+    mapping(address => Pool) Pools; // token => pool
 
     constructor(address _treasuryShares) {
         treasuryShares = ITreasuryShares(_treasuryShares);
@@ -61,6 +71,17 @@ contract TreasuryStorage is AccessControl {
 
         // assume that the treasuryShares token overrides the mint function
         treasuryShares.mint(address(this), _amount);
+    }
+
+    function updatePool(
+        address _token,
+        uint256 _accCaplPerShare,
+        uint256 _lastRewardBlock
+    ) external returns (Pool memory) {
+        Pools[_token].lastRewardBlock = _lastRewardBlock;
+        Pools[_token].accCaplPerShare = _accCaplPerShare;
+
+        return Pools[_token];
     }
 
     function addUserPosition(
@@ -118,12 +139,23 @@ contract TreasuryStorage is AccessControl {
     ) external {
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.loanedAmount -= _principal;
+        userPosition.totalAmount += _principal;
 
         IERC20(_token).safeTransferFrom(_user, address(this), _principal);
     }
 
     function getTokenSupply(address _token) external view returns (uint256) {
         return IERC20(_token).balanceOf(address(this));
+    }
+
+    function getPool(address _token) external view returns (Pool memory) {
+        require(this.checkIfPoolExists(_token), "The pool does not exists.");
+
+        return Pools[_token];
+    }
+
+    function checkIfPoolExists(address _token) external view returns (bool) {
+        return Pools[_token].rewardsPerBlock > 0;
     }
 
     function checkIfUserPositionExists(address _user, address _token)

@@ -12,6 +12,7 @@ contract TreasuryFund is AccessControl {
     using SafeERC20 for IERC20;
 
     IERC20 capl;
+    uint256 CAPL_PRECISION = 1e18;
 
     // tokens allowed to be deposited into the treasury, must be updatable
     address[] accessTokens;
@@ -21,6 +22,7 @@ contract TreasuryFund is AccessControl {
     address treasuryStorage;
 
     event Deposit(address _token, address _user, uint256 _amount);
+    event PoolUpdated(address indexed _token, uint256 _block);
 
     constructor(address _capl, address _treasuryStorage) {
         capl = IERC20(_capl);
@@ -30,8 +32,14 @@ contract TreasuryFund is AccessControl {
     /**
         @dev - this function deposits eligible token amounts to the treasury storage, updating the corresponding storage state (to be implemented)
      */
-    function deposit(address _token, uint256 _amount, uint256 _rewardDebt) external {
+    function deposit(address _token, uint256 _amount) external {
         ITreasuryStorage TreasuryStorage = ITreasuryStorage(treasuryStorage);
+
+        require(TreasuryStorage.checkIfPoolExists(_token), "Pool does not exist");
+        // update pool to current block
+        IPool.Pool memory pool = updatePool(_token);
+
+        uint256 _rewardDebt = (_amount * pool.accCaplPerShare) / CAPL_PRECISION;
 
         if (TreasuryStorage.checkIfUserPositionExists(msg.sender, _token)) {
             TreasuryStorage.addUserPosition(
@@ -51,6 +59,36 @@ contract TreasuryFund is AccessControl {
 
         IERC20(_token).safeTransfer(treasuryStorage, _amount);
         emit Deposit(_token, msg.sender, _amount);
+    }
+
+    function updatePool(address _token)
+        public
+        returns (IPool.Pool memory pool)
+    {
+        ITreasuryStorage TreasuryStorage = ITreasuryStorage(treasuryStorage);
+
+        IPool.Pool memory cpool = TreasuryStorage.getPool(_token);
+        uint256 totalSupply = TreasuryStorage.getTokenSupply(_token);
+        uint256 accCaplPerShare;
+        if (block.number > cpool.lastRewardBlock) {
+            if (totalSupply > 0) {
+                uint256 blocks = block.number - cpool.lastRewardBlock;
+                uint256 caplReward = blocks * cpool.rewardsPerBlock;
+                accCaplPerShare =
+                    cpool.accCaplPerShare +
+                    (caplReward * CAPL_PRECISION) /
+                    totalSupply;
+            }
+            uint256 lastRewardBlock = block.number;
+            IPool.Pool memory npool = TreasuryStorage.updatePool(
+                _token,
+                accCaplPerShare,
+                lastRewardBlock
+            );
+
+            emit PoolUpdated(_token, lastRewardBlock);
+            return npool;
+        }
     }
 
     /**
