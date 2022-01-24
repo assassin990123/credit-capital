@@ -4,9 +4,6 @@ pragma solidity 0.8.11;
 interface IPool {
     struct Pool {
         uint256 totalPooled; // total token pooled in the contract
-        uint256 rewardsPerBlock; // rate at which CAPL is minted for this pool
-        uint256 accCaplPerShare; // weighted CAPL share in pool
-        uint256 lastRewardBlock; // last time a claim was made
     }
 }
 
@@ -29,7 +26,7 @@ interface ITreasuryStorage {
 
     function updatePool(
         address _token,
-        uint256 _accCaplPerShare
+        uint256 _amount
     ) external returns (IPool.Pool memory);
 
     function addUserPosition(

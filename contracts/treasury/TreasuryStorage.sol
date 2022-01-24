@@ -32,7 +32,6 @@ contract TreasuryStorage is AccessControl {
 
     struct Pool {
         uint256 totalPooled; // total token pooled in the contract
-        uint256 accCaplPerShare; // weighted CAPL share in pool
     }
 
     // pool tracking
@@ -89,15 +88,6 @@ contract TreasuryStorage is AccessControl {
         });
     }
 
-    function setUserPosition(
-        address _token,
-        address _user,
-        uint256 _amount
-    ) external onlyRole(TREASURY_FUND) {
-        UserPosition storage userPosition = UserPositions[_user][_token];
-        userPosition.totalAmount += _amount;
-    }
-
     /**
         @dev - this function transfers _amount to the user and updates the user position to denote the loaned amount and change in contract balance.
      */
@@ -140,6 +130,22 @@ contract TreasuryStorage is AccessControl {
         treasuryShares.mint(_destination, _amount);
     }
 
+    function updatePool(
+        address _token,
+        uint256 _amount
+    ) external returns (Pool memory) {
+        Pools[_token].totalPooled += _amount;
+    }
+
+    function setUserPosition(
+        address _token,
+        address _user,
+        uint256 _amount
+    ) external onlyRole(TREASURY_FUND) {
+        UserPosition storage userPosition = UserPositions[_user][_token];
+        userPosition.totalAmount += _amount;
+    }
+
     function checkIfPoolExists(address _token) external view returns (bool) {
         return Pools[_token].totalPooled > 0;
     }
@@ -162,11 +168,11 @@ contract TreasuryStorage is AccessControl {
         unlockedAmount = userPosition.totalAmount - userPosition.loanedAmount;
     }
 
-    function getTokenSupply(address _token) external returns (uint256) {
+    function getTokenSupply(address _token) external view returns (uint256) {
         return IERC20(_token).balanceOf(address(this));
     }
 
-    function getPool(address _token) external returns (Pool memory) {
+    function getPool(address _token) external view returns (Pool memory) {
         return Pools[_token];
     }
 
