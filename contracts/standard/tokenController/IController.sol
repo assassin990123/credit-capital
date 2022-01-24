@@ -1,3 +1,6 @@
+//SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.11;
+
 interface IController {
     function CAPL() external view returns (address);
 

@@ -5,6 +5,9 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+// TreasurySotrage
+import "../../interfaces/ITreasuryStorage.sol";
+
 contract RevenueController is AccessControl {
     using SafeERC20 for IERC20;
 
@@ -33,24 +36,43 @@ contract RevenueController is AccessControl {
         address _token,
         uint256 _principal,
         uint256 _profit
-    ) external {}
+    ) external {
+        // call the treasuryStorage's returnPrincipal function
+        ITreasuryStorage(treasuryStorage).returnPrincipal(
+            msg.sender,
+            _token,
+            _principal
+        );
+        IERC20(_token).safeTransfer(address(this), _profit);
+    }
 
     /**
         @dev - this function calculates the amount of CAPL to distribute to the treasury fund contract:
              -  current CAPL balance / 30 days = transfer amount.
      */
-    function getCAPLAlloc() external {}
+    function getCAPLAlloc() external {
+        uint256 amount = capl.balanceOf(address(this)) / 30;
+
+        // get the distributable CAPL amount
+        capl.safeTransferFrom(address(this), treasuryFund, amount);
+    }
 
     /**
         ADMIN FUNCTIONS
         TODO: Add RBAC @dev
     */
 
-    function setTreasuryStorage(address _destination) external {
+    function setTreasuryStorage(address _destination)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         treasuryStorage = _destination;
     }
 
-    function setTreasuryFund(address _destination) external {
+    function setTreasuryFund(address _destination)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         treasuryFund = _destination;
     }
 }

@@ -16,6 +16,11 @@ contract TreasuryStorage is AccessControl {
 
     // user Roles for RBAC
     bytes32 public constant TREASURY_FUND = keccak256("TREASURY_FUND");
+    bytes32 public constant REVENUE_CONTROLLER =
+        keccak256("REVENUE_CONTROLLER");
+
+    // treasury shares represent a users percentage amount in the treasury pot
+    ITreasuryShares treasuryShares;
 
     struct UserPosition {
         uint256 totalAmount;
@@ -25,11 +30,21 @@ contract TreasuryStorage is AccessControl {
     // Mapping from user to userpostion of the token
     mapping(address => mapping(address => UserPosition)) UserPositions;
 
-    // treasury shares represent a users percentage amount in the treasury pot
-    ITreasuryShares treasuryShares;
+    struct Pool {
+        uint256 totalPooled; // total token pooled in the contract
+        uint256 rewardsPerBlock; // rate at which CAPL is minted for this pool
+        uint256 accCaplPerShare; // weighted CAPL share in pool
+        uint256 lastRewardBlock; // last time a claim was made
+    }
+
+    // pool tracking
+    mapping(address => Pool) Pools; // token => pool
 
     constructor(address _treasuryShares) {
         treasuryShares = ITreasuryShares(_treasuryShares);
+
+        // setup the admin role for the storage owner
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
     /**
         @dev - this function will mint _amount of treasury shares from the treasuryShares ERC20 token
@@ -99,8 +114,27 @@ contract TreasuryStorage is AccessControl {
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
     }
 
-    function getTokenSupply(address _token) external view returns (uint256) {
-        return IERC20(_token).balanceOf(address(this));
+    function withdraw(
+        address _token,
+        address _user,
+        uint256 _amount,
+        uint256 _newRewardDebt
+    ) external {
+        require(
+            getUnlockedAmount(_token, _user) > _amount,
+            "Withdrawn amount exceed the user balance"
+        );
+
+        this.setUserPosition(_token, _user, _amount);
+
+        Pool storage pool = Pools[_token];
+        pool.totalPooled -= _amount;
+
+        IERC20(_token).safeTransferFrom(address(this), _user, _amount);
+    }
+
+    function checkIfPoolExists(address _token) external view returns (bool) {
+        return Pools[_token].rewardsPerBlock > 0;
     }
 
     function checkIfUserPositionExists(address _user, address _token)
@@ -113,5 +147,14 @@ contract TreasuryStorage is AccessControl {
 
     function mintTreasuryShares(address _destination, uint256 _amount) external onlyRole(TREASURY_FUND) {
         treasuryShares.mint(_destination, _amount);
+    }
+    function getUnlockedAmount(address _token, address _user)
+        public
+        view
+        onlyRole(TREASURY_FUND)
+        returns (uint256 unlockedAmount)
+    {
+        UserPosition storage userPosition = UserPositions[_user][_token];
+        unlockedAmount = userPosition.totalAmount - userPosition.loanedAmount;
     }
 }
