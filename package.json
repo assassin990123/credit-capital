@@ -11,7 +11,7 @@
     "npm": "^8.3.0"
   },
   "scripts": {
-    "lint": "prettier --write \"contracts/**/*.sol\""
+    "lint": "prettier --write \"contracts/**/*.sol\" \"interfaces/*.sol\""
   },
   "devDependencies": {
     "@nomiclabs/hardhat-waffle": "^2.0.1",
