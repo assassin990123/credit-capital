@@ -23,34 +23,30 @@ interface IUserPositions {
 interface ITreasuryStorage {
     function deposit(
         address _user,
-        uint256 _amount,
-        uint256 _rewardDebt
+        address _token,
+        uint256 _amount
     ) external;
 
     function updatePool(
         address _token,
-        uint256 _accCaplPerShare,
-        uint256 _lastRewardBlock
+        uint256 _accCaplPerShare
     ) external returns (IPool.Pool memory);
 
     function addUserPosition(
         address _token,
         address _user,
-        uint256 _totalAmount,
-        uint256 _rewardDebt
+        uint256 _totalAmount
     ) external;
 
     function setUserPosition(
         address _token,
         address _user,
-        uint256 _amount,
-        uint256 _rewardDebt
+        uint256 _amount
     ) external;
 
     function setUserDebt(
         address _token,
-        address _user,
-        uint256 rewardDebt
+        address _user
     ) external;
 
     function loan(
@@ -62,8 +58,7 @@ interface ITreasuryStorage {
     function withdraw(
         address _token,
         address _user,
-        uint256 _amount,
-        uint256 _newRewardDebt
+        uint256 _amount
     ) external;
 
     function returnPrincipal(

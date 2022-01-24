@@ -32,9 +32,7 @@ contract TreasuryStorage is AccessControl {
 
     struct Pool {
         uint256 totalPooled; // total token pooled in the contract
-        uint256 rewardsPerBlock; // rate at which CAPL is minted for this pool
         uint256 accCaplPerShare; // weighted CAPL share in pool
-        uint256 lastRewardBlock; // last time a claim was made
     }
 
     // pool tracking
@@ -53,21 +51,26 @@ contract TreasuryStorage is AccessControl {
      */
     function deposit(
         address _user,
+        address _token,
         uint256 _amount
     ) external {
-        if (this.checkIfUserPositionExists(_user, address(treasuryShares))) {
+
+        if (!this.checkIfUserPositionExists(msg.sender, _token)) {
             this.addUserPosition(
-                address(treasuryShares),
-                _user,
-                _amount
+                _token,
+                msg.sender,
+                _amount,
             );
         } else {
             this.setUserPosition(
-                address(treasuryShares),
-                _user,
-                _amount
+                _token,
+                msg.sender,
+                _amount,
             );
         }
+
+        IERC20(_token).approve(_user, amount);
+        IERC20(_token).safeTransferFrom(_user, address(this), _amount);
     }
 
     function addUserPosition(
@@ -111,6 +114,7 @@ contract TreasuryStorage is AccessControl {
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.loanedAmount += _amount;
 
+        IERC20(_token).approve(address(this), amount);
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
     }
 
@@ -118,7 +122,6 @@ contract TreasuryStorage is AccessControl {
         address _token,
         address _user,
         uint256 _amount,
-        uint256 _newRewardDebt
     ) external {
         require(
             getUnlockedAmount(_token, _user) > _amount,
@@ -130,11 +133,12 @@ contract TreasuryStorage is AccessControl {
         Pool storage pool = Pools[_token];
         pool.totalPooled -= _amount;
 
+        IERC20(_token).approve(address(this), amount);
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
     }
 
     function checkIfPoolExists(address _token) external view returns (bool) {
-        return Pools[_token].rewardsPerBlock > 0;
+        return Pools[_token].totalPooled > 0;
     }
 
     function checkIfUserPositionExists(address _user, address _token)
