@@ -19,11 +19,6 @@
           "internalType": "uint256",
           "name": "_totalAmount",
           "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_rewardDebt",
-          "type": "uint256"
         }
       ],
       "name": "addUserPosition",
@@ -82,13 +77,13 @@
           "type": "address"
         },
         {
-          "internalType": "uint256",
-          "name": "_amount",
-          "type": "uint256"
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "_rewardDebt",
+          "name": "_amount",
           "type": "uint256"
         }
       ],
@@ -289,11 +284,6 @@
           "internalType": "address",
           "name": "_user",
           "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "rewardDebt",
-          "type": "uint256"
         }
       ],
       "name": "setUserDebt",
@@ -317,11 +307,6 @@
           "internalType": "uint256",
           "name": "_amount",
           "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_rewardDebt",
-          "type": "uint256"
         }
       ],
       "name": "setUserPosition",
@@ -339,11 +324,6 @@
         {
           "internalType": "uint256",
           "name": "_accCaplPerShare",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_lastRewardBlock",
           "type": "uint256"
         }
       ],
@@ -395,11 +375,6 @@
         {
           "internalType": "uint256",
           "name": "_amount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_newRewardDebt",
           "type": "uint256"
         }
       ],

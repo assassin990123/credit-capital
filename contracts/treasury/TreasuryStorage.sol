@@ -59,17 +59,17 @@ contract TreasuryStorage is AccessControl {
             this.addUserPosition(
                 _token,
                 msg.sender,
-                _amount,
+                _amount
             );
         } else {
             this.setUserPosition(
                 _token,
                 msg.sender,
-                _amount,
+                _amount
             );
         }
 
-        IERC20(_token).approve(_user, amount);
+        IERC20(_token).approve(_user, _amount);
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
     }
 
@@ -114,14 +114,14 @@ contract TreasuryStorage is AccessControl {
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.loanedAmount += _amount;
 
-        IERC20(_token).approve(address(this), amount);
+        IERC20(_token).approve(address(this), _amount);
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
     }
 
     function withdraw(
         address _token,
         address _user,
-        uint256 _amount,
+        uint256 _amount
     ) external {
         require(
             getUnlockedAmount(_token, _user) > _amount,
@@ -133,8 +133,11 @@ contract TreasuryStorage is AccessControl {
         Pool storage pool = Pools[_token];
         pool.totalPooled -= _amount;
 
-        IERC20(_token).approve(address(this), amount);
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
+    }
+
+    function mintTreasuryShares(address _destination, uint256 _amount) external onlyRole(TREASURY_FUND) {
+        treasuryShares.mint(_destination, _amount);
     }
 
     function checkIfPoolExists(address _token) external view returns (bool) {
@@ -149,9 +152,6 @@ contract TreasuryStorage is AccessControl {
         return UserPositions[_user][_token].totalAmount > 0;
     }
 
-    function mintTreasuryShares(address _destination, uint256 _amount) external onlyRole(TREASURY_FUND) {
-        treasuryShares.mint(_destination, _amount);
-    }
     function getUnlockedAmount(address _token, address _user)
         public
         view
@@ -160,5 +160,21 @@ contract TreasuryStorage is AccessControl {
     {
         UserPosition storage userPosition = UserPositions[_user][_token];
         unlockedAmount = userPosition.totalAmount - userPosition.loanedAmount;
+    }
+
+    function getTokenSupply(address _token) external returns (uint256) {
+        return IERC20(_token).balanceOf(address(this));
+    }
+
+    function getPool(address _token) external returns (Pool memory) {
+        return Pools[_token];
+    }
+
+    function getUserPosition(address _token, address _user)
+        external
+        view
+        returns (UserPosition memory) 
+    {
+        return UserPositions[_user][_token];
     }
 }

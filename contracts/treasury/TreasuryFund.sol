@@ -54,7 +54,7 @@ contract TreasuryFund is AccessControl {
 
         TreasuryStorage.deposit(msg.sender, _token, _amount);
         accessTokens.push(_token);
-        
+
         emit Deposit(_token, msg.sender, _amount);
     }
 
@@ -84,10 +84,6 @@ contract TreasuryFund is AccessControl {
         @dev - this funciton withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
      */
     function withdraw(address _token) external {
-        IPool.Pool memory pool = updatePool(_token);
-        IUserPositions.UserPosition memory user = TreasuryStorage
-            .getUserPosition(_token, msg.sender);
-
         uint256 amount = TreasuryStorage.getUnlockedAmount(_token, msg.sender);
 
         IERC20(_token).approve(address(TreasuryStorage), amount);
