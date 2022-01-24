@@ -19,7 +19,6 @@ contract TreasuryStorage is AccessControl {
 
     struct UserPosition {
         uint256 totalAmount;
-        uint256 rewardDebt;
         uint256 loanedAmount; // amount that has been taken out of the treasury storage as a loan
     }
 
@@ -32,7 +31,6 @@ contract TreasuryStorage is AccessControl {
     constructor(address _treasuryShares) {
         treasuryShares = ITreasuryShares(_treasuryShares);
     }
-
     /**
         @dev - this function will mint _amount of treasury shares from the treasuryShares ERC20 token
              - these shares will be held here, in this contract.
@@ -40,35 +38,28 @@ contract TreasuryStorage is AccessControl {
      */
     function deposit(
         address _user,
-        uint256 _amount,
-        uint256 _rewardDebt
+        uint256 _amount
     ) external {
         if (this.checkIfUserPositionExists(_user, address(treasuryShares))) {
             this.addUserPosition(
                 address(treasuryShares),
                 _user,
-                _amount,
-                _rewardDebt
+                _amount
             );
         } else {
             this.setUserPosition(
                 address(treasuryShares),
                 _user,
-                _amount,
-                _rewardDebt
+                _amount
             );
         }
-
-        // assume that the treasuryShares token overrides the mint function
-        treasuryShares.mint(_user, _amount);
     }
 
     function addUserPosition(
         address _token,
         address _user,
-        uint256 _totalAmount,
-        uint256 _rewardDebt
-    ) external {
+        uint256 _totalAmount
+    ) external onlyRole(TREASURY_FUND) {
         require(
             !this.checkIfUserPositionExists(_user, _token),
             "The user position is already exists"
@@ -76,7 +67,6 @@ contract TreasuryStorage is AccessControl {
 
         UserPositions[_user][_token] = UserPosition({
             totalAmount: _totalAmount,
-            rewardDebt: _rewardDebt,
             loanedAmount: 0
         });
     }
@@ -84,12 +74,10 @@ contract TreasuryStorage is AccessControl {
     function setUserPosition(
         address _token,
         address _user,
-        uint256 _amount,
-        uint256 _rewardDebt
-    ) external {
+        uint256 _amount
+    ) external onlyRole(TREASURY_FUND) {
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.totalAmount += _amount;
-        userPosition.rewardDebt = _rewardDebt;
     }
 
     /**
@@ -121,5 +109,9 @@ contract TreasuryStorage is AccessControl {
         returns (bool)
     {
         return UserPositions[_user][_token].totalAmount > 0;
+    }
+
+    function mintTreasuryShares(address _destination, uint256 _amount) external onlyRole(TREASURY_FUND) {
+        treasuryShares.mint(_destination, _amount);
     }
 }
