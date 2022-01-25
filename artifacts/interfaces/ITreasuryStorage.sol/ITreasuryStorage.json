@@ -108,21 +108,6 @@
               "internalType": "uint256",
               "name": "totalPooled",
               "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "rewardsPerBlock",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "accCaplPerShare",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "lastRewardBlock",
-              "type": "uint256"
             }
           ],
           "internalType": "struct IPool.Pool",
@@ -323,7 +308,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_accCaplPerShare",
+          "name": "_amount",
           "type": "uint256"
         }
       ],
@@ -334,21 +319,6 @@
             {
               "internalType": "uint256",
               "name": "totalPooled",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "rewardsPerBlock",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "accCaplPerShare",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "lastRewardBlock",
               "type": "uint256"
             }
           ],

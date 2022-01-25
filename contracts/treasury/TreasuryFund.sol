@@ -50,7 +50,7 @@ contract TreasuryFund is AccessControl {
             "Pool does not exist"
         );
         // update pool to current block
-        IPool.Pool memory pool = updatePool(_token, _amount);
+        updatePool(_token, _amount);
 
         TreasuryStorage.deposit(msg.sender, _token, _amount);
         accessTokens.push(_token);
@@ -63,10 +63,7 @@ contract TreasuryFund is AccessControl {
         returns (IPool.Pool memory pool)
     {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
-        IPool.Pool memory npool = TreasuryStorage.updatePool(
-            _token,
-            _amount
-        );
+        IPool.Pool memory npool = TreasuryStorage.updatePool(_token, _amount);
 
         emit PoolUpdated(_token, _amount);
         return npool;
@@ -91,8 +88,10 @@ contract TreasuryFund is AccessControl {
      */
     function pendingRevenue() external returns (uint256 pending) {
         uint256 balance = capl.balanceOf(address(this));
-        
-        IUserPositions.UserPosition memory user = ITreasuryStorage(treasuryStorage).getUserPosition(address(capl), msg.sender);
+
+        IUserPositions.UserPosition memory user = ITreasuryStorage(
+            treasuryStorage
+        ).getUserPosition(address(capl), msg.sender);
         uint256 totalSupply = ITreasuryStorage(treasuryStorage).getTokenSupply(
             address(capl)
         );

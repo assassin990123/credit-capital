@@ -43,6 +43,7 @@ contract TreasuryStorage is AccessControl {
         // setup the admin role for the storage owner
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
+
     /**
         @dev - this function will mint _amount of treasury shares from the treasuryShares ERC20 token
              - these shares will be held here, in this contract.
@@ -53,19 +54,10 @@ contract TreasuryStorage is AccessControl {
         address _token,
         uint256 _amount
     ) external {
-
         if (!this.checkIfUserPositionExists(msg.sender, _token)) {
-            this.addUserPosition(
-                _token,
-                msg.sender,
-                _amount
-            );
+            this.addUserPosition(_token, msg.sender, _amount);
         } else {
-            this.setUserPosition(
-                _token,
-                msg.sender,
-                _amount
-            );
+            this.setUserPosition(_token, msg.sender, _amount);
         }
 
         IERC20(_token).approve(_user, _amount);
@@ -126,15 +118,21 @@ contract TreasuryStorage is AccessControl {
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
     }
 
-    function mintTreasuryShares(address _destination, uint256 _amount) external onlyRole(TREASURY_FUND) {
+    function mintTreasuryShares(address _destination, uint256 _amount)
+        external
+        onlyRole(TREASURY_FUND)
+    {
         treasuryShares.mint(_destination, _amount);
     }
 
-    function updatePool(
-        address _token,
-        uint256 _amount
-    ) external returns (Pool memory) {
-        Pools[_token].totalPooled += _amount;
+    function updatePool(address _token, uint256 _amount)
+        external
+        returns (Pool memory)
+    {
+        Pool storage pool = Pools[_token];
+        pool.totalPooled += _amount;
+
+        return pool;
     }
 
     function setUserPosition(
@@ -179,7 +177,7 @@ contract TreasuryStorage is AccessControl {
     function getUserPosition(address _token, address _user)
         external
         view
-        returns (UserPosition memory) 
+        returns (UserPosition memory)
     {
         return UserPositions[_user][_token];
     }

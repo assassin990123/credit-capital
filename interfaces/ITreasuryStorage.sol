@@ -24,10 +24,9 @@ interface ITreasuryStorage {
         uint256 _amount
     ) external;
 
-    function updatePool(
-        address _token,
-        uint256 _amount
-    ) external returns (IPool.Pool memory);
+    function updatePool(address _token, uint256 _amount)
+        external
+        returns (IPool.Pool memory);
 
     function addUserPosition(
         address _token,
@@ -41,10 +40,7 @@ interface ITreasuryStorage {
         uint256 _amount
     ) external;
 
-    function setUserDebt(
-        address _token,
-        address _user
-    ) external;
+    function setUserDebt(address _token, address _user) external;
 
     function loan(
         address _token,

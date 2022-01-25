@@ -39,7 +39,7 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
-      "lastModificationDate": 1642775096306,
+      "lastModificationDate": 1643118846833,
       "contentHash": "f48de0eaae9544072b8766e2eac528a7",
       "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
@@ -185,7 +185,7 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\ERC20Capped.sol": {
-      "lastModificationDate": 1642549079345,
+      "lastModificationDate": 1643106490893,
       "contentHash": "da89e343119284763a5a135243cdb338",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol",
       "solcConfig": {
@@ -222,8 +222,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\tokens\\CreditCapitalPlatformToken.sol": {
-      "lastModificationDate": 1642653151703,
-      "contentHash": "a182203de801a243fd84af570de815ab",
+      "lastModificationDate": 1643110960406,
+      "contentHash": "2683fe67cfeabff5b88ae1e5ec76996c",
       "sourceName": "contracts/tokens/CreditCapitalPlatformToken.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -300,7 +300,7 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\node_modules\\@openzeppelin\\contracts\\access\\AccessControl.sol": {
-      "lastModificationDate": 1641347870761,
+      "lastModificationDate": 1643110234151,
       "contentHash": "79af4d35ce7918696f13f0cb6653ec99",
       "sourceName": "@openzeppelin/contracts/access/AccessControl.sol",
       "solcConfig": {
@@ -482,8 +482,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\TreasuryStorage.sol": {
-      "lastModificationDate": 1643017152005,
-      "contentHash": "0d218bcfb74100af369d13809dea6360",
+      "lastModificationDate": 1643120154511,
+      "contentHash": "4d908d30c821319e10b6942359786a40",
       "sourceName": "contracts/treasury/TreasuryStorage.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -633,8 +633,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\TreasuryFund.sol": {
-      "lastModificationDate": 1643014490693,
-      "contentHash": "508de1f7bfaa2d0537340d4a558b86d4",
+      "lastModificationDate": 1643119935091,
+      "contentHash": "11d75122adf108d7dee05fea296a01e1",
       "sourceName": "contracts/treasury/TreasuryFund.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -674,8 +674,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\interfaces\\ITreasuryStorage.sol": {
-      "lastModificationDate": 1643006513957,
-      "contentHash": "d58571296202fbe87e820c9fd1274f75",
+      "lastModificationDate": 1643119935222,
+      "contentHash": "efdd926276c9af77d50d01fafe34c23d",
       "sourceName": "interfaces/ITreasuryStorage.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -711,8 +711,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\interfaces\\IController.sol": {
-      "lastModificationDate": 1642998133718,
-      "contentHash": "d569390a9724a3d86b564729d3cc472d",
+      "lastModificationDate": 1643119935209,
+      "contentHash": "e4c84de4806ddbc9e33660b3e950ea22",
       "sourceName": "interfaces/IController.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -746,8 +746,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\RevenueController.sol": {
-      "lastModificationDate": 1643006305997,
-      "contentHash": "ef47af87277a30572a04a83c9bc7722d",
+      "lastModificationDate": 1643119935012,
+      "contentHash": "908836f4ba5ea7606e867bc0aeaeba3e",
       "sourceName": "contracts/treasury/RevenueController.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -951,8 +951,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\standard\\tokenController\\IController.sol": {
-      "lastModificationDate": 1642998133704,
-      "contentHash": "2f9a660a07e36e989a1a6cedc52f570a",
+      "lastModificationDate": 1643119934647,
+      "contentHash": "78999b1ac2d3b6bac18ed0ccfaf0c6e8",
       "sourceName": "contracts/standard/tokenController/IController.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -986,7 +986,7 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\tokens\\CAPL.sol": {
-      "lastModificationDate": 1642547642055,
+      "lastModificationDate": 1643107981105,
       "contentHash": "9ade5b40751b930341073d1185805c04",
       "sourceName": "contracts/tokens/CAPL.sol",
       "solcConfig": {
