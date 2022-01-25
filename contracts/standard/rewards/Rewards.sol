@@ -190,7 +190,7 @@ contract RewardsV2 is Pausable, AccessControl {
             }
         }
 
-        IERC20(_token).safeTransferFrom(msg.sender, vaultAddress, _amount);
+        IERC20(_token).safeTransfer(vaultAddress, _amount);
         emit Deposit(_token, msg.sender, _amount);
     }
 
@@ -282,7 +282,6 @@ contract RewardsV2 is Pausable, AccessControl {
             (amount * pool.accCaplPerShare) /
             CAPL_PRECISION;
 
-        IERC20(_token).approve(address(vault), amount);
         vault.withdraw(_token, _user, amount, newRewardDebt);
 
         emit Withdraw(_token, _user, amount);
