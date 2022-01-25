@@ -15,7 +15,7 @@ describe("Credit Capital Platform Token", async function () {
 		const cap = 10000;
 
 		// deploy token contract
-		const creditCapitalPlatformToken = await deployContract("CAPL", cap);
+		const creditCapitalPlatformToken = await deployContract("CreditCapitalPlatformToken", cap);
 
 		// get test accounts
 		[deployer, minter, normalUser] = await ethers.getSigners();

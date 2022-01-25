@@ -190,7 +190,7 @@ contract RewardsV2 is Pausable, AccessControl {
             }
         }
 
-        IERC20(_token).safeTransfer(vaultAddress, _amount);
+        IERC20(_token).safeTransferFrom(msg.sender, vaultAddress, _amount);
         emit Deposit(_token, msg.sender, _amount);
     }
 
