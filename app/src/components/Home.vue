@@ -12,6 +12,8 @@ import { useStore } from "@/store";
 const store = useStore();
 
 const connected = computed(() => store.getters.getConnected);
+// Temp hack to get this to build without errors.
+// eslint-disable-next-line no-unused-vars
 const wallet = computed(() => store.getters.getWallet);
 
 watchEffect(() => {
