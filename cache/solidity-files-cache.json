@@ -222,7 +222,7 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\tokens\\CreditCapitalPlatformToken.sol": {
-      "lastModificationDate": 1643110960406,
+      "lastModificationDate": 1643127815824,
       "contentHash": "2683fe67cfeabff5b88ae1e5ec76996c",
       "sourceName": "contracts/tokens/CreditCapitalPlatformToken.sol",
       "solcConfig": {
@@ -826,7 +826,7 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\standard\\rewards\\Rewards.sol": {
-      "lastModificationDate": 1643134119151,
+      "lastModificationDate": 1643134169155,
       "contentHash": "75c14f2e26387b4a312eb8e68e684ec7",
       "sourceName": "contracts/standard/rewards/Rewards.sol",
       "solcConfig": {
