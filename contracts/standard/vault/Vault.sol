@@ -96,6 +96,7 @@ contract Vault is AccessControl, Pausable {
             delete stakes[i];
         }
 
+        IERC20(_token).approve(address(this), _amount);
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
 
         emit Withdraw(_user, _token, _amount);
@@ -311,6 +312,7 @@ contract Vault is AccessControl, Pausable {
         require(_amount > 0 && pool.totalPooled >= _amount);
 
         // withdraw the token to user wallet
+        IERC20(_token).approve(address(this), _amount);
         IERC20(_token).safeTransferFrom(address(this), _destination, _amount);
 
         // update the pooled amount
