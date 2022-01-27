@@ -1,6 +1,12 @@
 <template>
   <div class="navigation">
     <div class="nav-inner-wrap">
+      <router-link to="/">Home</router-link>
+      <router-link to="dashboard">Dashboard</router-link>
+      <router-link to="stake">Stake/Unstake</router-link>
+      <router-link to="reward">Rewards</router-link>
+      <router-link to="swap">Swap/Liquidity</router-link>
+      <router-link to="treasury">Treasury</router-link>
       <button class="connectButton" @click="connectWeb3">
         {{ buttonString }}
       </button>
@@ -88,7 +94,8 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 25%;
+  z-index: 2;
+  width: 100%;
 }
 .navlink {
   color: #e0e1e4;
