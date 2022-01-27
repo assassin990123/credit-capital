@@ -99,8 +99,13 @@ const DEPLOYED_ADDRESS: {[key: string]: any} = {
   },
 };
 
-const RPC_URL = DEPLOYED_ADDRESS[NETWORK_TYPE]['RPC_URL'];
-const CHAIN_ID = DEPLOYED_ADDRESS[NETWORK_TYPE]['CHAIN_ID'];
+
+export const getAddress = (contractName: string) => {
+  return DEPLOYED_ADDRESS[NETWORK_TYPE][contractName];
+}
+
+const RPC_URL = getAddress('RPC_URL');
+const CHAIN_ID = getAddress('CHAIN_ID');
 
 export const walletLink = new WalletLink({
   appName: 'Credit Capital',
@@ -125,32 +130,32 @@ export const getContracts = (walletType: any) => {
       break
   }
 
-  const ERC20Mock = new web3.eth.Contract(ERC20MockABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['ERC20MOCK']);
-  const VaultMock = new web3.eth.Contract(VaultMockABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['VaultMock']);
+  const ERC20Mock = new web3.eth.Contract(ERC20MockABI as AbiItem[], getAddress('ERC20MOCK'));
+  const VaultMock = new web3.eth.Contract(VaultMockABI as AbiItem[], getAddress('VaultMock'));
 
-  const RewardsIController = new web3.eth.Contract(RewardsIControllerABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['RewardsIController']);
-  const RewardsIVault = new web3.eth.Contract(RewardsIVaultABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['IVault']);
-  const RewardsReqardsV2 = new web3.eth.Contract(RewardsReqardsV2ABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['RewardsV2']);
+  const RewardsIController = new web3.eth.Contract(RewardsIControllerABI as AbiItem[], getAddress('RewardsIController'));
+  const RewardsIVault = new web3.eth.Contract(RewardsIVaultABI as AbiItem[], getAddress('IVault'));
+  const RewardsReqardsV2 = new web3.eth.Contract(RewardsReqardsV2ABI as AbiItem[], getAddress('RewardsV2'));
 
-  const TokenIController = new web3.eth.Contract(TokenIControllerABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['TokenIController']);
+  const TokenIController = new web3.eth.Contract(TokenIControllerABI as AbiItem[], getAddress('TokenIController'));
 
-  const TokenController = new web3.eth.Contract(TokenControllerABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['TokenController']);
-  const TokenICAPL = new web3.eth.Contract(TokenICAPLABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['TokenICAPL']);
+  const TokenController = new web3.eth.Contract(TokenControllerABI as AbiItem[], getAddress('TokenController'));
+  const TokenICAPL = new web3.eth.Contract(TokenICAPLABI as AbiItem[], getAddress('TokenICAPL'));
 
-  const Vault = new web3.eth.Contract(VaultABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['Vault']);
+  const Vault = new web3.eth.Contract(VaultABI as AbiItem[], getAddress('Vault'));
 
-  const CreditCapitalPlatformToken = new web3.eth.Contract(CreditCapitalPlatformTokenABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['CreditCapitalPlatformToken']);
-  const CAPL = new web3.eth.Contract(CAPLABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['CAPL']);
-  const CAPLERC20 = new web3.eth.Contract(CAPLERC20ABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['CAPLERC20']);
-  const CAPLIERC20 = new web3.eth.Contract(CAPLIERC20ABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['CAPLIERC20']);
-  const CAPLIERC20Metadata = new web3.eth.Contract(CAPLIERC20MetadataABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['CAPLIERC20Metadata']);
-  const CAPLOwnable = new web3.eth.Contract(CAPLOwnableABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['CAPLOwnable']);
+  const CreditCapitalPlatformToken = new web3.eth.Contract(CreditCapitalPlatformTokenABI as AbiItem[], getAddress('CreditCapitalPlatformToken'));
+  const CAPL = new web3.eth.Contract(CAPLABI as AbiItem[], getAddress('CAPL'));
+  const CAPLERC20 = new web3.eth.Contract(CAPLERC20ABI as AbiItem[], getAddress('CAPLERC20'));
+  const CAPLIERC20 = new web3.eth.Contract(CAPLIERC20ABI as AbiItem[], getAddress('CAPLIERC20'));
+  const CAPLIERC20Metadata = new web3.eth.Contract(CAPLIERC20MetadataABI as AbiItem[], getAddress('CAPLIERC20Metadata'));
+  const CAPLOwnable = new web3.eth.Contract(CAPLOwnableABI as AbiItem[], getAddress('CAPLOwnable'));
 
-  const RevenueController = new web3.eth.Contract(RevenueControllerABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['RevenueController']);
-  const TreasuryFund = new web3.eth.Contract(TreasuryFundABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['TreasuryFund']);
+  const RevenueController = new web3.eth.Contract(RevenueControllerABI as AbiItem[], getAddress('RevenueController'));
+  const TreasuryFund = new web3.eth.Contract(TreasuryFundABI as AbiItem[], getAddress('TreasuryFund'));
 
-  const TreasuryStorageItreasuryShares = new web3.eth.Contract(TreasuryStorageItreasurySharesABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['TreasuryStorageItreasuryShares']);
-  const TreasuryStorageTreasuryStorage = new web3.eth.Contract(TreasuryStorageTreasuryStorageABI as AbiItem[], DEPLOYED_ADDRESS[NETWORK_TYPE]['TreasuryStorageTreasuryStorage']);
+  const TreasuryStorageItreasuryShares = new web3.eth.Contract(TreasuryStorageItreasurySharesABI as AbiItem[], getAddress('TreasuryStorageItreasuryShares'));
+  const TreasuryStorageTreasuryStorage = new web3.eth.Contract(TreasuryStorageTreasuryStorageABI as AbiItem[], getAddress('TreasuryStorageTreasuryStorage'));
 
 
   return {
