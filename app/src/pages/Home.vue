@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import Stake from "./Stake.vue";
+import Stake from "@/components/Stake.vue";
 import { computed, watchEffect } from "vue";
 import { useStore } from "@/store";
 
