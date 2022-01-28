@@ -69,12 +69,11 @@ contract TreasuryStorage is AccessControl {
         unlockedAmount = userPosition.totalAmount - userPosition.loanedAmount;
     }
 
+    /**
+        This function get the total amount of the access token that the storage has.
+     */
     function getTokenSupply(address _token) external view returns (uint256) {
         return IERC20(_token).balanceOf(address(this));
-    }
-
-    function getPool(address _token) public view returns (Pool memory) {
-        return Pools[_token];
     }
 
     function getUserPosition(address _token, address _user)
@@ -127,37 +126,6 @@ contract TreasuryStorage is AccessControl {
         });
     }
 
-    /**
-        @dev - this function transfers _amount to the user and updates the user position to denote the loaned amount and change in contract balance.
-     */
-    function loan(
-        address _token,
-        address _user,
-        uint256 _amount
-    ) external {
-        require(
-            IERC20(_token).balanceOf(address(this)) > _amount,
-            "The amount exceed the treasury balance."
-        );
-
-        UserPosition storage userPosition = UserPositions[_user][_token];
-        userPosition.loanedAmount += _amount;
-
-        IERC20(_token).approve(address(this), _amount);
-        IERC20(_token).safeTransferFrom(address(this), _user, _amount);
-    }
-
-    function returnPrincipal(
-        address _user,
-        address _token,
-        uint256 _principal
-    ) external onlyRole(REVENUE_CONTROLLER) {
-        // get the userposition
-        UserPosition storage userPosition = UserPositions[_user][_token];
-        userPosition.loanedAmount -= _principal;
-        userPosition.totalAmount += _principal;
-    }
-
     function withdraw(
         address _token,
         address _user,
@@ -181,6 +149,38 @@ contract TreasuryStorage is AccessControl {
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
     }
 
+    /**
+        @dev - this function transfers _amount to the user and updates the user position to denote the loaned amount and change in contract balance.
+     */
+    function loan(
+        address _token,
+        address _user,
+        uint256 _amount
+    ) external {
+        require(
+            getUnlockedAmount(_token, _user) > _amount,
+            "The amount exceed the treasury balance."
+        );
+
+        UserPosition storage userPosition = UserPositions[_user][_token];
+        userPosition.loanedAmount += _amount;
+        userPosition.totalAmount -= _amount;
+
+        IERC20(_token).approve(address(this), _amount);
+        IERC20(_token).safeTransferFrom(address(this), _user, _amount);
+    }
+
+    function returnPrincipal(
+        address _user,
+        address _token,
+        uint256 _principal
+    ) external onlyRole(REVENUE_CONTROLLER) {
+        // get the userposition
+        UserPosition storage userPosition = UserPositions[_user][_token];
+        userPosition.loanedAmount -= _principal;
+        userPosition.totalAmount += _principal;
+    }
+
     function setUserPosition(
         address _token,
         address _user,
@@ -189,6 +189,7 @@ contract TreasuryStorage is AccessControl {
     ) external onlyRole(REVENUE_CONTROLLER) {
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.profit += _profit;
+        userPosition.totalAmount += _profit;
         userPosition.lastAllocRequestBlock = _lastAllockRequetBlock;
     }
 

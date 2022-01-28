@@ -54,10 +54,10 @@ contract RevenueController is AccessControl {
     }
 
     /**
-        @dev - this function calculates the amount of CAPL to distribute to the treasury storage contract:
-             -  current CAPL balance / 30 days = transfer amount.
+        @dev - this function calculates the amount of access token to distribute to the treasury storage contract:
+             -  current access token balance / blocksPerDay * 30 days = transfer amount.
      */
-    function getTokenAlloc(address _token) external {
+    function getTokenAlloc(address _token) external view returns (uint256) {
         // get the access token balance
         uint256 balance = IERC20(_token).balanceOf(address(this));
         // get the user position
@@ -68,9 +68,20 @@ contract RevenueController is AccessControl {
         // get amount per block
         uint256 allocPerBlock = balance / (blocksPerDay * 30);
         // get passed block count for calcualtion of distribution
-        uint256 allocBlocks = block.number - userPosition.lastAllocRequestBlock;
+        uint256 passedBlocks = block.number -
+            userPosition.lastAllocRequestBlock;
         // get total amount to distribute
-        uint256 allocAmount = allocPerBlock * allocBlocks;
+        uint256 allocAmount = allocPerBlock * passedBlocks;
+
+        // returns the distribution amount to the user
+        return allocAmount;
+    }
+
+    /**
+        This function returns the allocAmount calculated to distribute to the treasury storage
+     */
+    function distributeTokenAlloc(address _token) external {
+        uint256 allocAmount = this.getTokenAlloc(_token);
 
         // update user state(in this case - the profit) in the storage
         ITreasuryStorage(treasuryStorage).setUserPosition(
@@ -87,6 +98,22 @@ contract RevenueController is AccessControl {
             treasuryStorage,
             allocAmount
         );
+    }
+
+    /**
+        @dev - this function gets the total amount of access tokens in the treasury storage.
+             - then, the liquidity pool is read (CAPL-USDC) and a USD value is determined.
+     */
+    function getTotalManagedValue()
+        external
+        returns (uint256 totalManagedValue)
+    {
+        totalManagedValue = 0;
+
+        for (uint256 i = 0; i < accessTokens.length; i++) {
+            totalManagedValue += ITreasuryStorage(treasuryStorage)
+                .getTokenSupply(accessTokens[i]);
+        }
     }
 
     /**
