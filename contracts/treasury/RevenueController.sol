@@ -20,7 +20,7 @@ contract RevenueController is AccessControl {
     address[] accessTokens;
 
     // block counts per day
-    uint256 blocksPerDay = 43200;
+    uint256 blocksPerDay = 1 days / 6; // this value comes from a block in polygon chain is generated every 6 seconds.
     
     // last alloc block per each access token
     mapping(address => uint256) LastRequestedBlocks; 
