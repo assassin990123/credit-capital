@@ -15,20 +15,17 @@ contract RevenueController is AccessControl {
     // treasury storage contract, similar to the vault contract.
     // all principal must go back to the treasury, profit stays here.
     address treasuryStorage;
-    
+
     // tokens allowed to be deposited into the treasury, must be updatable
     address[] accessTokens;
 
     // block counts per day
     uint256 blocksPerDay = 1 days / 6; // this value comes from a block in polygon chain is generated every 6 seconds.
-    
+
     // last alloc block per each access token
-    mapping(address => uint256) LastRequestedBlocks; 
-    
-    constructor(
-        address _capl,
-        address _treasuryStorage
-    ) {
+    mapping(address => uint256) LastRequestedBlocks;
+
+    constructor(address _capl, address _treasuryStorage) {
         capl = IERC20(_capl);
         treasuryStorage = _treasuryStorage;
     }
@@ -63,18 +60,33 @@ contract RevenueController is AccessControl {
     function getTokenAlloc(address _token) external {
         // get the access token balance
         uint256 balance = IERC20(_token).balanceOf(address(this));
+        // get the user position
+        IUserPositions.UserPosition memory userPosition = ITreasuryStorage(
+            treasuryStorage
+        ).getUserPosition(_token, msg.sender);
 
         // get amount per block
         uint256 allocPerBlock = balance / (blocksPerDay * 30);
         // get passed block count for calcualtion of distribution
-        uint256 allocBlocks = block.number - LastRequestedBlocks[_token];
+        uint256 allocBlocks = block.number - userPosition.lastAllocRequestBlock;
         // get total amount to distribute
         uint256 allocAmount = allocPerBlock * allocBlocks;
 
         // update user state(in this case - the profit) in the storage
-        ITreasuryStorage(treasuryStorage).setUserPosition(_token, msg.sender, allocAmount);
+        ITreasuryStorage(treasuryStorage).setUserPosition(
+            _token,
+            msg.sender,
+            allocAmount,
+            block.number
+        );
+
         // get the distributable access token amount
-        IERC20(_token).safeTransferFrom(address(this), treasuryStorage, allocAmount);
+        IERC20(_token).approve(address(this), allocAmount);
+        IERC20(_token).safeTransferFrom(
+            address(this),
+            treasuryStorage,
+            allocAmount
+        );
     }
 
     /**
