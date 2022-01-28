@@ -64,12 +64,12 @@ contract RevenueController is AccessControl {
         IUserPositions.UserPosition memory userPosition = ITreasuryStorage(
             treasuryStorage
         ).getUserPosition(_token, msg.sender);
-
-        // get amount per block
-        uint256 allocPerBlock = balance / (blocksPerDay * 30);
         // get passed block count for calcualtion of distribution
         uint256 passedBlocks = block.number -
             userPosition.lastAllocRequestBlock;
+
+        // get amount per block
+        uint256 allocPerBlock = balance / (blocksPerDay * 30 + passedBlocks);
         // get total amount to distribute
         uint256 allocAmount = allocPerBlock * passedBlocks;
 
