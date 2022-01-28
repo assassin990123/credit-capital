@@ -30,7 +30,9 @@ interface ITreasuryStorage {
         uint256 _lastRequestBlock
     ) external;
 
-    function setUserDebt(address _token, address _user) external;
+    function updatePool(address _token, uint256 _allocAmount)
+        external
+        returns (IPool.Pool memory);
 
     function loan(
         address _token,

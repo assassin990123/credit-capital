@@ -9,29 +9,6 @@
           "internalType": "address",
           "name": "_token",
           "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_user",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_totalAmount",
-          "type": "uint256"
-        }
-      ],
-      "name": "addUserPosition",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
         }
       ],
       "name": "checkIfPoolExists",
@@ -185,23 +162,18 @@
             },
             {
               "internalType": "uint256",
-              "name": "rewardDebt",
+              "name": "loanedAmount",
               "type": "uint256"
             },
             {
               "internalType": "uint256",
-              "name": "userLastWithdrawnStakeIndex",
+              "name": "profit",
               "type": "uint256"
             },
             {
-              "internalType": "bool",
-              "name": "staticLock",
-              "type": "bool"
-            },
-            {
-              "internalType": "bool",
-              "name": "autocompounding",
-              "type": "bool"
+              "internalType": "uint256",
+              "name": "lastAllocRequestBlock",
+              "type": "uint256"
             }
           ],
           "internalType": "struct IUserPositions.UserPosition",
@@ -269,28 +241,15 @@
           "internalType": "address",
           "name": "_user",
           "type": "address"
-        }
-      ],
-      "name": "setUserDebt",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_user",
-          "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "_amount",
+          "name": "_profit",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_lastRequestBlock",
           "type": "uint256"
         }
       ],
@@ -308,7 +267,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_amount",
+          "name": "_allocAmount",
           "type": "uint256"
         }
       ],

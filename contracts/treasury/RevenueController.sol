@@ -91,6 +91,9 @@ contract RevenueController is AccessControl {
             block.number
         );
 
+        // update the pool state
+        ITreasuryStorage(treasuryStorage).updatePool(_token, allocAmount);
+
         // get the distributable access token amount
         IERC20(_token).approve(address(this), allocAmount);
         IERC20(_token).safeTransferFrom(

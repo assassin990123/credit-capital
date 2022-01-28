@@ -162,9 +162,13 @@ contract TreasuryStorage is AccessControl {
             "The amount exceed the treasury balance."
         );
 
+        // update user state
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.loanedAmount += _amount;
         userPosition.totalAmount -= _amount;
+
+        // update the total amount of the access token pooled
+        Pools[_token].totalPooled -= _amount;
 
         IERC20(_token).approve(address(this), _amount);
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
@@ -179,6 +183,9 @@ contract TreasuryStorage is AccessControl {
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.loanedAmount -= _principal;
         userPosition.totalAmount += _principal;
+
+        // update pool's access token amount
+        Pools[_token].totalPooled += _principal;
     }
 
     function setUserPosition(
@@ -191,6 +198,17 @@ contract TreasuryStorage is AccessControl {
         userPosition.profit += _profit;
         userPosition.totalAmount += _profit;
         userPosition.lastAllocRequestBlock = _lastAllockRequetBlock;
+    }
+
+    function updatePool(address _token, uint256 _allocAmount)
+        external
+        onlyRole(REVENUE_CONTROLLER)
+        returns (Pool memory)
+    {
+        Pool storage pool = Pools[_token];
+        pool.totalPooled += _allocAmount;
+
+        return pool;
     }
 
     function mintTreasuryShares(address _destination, uint256 _amount)
