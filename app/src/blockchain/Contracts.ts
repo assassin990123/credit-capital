@@ -3,6 +3,8 @@ import WalletLink from 'walletlink'
 import { AbiItem } from 'web3-utils'
 
 import CAPLABI from "./ABI/CAPL.json";
+import VaultABI from "./ABI/Vault.json";
+import RewardsABI from "./ABI/Rewards.json";
 
 const NETWORK_TYPE = process.env.VUE_APP_NETWORK ? process.env.VUE_APP_NETWORK : "mainnet" ;
 
@@ -12,12 +14,16 @@ const DEPLOYED_ADDRESS: {[key: string]: any} = {
     CHAIN_ID: "4",
 
     CAPL: "0xe6264813D43Ef97cCE76E66be873040eBe9be09A",
+    Vault: "0x450534E9F3B431d192BE70B4bEbE57C54583c438",
+    Rewards: "0xDF9a85C7F10F5845399113c62543Cfa5DadE7482"
   },
   "mainnet": {
     RPC_URL: "https://polygon-rpc.com/",
     CHAIN_ID: "137",
 
     CAPL: "",
+    Vault: "",
+    Rewards: ""
   },
 };
 
@@ -61,9 +67,13 @@ export const getContracts = (walletType: any) => {
   }
 
   const CAPL = new web3.eth.Contract(CAPLABI as AbiItem[], getAddress('CAPL'));
+  const Vault = new web3.eth.Contract(VaultABI as AbiItem[], getAddress('Vault'));
+  const Rewards = new web3.eth.Contract(RewardsABI as AbiItem[], getAddress('Rewards'));
 
   return {
     web3,
-    CAPL
+    CAPL,
+    Vault,
+    Rewards
   }
 };
