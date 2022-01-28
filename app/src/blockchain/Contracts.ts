@@ -11,7 +11,7 @@ const DEPLOYED_ADDRESS: {[key: string]: any} = {
     RPC_URL: "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     CHAIN_ID: "4",
 
-    CAPL: "",
+    CAPL: "0xe6264813D43Ef97cCE76E66be873040eBe9be09A",
   },
   "mainnet": {
     RPC_URL: "https://polygon-rpc.com/",
