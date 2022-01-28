@@ -37,7 +37,7 @@ const DEPLOYED_ADDRESS: {[key: string]: any} = {
     RPC_URL: "https://rpc-mumbai.maticvigil.com/",
     CHAIN_ID: "80001",
     // Mocks
-    ERC20MOCK: "",
+    ERC20Mock: "",
     VaultMock: "",
     // standard/rewards
     RewardsIController: "",
@@ -69,7 +69,7 @@ const DEPLOYED_ADDRESS: {[key: string]: any} = {
     RPC_URL: "https://polygon-rpc.com/",
     CHAIN_ID: "137",
     // Mocks
-    ERC20MOCK: "",
+    ERC20Mock: "",
     VaultMock: "",
     // standard/rewards
     RewardsIController: "",
@@ -108,7 +108,7 @@ export const getAddress = (contractName: string) => {
   if (DEPLOYED_ADDRESS[NETWORK_TYPE][contractName] == undefined) {
     return false;
   }
-  
+
   return DEPLOYED_ADDRESS[NETWORK_TYPE][contractName];
 }
 
@@ -138,7 +138,7 @@ export const getContracts = (walletType: any) => {
       break
   }
 
-  const ERC20Mock = new web3.eth.Contract(ERC20MockABI as AbiItem[], getAddress('ERC20MOCK'));
+  const ERC20Mock = new web3.eth.Contract(ERC20MockABI as AbiItem[], getAddress('ERC20Mock'));
   const VaultMock = new web3.eth.Contract(VaultMockABI as AbiItem[], getAddress('VaultMock'));
 
   const RewardsIController = new web3.eth.Contract(RewardsIControllerABI as AbiItem[], getAddress('RewardsIController'));
