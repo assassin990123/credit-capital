@@ -101,6 +101,14 @@ const DEPLOYED_ADDRESS: {[key: string]: any} = {
 
 
 export const getAddress = (contractName: string) => {
+  if (DEPLOYED_ADDRESS[NETWORK_TYPE] === undefined) {
+    return false;
+  }
+
+  if (DEPLOYED_ADDRESS[NETWORK_TYPE][contractName] == undefined) {
+    return false;
+  }
+  
   return DEPLOYED_ADDRESS[NETWORK_TYPE][contractName];
 }
 
