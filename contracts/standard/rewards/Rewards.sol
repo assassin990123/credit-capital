@@ -1,4 +1,5 @@
 //SPDX-License-Identifier: UNLICENSED
+// Optimization: 1500
 pragma solidity 0.8.11;
 pragma experimental ABIEncoderV2;
 
@@ -120,7 +121,7 @@ interface IController {
     function mint(address destination, uint256 amount) external;
 }
 
-contract RewardsV2 is Pausable, AccessControl {
+contract Rewards is Pausable, AccessControl {
     using SafeERC20 for IERC20;
 
     IVault vault;
