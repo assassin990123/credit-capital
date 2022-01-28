@@ -15,17 +15,22 @@ contract RevenueController is AccessControl {
     // treasury storage contract, similar to the vault contract.
     // all principal must go back to the treasury, profit stays here.
     address treasuryStorage;
-    // treasury fund is similar to the rewards contract, it manages the logic of the treasury.
-    address treasuryFund;
+    
+    // tokens allowed to be deposited into the treasury, must be updatable
+    address[] accessTokens;
 
+    // block counts per day
+    uint256 blocksPerDay = 43200;
+    
+    // last alloc block per each access token
+    mapping(address => uint256) LastRequestedBlocks; 
+    
     constructor(
         address _capl,
-        address _treasuryStorage,
-        address _treasuryFund
+        address _treasuryStorage
     ) {
         capl = IERC20(_capl);
         treasuryStorage = _treasuryStorage;
-        treasuryFund = _treasuryFund;
     }
 
     /**
@@ -43,18 +48,33 @@ contract RevenueController is AccessControl {
             _token,
             _principal
         );
+
+        // the profit remains here
         IERC20(_token).safeTransfer(address(this), _profit);
+
+        // set the last distribution block
+        LastRequestedBlocks[_token] = block.number;
     }
 
     /**
-        @dev - this function calculates the amount of CAPL to distribute to the treasury fund contract:
+        @dev - this function calculates the amount of CAPL to distribute to the treasury storage contract:
              -  current CAPL balance / 30 days = transfer amount.
      */
-    function getCAPLAlloc() external {
-        uint256 amount = capl.balanceOf(address(this)) / 30;
+    function getTokenAlloc(address _token) external {
+        // get the access token balance
+        uint256 balance = IERC20(_token).balanceOf(address(this));
 
-        // get the distributable CAPL amount
-        capl.safeTransferFrom(address(this), treasuryFund, amount);
+        // get amount per block
+        uint256 allocPerBlock = balance / (blocksPerDay * 30);
+        // get passed block count for calcualtion of distribution
+        uint256 allocBlocks = block.number - LastRequestedBlocks[_token];
+        // get total amount to distribute
+        uint256 allocAmount = allocPerBlock * allocBlocks;
+
+        // update user state(in this case - the profit) in the storage
+        ITreasuryStorage(treasuryStorage).setUserPosition(_token, msg.sender, allocAmount);
+        // get the distributable access token amount
+        IERC20(_token).safeTransferFrom(address(this), treasuryStorage, allocAmount);
     }
 
     /**
@@ -67,12 +87,5 @@ contract RevenueController is AccessControl {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         treasuryStorage = _destination;
-    }
-
-    function setTreasuryFund(address _destination)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        treasuryFund = _destination;
     }
 }
