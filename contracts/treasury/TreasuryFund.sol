@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 // TreasurySotrage
 import "../../interfaces/ITreasuryStorage.sol";
-import "../../interfaces/IController.sol";
 
 contract TreasuryFund is AccessControl {
     using SafeERC20 for IERC20;
@@ -15,7 +14,6 @@ contract TreasuryFund is AccessControl {
     IERC20 capl;
     uint256 CAPL_PRECISION = 1e18;
 
-    IController controller;
     ITreasuryStorage TreasuryStorage;
 
     // tokens allowed to be deposited into the treasury, must be updatable

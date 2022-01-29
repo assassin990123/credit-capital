@@ -46,30 +46,6 @@
           "internalType": "address",
           "name": "_token",
           "type": "address"
-        }
-      ],
-      "name": "checkIfUserPositionExists",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_user",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
         },
         {
           "internalType": "uint256",

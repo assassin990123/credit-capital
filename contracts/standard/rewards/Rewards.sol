@@ -7,6 +7,8 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+import "../../../interfaces/ICAPL.sol";
+
 interface IVault {
     function addPool(address _token, uint256 _rewardsPerBlock) external;
 
@@ -116,20 +118,16 @@ interface IStake {
     }
 }
 
-interface IController {
-    function mint(address destination, uint256 amount) external;
-}
-
 contract RewardsV2 is Pausable, AccessControl {
     using SafeERC20 for IERC20;
+    bytes32 public constant MINTER = keccak256("MINTER");
 
     IVault vault;
     address vaultAddress;
 
+    ICAPL capl;
+
     uint256 CAPL_PRECISION = 1e18;
-
-    IController controller;
-
     uint256 timelockThreshold = 1 weeks;
 
     event Claim(address indexed _token, address indexed _user, uint256 _amount);
@@ -144,18 +142,19 @@ contract RewardsV2 is Pausable, AccessControl {
         address indexed _user,
         uint256 _amount
     );
-    event SetController(address _controller);
     event AddPool(address _token, uint256 _rewardsPerBlock);
     event WithdrawMATIC(address destination, uint256 amount);
 
     mapping(address => mapping(address => bool)) autoCompoudLocks;
 
-    constructor(address _vault) {
+    constructor(address _vault, address _capl) {
         vault = IVault(_vault);
+        capl = ICAPL(_capl);
         vaultAddress = _vault;
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(MINTER, msg.sender);
     }
 
     function deposit(address _token, uint256 _amount) external {
@@ -263,7 +262,7 @@ contract RewardsV2 is Pausable, AccessControl {
         vault.setUserDebt(_token, _user, accumulatedCapl);
 
         if (pendingCapl > 0) {
-            controller.mint(_user, pendingCapl);
+            capl.mint(_user, pendingCapl);
         }
 
         emit Claim(_token, _user, pendingCapl);
@@ -294,13 +293,6 @@ contract RewardsV2 is Pausable, AccessControl {
         returns (bool)
     {
         return _startBlock + timelockThreshold < block.number;
-    }
-
-    function setController(address _controller)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        controller = IController(_controller);
     }
 
     // fallback functions
