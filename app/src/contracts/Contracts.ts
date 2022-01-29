@@ -1,79 +1,85 @@
-import Web3 from "web3";
-import WalletLink from 'walletlink'
-import { AbiItem } from 'web3-utils'
+import { ethers } from "ethers";
+
+import { store } from "../store";
 
 import CAPLABI from "./ABI/CAPL.json";
 import VaultABI from "./ABI/Vault.json";
 import RewardsABI from "./ABI/Rewards.json";
 
 const NETWORK_TYPE = process.env.VUE_APP_NETWORK ? process.env.VUE_APP_NETWORK : "mainnet" ;
+const ChainID = process.env.VUE_APP_NETWORK_ID ? process.env.VUE_APP_NETWORK_ID : "1" ;
 
-const DEPLOYED_ADDRESS: {[key: string]: any} = {
-  "rinkeby": {
-    RPC_URL: "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
-    CHAIN_ID: "4",
 
-    CAPL: "0xe6264813D43Ef97cCE76E66be873040eBe9be09A",
-    Vault: "0x450534E9F3B431d192BE70B4bEbE57C54583c438",
-    Rewards: "0xDF9a85C7F10F5845399113c62543Cfa5DadE7482"
-  },
-  "mainnet": {
-    RPC_URL: "https://polygon-rpc.com/",
-    CHAIN_ID: "137",
 
-    CAPL: "",
-    Vault: "",
-    Rewards: ""
-  },
+const CAPLDeployments: {[key: string]: string} = {
+  1: "",
+  4: "0xe6264813D43Ef97cCE76E66be873040eBe9be09A",
 };
 
+const VaultDeployments: {[key: string]: string} = {
+  1: "",
+  4: "0x450534E9F3B431d192BE70B4bEbE57C54583c438",
+};
 
-export const getAddress = (contractName: string) => {
-  if (DEPLOYED_ADDRESS[NETWORK_TYPE] === undefined) {
-    return false;
+const RewardsDeployments: {[key: string]: string} = {
+  1: "",
+  4: "0xDF9a85C7F10F5845399113c62543Cfa5DadE7482",
+};
+
+async function connectWallet () {
+  if (store.getters.getConnected) {
+    return;
   }
 
-  if (DEPLOYED_ADDRESS[NETWORK_TYPE][contractName] == undefined) {
-    return false;
-  }
+  if (window.ethereum) {
+    const hexadecimal = '0x' + parseInt(ChainID).toString(16);
 
-  return DEPLOYED_ADDRESS[NETWORK_TYPE][contractName];
+    try {
+      // check if the chain to connect to is installed
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: hexadecimal }], // chainId must be in hexadecimal numbers
+      });
+    } catch (error: any) {
+      // This error code indicates that the chain has not been added to MetaMask
+      // if it is not, then install it into the user MetaMask
+      if (error.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: hexadecimal,
+                rpcUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+              },
+            ],
+          });
+        } catch (addError) {
+          console.error(addError);
+        }
+      }
+      console.error(error);
+    }
+  } else {
+    // if no window.ethereum then MetaMask is not installed
+    return 'MetaMask is not installed. Please consider installing it: https://metamask.io/download.html';
+  } 
 }
 
-const RPC_URL = getAddress('RPC_URL');
-const CHAIN_ID = getAddress('CHAIN_ID');
+export const CAPLContractInit = (provider: any) => {
+  connectWallet();
+  const address = CAPLDeployments[ChainID]; // refactor
+  return new ethers.Contract(address, CAPLABI, provider);
+};
 
-export const walletLink = new WalletLink({
-  appName: 'Credit Capital',
-  darkMode: true,
-})
+export const VaultContractInit = (provider: any) => {
+  connectWallet();
+  const address = VaultDeployments[ChainID]; // refactor
+  return new ethers.Contract(address, VaultABI, provider);
+};
 
-export const ethereum = walletLink.makeWeb3Provider(RPC_URL, CHAIN_ID)
-
-export const getContracts = (walletType: any) => {
-  let web3;
-
-  switch (walletType) {
-    case 'MetaMask':
-      //@ts-ignore
-      web3 = new Web3(window.ethereum)
-      break
-    case 'Coinbase':
-      web3 = new Web3(ethereum)
-      break
-    default:
-      web3 = new Web3(RPC_URL)
-      break
-  }
-
-  const CAPL = new web3.eth.Contract(CAPLABI as AbiItem[], getAddress('CAPL'));
-  const Vault = new web3.eth.Contract(VaultABI as AbiItem[], getAddress('Vault'));
-  const Rewards = new web3.eth.Contract(RewardsABI as AbiItem[], getAddress('Rewards'));
-
-  return {
-    web3,
-    CAPL,
-    Vault,
-    Rewards
-  }
+export const RewardsContractInit = (provider: any) => {
+  connectWallet();
+  const address = RewardsDeployments[ChainID]; // refactor
+  return new ethers.Contract(address, RewardsABI, provider);
 };
