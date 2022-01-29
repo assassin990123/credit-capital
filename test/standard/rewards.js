@@ -10,17 +10,16 @@ const deployContract = async (contract, params) => {
 }
 
 const deployContracts = async (deployer) => {
-  const capl = await deployContract("CAPL", [100])
+  const capl = await deployContract("CreditCapitalPlatformToken", [100])
   const vault = await deployContract("VaultMock", [null])
-  const rewards = await deployContract("RewardsV2", [vault.address])
-  const controller = await deployContract("Controller", [capl.address])
+  const rewards = await deployContract("RewardsV2", [vault.address, capl.address])
   const lp = await deployContract("ERC20Mock", ["LP", "LP", deployer.address, 1_000_000])
   // access control
   // give ownership (minting rights) of capl to the vault
   // capl.transferOwnership(vault.address)
   // grant minting rights to rewards contract
-  // vault.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('MINTER')), rewards.address)
-  return { capl, vault, rewards, controller, lp }
+  // vault.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('MINTER_ROLE')), rewards.address)
+  return { capl, vault, rewards, lp }
 }
 
 const setupAccounts = (accounts) => {
@@ -35,8 +34,9 @@ describe("Rewards Vault", function () {
     const accounts = await hre.ethers.getSigners();
     const { deployer, user, user2 } = await setupAccounts(accounts);
 
-    const { capl, vault, rewards, lp, controller } = await deployContracts(deployer)
-
+    const { capl, vault, rewards, lp } = await deployContracts(deployer) 
+    // await capl.mint(deployer.address, 100); // mint 100 CAPL
+    
     await vault.addPool(lp.address, 10)  // 10 CAPL per block
 
     // grant rewards the REWARDS role in the vault
@@ -86,12 +86,17 @@ describe("Rewards Vault", function () {
     //console.log(await rewards.connect(user).callStatic.pendingRewards(lp.address, user.address))
     //console.log(await rewards.connect(user2).callStatic.pendingRewards(lp.address, user2.address))
 
-    // set controller in rewards contract
-    await rewards.setController(controller.address)
-    // transfer ownership of capl to token controller
-    await capl.transferOwnership(controller.address)
-    // set rewards as MINTER role in controller
-    await controller.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('MINTER')), rewards.address)
+    // set rewards as MINTER_ROLE role in capl
+    await capl.grantRole(capl.MINTER_ROLE(), rewards.address.toLowerCase());
+
+    // set user as MINTER_ROLE role in rewards.
+    await rewards.grantRole(await rewards.MINTER_ROLE(), user.address.toLowerCase());
+
+    console.log(user.address.toLowerCase());
+    console.log(user2.address.toLowerCase());
+    console.log(rewards.address.toLowerCase());
+    console.log(await capl.MINTER_ROLE());
+    console.log(await rewards.MINTER_ROLE());
 
     expect(await rewards.connect(user).claim(lp.address, user.address)).to.emit(rewards, "Claim").withArgs(lp.address, user.address, 63)
     expect(await rewards.connect(user).claim(lp.address, user2.address)).to.emit(rewards, "Claim").withArgs(lp.address, user2.address, 19)
