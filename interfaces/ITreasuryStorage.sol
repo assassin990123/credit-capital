@@ -30,6 +30,8 @@ interface ITreasuryStorage {
         uint256 _lastRequestBlock
     ) external;
 
+    function addPool(address _token) external;
+
     function updatePool(address _token, uint256 _allocAmount)
         external
         returns (IPool.Pool memory);

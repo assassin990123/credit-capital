@@ -12,6 +12,8 @@ contract RevenueController is AccessControl {
     using SafeERC20 for IERC20;
 
     IERC20 capl;
+
+    ITreasuryStorage TreasuryStorage;
     // treasury storage contract, similar to the vault contract.
     // all principal must go back to the treasury, profit stays here.
     address treasuryStorage;
@@ -25,9 +27,58 @@ contract RevenueController is AccessControl {
     // last alloc block per each access token
     mapping(address => uint256) LastRequestedBlocks;
 
+    event Deposit(address indexed _token, address _user, uint256 _amount);
+    event PoolUpdated(address indexed _token, uint256 _amount);
+    event PoolAdded(address indexed _token);
+    event DistributeTokenAlloc(
+        address indexed _token,
+        address indexed _user,
+        uint256 _amount
+    );
+    event Withdraw(
+        address indexed _token,
+        address indexed _user,
+        uint256 _amount
+    );
+
     constructor(address _capl, address _treasuryStorage) {
         capl = IERC20(_capl);
         treasuryStorage = _treasuryStorage;
+    }
+
+    /**
+        @dev - this function deposits eligible token amounts to the treasury storage, updating the corresponding storage state (to be implemented)
+     */
+    function deposit(address _token, uint256 _amount) external {
+        TreasuryStorage = ITreasuryStorage(treasuryStorage);
+
+        require(
+            TreasuryStorage.checkIfPoolExists(_token),
+            "Pool does not exist"
+        );
+
+        // update pool to current block
+        updatePool(_token, _amount);
+
+        TreasuryStorage.deposit(msg.sender, _token, _amount);
+        accessTokens.push(_token);
+
+        emit Deposit(_token, msg.sender, _amount);
+    }
+
+    function addPool(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        ITreasuryStorage(treasuryStorage).addPool(_token);
+    }
+
+    function updatePool(address _token, uint256 _amount)
+        internal
+        returns (IPool.Pool memory pool)
+    {
+        TreasuryStorage = ITreasuryStorage(treasuryStorage);
+        IPool.Pool memory npool = TreasuryStorage.updatePool(_token, _amount);
+
+        emit PoolUpdated(_token, _amount);
+        return npool;
     }
 
     /**
@@ -39,6 +90,9 @@ contract RevenueController is AccessControl {
         uint256 _principal,
         uint256 _profit
     ) external {
+        // update pool info
+        ITreasuryStorage(treasuryStorage).updatePool(_token, _principal);
+
         // call the treasuryStorage's returnPrincipal function
         ITreasuryStorage(treasuryStorage).returnPrincipal(
             msg.sender,
@@ -46,11 +100,29 @@ contract RevenueController is AccessControl {
             _principal
         );
 
+        // set the last distribution block
+        // update user state(in this case - the profit) in the storage
+        ITreasuryStorage(treasuryStorage).setUserPosition(
+            _token,
+            msg.sender,
+            0,
+            block.number
+        );
+
         // the profit remains here
         IERC20(_token).safeTransfer(address(this), _profit);
+    }
 
-        // set the last distribution block
-        LastRequestedBlocks[_token] = block.number;
+    /**
+        @dev - this funciton withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
+     */
+    function withdraw(address _token) external {
+        uint256 amount = TreasuryStorage.getUnlockedAmount(_token, msg.sender);
+
+        IERC20(_token).approve(address(TreasuryStorage), amount);
+        TreasuryStorage.withdraw(_token, msg.sender, amount);
+
+        emit Withdraw(_token, msg.sender, amount);
     }
 
     /**
@@ -101,6 +173,8 @@ contract RevenueController is AccessControl {
             treasuryStorage,
             allocAmount
         );
+
+        emit DistributeTokenAlloc(_token, msg.sender, allocAmount);
     }
 
     /**

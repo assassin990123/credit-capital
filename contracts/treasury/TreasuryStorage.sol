@@ -97,10 +97,6 @@ contract TreasuryStorage is AccessControl {
             "Pool does not exist"
         );
 
-        // update pool info
-        Pool storage pool = Pools[_token];
-        pool.totalPooled += _amount;
-
         if (!this.checkIfUserPositionExists(_user, _token)) {
             addUserPosition(_token, _user, _amount);
         } else {
@@ -111,19 +107,6 @@ contract TreasuryStorage is AccessControl {
 
         IERC20(_token).approve(_user, _amount);
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
-    }
-
-    function addUserPosition(
-        address _token,
-        address _user,
-        uint256 _totalAmount
-    ) internal {
-        UserPositions[_user][_token] = UserPosition({
-            totalAmount: _totalAmount,
-            loanedAmount: 0,
-            profit: 0,
-            lastAllocRequestBlock: block.number
-        });
     }
 
     function withdraw(
@@ -183,9 +166,19 @@ contract TreasuryStorage is AccessControl {
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.loanedAmount -= _principal;
         userPosition.totalAmount += _principal;
+    }
 
-        // update pool's access token amount
-        Pools[_token].totalPooled += _principal;
+    function addUserPosition(
+        address _token,
+        address _user,
+        uint256 _totalAmount
+    ) internal {
+        UserPositions[_user][_token] = UserPosition({
+            totalAmount: _totalAmount,
+            loanedAmount: 0,
+            profit: 0,
+            lastAllocRequestBlock: block.number
+        });
     }
 
     function setUserPosition(
@@ -200,13 +193,19 @@ contract TreasuryStorage is AccessControl {
         userPosition.lastAllocRequestBlock = _lastAllockRequetBlock;
     }
 
-    function updatePool(address _token, uint256 _allocAmount)
+    function addPool(address _token) external onlyRole(REVENUE_CONTROLLER) {
+        require(!checkIfPoolExists(_token), "This pool already exists.");
+
+        Pools[_token] = Pool({totalPooled: 0});
+    }
+
+    function updatePool(address _token, uint256 _amount)
         external
         onlyRole(REVENUE_CONTROLLER)
         returns (Pool memory)
     {
         Pool storage pool = Pools[_token];
-        pool.totalPooled += _allocAmount;
+        pool.totalPooled += _amount;
 
         return pool;
     }

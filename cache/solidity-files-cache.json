@@ -482,8 +482,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\TreasuryStorage.sol": {
-      "lastModificationDate": 1643380872749,
-      "contentHash": "1fa9cb0267b84b2e2af7469f659c1d5f",
+      "lastModificationDate": 1643421325738,
+      "contentHash": "0c5240a6e606bef705597cd2710546ee",
       "sourceName": "contracts/treasury/TreasuryStorage.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -633,7 +633,7 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\TreasuryFund.sol": {
-      "lastModificationDate": 1643380561959,
+      "lastModificationDate": 1643421248852,
       "contentHash": "e7d0634a872571e95d74ea54e8d8a269",
       "sourceName": "contracts/treasury/TreasuryFund.sol",
       "solcConfig": {
@@ -674,8 +674,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\interfaces\\ITreasuryStorage.sol": {
-      "lastModificationDate": 1643380872779,
-      "contentHash": "64c66b794674b94942b1e10606b6e7d0",
+      "lastModificationDate": 1643421600840,
+      "contentHash": "10dc0bc017bce94e7938d0c4ddcbb339",
       "sourceName": "interfaces/ITreasuryStorage.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -746,8 +746,8 @@
       ]
     },
     "D:\\works\\Blockchain\\DEFI-DEX\\Graham\\cc-rewards-vault-contracts\\contracts\\treasury\\RevenueController.sol": {
-      "lastModificationDate": 1643380872503,
-      "contentHash": "289971d7cc286190ab7a6c826cdc9490",
+      "lastModificationDate": 1643421694335,
+      "contentHash": "f477eb115c324aba47385240d759113e",
       "sourceName": "contracts/treasury/RevenueController.sol",
       "solcConfig": {
         "version": "0.8.11",
