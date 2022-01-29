@@ -129,19 +129,19 @@ contract RevenueController is AccessControl {
         @dev - this function calculates the amount of access token to distribute to the treasury storage contract:
              -  current access token balance / blocksPerDay * 30 days = transfer amount.
      */
-    function getTokenAlloc(address _token) external view returns (uint256) {
+    function getTokenAlloc(address _token) public view returns (uint256) {
         // get the access token balance
         uint256 balance = IERC20(_token).balanceOf(address(this));
         // get the user position
         IUserPositions.UserPosition memory userPosition = ITreasuryStorage(
             treasuryStorage
         ).getUserPosition(_token, msg.sender);
-
-        // get amount per block
-        uint256 allocPerBlock = balance / (blocksPerDay * 30);
         // get passed block count for calcualtion of distribution
         uint256 passedBlocks = block.number -
             userPosition.lastAllocRequestBlock;
+
+        // get amount per block
+        uint256 allocPerBlock = balance / (blocksPerDay * 30 + passedBlocks);
         // get total amount to distribute
         uint256 allocAmount = allocPerBlock * passedBlocks;
 
@@ -153,7 +153,7 @@ contract RevenueController is AccessControl {
         This function returns the allocAmount calculated to distribute to the treasury storage
      */
     function distributeTokenAlloc(address _token) external {
-        uint256 allocAmount = this.getTokenAlloc(_token);
+        uint256 allocAmount = getTokenAlloc(_token);
 
         // update user state(in this case - the profit) in the storage
         ITreasuryStorage(treasuryStorage).setUserPosition(
@@ -177,20 +177,11 @@ contract RevenueController is AccessControl {
         emit DistributeTokenAlloc(_token, msg.sender, allocAmount);
     }
 
-    /**
-        @dev - this function gets the total amount of access tokens in the treasury storage.
-             - then, the liquidity pool is read (CAPL-USDC) and a USD value is determined.
-     */
-    function getTotalManagedValue()
+    function getTotalManagedValue(address _token)
         external
         returns (uint256 totalManagedValue)
     {
-        totalManagedValue = 0;
-
-        for (uint256 i = 0; i < accessTokens.length; i++) {
-            totalManagedValue += ITreasuryStorage(treasuryStorage)
-                .getTokenSupply(accessTokens[i]);
-        }
+        totalManagedValue = ITreasuryStorage(treasuryStorage).getTokenSupply(_token);
     }
 
     /**
