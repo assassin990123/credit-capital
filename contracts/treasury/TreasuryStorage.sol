@@ -97,7 +97,7 @@ contract TreasuryStorage is AccessControl {
             "Pool does not exist"
         );
 
-        if (!this.checkIfUserPositionExists(_user, _token)) {
+        if (!checkIfUserPositionExists(_user, _token)) {
             addUserPosition(_token, _user, _amount);
         } else {
             // update userPosition

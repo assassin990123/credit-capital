@@ -181,7 +181,9 @@ contract RevenueController is AccessControl {
         external
         returns (uint256 totalManagedValue)
     {
-        totalManagedValue = ITreasuryStorage(treasuryStorage).getTokenSupply(_token);
+        totalManagedValue = ITreasuryStorage(treasuryStorage).getTokenSupply(
+            _token
+        );
     }
 
     /**

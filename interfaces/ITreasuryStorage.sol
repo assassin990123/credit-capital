@@ -69,8 +69,4 @@ interface ITreasuryStorage {
         returns (uint256);
 
     function checkIfPoolExists(address _token) external returns (bool);
-
-    function checkIfUserPositionExists(address _user, address _token)
-        external
-        returns (bool);
 }
