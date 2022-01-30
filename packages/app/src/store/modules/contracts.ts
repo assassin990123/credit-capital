@@ -53,9 +53,9 @@ const actions = {
     let balance = await caplContract.methods.balanceOf(address);
 
     // parse balance, set new value in the local state
-    commit("setCAPLBalance", balance);
+    commit("setCAPLBalance", ethers.utils.formatUnits(balance, 18));
   }
-  
+
 };
 
 const mutations = {
