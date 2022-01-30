@@ -1,27 +1,26 @@
-# vue-web3-skeleton
+## Frontend docs
 
-## Project setup
-```
-npm install
-```
+## development
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+You can run two variations to get started. If you are also working on the smart contracts, run this:
 
-### Compiles and minifies for production
 ```
-npm run build
+#main directory
+yarn build && yarn serve
 ```
 
-### Lints and fixes files
+Otherwise,
 ```
-npm run lint
+#app directory
+yarn && yarn serve
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Check out the ``app`` repository. In there you will find scaffolding for our app.
 
-### CI
-[Dev Deployment](https://creditcapital.netlify.app/)
+The stack is ``vue3``, ``typescript``, ``vuex``, ``web3``, ``web3modal``, ``ethers`` and several wallet provider librarires.
+
+### features
+
+Multi wallet support - check out ``app/src/utils`` to understand ``web3modal`` and how it interacts with the store.
+
+Testnet support - check out ``env.example``. In there, we can set the ``VUE_APP_NETWORK`` easily.
