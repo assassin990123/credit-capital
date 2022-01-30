@@ -10,16 +10,9 @@ const deployContract = async (contract, params) => {
 }
 
 const deployContracts = async (deployer) => {
-<<<<<<< HEAD:test/standard/deposit.js
   const capl = await deployContract("CreditCapitalPlatformToken", [100])
   const vault = await deployContract("Vault", [null])
   const rewards = await deployContract("RewardsV2", [vault.address, capl.address])
-=======
-  const capl = await deployContract("CAPL", 100)
-  const vault = await deployContract("Vault", null)
-  const rewards = await deployContract("Rewards", vault.address)
-  const controller = await deployContract("Controller", capl.address)
->>>>>>> dev:packages/solidity/test/standard/deposit.js
   // access control
   // give ownership (minting rights) of capl to the vault
   // capl.transferOwnership(vault.address)
@@ -39,6 +32,7 @@ describe("Rewards Vault", function () {
   it("Deploy a new pool", async function () {
     // will need to test access control in the future
     const { capl, vault } = await deployContracts()
+    console.log("test");
 
     // await capl.mint(deployer.address, 100); // mint 100 CAPL
     await vault.addPool(capl.address, 10)  // 10 CAPL per block

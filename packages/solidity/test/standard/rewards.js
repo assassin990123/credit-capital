@@ -35,6 +35,8 @@ describe("Rewards Vault", function () {
     const { deployer, user, user2 } = await setupAccounts(accounts);
 
     const { capl, vault, rewards, lp } = await deployContracts(deployer) 
+    console.log("test");
+
     // await capl.mint(deployer.address, 100); // mint 100 CAPL
     
     await vault.addPool(lp.address, 10)  // 10 CAPL per block

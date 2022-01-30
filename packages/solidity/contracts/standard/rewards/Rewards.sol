@@ -119,15 +119,7 @@ interface IStake {
     }
 }
 
-<<<<<<< HEAD:contracts/standard/rewards/Rewards.sol
 contract RewardsV2 is Pausable, AccessControl {
-=======
-interface IController {
-    function mint(address destination, uint256 amount) external;
-}
-
-contract Rewards is Pausable, AccessControl {
->>>>>>> dev:packages/solidity/contracts/standard/rewards/Rewards.sol
     using SafeERC20 for IERC20;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
