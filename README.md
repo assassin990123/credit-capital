@@ -4,20 +4,22 @@ The frontend can be found here: ``packages/app``
 The backend can be found here ``packages/solidity``
 
 ### Development
-first, bootstrap the repository
+- first, bootstrap the repository
 
-``yarn bootstrap``
+``yarn && yarn bootstrap``
 
-then, if you want to run the web app, run
+- then, if you want to run the web app, run
 
 ``yarn start``
 
+The app will then be available at ``http://localhost:8080/``
 
-If you want to compile contracts, run
+
+- If you want to compile contracts, run
 
 ``yarn compile``
 
-If you want to run backend tests, run
+- If you want to run backend tests, run
 
 ``yarn test``
 
