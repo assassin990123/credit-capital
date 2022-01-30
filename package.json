@@ -4,7 +4,7 @@
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "start": "lerna run start",
+    "start": "lerna run --stream start",
     "compile": "lerna run --scope {solidity} compile",
     "test": "lerna run --scope {solidity} test"
   },
