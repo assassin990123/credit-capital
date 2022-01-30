@@ -92,12 +92,6 @@ describe("Rewards Vault", function () {
     // set user as MINTER_ROLE role in rewards.
     await rewards.grantRole(await rewards.MINTER_ROLE(), user.address.toLowerCase());
 
-    console.log(user.address.toLowerCase());
-    console.log(user2.address.toLowerCase());
-    console.log(rewards.address.toLowerCase());
-    console.log(await capl.MINTER_ROLE());
-    console.log(await rewards.MINTER_ROLE());
-
     expect(await rewards.connect(user).claim(lp.address, user.address)).to.emit(rewards, "Claim").withArgs(lp.address, user.address, 63)
     expect(await rewards.connect(user).claim(lp.address, user2.address)).to.emit(rewards, "Claim").withArgs(lp.address, user2.address, 19)
 
