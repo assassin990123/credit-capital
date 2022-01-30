@@ -1,36 +1,25 @@
 # Credit Capital
 
-## Frontend docs
+The frontend can be found here: ``packages/app``
+The backend can be found here ``packages/solidity``
 
-## development
+### Development
+first, bootstrap the repository
 
-You can run two variations to get started. If you are also working on the smart contracts, run this:
+``yarn bootstrap``
 
-```
-#main directory
-yarn build && yarn serve
-```
+then, if you want to run the web app, run
 
-Otherwise,
-```
-#app directory
-yarn && yarn serve
-```
-
-Check out the ``app`` repository. In there you will find scaffolding for our app.
-
-The stack is ``vue3``, ``typescript``, ``vuex``, ``web3``, ``web3modal``, ``ethers`` and several wallet provider librarires.
-
-### features
-
-Multi wallet support - check out ``app/src/utils`` to understand ``web3modal`` and how it interacts with the store.
-
-Testnet support - check out ``env.example``. In there, we can set the ``VUE_APP_NETWORK`` easily.
+``yarn start``
 
 
+If you want to compile contracts, run
 
-## Smart contract docs
-Check out the documentation in the folders in ``contracts`` folder for documentation on each contract.
+``yarn compile``
+
+If you want to run backend tests, run
+
+``yarn test``
 
 ### Design illustration
 
