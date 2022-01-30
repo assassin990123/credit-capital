@@ -18,13 +18,10 @@
 import { computed } from "vue";
 import { useStore } from "@/store";
 import { ref, watchEffect } from "vue";
-// @ts-ignore
-import { web3Interface } from "@/utils/wallet";
 
 export default {
   setup() {
     const store = useStore();
-    const web3Connection = new web3Interface();
 
     let buttonString = ref("Connect");
 
@@ -45,16 +42,13 @@ export default {
       store.commit("showMoons", true);
     }
 
-    function connectWeb3() {
-      if (connected.value) return;
-      web3Connection.connect();
-    }
-
     return {
       connected,
-      connectWeb3,
       buttonString,
       showMoons,
+      connectWeb3Modal: () => {
+        store.dispatch('accounts/connectWeb3')
+      }
     };
   },
 };

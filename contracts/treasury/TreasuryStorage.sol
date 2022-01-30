@@ -46,27 +46,17 @@ contract TreasuryStorage is AccessControl {
         // setup the admin role for the storage owner
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
+
     /**
         @dev - this function will mint _amount of treasury shares from the treasuryShares ERC20 token
              - these shares will be held here, in this contract.
              - 100% share is assumed by one user.
      */
-    function deposit(
-        address _user,
-        uint256 _amount
-    ) external {
+    function deposit(address _user, uint256 _amount) external {
         if (this.checkIfUserPositionExists(_user, address(treasuryShares))) {
-            this.addUserPosition(
-                address(treasuryShares),
-                _user,
-                _amount
-            );
+            this.addUserPosition(address(treasuryShares), _user, _amount);
         } else {
-            this.setUserPosition(
-                address(treasuryShares),
-                _user,
-                _amount
-            );
+            this.setUserPosition(address(treasuryShares), _user, _amount);
         }
     }
 
@@ -145,9 +135,13 @@ contract TreasuryStorage is AccessControl {
         return UserPositions[_user][_token].totalAmount > 0;
     }
 
-    function mintTreasuryShares(address _destination, uint256 _amount) external onlyRole(TREASURY_FUND) {
+    function mintTreasuryShares(address _destination, uint256 _amount)
+        external
+        onlyRole(TREASURY_FUND)
+    {
         treasuryShares.mint(_destination, _amount);
     }
+
     function getUnlockedAmount(address _token, address _user)
         public
         view
