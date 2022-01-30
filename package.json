@@ -1,23 +1,12 @@
 {
-  "name": "hardhat-project",
   "dependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.0.3",
-    "@openzeppelin/contracts": "^4.4.1",
-    "chai": "^4.3.4",
-    "ethereum-waffle": "^3.4.0",
-    "ethers": "^5.5.2",
-    "hardhat": "^2.8.0",
-    "hardhat-interface-generator": "^0.0.6",
-    "npm": "^8.3.0"
+    "lerna": "^4.0.0"
   },
   "scripts": {
-    "lint": "prettier --write \"contracts/**/*.sol\" \"interfaces/*.sol\"",
-    "build": "yarn && cd app && yarn",
-    "serve": "cd app && yarn serve"
+    "bootstrap": "lerna bootstrap",
+    "start": "lerna run start",
+    "compile": "lerna run --scope {solidity} compile",
+    "test": "lerna run --scope {solidity} test"
   },
-  "devDependencies": {
-    "@nomiclabs/hardhat-waffle": "^2.0.1",
-    "prettier": "^2.5.1",
-    "prettier-plugin-solidity": "^1.0.0-beta.19"
-  }
+  "name": "credit-capital"
 }
