@@ -158,7 +158,7 @@ contract Vault is AccessControl, Pausable {
         view
         returns (bool)
     {
-        return UserPositions[_user][_token].totalAmount > 0;
+        return UserPositions[_user][_token].rewardDebt > 0;
     }
 
     function getUserPosition(address _token, address _user)

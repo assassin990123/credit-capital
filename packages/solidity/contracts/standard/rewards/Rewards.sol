@@ -160,6 +160,8 @@ contract RewardsV2 is Pausable, AccessControl {
 
     function deposit(address _token, uint256 _amount) external {
         require(vault.checkIfPoolExists(_token), "Pool does not exist");
+        require(_amount > 0, "Deposit mount should not be 0");
+
         // update pool to current block
         IPool.Pool memory pool = updatePool(_token);
 
@@ -248,7 +250,10 @@ contract RewardsV2 is Pausable, AccessControl {
             user.rewardDebt;
     }
 
-    function claim(address _token, address _user) external onlyRole(MINTER_ROLE) {
+    function claim(address _token, address _user)
+        external
+        onlyRole(MINTER_ROLE)
+    {
         IPool.Pool memory pool = updatePool(_token);
         IUserPositions.UserPosition memory user = vault.getUserPosition(
             _token,

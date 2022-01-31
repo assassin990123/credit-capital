@@ -33,6 +33,7 @@ contract TreasuryStorage is AccessControl {
 
     struct Pool {
         uint256 totalPooled; // total token pooled in the contract
+        bool isActive; // determine if the pool exists
     }
 
     // pool tracking
@@ -49,7 +50,7 @@ contract TreasuryStorage is AccessControl {
         Read functions
      */
     function checkIfPoolExists(address _token) public view returns (bool) {
-        return Pools[_token].totalPooled > 0;
+        return Pools[_token].isActive;
     }
 
     function checkIfUserPositionExists(address _user, address _token)
@@ -76,6 +77,10 @@ contract TreasuryStorage is AccessControl {
         return IERC20(_token).balanceOf(address(this));
     }
 
+    function getPool(address _token) external view returns (Pool memory) {
+        return Pools[_token];
+    }
+
     function getUserPosition(address _token, address _user)
         public
         view
@@ -93,7 +98,7 @@ contract TreasuryStorage is AccessControl {
         uint256 _amount
     ) external {
         require(
-            TreasuryStorage.checkIfPoolExists(_token),
+            checkIfPoolExists(_token),
             "Pool does not exist"
         );
 
@@ -105,7 +110,6 @@ contract TreasuryStorage is AccessControl {
             userPosition.totalAmount += _amount;
         }
 
-        IERC20(_token).approve(_user, _amount);
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
     }
 
@@ -148,7 +152,7 @@ contract TreasuryStorage is AccessControl {
         // update user state
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.loanedAmount += _amount;
-        userPosition.totalAmount -= _amount;
+        // userPosition.totalAmount -= _amount;
 
         // update the total amount of the access token pooled
         Pools[_token].totalPooled -= _amount;
@@ -165,7 +169,7 @@ contract TreasuryStorage is AccessControl {
         // get the userposition
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.loanedAmount -= _principal;
-        userPosition.totalAmount += _principal;
+        // userPosition.totalAmount += _principal;
     }
 
     function addUserPosition(
@@ -189,14 +193,17 @@ contract TreasuryStorage is AccessControl {
     ) external onlyRole(REVENUE_CONTROLLER) {
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.profit += _profit;
-        userPosition.totalAmount += _profit;
+        // userPosition.totalAmount += _profit;
         userPosition.lastAllocRequestBlock = _lastAllockRequetBlock;
     }
 
     function addPool(address _token) external onlyRole(REVENUE_CONTROLLER) {
         require(!checkIfPoolExists(_token), "This pool already exists.");
 
-        Pools[_token] = Pool({totalPooled: 0});
+        Pools[_token] = Pool({
+            totalPooled: 0,
+            isActive: true
+        });
     }
 
     function updatePool(address _token, uint256 _amount)

@@ -11,7 +11,7 @@
     "npm": "^8.3.0"
   },
   "scripts": {
-    "lint": "prettier --write \"contracts/**/*.sol\" \"interfaces/*.sol\"",
+    "lint": "prettier --write \"contracts/**/*.sol\" \"interfaces/*.sol\" \"test/**/*.js\"",
     "compile": "yarn hardhat compile",
     "test": "yarn hardhat test"
   },

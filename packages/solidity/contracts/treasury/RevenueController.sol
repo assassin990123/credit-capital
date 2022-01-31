@@ -18,9 +18,6 @@ contract RevenueController is AccessControl {
     // all principal must go back to the treasury, profit stays here.
     address treasuryStorage;
 
-    // tokens allowed to be deposited into the treasury, must be updatable
-    address[] accessTokens;
-
     // block counts per day
     uint256 blocksPerDay = 1 days / 6; // this value comes from a block in polygon chain is generated every 6 seconds.
 
@@ -41,9 +38,18 @@ contract RevenueController is AccessControl {
         uint256 _amount
     );
 
+    event Loan(
+        address indexed _token,
+        address indexed _user,
+        uint256 _amount
+    );
+
     constructor(address _capl, address _treasuryStorage) {
         capl = IERC20(_capl);
         treasuryStorage = _treasuryStorage;
+
+        // setup the admin role for the storage owner
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     /**
@@ -60,9 +66,8 @@ contract RevenueController is AccessControl {
         // update pool to current block
         updatePool(_token, _amount);
 
+        IERC20(_token).approve(address(this), _amount);
         TreasuryStorage.deposit(msg.sender, _token, _amount);
-        accessTokens.push(_token);
-
         emit Deposit(_token, msg.sender, _amount);
     }
 
@@ -118,13 +123,18 @@ contract RevenueController is AccessControl {
      */
     function withdraw(address _token) external {
         uint256 amount = TreasuryStorage.getUnlockedAmount(_token, msg.sender);
-
-        IERC20(_token).approve(address(TreasuryStorage), amount);
         TreasuryStorage.withdraw(_token, msg.sender, amount);
 
         emit Withdraw(_token, msg.sender, amount);
     }
 
+    function loan(address token, uint256 amount) external {
+        // check if the amount is under allowance
+        require(TreasuryStorage.getUnlockedAmount(token, msg.sender) > amount);
+
+        TreasuryStorage.loan(token, msg.sender, amount);
+        emit Loan(token, msg.sender, amount);
+    }
     /**
         @dev - this function calculates the amount of access token to distribute to the treasury storage contract:
              -  current access token balance / blocksPerDay * 30 days = transfer amount.
@@ -141,7 +151,7 @@ contract RevenueController is AccessControl {
             userPosition.lastAllocRequestBlock;
 
         // get amount per block
-        uint256 allocPerBlock = balance / (blocksPerDay * 30 + passedBlocks);
+        uint256 allocPerBlock = balance / (blocksPerDay * 30 + passedBlocks); // 518,400 blocks per day
         // get total amount to distribute
         uint256 allocAmount = allocPerBlock * passedBlocks;
 
