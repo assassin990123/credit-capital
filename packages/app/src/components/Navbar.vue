@@ -46,7 +46,7 @@ export default {
       connected,
       buttonString,
       showMoons,
-      connectWeb3Modal: () => {
+      connectWeb3: () => {
         store.dispatch('accounts/connectWeb3')
       }
     };
