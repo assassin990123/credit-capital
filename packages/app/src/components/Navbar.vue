@@ -29,10 +29,15 @@ export default {
     const wallet = computed(() => store.getters['accounts/getActiveAccount']);
 
     watchEffect(() => {
-      
+
       isConnected.value
         ? (buttonString.value = shortenAddress(wallet.value))
         : (buttonString.value = "Connect");
+
+
+      if (isConnected.value) {
+        console.log("balance", store.getters['contracts/getCAPLBalance'])
+      }
     });
 
     const shortenAddress = (address: string, chars = 3): string => {
