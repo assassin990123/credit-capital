@@ -4,14 +4,14 @@ const { ethers } = require("hardhat");
 
 const deployContract = async (contract, params) => {
   let c = await ethers.getContractFactory(contract);
-  if (params) c = await c.deploy(params)
+  if (params) c = await c.deploy(...params)
   else c = await c.deploy()
   return await c.deployed()
 }
 
 const deployContracts = async (deployer) => {
   const capl = await deployContract("CAPL", [100])
-  const vault = await deployContract("VaultMock", [null])
+  const vault = await deployContract("VaultMock", [])
   const rewards = await deployContract("RewardsV2", [vault.address, capl.address])
   // access control
   // give ownership (minting rights) of capl to the vault
@@ -31,8 +31,6 @@ describe("Rewards Vault", function () {
   it("Deposit and withdraw a new position", async function () {
     const accounts = await hre.ethers.getSigners();
     const { deployer, user } = await setupAccounts(accounts);
-
-    console.log("test");
     const { capl, vault, rewards } = await deployContracts()
     // await capl.mint(deployer.address, 100); // mint 100 CAPL
     await vault.addPool(capl.address, 10)  // 10 CAPL per block
