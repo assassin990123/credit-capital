@@ -40,14 +40,14 @@ const actions = {
   async getCAPLBalance({commit, rootState}) {
 
     // get address from rootstate,
-    const address = rootState.accounts[0];
+    const address = rootState.accounts.activeAccount;
 
     // get contract from contract state (local state)
-    if (state.caplContract === null) {
-      this.setContracts(rootState);
+    let caplContract = state.caplContract;
+    if (caplContract === null) {
+      const provider = rootState.accounts.web3Provider;
+      caplContract = new ethers.Contract(capl[ChainID], caplABI, provider)
     }
-
-    const caplContract = state.caplContract;
 
     // get balance
     let balance = await caplContract.methods.balanceOf(address);
