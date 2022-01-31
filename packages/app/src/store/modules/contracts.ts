@@ -38,22 +38,18 @@ const actions = {
   },
 
   async getCAPLBalance({commit, rootState}) {
-
     // get address from rootstate,
     const address = rootState.accounts.activeAccount;
-
     // get contract from contract state (local state)
     if (state.caplContract === null) {
       actions.setContracts({commit, rootState});
     }
 
     const caplContract = state.caplContract;
-
     // get balance
-    let balance = await caplContract.methods.balanceOf(address);
-
+    const caplBalance = await caplContract.balanceOf(address);
     // parse balance, set new value in the local state
-    commit("setCAPLBalance", ethers.utils.formatUnits(balance, 18));
+    commit("setCAPLBalance", ethers.utils.formatUnits(caplBalance, 18));
   }
 
 };
