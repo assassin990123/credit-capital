@@ -7,7 +7,7 @@
       <router-link to="reward">Rewards</router-link>
       <router-link to="swap">Swap/Liquidity</router-link>
       <router-link to="treasury">Treasury</router-link>
-      <button class="connectButton" @click="connectWeb3">
+      <button class="connectButton" @click="connectWeb3Modal">
         {{ buttonString }}
       </button>
     </div>
@@ -25,11 +25,12 @@ export default {
 
     let buttonString = ref("Connect");
 
-    const connected = computed(() => store.getters.getConnected);
-    const wallet = computed(() => store.getters.getWallet);
+    const isConnected = computed(() => store.getters['accounts/isUserConnected']);
+    const wallet = computed(() => store.getters['accounts/getActiveAccount']);
 
     watchEffect(() => {
-      connected.value
+      
+      isConnected.value
         ? (buttonString.value = shortenAddress(wallet.value))
         : (buttonString.value = "Connect");
     });
@@ -43,7 +44,7 @@ export default {
     }
 
     return {
-      connected,
+      isConnected,
       buttonString,
       showMoons,
       connectWeb3Modal: () => {
