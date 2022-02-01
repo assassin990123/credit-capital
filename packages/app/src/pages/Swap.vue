@@ -65,16 +65,13 @@
           </div>
         </div>
       </div>
-      <div class="footer-container">
-        <div class="footer-item">TOTAL LOCKED VALUE</div>
-        <div class="footer-item">PRICE OF CAPL</div>
-        <div class="footer-item">UESR POSITION</div>
-      </div>
+      <Footer />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import Footer from "@/components/Footer.vue";
 </script>
 
 <style>
@@ -96,7 +93,6 @@
 .panel {
   flex: 1;
   margin: 0 8%;
-  height: 50vh;
 }
 
 .panel-title {
@@ -108,7 +104,7 @@
   padding: 10px 20px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 .panel-header {
@@ -138,23 +134,6 @@
 
 .text-right {
   text-align: right;
-}
-
-.footer-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  border: 1px solid #000000;
-  padding: 20px;
-  margin: 0 5% 30px;
-}
-
-.footer-item {
-  border: 1px solid #000000;
-  padding: 20px;
-  flex: 1;
-  margin: 0 5%;
-  text-align: center;
 }
 
 </style>
