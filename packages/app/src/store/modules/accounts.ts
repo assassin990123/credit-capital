@@ -3,12 +3,11 @@
 import Web3 from "web3";
 import { ethers } from "ethers";
 import web3ModalSetup from "../../utils/web3ModalSetup";
-import { markRaw } from 'vue'
+import { markRaw } from "vue";
 
-
-const ChainID = process.env.VUE_APP_NETWORK_ID ? process.env.VUE_APP_NETWORK_ID : "1" ;
-
-
+const ChainID = process.env.VUE_APP_NETWORK_ID
+  ? process.env.VUE_APP_NETWORK_ID
+  : "1";
 
 const state = {
   activeAccount: null,
@@ -17,7 +16,7 @@ const state = {
   chainName: null,
   web3Provider: null,
   isConnected: false,
-  web3Modal: null
+  web3Modal: null,
 };
 
 const getters = {
@@ -52,32 +51,31 @@ const getters = {
   },
   isUserConnected(state) {
     return state.isConnected;
-  }
+  },
 };
 
 const actions = {
-
   async connectWeb3({ commit, dispatch }) {
     if (state.isConnected == true) return;
     let selectedAccount;
     let provider: any;
 
     if (window.ethereum) {
-        await window.ethereum.enable();
-        provider = markRaw(new ethers.providers.Web3Provider(window.ethereum))
-        selectedAccount = window.ethereum.selectedAddress;
+      await window.ethereum.enable();
+      provider = markRaw(new ethers.providers.Web3Provider(window.ethereum));
+      selectedAccount = window.ethereum.selectedAddress;
     } else {
-        const web3Modal = web3ModalSetup();
-        provider = await web3Modal.connect();
-        selectedAccount = markRaw(provider.accounts[0]);
+      const web3Modal = web3ModalSetup();
+      provider = await web3Modal.connect();
+      selectedAccount = markRaw(provider.accounts[0]);
     }
-    await actions.checkNetwork()
+    await actions.checkNetwork();
     commit("setIsConnected", true);
     commit("setActiveAccount", selectedAccount);
     commit("setChainData", window.ethereum.chainId);
     commit("setWeb3Provider", markRaw(provider));
 
-    dispatch('contracts/setContracts', null, {root: true})
+    dispatch("contracts/setContracts", null, { root: true });
     // actions.fetchActiveBalance({ commit });
   },
 
@@ -87,8 +85,7 @@ const actions = {
   },
 
   async ethereumListener({ commit }) {
-
-    window.ethereum.on('accountsChanged', (accounts) => {
+    window.ethereum.on("accountsChanged", (accounts) => {
       if (state.isConnected) {
         commit("setActiveAccount", accounts[0]);
         commit("setWeb3Provider", state.web3Provider);
@@ -96,27 +93,26 @@ const actions = {
       }
     });
 
-    window.ethereum.on('chainChanged', async (chainId) => {
-      await actions.checkNetwork()
+    window.ethereum.on("chainChanged", async (chainId) => {
+      await actions.checkNetwork();
       commit("setChainData", chainId);
       commit("setWeb3Provider", state.web3Provider);
       // actions.fetchActiveBalance({ commit });
     });
-
   },
 
   async fetchActiveBalance({ commit }) {
-    let balance = await state.web3Provider.getBalance(state.activeAccount);
+    const balance = await state.web3Provider.getBalance(state.activeAccount);
     commit("setActiveBalance", balance);
   },
-  async checkNetwork () {
+  async checkNetwork() {
     if (window.ethereum) {
-      const hexadecimal = '0x' + parseInt(ChainID).toString(16);
-  
+      const hexadecimal = "0x" + parseInt(ChainID).toString(16);
+
       try {
         // check if the chain to connect to is installed
         await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
+          method: "wallet_switchEthereumChain",
           params: [{ chainId: hexadecimal }], // chainId must be in hexadecimal numbers
         });
       } catch (error: any) {
@@ -125,11 +121,11 @@ const actions = {
         if (error.code === 4902) {
           try {
             await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
+              method: "wallet_addEthereumChain",
               params: [
                 {
                   chainId: hexadecimal,
-                  rpcUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+                  rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
                 },
               ],
             });
@@ -140,11 +136,10 @@ const actions = {
         console.error(error);
       }
     }
-  }
+  },
 };
 
 const mutations = {
-
   setActiveAccount(state, selectedAddress) {
     state.activeAccount = selectedAddress;
   },
@@ -156,7 +151,7 @@ const mutations = {
   setChainData(state, chainId) {
     state.chainId = chainId;
 
-    switch(chainId) {
+    switch (chainId) {
       case "0x1":
         state.chainName = "Mainnet";
         break;
@@ -187,13 +182,12 @@ const mutations = {
   setIsConnected(state, isConnected) {
     state.isConnected = isConnected;
     // add to persistent storage so that the user can be logged back in when revisiting website
-    localStorage.setItem('isConnected', isConnected);
+    localStorage.setItem("isConnected", isConnected);
   },
 
   setWeb3ModalInstance(state, w3mObject) {
     state.web3Modal = w3mObject;
-  }
-
+  },
 };
 
 export default {
@@ -201,5 +195,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 };

@@ -4,4 +4,4 @@ import { vaultABI } from "./vault";
 import { balancerPool } from "./balancerPool";
 import { balancerVault } from "./balancerVault";
 
-export { caplABI, rewardsABI, vaultABI, balancerPool, balancerVault}
+export { caplABI, rewardsABI, vaultABI, balancerPool, balancerVault };

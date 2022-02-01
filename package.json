@@ -6,7 +6,8 @@
     "bootstrap": "yarn && lerna bootstrap",
     "start": "lerna run --stream start",
     "compile": "lerna exec --scope cc-sol -- yarn compile",
-    "test": "lerna exec --scope cc-sol -- yarn test"
+    "test": "lerna exec --scope cc-sol -- yarn test",
+    "lint": "lerna run lint"
   },
   "name": "credit-capital"
 }

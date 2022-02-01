@@ -25,18 +25,18 @@ export default {
 
     let buttonString = ref("Connect");
 
-    const isConnected = computed(() => store.getters['accounts/isUserConnected']);
-    const wallet = computed(() => store.getters['accounts/getActiveAccount']);
+    const isConnected = computed(
+      () => store.getters["accounts/isUserConnected"]
+    );
+    const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
     watchEffect(() => {
-
       isConnected.value
         ? (buttonString.value = shortenAddress(wallet.value))
         : (buttonString.value = "Connect");
 
-
       if (isConnected.value) {
-        console.log("balance", store.getters['contracts/getCAPLBalance'])
+        console.log("balance", store.getters["contracts/getCAPLBalance"]);
       }
     });
 
@@ -53,8 +53,8 @@ export default {
       buttonString,
       showMoons,
       connectWeb3: () => {
-        store.dispatch('accounts/connectWeb3')
-      }
+        store.dispatch("accounts/connectWeb3");
+      },
     };
   },
 };

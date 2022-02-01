@@ -46,7 +46,7 @@
                 <div>000</div>
               </div>
               <div class="text-right">
-                <div>BALANCE:    </div>
+                <div>BALANCE:</div>
                 <div>CAPL</div>
               </div>
             </div>
@@ -114,7 +114,6 @@ import Footer from "@/components/Footer.vue";
 }
 
 .panel-explanation {
-  
 }
 
 .panel-display {
@@ -135,5 +134,4 @@ import Footer from "@/components/Footer.vue";
 .text-right {
   text-align: right;
 }
-
 </style>

@@ -6,8 +6,7 @@
   </div>
 </template>
 
-<script lang="ts">
-</script>
+<script lang="ts"></script>
 
 <style>
 .footer-container {
@@ -26,5 +25,4 @@
   margin: 0 5%;
   text-align: center;
 }
-
 </style>

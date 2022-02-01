@@ -38,11 +38,7 @@ contract RevenueController is AccessControl {
         uint256 _amount
     );
 
-    event Loan(
-        address indexed _token,
-        address indexed _user,
-        uint256 _amount
-    );
+    event Loan(address indexed _token, address indexed _user, uint256 _amount);
 
     constructor(address _capl, address _treasuryStorage) {
         capl = IERC20(_capl);
@@ -135,6 +131,7 @@ contract RevenueController is AccessControl {
         TreasuryStorage.loan(token, msg.sender, amount);
         emit Loan(token, msg.sender, amount);
     }
+
     /**
         @dev - this function calculates the amount of access token to distribute to the treasury storage contract:
              -  current access token balance / blocksPerDay * 30 days = transfer amount.

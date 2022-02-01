@@ -9,9 +9,9 @@ export const key: InjectionKey<Store<any>> = Symbol();
 export const store = createStore<any>({
   modules: {
     accounts: accounts,
-    contracts: contracts
+    contracts: contracts,
   },
-  state: {}
+  state: {},
 });
 
 export function useStore() {

@@ -97,10 +97,7 @@ contract TreasuryStorage is AccessControl {
         address _token,
         uint256 _amount
     ) external {
-        require(
-            checkIfPoolExists(_token),
-            "Pool does not exist"
-        );
+        require(checkIfPoolExists(_token), "Pool does not exist");
 
         if (!checkIfUserPositionExists(_user, _token)) {
             addUserPosition(_token, _user, _amount);
@@ -200,10 +197,7 @@ contract TreasuryStorage is AccessControl {
     function addPool(address _token) external onlyRole(REVENUE_CONTROLLER) {
         require(!checkIfPoolExists(_token), "This pool already exists.");
 
-        Pools[_token] = Pool({
-            totalPooled: 0,
-            isActive: true
-        });
+        Pools[_token] = Pool({totalPooled: 0, isActive: true});
     }
 
     function updatePool(address _token, uint256 _amount)
