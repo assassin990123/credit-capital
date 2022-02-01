@@ -18,9 +18,9 @@ const balancerVault: { [key: number]: string } = {
   42: "0xba12222222228d8ba445958a75a0704d566bf2c8",
 };
 // https://kovan.etherscan.io/address/0x270c10cb22cf7dfcbb6435b9a0886bd05e5818e9#readContract
-const caplUSDCPool: { [key: number]: string } = {
+const caplUSDCPoolId: { [key: number]: string } = {
   1: "",
   42: "0x270c10cb22cf7dfcbb6435b9a0886bd05e5818e9000200000000000000000624",
 };
 
-export { capl, vault, rewards, balancerVault, caplUSDCPool };
+export { capl, vault, rewards, balancerVault, caplUSDCPoolId };
