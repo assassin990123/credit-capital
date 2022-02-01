@@ -12,20 +12,78 @@ contract RevenueController is AccessControl {
     using SafeERC20 for IERC20;
 
     IERC20 capl;
+
+    ITreasuryStorage TreasuryStorage;
     // treasury storage contract, similar to the vault contract.
     // all principal must go back to the treasury, profit stays here.
     address treasuryStorage;
-    // treasury fund is similar to the rewards contract, it manages the logic of the treasury.
-    address treasuryFund;
 
-    constructor(
-        address _capl,
-        address _treasuryStorage,
-        address _treasuryFund
-    ) {
+    // block counts per day
+    uint256 blocksPerDay = 1 days / 6; // this value comes from a block in polygon chain is generated every 6 seconds.
+
+    // last alloc block per each access token
+    mapping(address => uint256) LastRequestedBlocks;
+
+    event Deposit(address indexed _token, address _user, uint256 _amount);
+    event PoolUpdated(address indexed _token, uint256 _amount);
+    event PoolAdded(address indexed _token);
+    event DistributeTokenAlloc(
+        address indexed _token,
+        address indexed _user,
+        uint256 _amount
+    );
+    event Withdraw(
+        address indexed _token,
+        address indexed _user,
+        uint256 _amount
+    );
+
+    event Loan(
+        address indexed _token,
+        address indexed _user,
+        uint256 _amount
+    );
+
+    constructor(address _capl, address _treasuryStorage) {
         capl = IERC20(_capl);
         treasuryStorage = _treasuryStorage;
-        treasuryFund = _treasuryFund;
+
+        // setup the admin role for the storage owner
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    }
+
+    /**
+        @dev - this function deposits eligible token amounts to the treasury storage, updating the corresponding storage state (to be implemented)
+     */
+    function deposit(address _token, uint256 _amount) external {
+        TreasuryStorage = ITreasuryStorage(treasuryStorage);
+
+        require(
+            TreasuryStorage.checkIfPoolExists(_token),
+            "Pool does not exist"
+        );
+
+        // update pool to current block
+        updatePool(_token, _amount);
+
+        IERC20(_token).approve(address(this), _amount);
+        TreasuryStorage.deposit(msg.sender, _token, _amount);
+        emit Deposit(_token, msg.sender, _amount);
+    }
+
+    function addPool(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        ITreasuryStorage(treasuryStorage).addPool(_token);
+    }
+
+    function updatePool(address _token, uint256 _amount)
+        internal
+        returns (IPool.Pool memory pool)
+    {
+        TreasuryStorage = ITreasuryStorage(treasuryStorage);
+        IPool.Pool memory npool = TreasuryStorage.updatePool(_token, _amount);
+
+        emit PoolUpdated(_token, _amount);
+        return npool;
     }
 
     /**
@@ -37,24 +95,105 @@ contract RevenueController is AccessControl {
         uint256 _principal,
         uint256 _profit
     ) external {
+        // update pool info
+        ITreasuryStorage(treasuryStorage).updatePool(_token, _principal);
+
         // call the treasuryStorage's returnPrincipal function
         ITreasuryStorage(treasuryStorage).returnPrincipal(
             msg.sender,
             _token,
             _principal
         );
+
+        // set the last distribution block
+        // update user state(in this case - the profit) in the storage
+        ITreasuryStorage(treasuryStorage).setUserPosition(
+            _token,
+            msg.sender,
+            0,
+            block.number
+        );
+
+        // the profit remains here
         IERC20(_token).safeTransfer(address(this), _profit);
     }
 
     /**
-        @dev - this function calculates the amount of CAPL to distribute to the treasury fund contract:
-             -  current CAPL balance / 30 days = transfer amount.
+        @dev - this funciton withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
      */
-    function getCAPLAlloc() external {
-        uint256 amount = capl.balanceOf(address(this)) / 30;
+    function withdraw(address _token) external {
+        uint256 amount = TreasuryStorage.getUnlockedAmount(_token, msg.sender);
+        TreasuryStorage.withdraw(_token, msg.sender, amount);
 
-        // get the distributable CAPL amount
-        capl.safeTransferFrom(address(this), treasuryFund, amount);
+        emit Withdraw(_token, msg.sender, amount);
+    }
+
+    function loan(address token, uint256 amount) external {
+        // check if the amount is under allowance
+        require(TreasuryStorage.getUnlockedAmount(token, msg.sender) > amount);
+
+        TreasuryStorage.loan(token, msg.sender, amount);
+        emit Loan(token, msg.sender, amount);
+    }
+    /**
+        @dev - this function calculates the amount of access token to distribute to the treasury storage contract:
+             -  current access token balance / blocksPerDay * 30 days = transfer amount.
+     */
+    function getTokenAlloc(address _token) public view returns (uint256) {
+        // get the access token balance
+        uint256 balance = IERC20(_token).balanceOf(address(this));
+        // get the user position
+        IUserPositions.UserPosition memory userPosition = ITreasuryStorage(
+            treasuryStorage
+        ).getUserPosition(_token, msg.sender);
+        // get passed block count for calcualtion of distribution
+        uint256 passedBlocks = block.number -
+            userPosition.lastAllocRequestBlock;
+
+        // get amount per block
+        uint256 allocPerBlock = balance / (blocksPerDay * 30 + passedBlocks); // 518,400 blocks per day
+        // get total amount to distribute
+        uint256 allocAmount = allocPerBlock * passedBlocks;
+
+        // returns the distribution amount to the user
+        return allocAmount;
+    }
+
+    /**
+        This function returns the allocAmount calculated to distribute to the treasury storage
+     */
+    function distributeTokenAlloc(address _token) external {
+        uint256 allocAmount = getTokenAlloc(_token);
+
+        // update user state(in this case - the profit) in the storage
+        ITreasuryStorage(treasuryStorage).setUserPosition(
+            _token,
+            msg.sender,
+            allocAmount,
+            block.number
+        );
+
+        // update the pool state
+        ITreasuryStorage(treasuryStorage).updatePool(_token, allocAmount);
+
+        // get the distributable access token amount
+        IERC20(_token).approve(address(this), allocAmount);
+        IERC20(_token).safeTransferFrom(
+            address(this),
+            treasuryStorage,
+            allocAmount
+        );
+
+        emit DistributeTokenAlloc(_token, msg.sender, allocAmount);
+    }
+
+    function getTotalManagedValue(address _token)
+        external
+        returns (uint256 totalManagedValue)
+    {
+        totalManagedValue = ITreasuryStorage(treasuryStorage).getTokenSupply(
+            _token
+        );
     }
 
     /**
@@ -67,12 +206,5 @@ contract RevenueController is AccessControl {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         treasuryStorage = _destination;
-    }
-
-    function setTreasuryFund(address _destination)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        treasuryFund = _destination;
     }
 }

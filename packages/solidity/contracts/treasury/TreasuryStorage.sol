@@ -15,7 +15,6 @@ contract TreasuryStorage is AccessControl {
     using SafeERC20 for IERC20;
 
     // user Roles for RBAC
-    bytes32 public constant TREASURY_FUND = keccak256("TREASURY_FUND");
     bytes32 public constant REVENUE_CONTROLLER =
         keccak256("REVENUE_CONTROLLER");
 
@@ -25,6 +24,8 @@ contract TreasuryStorage is AccessControl {
     struct UserPosition {
         uint256 totalAmount;
         uint256 loanedAmount; // amount that has been taken out of the treasury storage as a loan
+        uint256 profit;
+        uint256 lastAllocRequestBlock; // track the last block when the profit has distributed from the RevenueController
     }
 
     // Mapping from user to userpostion of the token
@@ -32,9 +33,7 @@ contract TreasuryStorage is AccessControl {
 
     struct Pool {
         uint256 totalPooled; // total token pooled in the contract
-        uint256 rewardsPerBlock; // rate at which CAPL is minted for this pool
-        uint256 accCaplPerShare; // weighted CAPL share in pool
-        uint256 lastRewardBlock; // last time a claim was made
+        bool isActive; // determine if the pool exists
     }
 
     // pool tracking
@@ -48,41 +47,93 @@ contract TreasuryStorage is AccessControl {
     }
 
     /**
-        @dev - this function will mint _amount of treasury shares from the treasuryShares ERC20 token
-             - these shares will be held here, in this contract.
-             - 100% share is assumed by one user.
+        Read functions
      */
-    function deposit(address _user, uint256 _amount) external {
-        if (this.checkIfUserPositionExists(_user, address(treasuryShares))) {
-            this.addUserPosition(address(treasuryShares), _user, _amount);
-        } else {
-            this.setUserPosition(address(treasuryShares), _user, _amount);
-        }
+    function checkIfPoolExists(address _token) public view returns (bool) {
+        return Pools[_token].isActive;
     }
 
-    function addUserPosition(
-        address _token,
+    function checkIfUserPositionExists(address _user, address _token)
+        public
+        view
+        returns (bool)
+    {
+        return UserPositions[_user][_token].totalAmount > 0;
+    }
+
+    function getUnlockedAmount(address _token, address _user)
+        public
+        view
+        returns (uint256 unlockedAmount)
+    {
+        UserPosition storage userPosition = UserPositions[_user][_token];
+        unlockedAmount = userPosition.totalAmount - userPosition.loanedAmount;
+    }
+
+    /**
+        This function get the total amount of the access token that the storage has.
+     */
+    function getTokenSupply(address _token) external view returns (uint256) {
+        return IERC20(_token).balanceOf(address(this));
+    }
+
+    function getPool(address _token) external view returns (Pool memory) {
+        return Pools[_token];
+    }
+
+    function getUserPosition(address _token, address _user)
+        public
+        view
+        returns (UserPosition memory)
+    {
+        return UserPositions[_user][_token];
+    }
+
+    /**
+        Write functions
+     */
+    function deposit(
         address _user,
-        uint256 _totalAmount
-    ) external onlyRole(TREASURY_FUND) {
+        address _token,
+        uint256 _amount
+    ) external {
         require(
-            !this.checkIfUserPositionExists(_user, _token),
-            "The user position is already exists"
+            checkIfPoolExists(_token),
+            "Pool does not exist"
         );
 
-        UserPositions[_user][_token] = UserPosition({
-            totalAmount: _totalAmount,
-            loanedAmount: 0
-        });
+        if (!checkIfUserPositionExists(_user, _token)) {
+            addUserPosition(_token, _user, _amount);
+        } else {
+            // update userPosition
+            UserPosition storage userPosition = UserPositions[_token][_user];
+            userPosition.totalAmount += _amount;
+        }
+
+        IERC20(_token).safeTransferFrom(_user, address(this), _amount);
     }
 
-    function setUserPosition(
+    function withdraw(
         address _token,
         address _user,
         uint256 _amount
-    ) external onlyRole(TREASURY_FUND) {
-        UserPosition storage userPosition = UserPositions[_user][_token];
-        userPosition.totalAmount += _amount;
+    ) external {
+        require(
+            getUnlockedAmount(_token, _user) > _amount,
+            "Withdrawn amount exceed the allowance"
+        );
+
+        // update userPosition
+        UserPosition storage userPosition = UserPositions[_token][_user];
+        userPosition.totalAmount -= _amount;
+
+        // update Pool info
+        Pool storage pool = Pools[_token];
+        pool.totalPooled -= _amount;
+
+        // transfer access token amount to the user
+        IERC20(_token).approve(address(this), _amount);
+        IERC20(_token).safeTransferFrom(address(this), _user, _amount);
     }
 
     /**
@@ -92,63 +143,84 @@ contract TreasuryStorage is AccessControl {
         address _token,
         address _user,
         uint256 _amount
-    ) external onlyRole(TREASURY_FUND) {
-        require(
-            IERC20(_token).balanceOf(address(this)) > _amount,
-            "The amount exceed the treasury balance."
-        );
-
-        UserPosition storage userPosition = UserPositions[_user][_token];
-        userPosition.loanedAmount += _amount;
-
-        IERC20(_token).safeTransferFrom(address(this), _user, _amount);
-    }
-
-    function withdraw(
-        address _token,
-        address _user,
-        uint256 _amount,
-        uint256 _newRewardDebt
     ) external {
         require(
             getUnlockedAmount(_token, _user) > _amount,
-            "Withdrawn amount exceed the user balance"
+            "The amount exceed the treasury balance."
         );
 
-        this.setUserPosition(_token, _user, _amount);
+        // update user state
+        UserPosition storage userPosition = UserPositions[_user][_token];
+        userPosition.loanedAmount += _amount;
+        // userPosition.totalAmount -= _amount;
 
-        Pool storage pool = Pools[_token];
-        pool.totalPooled -= _amount;
+        // update the total amount of the access token pooled
+        Pools[_token].totalPooled -= _amount;
 
+        IERC20(_token).approve(address(this), _amount);
         IERC20(_token).safeTransferFrom(address(this), _user, _amount);
     }
 
-    function checkIfPoolExists(address _token) external view returns (bool) {
-        return Pools[_token].rewardsPerBlock > 0;
+    function returnPrincipal(
+        address _user,
+        address _token,
+        uint256 _principal
+    ) external onlyRole(REVENUE_CONTROLLER) {
+        // get the userposition
+        UserPosition storage userPosition = UserPositions[_user][_token];
+        userPosition.loanedAmount -= _principal;
+        // userPosition.totalAmount += _principal;
     }
 
-    function checkIfUserPositionExists(address _user, address _token)
+    function addUserPosition(
+        address _token,
+        address _user,
+        uint256 _totalAmount
+    ) internal {
+        UserPositions[_user][_token] = UserPosition({
+            totalAmount: _totalAmount,
+            loanedAmount: 0,
+            profit: 0,
+            lastAllocRequestBlock: block.number
+        });
+    }
+
+    function setUserPosition(
+        address _token,
+        address _user,
+        uint256 _profit,
+        uint256 _lastAllockRequetBlock
+    ) external onlyRole(REVENUE_CONTROLLER) {
+        UserPosition storage userPosition = UserPositions[_user][_token];
+        userPosition.profit += _profit;
+        // userPosition.totalAmount += _profit;
+        userPosition.lastAllocRequestBlock = _lastAllockRequetBlock;
+    }
+
+    function addPool(address _token) external onlyRole(REVENUE_CONTROLLER) {
+        require(!checkIfPoolExists(_token), "This pool already exists.");
+
+        Pools[_token] = Pool({
+            totalPooled: 0,
+            isActive: true
+        });
+    }
+
+    function updatePool(address _token, uint256 _amount)
         external
-        view
-        returns (bool)
+        onlyRole(REVENUE_CONTROLLER)
+        returns (Pool memory)
     {
-        return UserPositions[_user][_token].totalAmount > 0;
+        Pool storage pool = Pools[_token];
+        pool.totalPooled += _amount;
+
+        return pool;
     }
 
     function mintTreasuryShares(address _destination, uint256 _amount)
         external
-        onlyRole(TREASURY_FUND)
+        onlyRole(DEFAULT_ADMIN_ROLE)
     {
         treasuryShares.mint(_destination, _amount);
-    }
-
-    function getUnlockedAmount(address _token, address _user)
-        public
-        view
-        onlyRole(TREASURY_FUND)
-        returns (uint256 unlockedAmount)
-    {
-        UserPosition storage userPosition = UserPositions[_user][_token];
-        unlockedAmount = userPosition.totalAmount - userPosition.loanedAmount;
     }
 }

@@ -23,11 +23,11 @@ contract CreditCapitalPlatformToken is
         ERC20("CreditCapital Platform Token", "CAPL")
         ERC20Capped(cap_)
     {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
     }
 
-    function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
+    function mint(address to, uint256 amount) external onlyRole(MINTER_ROLE) {
         _mint(to, amount);
     }
 

@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 // TreasurySotrage
 import "../../interfaces/ITreasuryStorage.sol";
-import "../../interfaces/IController.sol";
 
 contract TreasuryFund is AccessControl {
     using SafeERC20 for IERC20;
@@ -15,7 +14,6 @@ contract TreasuryFund is AccessControl {
     IERC20 capl;
     uint256 CAPL_PRECISION = 1e18;
 
-    IController controller;
     ITreasuryStorage TreasuryStorage;
 
     // tokens allowed to be deposited into the treasury, must be updatable
@@ -26,7 +24,7 @@ contract TreasuryFund is AccessControl {
     address treasuryStorage;
 
     event Deposit(address _token, address _user, uint256 _amount);
-    event PoolUpdated(address indexed _token, uint256 _block);
+    event PoolUpdated(address indexed _token, uint256 _amount);
     event Claim(address indexed _token, address indexed _user, uint256 _amount);
     event Withdraw(
         address indexed _token,
@@ -50,78 +48,33 @@ contract TreasuryFund is AccessControl {
             "Pool does not exist"
         );
         // update pool to current block
-        IPool.Pool memory pool = updatePool(_token);
+        updatePool(_token, _amount);
 
-        uint256 _rewardDebt = (_amount * pool.accCaplPerShare) / CAPL_PRECISION;
-
-        if (TreasuryStorage.checkIfUserPositionExists(msg.sender, _token)) {
-            TreasuryStorage.addUserPosition(
-                _token,
-                msg.sender,
-                _amount,
-                _rewardDebt
-            );
-        } else {
-            TreasuryStorage.setUserPosition(
-                _token,
-                msg.sender,
-                _amount,
-                _rewardDebt
-            );
-        }
-
+        TreasuryStorage.deposit(msg.sender, _token, _amount);
         accessTokens.push(_token);
 
-        IERC20(_token).safeTransfer(treasuryStorage, _amount);
         emit Deposit(_token, msg.sender, _amount);
     }
 
-    function updatePool(address _token)
+    function updatePool(address _token, uint256 _amount)
         public
         returns (IPool.Pool memory pool)
     {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
+        IPool.Pool memory npool = TreasuryStorage.updatePool(_token, _amount);
 
-        IPool.Pool memory cpool = TreasuryStorage.getPool(_token);
-        uint256 totalSupply = TreasuryStorage.getTokenSupply(_token);
-        uint256 accCaplPerShare;
-        if (block.number > cpool.lastRewardBlock) {
-            if (totalSupply > 0) {
-                uint256 blocks = block.number - cpool.lastRewardBlock;
-                uint256 caplReward = blocks * cpool.rewardsPerBlock;
-                accCaplPerShare =
-                    cpool.accCaplPerShare +
-                    (caplReward * CAPL_PRECISION) /
-                    totalSupply;
-            }
-            uint256 lastRewardBlock = block.number;
-            IPool.Pool memory npool = TreasuryStorage.updatePool(
-                _token,
-                accCaplPerShare,
-                lastRewardBlock
-            );
-
-            emit PoolUpdated(_token, lastRewardBlock);
-            return npool;
-        }
+        emit PoolUpdated(_token, _amount);
+        return npool;
     }
 
     /**
         @dev - this funciton withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
      */
     function withdraw(address _token) external {
-        IPool.Pool memory pool = updatePool(_token);
-        IUserPositions.UserPosition memory user = TreasuryStorage
-            .getUserPosition(_token, msg.sender);
-
         uint256 amount = TreasuryStorage.getUnlockedAmount(_token, msg.sender);
 
-        uint256 newRewardDebt = user.rewardDebt -
-            (amount * pool.accCaplPerShare) /
-            CAPL_PRECISION;
-
         IERC20(_token).approve(address(TreasuryStorage), amount);
-        TreasuryStorage.withdraw(_token, msg.sender, amount, newRewardDebt);
+        TreasuryStorage.withdraw(_token, msg.sender, amount);
 
         emit Withdraw(_token, msg.sender, amount);
     }
@@ -132,29 +85,17 @@ contract TreasuryFund is AccessControl {
              - almost exact logic same as rewards 
      */
     function pendingRevenue() external returns (uint256 pending) {
-        IPool.Pool memory pool = ITreasuryStorage(treasuryStorage).getPool(
-            address(capl)
-        );
+        uint256 balance = capl.balanceOf(address(this));
+
         IUserPositions.UserPosition memory user = ITreasuryStorage(
             treasuryStorage
         ).getUserPosition(address(capl), msg.sender);
-
-        uint256 accCaplPerShare = pool.accCaplPerShare;
-        uint256 tokenSupply = ITreasuryStorage(treasuryStorage).getTokenSupply(
+        uint256 totalSupply = ITreasuryStorage(treasuryStorage).getTokenSupply(
             address(capl)
         );
 
-        if (block.number > pool.lastRewardBlock && tokenSupply != 0) {
-            uint256 blocks = block.number - pool.lastRewardBlock;
-            uint256 caplReward = blocks * pool.rewardsPerBlock;
-            accCaplPerShare =
-                accCaplPerShare +
-                (caplReward * CAPL_PRECISION) /
-                tokenSupply;
-        }
-        pending =
-            ((user.totalAmount * accCaplPerShare) / CAPL_PRECISION) -
-            user.rewardDebt;
+        uint256 accCaplPerShare = user.totalAmount / totalSupply;
+        pending = (balance * accCaplPerShare) / CAPL_PRECISION;
     }
 
     /**
@@ -162,22 +103,13 @@ contract TreasuryFund is AccessControl {
              - almost exact logic same as rewards
       */
     function claimRevenue() external {
-        IPool.Pool memory pool = updatePool(address(capl));
-        IUserPositions.UserPosition memory user = TreasuryStorage
-            .getUserPosition(address(capl), msg.sender);
+        uint256 pending = this.pendingRevenue();
 
-        uint256 accumulatedCapl = (user.totalAmount * pool.accCaplPerShare) /
-            CAPL_PRECISION;
-        uint256 pendingCapl = accumulatedCapl - user.rewardDebt;
-
-        // _user.rewardDebt = accumulatedCapl
-        TreasuryStorage.setUserDebt(address(capl), msg.sender, accumulatedCapl);
-
-        if (pendingCapl > 0) {
-            controller.mint(msg.sender, pendingCapl);
+        if (pending > 0) {
+            capl.safeTransferFrom(address(this), msg.sender, pending);
         }
 
-        emit Claim(address(capl), msg.sender, pendingCapl);
+        emit Claim(address(capl), msg.sender, pending);
     }
 
     /**
