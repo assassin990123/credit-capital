@@ -12,5 +12,15 @@ const rewards: {[key: number]: string} = {
   1: "",
   42: "0x867ef4b396C22bae4Ad1966020227FE232E914ee"
 }
+
+const balancerVault: {[key: number]: string} = {
+  1: "",
+  42: "0xba12222222228d8ba445958a75a0704d566bf2c8"
+}
+
+const caplUSDCPool : {[key: number]: string} = {
+  1: "",
+  42: "0x270c10cb22cf7dfcbb6435b9a0886bd05e5818e9000200000000000000000624"
+}
   
 export  {capl, vault, rewards}
