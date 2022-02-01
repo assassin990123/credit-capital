@@ -10,7 +10,8 @@ const ChainID = process.env.VUE_APP_NETWORK_ID ? Number(process.env.VUE_APP_NETW
 const state = {
   rewardsContract: null,
   vaultContract: null,
-  caplContract: null
+  caplContract: null,
+  caplBalance: 0
 };
 
 const getters = {
@@ -22,6 +23,9 @@ const getters = {
   },
   getVaultContract(state) {
     return state.calcContract;
+  },
+  getCAPLBalance(state) {
+    return state.caplBalance;
   }
 };
 
@@ -32,6 +36,22 @@ const actions = {
     commit("setVaultContract", markRaw(new ethers.Contract(vault[ChainID], vaultABI, provider)))
     commit("setRewardsContract", markRaw(new ethers.Contract(rewards[ChainID], rewardsABI, provider)))
   },
+
+  async getCAPLBalance({commit, rootState}) {
+    // get address from rootstate,
+    const address = rootState.accounts.activeAccount;
+    // get contract from contract state (local state)
+    if (state.caplContract === null) {
+      actions.setContracts({commit, rootState});
+    }
+
+    const caplContract = state.caplContract;
+    // get balance
+    const caplBalance = await caplContract.balanceOf(address);
+    // parse balance, set new value in the local state
+    commit("setCAPLBalance", ethers.utils.formatUnits(caplBalance, 18));
+  }
+
 };
 
 const mutations = {
@@ -43,6 +63,9 @@ const mutations = {
   },
   setRewardsContract(state, _contract) {
     state.rewardsContract = _contract
+  },
+  setCAPLBalance(state, _balance) {
+    state.caplBalance = _balance
   }
 };
 
