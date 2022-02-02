@@ -122,11 +122,11 @@ contract TreasuryStorage is AccessControl {
 
         // update userPosition
         UserPosition storage userPosition = UserPositions[_token][_user];
-        userPosition.totalAmount -= _amount;
+        unchecked {userPosition.totalAmount -= _amount;}
 
         // update Pool info
         Pool storage pool = Pools[_token];
-        pool.totalPooled -= _amount;
+        unchecked {pool.totalPooled -= _amount;}
 
         // transfer access token amount to the user
         IERC20(_token).safeTransfer(_user, _amount);
@@ -147,11 +147,11 @@ contract TreasuryStorage is AccessControl {
 
         // update user state
         UserPosition storage userPosition = UserPositions[_user][_token];
-        userPosition.loanedAmount += _amount;
+        unchecked {userPosition.loanedAmount += _amount;}
         // userPosition.totalAmount -= _amount;
 
         // update the total amount of the access token pooled
-        Pools[_token].totalPooled -= _amount;
+        unchecked {Pools[_token].totalPooled -= _amount;}
 
         IERC20(_token).safeTransfer(_user, _amount);
     }
