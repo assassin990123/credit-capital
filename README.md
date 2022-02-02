@@ -1,7 +1,7 @@
 # Credit Capital
 
 The frontend can be found here: ``packages/app``
-The backend can be found here ``packages/solidity``
+The backend can be found here ``packages/sol``
 
 ### Development
 - first, bootstrap the repository
