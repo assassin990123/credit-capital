@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="swap-container">
-      <div class="panel-container">
+      <div class="panel-container inner-container">
         <div class="panel">
           <h1 class="panel-title">SWAP</h1>
           <div class="panel-content">
@@ -83,11 +83,14 @@ import Footer from "@/components/Footer.vue";
   height: 100%;
 }
 
+.inner-container {
+  margin-top: 90px;
+}
+
 .panel-container {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  margin-top: 60px;
 }
 
 .panel {

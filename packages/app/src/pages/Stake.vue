@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="swap-container">
-      <div class="panel-container">
+      <div class="panel-container inner-container">
         <div class="panel stake-panel">
           <h1 class="panel-title">STAKE</h1>
           <div class="panel-content stake-panel-content">
