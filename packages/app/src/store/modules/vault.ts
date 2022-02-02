@@ -9,68 +9,70 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   : 1;
 
 const state = {
-  CAPLUSDPollContract: null,
+  // CAPLUSDPollContract: null,
   vaultContract: null,
-  poolID: null
+  // poolID: null,
+  poolTokens: {}
 };
 
 const getters = {
-  // get CAPLUSDPollContract
-  getCAPLUSDPollContract(state) {
-    return state.CAPLUSDPollContract;
-  },
-
   // get CAPLUSDPollContract
   getVaultContract(state) {
     return state.vaultContract;
   },
 
-  // get poolID
-  getPoolID(state) {
-    return state.poolID;
-  },
+  // get poolTokens
+  getPoolTokens() {
+    return state.poolTokens;
+  }
 };
 
 const actions = {
   async setContracts({ commit, rootState }) {
     const provider = rootState.accounts.web3Provider;
 
-    commit(
-      "setCAPLUSDCPoolContract",
-      markRaw(new ethers.Contract(caplUSDCPoolId[ChainID], balancerPool, provider))
-    );
-
+    // set vault contract
     commit(
       "setVaultContract",
       markRaw(new ethers.Contract(vaultContract[ChainID], balancerVault, provider))
     );
   },
 
-  async getPoolID({ commit, rootState }) {
-    // get contract from contract state (local state)
-    if (state.CAPLUSDPollContract === null) {
+  async getPoolTokens({ commit, rootState }) {
+    // get poolID
+    const poolID = caplUSDCPoolId[ChainID];
+
+    // if state.vaultContract is null, call the `setContracts` function
+    if (state.vaultContract === null) {
       actions.setContracts({ commit, rootState });
     }
-    const CAPLUSDPollContract = state.CAPLUSDPollContract;
+    const vaultContract = state.vaultContract;
     
-    // parse poolID, set new value in the local state
-    const poolID = await CAPLUSDPollContract.getPoolId();
-    commit("setCAPLUSDCPoolContract", poolID);
+    // call getPoolTokens
+    const poolTokens = await vaultContract.getPoolTokens(poolID);
+    
+    // parse balance
+    const balances = poolTokens.balances.map(obj => ethers.utils.formatUnits(obj, 18));
+    
+    // call setPoolTokens in mutations.
+    commit("setPoolTokens", {
+      "tokens" : poolTokens.tokens,
+      "balances":  balances
+    });
   },
+  
 };
 
 const mutations = {
-  setCAPLUSDCPoolContract(state, _contract) {
-    state.CAPLUSDPollContract = _contract;
-  },
-
+  // assign vault contract
   setVaultContract(state, _contract) {
     state.vaultContract = _contract;
   },
 
-  setPoolID(state, _poolID) {
-    state.poolID = _poolID;
-  },
+  // assign poolTokens.
+  setPoolTokens(state, _poolTokens) {
+    state.poolTokens = _poolTokens;
+  }
 };
 
 export default {

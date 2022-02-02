@@ -7,7 +7,7 @@
       <router-link to="reward">Rewards</router-link>
       <router-link to="swap">Swap/Liquidity</router-link>
       <router-link to="treasury">Treasury</router-link>
-      <button class="connectButton" @click="connectWeb3Modal">
+      <button class="connectButton" @click="connectWeb3">
         {{ buttonString }}
       </button>
     </div>
@@ -34,10 +34,6 @@ export default {
       isConnected.value
         ? (buttonString.value = shortenAddress(wallet.value))
         : (buttonString.value = "Connect");
-
-      if (isConnected.value) {
-        console.log("balance", store.getters["contracts/getCAPLBalance"]);
-      }
     });
 
     const shortenAddress = (address: string, chars = 3): string => {
