@@ -62,7 +62,6 @@ contract RevenueController is AccessControl {
         // update pool to current block
         updatePool(_token, _amount);
 
-        IERC20(_token).approve(address(this), _amount);
         TreasuryStorage.deposit(msg.sender, _token, _amount);
         emit Deposit(_token, msg.sender, _amount);
     }
@@ -111,7 +110,7 @@ contract RevenueController is AccessControl {
         );
 
         // the profit remains here
-        IERC20(_token).safeTransfer(address(this), _profit);
+        IERC20(_token).safeTransferFrom(msg.sender, address(this), _profit);
     }
 
     /**
@@ -126,7 +125,7 @@ contract RevenueController is AccessControl {
 
     function loan(address token, uint256 amount) external {
         // check if the amount is under allowance
-        require(TreasuryStorage.getUnlockedAmount(token, msg.sender) > amount);
+        require(TreasuryStorage.getUnlockedAmount(token, msg.sender) >= amount, "Can not loan over unlocked amount");
 
         TreasuryStorage.loan(token, msg.sender, amount);
         emit Loan(token, msg.sender, amount);
@@ -139,10 +138,12 @@ contract RevenueController is AccessControl {
     function getTokenAlloc(address _token) public view returns (uint256) {
         // get the access token balance
         uint256 balance = IERC20(_token).balanceOf(address(this));
+        
         // get the user position
         IUserPositions.UserPosition memory userPosition = ITreasuryStorage(
             treasuryStorage
         ).getUserPosition(_token, msg.sender);
+
         // get passed block count for calcualtion of distribution
         uint256 passedBlocks = block.number -
             userPosition.lastAllocRequestBlock;
@@ -174,9 +175,7 @@ contract RevenueController is AccessControl {
         ITreasuryStorage(treasuryStorage).updatePool(_token, allocAmount);
 
         // get the distributable access token amount
-        IERC20(_token).approve(address(this), allocAmount);
-        IERC20(_token).safeTransferFrom(
-            address(this),
+        IERC20(_token).safeTransfer(
             treasuryStorage,
             allocAmount
         );
