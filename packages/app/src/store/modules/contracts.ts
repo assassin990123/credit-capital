@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { ethers } from "ethers";
-import { caplABI, rewardsABI, vaultABI, balancerVault as a balancerVaultABI } from "../../contracts/abi";
+import { caplABI, rewardsABI, vaultABI, balancerVault as balancerVaultABI } from "../../contracts/abi";
 import { capl, vault, rewards, vaultContract as balancerVault, caplUSDCPoolId } from "../../contracts";
 import { markRaw } from "vue";
 
@@ -14,7 +14,7 @@ const state = {
   caplContract: null,
   caplBalance: 0,
   balancerVaultContract: null,
-  balancerVault: {}
+  poolTokens: {}
 };
 
 const getters = {
@@ -30,9 +30,9 @@ const getters = {
     return state.balancerVaultContract;
   },
 
-  // get balancerVault
-  getBalancerVault() {
-    return state.balancerVault;
+  // get poolTokens
+  getPoolTokens() {
+    return state.poolTokens;
   }
 };
 
@@ -74,7 +74,7 @@ const actions = {
     commit("setCAPLBalance", ethers.utils.formatUnits(caplBalance, 18));
   },
 
-  async getBalancerVault({ commit, rootState }) {
+  async getPoolTokens({ commit, rootState }) {
     // get poolID
     const poolID = caplUSDCPoolId[ChainID];
 
@@ -85,14 +85,14 @@ const actions = {
     const balancerVaultContract = state.balancerVaultContract;
     
     // call getPoolTokens
-    const balancerVault = await balancerVaultContract.getPoolTokens(poolID);
+    const poolTokens = await balancerVaultContract.getPoolTokens(poolID);
     
     // parse balance
-    const balances = balancerVault.balances.map(obj => ethers.utils.formatUnits(obj, 18));
+    const balances = poolTokens.balances.map(obj => ethers.utils.formatUnits(obj, 18));
     
     // call setPoolTokens in mutations.
-    commit("setBalancerVault", {
-      "tokens" : balancerVault.tokens,
+    commit("setPoolTokens", {
+      "tokens" : poolTokens.tokens,
       "balances":  balances
     });
   },
@@ -118,8 +118,8 @@ const mutations = {
   },
 
   // assign poolTokens.
-  setBalancerVault(state, _balancerVault) {
-    state.balancerVault = _balancerVault;
+  setPoolTokens(state, _poolTokens) {
+    state.poolTokens = _poolTokens;
   }
 };
 
