@@ -79,7 +79,6 @@ describe("Treasury", async () => {
       expect((await storage.getUserPosition(lp.address, deployer.address)).totalAmount).to.equal(250_000);
       expect((await storage.getPool(lp.address)).totalPooled).to.equal(250_000);
 
-      console.log(await storage.getUnlockedAmount(lp.address, deployer.address));
       // approve lp token allowance
       await lp.approve(controller.address, 250_000);
 
@@ -140,7 +139,11 @@ describe("Treasury", async () => {
       await lp.approve(storage.address, unlocked + 50_000);
 
       // loaning will be reverted token
-      expect(await controller.loan(lp.address, unlocked + 50_000)).to.be.reverted();
+      try {
+        await controller.loan(lp.address, unlocked + 50_000);
+      } catch (error) {
+        expect(error.message).match(/Can not loan over unlocked amount/);
+      }
       expect((await storage.getUserPosition(lp.address, deployer.address)).loanedAmount).to.equal(0);
       expect((await storage.getPool(lp.address)).totalPooled).to.equal(250_000);
     });
@@ -182,20 +185,21 @@ describe("Treasury", async () => {
       expect((await storage.getUserPosition(lp.address, deployer.address)).totalAmount).to.equal(250_000);
       expect((await storage.getUserPosition(lp.address, deployer.address)).loanedAmount).to.equal(0);
       expect((await storage.getPool(lp.address)).totalPooled).to.equal(250_000);
-
+      
       // the profit should be remain in controller
       expect(await lp.balanceOf(controller.address)).to.equal(1000);
-
+      
       // distribute user alloc based on time
       const allocAmount = await controller.getTokenAlloc(lp.address);
-
+      
       // return token alloc to the user
-      const tokenAlloc = await controller.distributeTokenAlloc(lp.address);
-      console.log(tokenAlloc);
+      await controller.callStatic.distributeTokenAlloc(lp.address);
+      console.log(allocAmount);
 
-      expect(allocAmount).to.equal(tokenAlloc);
-      expect((await storage.getUserPosition(lp.address, deployer.address)).profit).to.equal(tokenAlloc);
-      expect((await storage.getPool(lp.address)).totalPooled).to.equal(250_000 + tokenAlloc);
+      console.log((await storage.getUserPosition(lp.address, deployer.address)).totalAmount);
+      expect((await storage.getUserPosition(lp.address, deployer.address)).totalAmount).to.equal(250_000 + allocAmount);
+      expect((await storage.getUserPosition(lp.address, deployer.address)).profit).to.equal(allocAmount);
+      expect((await storage.getPool(lp.address)).totalPooled).to.equal(250_000 + allocAmount);
     });
   });
 });

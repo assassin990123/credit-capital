@@ -129,7 +129,7 @@ contract RevenueController is AccessControl {
 
     function loan(address token, uint256 amount) external {
         // check if the amount is under allowance
-        require(TreasuryStorage.getUnlockedAmount(token, msg.sender) > amount);
+        require(TreasuryStorage.getUnlockedAmount(token, msg.sender) >= amount, "Can not loan over unlocked amount");
 
         TreasuryStorage.loan(token, msg.sender, amount);
         emit Loan(token, msg.sender, amount);
@@ -141,10 +141,12 @@ contract RevenueController is AccessControl {
     function getTokenAlloc(address _token) public view returns (uint256) {
         // get the access token balance
         uint256 balance = IERC20(_token).balanceOf(address(this));
+        
         // get the user position
         IUserPositions.UserPosition memory userPosition = ITreasuryStorage(
             treasuryStorage
         ).getUserPosition(_token, msg.sender);
+
         // get passed block count for calcualtion of distribution
         uint256 passedBlocks = block.number -
             userPosition.lastAllocRequestBlock;
