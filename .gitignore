@@ -38,17 +38,18 @@ bower_components
 build/Release
 
 # Dependency directories
-node_modules/
-jspm_packages/
+packages/app/jspm_packages
 
 # TypeScript v1 declaration files
-typings/
+packages/app/typings/
 
 # TypeScript cache
 *.tsbuildinfo
 
 # Optional npm cache directory
 .npm
+
+.DS_Store
 
 # Optional eslint cache
 .eslintcache
@@ -102,3 +103,40 @@ dist
 
 # TernJS port file
 .tern-port
+
+**/node_modules
+
+# Hardhat files
+cache
+artifacts
+
+packages/sol/artifacts*
+packages/sol/cache*
+
+
+
+# frontend
+
+.DS_Store
+node_modules
+/dist
+
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
