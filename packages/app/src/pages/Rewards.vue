@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="swap-container">
-      <div class="panel-container">
+      <div class="inner-container">
         <div class="rewards-container">
           <h1 class="panel-title">PENDING REWARDS</h1>
           <div class="rewards-content">
