@@ -6,7 +6,7 @@ The backend can be found here ``packages/sol``
 ### Development
 - first, bootstrap the repository
 
-``yarn && yarn bootstrap``
+``yarn bootstrap``
 
 - then, if you want to run the web app, run
 
