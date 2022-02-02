@@ -1,8 +1,57 @@
 <template>
   <div class="home">
-    <h1>Rewards</h1>
+    <div class="swap-container">
+      <div class="inner-container">
+        <div class="rewards-container">
+          <h1 class="panel-title">PENDING REWARDS</h1>
+          <div class="rewards-content">
+            <div class="rewards-display">USDC: $0000.00</div>
+            <div class="rewards-section">
+              <div class="rewards-section-item">CLAIM</div>
+              <div class="rewards-section-item">COMPOUND</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import Footer from "@/components/Footer.vue";
 </script>
+
+<style>
+.rewards-container {
+  width: 100%;
+}
+
+.rewards-content {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.rewards-display {
+  border: 1px solid #000000;
+  font-size: 100px;
+  font-weight: 700;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.rewards-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 50px;
+}
+
+.rewards-section-item {
+  border: 1px solid #000000;
+  padding: 10px 20px;
+  font-size: 36px;
+}
+</style>

@@ -16,7 +16,7 @@
       "@/*": ["src/*"]
     },
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*.ts",

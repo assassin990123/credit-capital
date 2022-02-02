@@ -7,35 +7,35 @@ import SwapPage from "./pages/Swap.vue";
 import TreasuryPage from "./pages/Treasury.vue";
 
 const routeInfos = [
-    {
-        path : "/",
-        component : HomePage
-    },
-    {
-        path : "/dashboard",
-        component : DashboardPage
-    },
-    {
-        path : "/stake",
-        component : StakePage
-    },
-    {
-        path : "/reward",
-        component : RewardsPage
-    },
-    {
-        path : "/swap",
-        component : SwapPage
-    },
-    {
-        path : "/treasury",
-        component : TreasuryPage
-    }
-]
+  {
+    path: "/",
+    component: HomePage,
+  },
+  {
+    path: "/dashboard",
+    component: DashboardPage,
+  },
+  {
+    path: "/stake",
+    component: StakePage,
+  },
+  {
+    path: "/reward",
+    component: RewardsPage,
+  },
+  {
+    path: "/swap",
+    component: SwapPage,
+  },
+  {
+    path: "/treasury",
+    component: TreasuryPage,
+  },
+];
 
 const router = createRouter({
-    history : createWebHistory(),
-    routes : routeInfos
-})
+  history: createWebHistory(),
+  routes: routeInfos,
+});
 
 export default router;

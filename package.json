@@ -3,10 +3,11 @@
     "lerna": "^4.0.0"
   },
   "scripts": {
-    "bootstrap": "lerna bootstrap",
-    "start": "lerna run start",
-    "compile": "lerna run --scope {solidity} compile",
-    "test": "lerna run --scope {solidity} test"
+    "bootstrap": "yarn && lerna bootstrap",
+    "start": "lerna run --stream start",
+    "compile": "lerna exec --scope cc-sol -- yarn compile",
+    "test": "lerna exec --scope cc-sol -- yarn test",
+    "lint": "lerna run lint"
   },
   "name": "credit-capital"
 }
