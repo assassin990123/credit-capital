@@ -119,7 +119,7 @@ contract TreasuryStorage is AccessControl {
         uint256 _amount
     ) external {
         require(
-            getUnlockedAmount(_token, _user) > _amount,
+            getUnlockedAmount(_token, _user) >= _amount,
             "Withdrawn amount exceed the allowance"
         );
 
@@ -132,8 +132,7 @@ contract TreasuryStorage is AccessControl {
         pool.totalPooled -= _amount;
 
         // transfer access token amount to the user
-        IERC20(_token).approve(address(this), _amount);
-        IERC20(_token).safeTransferFrom(address(this), _user, _amount);
+        IERC20(_token).safeTransfer(_user, _amount);
     }
 
     /**
@@ -145,7 +144,7 @@ contract TreasuryStorage is AccessControl {
         uint256 _amount
     ) external {
         require(
-            getUnlockedAmount(_token, _user) > _amount,
+            getUnlockedAmount(_token, _user) >= _amount,
             "The amount exceed the treasury balance."
         );
 
@@ -157,8 +156,7 @@ contract TreasuryStorage is AccessControl {
         // update the total amount of the access token pooled
         Pools[_token].totalPooled -= _amount;
 
-        IERC20(_token).approve(address(this), _amount);
-        IERC20(_token).safeTransferFrom(address(this), _user, _amount);
+        IERC20(_token).safeTransfer(_user, _amount);
     }
 
     function returnPrincipal(

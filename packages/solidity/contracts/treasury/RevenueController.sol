@@ -66,7 +66,6 @@ contract RevenueController is AccessControl {
         // update pool to current block
         updatePool(_token, _amount);
 
-        IERC20(_token).approve(address(this), _amount);
         TreasuryStorage.deposit(msg.sender, _token, _amount);
         emit Deposit(_token, msg.sender, _amount);
     }
@@ -115,7 +114,7 @@ contract RevenueController is AccessControl {
         );
 
         // the profit remains here
-        IERC20(_token).safeTransfer(address(this), _profit);
+        IERC20(_token).safeTransferFrom(msg.sender, address(this), _profit);
     }
 
     /**
@@ -177,7 +176,6 @@ contract RevenueController is AccessControl {
         ITreasuryStorage(treasuryStorage).updatePool(_token, allocAmount);
 
         // get the distributable access token amount
-        IERC20(_token).approve(address(this), allocAmount);
         IERC20(_token).safeTransferFrom(
             address(this),
             treasuryStorage,
