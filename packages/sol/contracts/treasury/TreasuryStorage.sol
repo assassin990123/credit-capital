@@ -165,6 +165,9 @@ contract TreasuryStorage is AccessControl {
         UserPosition storage userPosition = UserPositions[_user][_token];
         userPosition.loanedAmount -= _principal;
         // userPosition.totalAmount += _principal;
+
+        // transfer token from the user
+        IERC20(_token).safeTransferFrom(_user, address(this), _principal);
     }
 
     function addUserPosition(
