@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { ethers } from "ethers";
 import { balancerPool, balancerVault } from "../../contracts/abi";
-import { balancerVault, caplUSDCPoolId } from "../../contracts";
+import { balancerVault as vaultContract, caplUSDCPoolId } from "../../contracts";
 import { markRaw } from "vue";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
@@ -10,6 +10,7 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
 
 const state = {
   CAPLUSDPollContract: null,
+  vaultContract: null,
   poolID: null
 };
 
@@ -17,6 +18,11 @@ const getters = {
   // get CAPLUSDPollContract
   getCAPLUSDPollContract(state) {
     return state.CAPLUSDPollContract;
+  },
+
+  // get CAPLUSDPollContract
+  getVaultContract(state) {
+    return state.vaultContract;
   },
 
   // get poolID
@@ -28,9 +34,15 @@ const getters = {
 const actions = {
   async setContracts({ commit, rootState }) {
     const provider = rootState.accounts.web3Provider;
+
     commit(
       "setCAPLUSDCPoolContract",
       markRaw(new ethers.Contract(caplUSDCPoolId[ChainID], balancerPool, provider))
+    );
+
+    commit(
+      "setVaultContract",
+      markRaw(new ethers.Contract(vaultContract[ChainID], balancerVault, provider))
     );
   },
 
@@ -50,6 +62,10 @@ const actions = {
 const mutations = {
   setCAPLUSDCPoolContract(state, _contract) {
     state.CAPLUSDPollContract = _contract;
+  },
+
+  setVaultContract(state, _contract) {
+    state.vaultContract = _contract;
   },
 
   setPoolID(state, _poolID) {
