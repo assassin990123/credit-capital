@@ -29,7 +29,7 @@ contract TreasuryStorage is AccessControl {
     }
 
     // Mapping from user to userpostion of the token
-    mapping(address => mapping(address => UserPosition)) UserPositions;
+    mapping(address => mapping(address => UserPosition)) UserPositions; // user => (token => userposition)
 
     struct Pool {
         uint256 totalPooled; // total token pooled in the contract
@@ -66,7 +66,7 @@ contract TreasuryStorage is AccessControl {
         view
         returns (uint256 unlockedAmount)
     {
-        UserPosition storage userPosition = UserPositions[_user][_token];
+        UserPosition memory userPosition = UserPositions[_user][_token];
         unlockedAmount = userPosition.totalAmount - userPosition.loanedAmount;
     }
 
@@ -103,7 +103,7 @@ contract TreasuryStorage is AccessControl {
             addUserPosition(_token, _user, _amount);
         } else {
             // update userPosition
-            UserPosition storage userPosition = UserPositions[_token][_user];
+            UserPosition storage userPosition = UserPositions[_user][_token];
             userPosition.totalAmount += _amount;
         }
 
@@ -121,12 +121,12 @@ contract TreasuryStorage is AccessControl {
         );
 
         // update userPosition
-        UserPosition storage userPosition = UserPositions[_token][_user];
-        unchecked {userPosition.totalAmount -= _amount;}
+        UserPosition storage userPosition = UserPositions[_user][_token];
+        userPosition.totalAmount -= _amount;
 
         // update Pool info
         Pool storage pool = Pools[_token];
-        unchecked {pool.totalPooled -= _amount;}
+        pool.totalPooled -= _amount;
 
         // transfer access token amount to the user
         IERC20(_token).safeTransfer(_user, _amount);
@@ -147,11 +147,11 @@ contract TreasuryStorage is AccessControl {
 
         // update user state
         UserPosition storage userPosition = UserPositions[_user][_token];
-        unchecked {userPosition.loanedAmount += _amount;}
+        userPosition.loanedAmount += _amount;
         // userPosition.totalAmount -= _amount;
 
         // update the total amount of the access token pooled
-        unchecked {Pools[_token].totalPooled -= _amount;}
+        Pools[_token].totalPooled -= _amount;
 
         IERC20(_token).safeTransfer(_user, _amount);
     }

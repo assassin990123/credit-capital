@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 // TreasurySotrage
+import "hardhat/console.sol";
 import "../../interfaces/ITreasuryStorage.sol";
 
 contract RevenueController is AccessControl {
@@ -117,6 +118,8 @@ contract RevenueController is AccessControl {
         @dev - this funciton withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
      */
     function withdraw(address _token) external {
+        TreasuryStorage = ITreasuryStorage(treasuryStorage);
+
         uint256 amount = TreasuryStorage.getUnlockedAmount(_token, msg.sender);
         TreasuryStorage.withdraw(_token, msg.sender, amount);
 
@@ -125,7 +128,10 @@ contract RevenueController is AccessControl {
 
     function loan(address token, uint256 amount) external {
         // check if the amount is under allowance
-        require(TreasuryStorage.getUnlockedAmount(token, msg.sender) >= amount, "Can not loan over unlocked amount");
+        require(
+            TreasuryStorage.getUnlockedAmount(token, msg.sender) >= amount,
+            "Can not loan over unlocked amount"
+        );
 
         TreasuryStorage.loan(token, msg.sender, amount);
         emit Loan(token, msg.sender, amount);
@@ -138,7 +144,7 @@ contract RevenueController is AccessControl {
     function getTokenAlloc(address _token) public view returns (uint256) {
         // get the access token balance
         uint256 balance = IERC20(_token).balanceOf(address(this));
-        
+
         // get the user position
         IUserPositions.UserPosition memory userPosition = ITreasuryStorage(
             treasuryStorage
@@ -175,10 +181,7 @@ contract RevenueController is AccessControl {
         ITreasuryStorage(treasuryStorage).updatePool(_token, allocAmount);
 
         // get the distributable access token amount
-        IERC20(_token).safeTransfer(
-            treasuryStorage,
-            allocAmount
-        );
+        IERC20(_token).safeTransfer(treasuryStorage, allocAmount);
 
         emit DistributeTokenAlloc(_token, msg.sender, allocAmount);
     }
