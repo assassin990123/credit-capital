@@ -96,7 +96,7 @@ describe("Treasury", async () => {
       expect(
         (await storage.getUserPosition(lp.address, deployer.address))
           .totalAmount
-      ).to.equal(250_000);
+      ).to.equal(0);
       expect(
         (await storage.getPool(lp.address)).totalPooled
       ).to.equal(0);
