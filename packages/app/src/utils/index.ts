@@ -15,3 +15,7 @@ export const format = (n: any) => {
     return +(n / 1e12).toFixed(1) + " T";
   }
 };
+
+export const calculateCAPLUSDPrice = (usd: any) => {
+
+}

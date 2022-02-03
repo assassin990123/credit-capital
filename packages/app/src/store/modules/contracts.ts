@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { ethers } from "ethers";
-import { caplABI, rewardsABI, vaultABI } from "../../contracts/abi";
-import { capl, vault, rewards } from "../../contracts";
+import { caplABI, rewardsABI, vaultABI, balancerVault as balancerVaultABI } from "../../contracts/abi";
+import { capl, vault, rewards, vaultContract as balancerVault, caplUSDCPoolId } from "../../contracts";
 import { markRaw } from "vue";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
@@ -13,21 +13,27 @@ const state = {
   vaultContract: null,
   caplContract: null,
   caplBalance: 0,
+  balancerVaultContract: null,
+  poolTokens: {}
 };
 
 const getters = {
   getCAPLContract(state) {
     return state.caplContract;
   },
-  getVaultContract(state) {
-    return state.calcAbi;
-  },
-  getVaultContract(state) {
-    return state.calcContract;
-  },
   getCAPLBalance(state) {
     return state.caplBalance;
   },
+
+  // get CAPLUSDPollContract
+  getBalancerVaultContract(state) {
+    return state.balancerVaultContract;
+  },
+
+  // get poolTokens
+  getPoolTokens() {
+    return state.poolTokens;
+  }
 };
 
 const actions = {
@@ -45,6 +51,12 @@ const actions = {
       "setRewardsContract",
       markRaw(new ethers.Contract(rewards[ChainID], rewardsABI, provider))
     );
+
+    // set vault contract
+    commit(
+      "setBalancerVaultContract",
+      markRaw(new ethers.Contract(balancerVault[ChainID], balancerVaultABI, provider))
+    );
   },
 
   async getCAPLBalance({ commit, rootState }) {
@@ -61,6 +73,29 @@ const actions = {
     // parse balance, set new value in the local state
     commit("setCAPLBalance", ethers.utils.formatUnits(caplBalance, 18));
   },
+
+  async getPoolTokens({ commit, rootState }) {
+    // get poolID
+    const poolID = caplUSDCPoolId[ChainID];
+
+    // if state.balancerVaultContract is null, call the `setContracts` function
+    if (state.balancerVaultContract === null) {
+      actions.setContracts({ commit, rootState });
+    }
+    const balancerVaultContract = state.balancerVaultContract;
+    
+    // call getPoolTokens
+    const poolTokens = await balancerVaultContract.getPoolTokens(poolID);
+    
+    // parse balance
+    const balances = poolTokens.balances.map(obj => ethers.utils.formatUnits(obj, 18));
+    
+    // call setPoolTokens in mutations.
+    commit("setPoolTokens", {
+      "tokens" : poolTokens.tokens,
+      "balances":  balances
+    });
+  },
 };
 
 const mutations = {
@@ -76,6 +111,16 @@ const mutations = {
   setCAPLBalance(state, _balance) {
     state.caplBalance = _balance;
   },
+
+  // assign vault contract
+  setBalancerVaultContract(state, _contract) {
+    state.balancerVaultContract = _contract;
+  },
+
+  // assign poolTokens.
+  setPoolTokens(state, _poolTokens) {
+    state.poolTokens = _poolTokens;
+  }
 };
 
 export default {
