@@ -67,7 +67,7 @@ contract TreasuryStorage is AccessControl {
         returns (uint256 unlockedAmount)
     {
         UserPosition memory userPosition = UserPositions[_user][_token];
-        unlockedAmount = userPosition.totalAmount - userPosition.loanedAmount;
+        unchecked {unlockedAmount = userPosition.totalAmount - userPosition.loanedAmount;}
     }
 
     /**
@@ -104,7 +104,7 @@ contract TreasuryStorage is AccessControl {
         } else {
             // update userPosition
             UserPosition storage userPosition = UserPositions[_user][_token];
-            userPosition.totalAmount += _amount;
+            unchecked {userPosition.totalAmount += _amount;}
         }
 
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
@@ -122,11 +122,11 @@ contract TreasuryStorage is AccessControl {
 
         // update userPosition
         UserPosition storage userPosition = UserPositions[_user][_token];
-        userPosition.totalAmount -= _amount;
+        unchecked {userPosition.totalAmount -= _amount;}
 
         // update Pool info
         Pool storage pool = Pools[_token];
-        pool.totalPooled -= _amount;
+        unchecked {pool.totalPooled -= _amount;}
 
         // transfer access token amount to the user
         IERC20(_token).safeTransfer(_user, _amount);
@@ -147,11 +147,11 @@ contract TreasuryStorage is AccessControl {
 
         // update user state
         UserPosition storage userPosition = UserPositions[_user][_token];
-        userPosition.loanedAmount += _amount;
+        unchecked {userPosition.loanedAmount += _amount;}
         // userPosition.totalAmount -= _amount;
 
         // update the total amount of the access token pooled
-        Pools[_token].totalPooled -= _amount;
+        unchecked {Pools[_token].totalPooled -= _amount;}
 
         IERC20(_token).safeTransfer(_user, _amount);
     }
@@ -163,7 +163,7 @@ contract TreasuryStorage is AccessControl {
     ) external onlyRole(REVENUE_CONTROLLER) {
         // get the userposition
         UserPosition storage userPosition = UserPositions[_user][_token];
-        userPosition.loanedAmount -= _principal;
+        unchecked {userPosition.loanedAmount -= _principal;}
         // userPosition.totalAmount += _principal;
 
         // transfer token from the user
@@ -190,8 +190,8 @@ contract TreasuryStorage is AccessControl {
         uint256 _lastAllockRequetBlock
     ) external onlyRole(REVENUE_CONTROLLER) {
         UserPosition storage userPosition = UserPositions[_user][_token];
-        userPosition.profit += _profit;
-        // userPosition.totalAmount += _profit;
+        unchecked {userPosition.profit += _profit;}
+        unchecked {userPosition.totalAmount += _profit;}
         userPosition.lastAllocRequestBlock = _lastAllockRequetBlock;
     }
 
@@ -207,7 +207,7 @@ contract TreasuryStorage is AccessControl {
         returns (Pool memory)
     {
         Pool storage pool = Pools[_token];
-        pool.totalPooled += _amount;
+        unchecked {pool.totalPooled += _amount;}
 
         return pool;
     }
