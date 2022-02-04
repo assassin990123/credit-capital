@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { ethers } from "ethers";
 import { caplABI, rewardsABI, vaultABI, balancerVault as balancerVaultABI } from "../../contracts/abi";
-import { capl, vault, rewards, vaultContract as balancerVault, caplUSDCPoolId } from "../../contracts";
+import { capl, vault, rewards, balancerVault, caplUSDCPoolId } from "../../contracts";
 import { markRaw } from "vue";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
