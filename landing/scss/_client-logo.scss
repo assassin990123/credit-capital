@@ -1,0 +1,25 @@
+/*============================================
+
+                25 -- Client Logo
+
+==============================================*/
+.client-logo {
+
+    padding: 15px;
+
+    img {
+        @media#{$xs-layout} {
+            width: 75%;
+        }
+        @media#{$sm-layout} {
+            width: 65%;
+        }
+        @media#{$layout-575} {
+            width: 65%;
+        }
+        @media#{$layout-479} {
+            width: 65%;
+        }
+    }
+
+}

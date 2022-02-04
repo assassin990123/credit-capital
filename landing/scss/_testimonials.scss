@@ -1,0 +1,375 @@
+/*============================================
+
+                21 -- Testimonial
+
+==============================================*/
+/*-- testimonial 1 --*/
+
+.testimonial-item-wrap-1 {
+    .testimonial-item {
+        position: relative;
+        padding: 40px;
+        border-radius: 4px;
+        background-color: #fff;
+        border: 1px solid #eee;
+        transition: all 0.3s;
+        z-index: 1;
+
+        .testimonial-author {
+            position: relative;
+            padding-left: 64px;
+            padding-top: 14px;
+            padding-bottom: 30px;
+            line-height: 18px;
+
+            img {
+                position: absolute;
+                width: 54px;
+                height: 54px;
+                overflow: hidden;
+                left: 0;
+                top: 8px;
+                border-radius: 50%;
+                background-color: #fff;
+                box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+            }
+
+            .author__title {
+                font-size: 24px;
+                line-height: 20px;
+                font-weight: 600;
+                transition: all 0.3s;
+                margin-bottom: 5px;
+            }
+
+            .author__meta {
+                font-size: 15px;
+                line-height: 14px;
+                text-transform: capitalize;
+                font-weight: 500;
+                transition: all 0.3s;
+                display: block;
+                margin-bottom: 8px;
+            }
+
+            .author__rating {
+                color: #ffb02b;
+                font-size: 15px;
+
+                .la {
+                    margin: 0 -2px;
+                }
+            }
+
+            &:after {
+                position: absolute;
+                content: "\f10e";
+                font-family: "Line Awesome Free";
+                font-size: 100px;
+                font-weight: 900;
+                line-height: 0;
+                bottom: 50px;
+                right: -15px;
+                color: #7f8897;
+                transition: all 0.3s;
+                opacity: 0.1;
+            }
+        }
+
+        .testimonial-desc .testimonial__desc {
+            line-height: 30px;
+            transition: all 0.3s;
+        }
+
+        &:after {
+            position: absolute;
+            content: '';
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background-image: $bg-gradient;
+            border-radius: 4px;
+            z-index: -1;
+            transition: all 0.4s ease;
+        }
+
+        &:hover {
+            &:after {
+                height: 100%;
+                top: 0;
+                bottom: auto;
+            }
+
+            .testimonial-author:after {
+                opacity: 0.2;
+            }
+
+            .testimonial-desc .testimonial__desc {
+                color: #fff;
+            }
+
+            .testimonial-author {
+
+                .author__title,
+                .author__meta {
+                    color: #fff;
+                }
+            }
+        }
+    }
+
+    .owl-dots {
+        text-align: center;
+        margin-top: 60px;
+
+        div {
+            width: 14px;
+            height: 14px;
+            line-height: 14px;
+            background-color: #fff;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            position: relative;
+            transition: all 0.3s;
+            transform: scale(0.8);
+            border: 2px solid $theme-color-1;
+
+            &.active,
+            &:hover {
+                background-color: $theme-color-1;
+                transform: scale(1);
+            }
+        }
+    }
+}
+
+/*-- testimonial 2 --*/
+
+
+.testimonial-item-wrap-2 {
+    .testimonial-item{
+        @media #{$md-layout} {
+                width: 70%;
+                margin-left: auto;
+                margin-right: auto;
+            
+        }
+    }
+    .testimonial-img img {
+        border-radius: 8px;
+    }
+
+    .testimonial-content {
+        padding-left: 50px;
+
+        @media #{$md-layout} {
+            padding-left: 0;
+            padding-top: 60px;
+
+        }
+
+        @media #{$sm-layout} {
+            padding-left: 0;
+            padding-top: 60px;
+
+        }
+
+        @media #{$layout-479} {
+            padding-left: 0;
+            padding-top: 60px;
+
+        }
+
+        .testimonial-desc {
+            .la-quote-left {
+                font-size: 120px;
+                line-height: 70px;
+                color: rgba(127, 136, 151, 0.2);
+                margin-left: -15px;
+            }
+
+            .testimonial__desc {
+                margin-top: 20px;
+                line-height: 28px;
+            }
+        }
+
+        .testimonial-author {
+            margin-top: 50px;
+            border-left: 2px solid rgba(127, 136, 151, 0.2);
+
+            .author__title {
+                font-size: 24px;
+                line-height: 20px;
+                font-weight: 600;
+                margin: 0 5px 0 15px;
+                padding-top: 4px;
+                display: inline-block;
+
+                @media (max-width: 320px) {
+                    display: block;
+
+                }
+
+            }
+
+            .author__meta {
+                font-size: 15px;
+                text-transform: capitalize;
+                font-weight: 500;
+                margin-bottom: 0;
+                display: inline-block;
+
+
+                @media (max-width: 320px) {
+                    display: block;
+                    margin-left: 15px;
+
+                }
+            }
+
+            .author__rating {
+                color: #ffb02b;
+                font-size: 15px;
+                display: block;
+                margin-top: 4px;
+                margin-left: 15px;
+
+                .la {
+                    margin: 0 -2px;
+                }
+            }
+        }
+    }
+
+    .owl-nav div {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        border-radius: 50%;
+        background-color: #fff;
+        border: 1px solid rgba(127, 136, 151, 0.1);
+        box-shadow: 0 0 40px rgba(82, 85, 90, 0.1);
+        font-size: 22px;
+        transition: all 0.3s;
+
+        @media (max-width: 1366px) {
+            top: 38%;
+            transform: translateY(0);
+
+        }
+
+        @media (max-width: 575px) {
+            top: auto;
+            bottom: -50px;
+
+        }
+
+        &:hover {
+            background-color: $theme-color-1;
+            color: #fff;
+        }
+
+        &.owl-prev {
+            left: -100px;
+            @media (max-width: 1366px)  {
+                    left: -25px;
+                
+            }
+            
+            @media (max-width: 575px)  {
+                    left: 200px;
+                
+            }
+            
+            @media (max-width: 481px) {
+                    left: 160px;
+                
+            }
+            
+            @media (max-width: 425px)  {
+                    left: 130px;
+                
+            }
+            
+            @media (max-width: 384px)  {
+                    left: 110px;
+                
+            }
+            
+            @media (max-width: 320px)  {
+                    left: 85px;
+                
+            }
+        }
+
+        &.owl-next {
+            left: auto;
+            right: -100px;
+            @media (max-width: 1366px) {
+                    right: -25px;
+                
+            }
+            
+            @media (max-width: 575px)  {
+                    right: 200px;
+                
+            }
+            
+            @media (max-width: 481px){
+                    right: 160px;
+                
+            }
+            
+            @media (max-width: 425px)  {
+                    right: 130px;
+                
+            }
+            
+            @media (max-width: 384px)  {
+                    right: 110px;
+                
+            }
+            
+            @media (max-width: 320px)  {
+                    right: 85px;
+                
+            }
+        }
+    }
+
+    .owl-dots {
+        margin-top: -12px;
+        text-align: center;
+        @media (max-width: 1199px) {
+                margin-top: 30px;
+            
+        }
+        div {
+            width: 14px;
+            height: 14px;
+            line-height: 14px;
+            background-color: #fff;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            position: relative;
+            transition: all 0.3s;
+            transform: scale(0.8);
+            border: 2px solid $theme-color-1;
+
+            &.active,
+            &:hover {
+                background-color: $theme-color-1;
+                transform: scale(1);
+            }
+        }
+    }
+}
+

@@ -1,0 +1,622 @@
+/*============================================
+
+                03 -- Components
+
+==============================================*/
+
+//Buttons
+
+.btn.theme-btn-1 {
+    color: $white;
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+    border: none;
+    padding: 0px 45px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 400;
+    transition: 0.5s;
+    background-size: 200% auto;
+    background-image: $bg-gradient;
+    height: 50px;
+    line-height: 50px;
+    box-shadow: $theme-shadow-1;
+
+    &:hover {
+        background-position: right center;
+        box-shadow: 0px 17px 43px 1px rgba(221, 26, 36, 0.356);
+    }
+}
+
+
+//Shadow
+.shadow {
+    box-shadow: $shadow !important;
+}
+
+
+
+/*-- form --*/
+.form-group {
+    margin-bottom: 20px;
+
+    label {
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .form-control {
+        outline: none;
+        box-shadow: none;
+        background-color: $white;
+        border: 1px solid $gray-300;
+        color: $gray-700;
+        height: 42px;
+        font-size: 13px;
+        border-radius: 6px;
+        transition: all 0.5s ease;
+
+        &:focus,
+        &.active {
+            border-color: $theme-color-1;
+        }
+    }
+
+    textarea {
+        height: 120px !important;
+
+        &.form-control {
+            line-height: 25px;
+        }
+    }
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+    background-color: transparent;
+    opacity: 1;
+}
+
+//Checkbox / Radio button
+.custom-control-input:checked~.custom-control-label {
+    &:before {
+        color: $white;
+        border-color: $theme-color-1;
+        background-color: $theme-color-1;
+    }
+}
+
+.custom-control-input:focus~.custom-control-label::before,
+.form-control:focus {
+    box-shadow: none;
+    border-color: $theme-color-1;
+}
+
+.custom-control-label {
+    cursor: pointer;
+
+    &:before,
+    &:after {
+        top: 2px;
+    }
+}
+
+.custom-switch .custom-control-label {
+    &:after {
+        top: 4px;
+    }
+
+}
+
+
+// Print Media
+@media print {
+
+    #topnav,
+    .footer {
+        display: none !important;
+    }
+}
+
+/*--Custom-d-flex --*/
+
+.custom-d-flex {
+    display: flex !important;
+}
+
+/*-- custom-align-item-center --*/
+.custom-align-item-center {
+    align-items: center;
+}
+
+/*-- overlay --*/
+.default-overlay,
+.default-overlay-2 {
+    position: relative;
+}
+
+.default-overlay:before,
+.default-overlay-2:before {
+    content: "";
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    transition: all 250ms ease-out;
+    z-index: 9;
+}
+
+/*-- Preloader --*/
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $bg-gradient;
+    z-index: 9999999;
+}
+
+#preloader #status {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    background-color: #fff;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 3px 12px rgba(6, 11, 47, 0.06);
+    box-shadow: 0 3px 12px rgba(6, 11, 47, 0.06);
+    margin: 100px auto;
+    -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
+    animation: sk-rotateplane 1.2s infinite ease-in-out;
+}
+
+@-webkit-keyframes sk-rotateplane {
+    0% {
+        -webkit-transform: perspective(120px);
+    }
+
+    50% {
+        -webkit-transform: perspective(120px) rotateY(180deg);
+    }
+
+    100% {
+        -webkit-transform: perspective(120px) rotateY(180deg) rotateX(180deg);
+    }
+}
+
+@keyframes sk-rotateplane {
+    0% {
+        transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+        -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    }
+
+    50% {
+        transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+        -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+    }
+
+    100% {
+        transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+        -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+    }
+}
+
+
+/*-- Go Top --*/
+
+.go-top-area {
+    position: relative;
+    z-index: 999;
+
+    .go-top {
+        position: fixed;
+        cursor: pointer;
+        top: 0;
+        right: 24px;
+        color: #ffffff;
+        background-image: $bg-gradient;
+        z-index: 9999;
+        width: 40px;
+        text-align: center;
+        height: 42px;
+        line-height: 42px;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.9s ease-out 0s;
+        border-radius: 0px;
+
+        i {
+            position: absolute;
+            top: 50%;
+            left: -4px;
+            right: 0;
+            margin: 0 auto;
+            font-size: 15px;
+            transform: translateY(-50%);
+            transition: all 0.5s ease-out 0s;
+
+            &:last-child {
+                opacity: 0;
+                visibility: hidden;
+                top: 60%;
+            }
+        }
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: $bg-gradient;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease-out 0s;
+            border-radius: 0px;
+        }
+
+        &:focus,
+        &:hover {
+            color: #fff;
+        }
+
+        &:focus::before,
+        &:hover::before {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        &:focus i:first-child,
+        &:hover i:first-child {
+            opacity: 0;
+            top: 0;
+            visibility: hidden;
+        }
+
+        &:focus i:last-child,
+        &:hover i:last-child {
+            opacity: 1;
+            visibility: visible;
+            top: 50%;
+        }
+
+        &.active {
+            top: 98%;
+            transform: translateY(-98%);
+            opacity: 1;
+            visibility: visible;
+            border-radius: 0px;
+            right: 20px;
+        }
+    }
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1200px) {
+    .go-top-area .go-top.active {
+        top: 93%;
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .go-top-area .go-top.active {
+        top: 93%;
+    }
+}
+
+.go-top-wrap {
+    position: relative;
+
+    .go-top-btn {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        color: #fff;
+        top: 3px;
+        z-index: 1;
+        background-image: $bg-gradient;
+        border-radius: 0px;
+
+        i {
+            font-size: 20px;
+            font-weight: 700;
+            padding-left: 4px;
+            color: #fff;
+        }
+
+        &::after {
+            z-index: -1;
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            animation: ripple 1.6s ease-out infinite;
+            opacity: 0;
+            background-image: $bg-gradient;
+            border-radius: 0px;
+        }
+
+        &:hover {
+            background-color: #222;
+            color: #fff;
+        }
+    }
+}
+
+@keyframes ripple {
+
+    0%,
+    35% {
+        -webkit-transform: scale(0);
+        -moz-transform: scale(0);
+        -ms-transform: scale(0);
+        -o-transform: scale(0);
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    50% {
+        -webkit-transform: scale(1.5);
+        -moz-transform: scale(1.5);
+        -ms-transform: scale(1.5);
+        -o-transform: scale(1.5);
+        transform: scale(1.5);
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+        -webkit-transform: scale(2);
+        -moz-transform: scale(2);
+        -ms-transform: scale(2);
+        -o-transform: scale(2);
+        transform: scale(2);
+    }
+}
+
+@-webkit-keyframes ripple {
+
+    0%,
+    35% {
+        -webkit-transform: scale(0);
+        -moz-transform: scale(0);
+        -ms-transform: scale(0);
+        -o-transform: scale(0);
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    50% {
+        -webkit-transform: scale(1.5);
+        -moz-transform: scale(1.5);
+        -ms-transform: scale(1.5);
+        -o-transform: scale(1.5);
+        transform: scale(1.5);
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+        -webkit-transform: scale(2);
+        -moz-transform: scale(2);
+        -ms-transform: scale(2);
+        -o-transform: scale(2);
+        transform: scale(2);
+    }
+}
+
+/*-- List Icon --*/
+.list-icon li {
+    position: relative;
+    padding-left: 30px;
+
+    i {
+        position: absolute;
+        left: 0;
+        top: 5px;
+        color: $theme-color-1;
+        font-size: 22px;
+        line-height: 20px;
+    }
+}
+
+.theme-bg .list-icon li i {
+    color: #ffffff;
+}
+
+.list-icon-2 li {
+    padding-left: 20px;
+    position: relative;
+
+    &:before {
+        content: "";
+        background: $theme-color-1;
+        position: absolute;
+        top: 8px;
+        left: 0;
+        width: 10px;
+        height: 2px;
+        border-radius: 4px;
+    }
+}
+
+.custom-li {
+    display: inline-block;
+
+    li {
+        float: left;
+        margin-bottom: 20px;
+        width: calc(100% / 2);
+    }
+}
+
+
+
+
+/*-- Background Iamge --*/
+.bg-section {
+    height: 100%;
+    background-attachment: fixed !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+}
+
+.bg-home {
+    height: 100vh;
+    background-size: cover;
+    align-self: center;
+    position: relative;
+    background-position: center center;
+
+    @media (max-width: 767px) {
+        padding: 150px 0;
+        height: auto;
+
+    }
+}
+
+
+/*-- width --*/
+.width-100 {
+    width: 100%;
+}
+
+/*-- Parallax Image --*/
+.parallax-img {
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+
+// Background
+.bg-gray-100 {
+    background: $gray-100;
+}
+
+.bg-gray-200 {
+    background: $gray-200;
+}
+
+.bg-gray-500 {
+    background: $gray-500;
+}
+
+.bg-gray-600 {
+    background: $gray-600;
+}
+
+.bg-gray-700 {
+    background: $gray-700;
+}
+
+// Txt Color 
+
+.gray-100 {
+    color: $gray-100;
+}
+
+.gray-200 {
+    color: $gray-200;
+}
+
+.gray-300 {
+    color: $gray-300;
+}
+
+.gray-400 {
+    color: $gray-400;
+}
+
+.gray-500 {
+    color: $gray-500;
+}
+
+.gray-600 {
+    color: $gray-600;
+}
+
+.gray-700 {
+    color: $gray-700;
+}
+
+
+
+.theme-color-1 {
+    color: $theme-color-1 !important;
+}
+
+
+.bg-theme-color-1 {
+    background-color: $theme-color-1;
+}
+
+.bg-theme-li-color{
+background-color: #fff3f4;
+}
+
+// Border 
+
+.bb-gray-100 {
+    border-bottom: 1px solid $gray-100;
+}
+
+.bb-gray-200 {
+    border-bottom: 1px solid $gray-200;
+}
+
+.bb-gray-300 {
+    border-bottom: 1px solid $gray-300;
+}
+
+.bb-gray-400 {
+    border-bottom: 1px solid $gray-400;
+}
+
+.bb-gray-500 {
+    border-bottom: 1px solid $gray-500;
+}
+
+.bb-gray-600 {
+    border-bottom: 1px solid $gray-600;
+}
+
+.bt-gray-100 {
+    border-top: 1px solid $gray-100;
+}
+
+.bt-gray-200 {
+    border-top: 1px solid $gray-200;
+}
+
+.bt-gray-300 {
+    border-top: 1px solid $gray-300;
+}
+
+.bt-gray-400 {
+    border-top: 1px solid $gray-400;
+}
+
+.bt-gray-500 {
+    border-top: 1px solid $gray-500;
+}
+
+.bt-gray-600 {
+    border-top: 1px solid $gray-600;
+}
