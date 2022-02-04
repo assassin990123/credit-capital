@@ -1,0 +1,177 @@
+/*============================================
+
+                24 -- Coming Soon
+
+==============================================*/
+.coming-soon-logo-1 {
+    position: absolute;
+    z-index: 99;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 25px;
+}
+
+.coming-soon-1 {
+    height: 100vh;
+    width: 100%;
+    min-height: 555px;
+    background: url(../images/bg/coming-soon-bg-1.png) no-repeat center;
+    background-size: cover;
+    display: table;
+    position: relative;
+
+    .coming-soon-inner {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+        position: relative;
+        z-index: 22;
+        color: #FFF;
+        padding-top: 66px;
+    }
+
+    .coming-soon-inner h1 {
+        font-size: 75px;
+        font-weight: 600;
+        margin-bottom: 30px;
+        color: #fff;
+
+        @media #{$md-layout} {
+            font-size: 60px;
+        }
+
+        @media #{$xs-layout} {
+            font-size: 40px;
+        }
+
+        @media #{$layout-575} {
+            font-size: 35px;
+        }
+
+    }
+
+    .coming-soon-inner ul {
+        width: 900px;
+        margin: 36px auto;
+
+        @media (max-width: 991.98px) {
+
+            width: 100% !important;
+
+        }
+
+    }
+
+    .coming-soon-inner ul li {
+        width: 22%;
+        font-size: 31px;
+        font-weight: 500;
+        display: inline-block;
+
+        @media #{$md-layout} {
+
+            font-size: 26px;
+
+        }
+
+        @media #{$xs-layout} {
+
+            font-size: 22px;
+
+        }
+
+        @media #{$layout-575} {
+
+            font-size: 18px;
+
+        }
+
+    }
+
+    .coming-soon-inner ul li span {
+        color: #FFF;
+        font-size: 84px;
+        font-weight: 600;
+        display: block;
+        padding: 50px 0;
+
+
+        @media #{$md-layout} {
+
+            font-size: 65px;
+            padding: 30px 0;
+
+        }
+
+        @media #{$xs-layout} {
+
+            font-size: 45px;
+            padding: 20px 0;
+
+        }
+
+        @media #{$layout-575} {
+
+            font-size: 35px;
+            padding: 12px 0;
+
+        }
+    }
+
+    .coming-soon-inner .subscribe {
+        max-width: 360px;
+        margin: 0 auto;
+    }
+
+    .coming-soon-inner .subscribe input {
+        padding: 17px 17px;
+        border-radius: 4px;
+    }
+
+    .coming-soon-inner .subscribe button {
+        width: 65px;
+        border-radius: 0px 4px 4px 0px;
+        font-size: 25px;
+    }
+
+    .coming-soon-inner .newsletter {
+        padding: 10px 0;
+        max-width: 90%;
+        margin: auto;
+    }
+
+    .coming-soon-inner .newsletter p {
+        margin-bottom: 30px;
+    }
+
+    .coming-soon-inner .subscribe {
+        position: relative;
+    }
+
+    .coming-soon-inner .subscribe input {
+        padding: 17px 20px;
+        outline: none;
+        color: #555;
+        width: 100%;
+        border: none;
+    }
+
+    .coming-soon-inner .subscribe button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: #fff;
+        width: 62px;
+        height: 100%;
+        cursor: pointer;
+        text-align: center;
+        background: $gray-700;
+        transition: all 0.4s ease-out 0s;
+        border: none;
+    }
+
+    .coming-soon-inner .subscribe button:hover {
+        background: #141620;
+        color: #fff;
+    }
+}

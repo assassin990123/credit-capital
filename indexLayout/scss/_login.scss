@@ -1,0 +1,224 @@
+/*============================================
+
+               12 -- Login 
+
+==============================================*/
+.login-page {
+  position: relative;
+  background-image: url("../images/bg/login-bg.jpg");
+  background-size: cover;
+  background-position: center;
+  justify-content: center;
+  min-height: 100vh;
+
+  .overlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-image: url('../images/bg/overlay.png');
+    opacity: 30%;
+  }
+
+  .login-form {
+    z-index: 1;
+    width: 450px;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 3rem 0rem;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+
+    .input-group {
+
+      position: relative;
+      margin-bottom: 1.5rem;
+
+
+      .login-form-icon {
+        position: absolute;
+        top: 0.75rem;
+        left: 0rem;
+        background-color: transparent !important;
+        color: $theme-color-1;
+        border: none;
+        z-index: 10;
+        font-size: 1rem;
+      }
+
+      .form-control {
+        background-color: transparent;
+        border: none;
+        border-bottom: 0.0625rem solid #eeeeff;
+        border-radius: 0;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.6;
+        color: #1e2022;
+        padding: 0.75rem 1.5rem;
+        height: 3.225rem;
+
+        &:focus {
+          color: #1e2022;
+          outline: 0;
+          background-color: transparent;
+          box-shadow: none;
+        }
+
+        &::-webkit-input-placeholder,
+        &::-moz-placeholder,
+        &:-ms-input-placeholder,
+        &::-ms-input-placeholder,
+        &::placeholder {
+          color: #97a4af;
+          opacity: 1;
+        }
+      }
+
+    }
+  }
+
+  .login-form {
+
+    .login-social-icon {
+      background: $bg-gradient;
+      box-shadow: $theme-shadow-1;
+      margin: -3rem -1rem 2rem;
+      padding: 1rem;
+      text-align: center;
+      border-radius: 0.5rem;
+      color: #fff;
+
+      h2 {
+        color: $white;
+      }
+
+      .social-buttons {
+        display: flex;
+        padding: 0;
+        margin: 0;
+
+        li {
+          display: flex;
+          padding: 0;
+          margin: 0;
+          flex-basis: 20%;
+          flex-shrink: 0;
+          margin: 2px;
+
+          &:first-child {
+            margin-left: 0px;
+          }
+
+          &:last-child {
+            margin-right: 0px;
+          }
+        }
+
+        width: 100%;
+        list-style: none;
+        flex-wrap: wrap;
+        margin: 1.5rem 0rem 0rem;
+        justify-content: center;
+
+        a {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          padding: 0.75rem 1rem;
+          font-weight: 500;
+          text-decoration: none;
+          color: #fff;
+          border-radius: 0.3125rem;
+          border: 1px solid rgba(255, 255, 255, 0);
+          transition: 0.4s;
+
+          &:hover {
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+          }
+        }
+      }
+
+    }
+
+  }
+
+  .form-check {
+    display: inline-flex;
+
+    input[type='checkbox'] {
+      position: absolute;
+      left: 0;
+      z-index: -1;
+      width: 1rem;
+      height: 1.3rem;
+      opacity: 0;
+    }
+  }
+
+  .form-check-box {
+    cursor: pointer;
+
+    &::before {
+      border-radius: 0.25rem;
+      transition: .4s;
+      position: absolute;
+      top: 6px;
+      left: 0rem;
+      display: block;
+      width: 1rem;
+      height: 1rem;
+      pointer-events: none;
+      content: "";
+      background-color: #eeeeff;
+      border: 1px solid #97a4af;
+    }
+
+    &:hover::before {
+      border-color: $theme-color-1;
+    }
+
+    &::after {
+      position: absolute;
+      top: 0.1875rem;
+      left: 0rem;
+      display: block;
+      width: 1rem;
+      height: 1rem;
+      content: "";
+      background: no-repeat 50% / 50% 50%;
+    }
+  }
+
+  .form-check {
+    padding-left: 1.5rem;
+    font-weight: 400;
+
+    label {
+      color: #97a4af;
+    }
+
+    input:checked~.form-check-box {
+      &::before {
+        color: #fff;
+        border-color: $theme-color-1;
+        background-color: $theme-color-1;
+      }
+
+      &::after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e");
+      }
+    }
+  }
+
+  .login-footer {
+    text-align: center;
+    margin-top: 22px;
+    font-size: 12px;
+    color: #97a4af;
+    font-weight: 400;
+  }
+}
