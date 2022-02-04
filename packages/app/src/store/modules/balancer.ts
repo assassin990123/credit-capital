@@ -1,8 +1,15 @@
 // @ts-nocheck
 import { ethers } from "ethers";
-import Web3 from "web3";
 import { balancerVault as balancerVaultABI } from "../../contracts/abi";
-import { balancerVault as balancerVault, caplUSDCPoolId } from "../../contracts";
+import {
+  balancerVault as balancerVault,
+  caplUSDCPoolId,
+  poolWETH_USDC,
+  poolBAL_WETH,
+  swapTokenBAL,
+  swapTokenUSDC,
+  swapTokenWETH,
+} from "../../contracts";
 import { markRaw } from "vue";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
@@ -62,12 +69,12 @@ const actions = {
   },
 
   async batchSwap({ commit, rootState }) {
-    const pool_WETH_USDC = "0x3a19030ed746bd1c3f2b0f996ff9479af04c5f0a000200000000000000000004";
-    const pool_BAL_WETH = "0x61d5dc44849c9c87b0856a2a311536205c96c7fd000200000000000000000000";
+    const pool_WETH_USDC = poolWETH_USDC[ChainID];
+    const pool_BAL_WETH = poolBAL_WETH[ChainID];
 
-    const token_BAL = "0x41286Bb1D3E870f3F750eB7E1C25d7E48c8A1Ac7".toLowerCase();
-    const token_USDC  = "0xc2569dd7d0fd715B054fBf16E75B001E5c0C1115".toLowerCase();
-    const token_WETH = "0xdFCeA9088c8A88A76FF74892C1457C17dfeef9C1".toLowerCase();
+    const token_BAL = swapTokenBAL[ChainID].toLowerCase();
+    const token_USDC  = swapTokenUSDC[ChainID].toLowerCase();
+    const token_WETH = swapTokenWETH[ChainID].toLowerCase();
     const tokenData = {};
     tokenData[token_BAL] = {
       "symbol": "BAL",
@@ -102,7 +109,7 @@ const actions = {
     const checksumTokens = [];
     for (const token of tokenAddresses) {
       tokenLimits.push(ethers.utils.formatUnits(tokenData[token]["limit"], 18));
-      checksumTokens.push(Web3.utils.toChecksumAddress(token));
+      checksumTokens.push(ethers.utils.getAddress(token));
     }
 
     const swapKind = 0;
@@ -120,9 +127,9 @@ const actions = {
       userData: '0x',
     }];
     const fundStruct = {
-      sender: Web3.utils.toChecksumAddress(fundSettings["sender"]),
+      sender: ethers.utils.getAddress(fundSettings["sender"]),
       fromInternalBalance: fundSettings["fromInternalBalance"],
-      recipient: Web3.utils.toChecksumAddress(fundSettings["recipient"]),
+      recipient: ethers.utils.getAddress(fundSettings["recipient"]),
       toInternalBalance: fundSettings["toInternalBalance"]
     };
     const deadline = ethers.utils.formatUnits(999999999999999999, 18);
