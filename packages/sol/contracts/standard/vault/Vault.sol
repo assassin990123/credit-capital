@@ -171,7 +171,7 @@ contract Vault is AccessControl, Pausable {
     }
 
     function getUnlockedAmount(address _token, address _user)
-        external
+        public
         onlyRole(REWARDS)
         returns (uint256)
     {
@@ -200,6 +200,24 @@ contract Vault is AccessControl, Pausable {
         userPosition.userLastWithdrawnStakeIndex = lastUnlockedIndex;
 
         return unlockedAmount;
+    }
+
+    function getUserStakedPosition(address _token, address _user)
+        external
+        returns (uint256)
+    {
+        // get userposition
+        UserPosition memory user = UserPositions[_user][_token];
+        uint256 lockedAmount = user.totalAmount;
+
+        // get unclocked amount
+        uint256 unlockedAmount = getUnlockedAmount(_token, _user);
+
+        if (unlockedAmount > 0) {
+            unchecked {lockedAmount = user.totalAmount - unlockedAmount;}
+        }
+
+        return lockedAmount;
     }
 
     function getLastStake(address _token, address _user)
