@@ -1243,7 +1243,7 @@ button:focus, input:focus, input:focus, textarea, textarea:focus {
   z-index: 999;
   -webkit-box-shadow: 0 2px 28px 0 rgba(0, 0, 0, 0.09);
   box-shadow: 0 2px 28px 0 rgba(0, 0, 0, 0.09);
-  background-color: #ffffff !important;
+  background-color: #FFB531;
   -webkit-animation: 500ms ease-in-out 0s normal none 1 running fadeInDown;
   animation: 500ms ease-in-out 0s normal none 1 running fadeInDown;
   padding-top: 5px;
