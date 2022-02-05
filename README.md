@@ -8,7 +8,7 @@ The backend can be found here ``packages/sol``
 
 ``yarn bootstrap``
 
-- then, if you want to run the web app, run
+- then, if you want to run the web app, first copy the contents of``.env.example`` file located in the ``app`` package into a new file called ``.env``, then
 
 ``yarn start``
 
