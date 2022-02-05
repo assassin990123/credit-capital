@@ -1,0 +1,86 @@
+/*============================================
+
+              09 -- Breadcrumb 
+
+==============================================*/
+.banner-section {
+  padding-top: 155px;
+  background-color: $gray-100;
+  @media screen and (max-width: 991px) {
+    padding-top: 140px;
+
+  }
+
+  @media screen and (max-width: 767px) {
+    padding-top: 120px;
+
+  }
+
+
+
+  .banner-content {
+    .title {
+      color: $gray-700;
+      font-weight: 700;
+      line-height: 1.058;
+      margin-bottom: 2rem;
+      font-size: 68px;
+
+      @media #{$xl-layout} {
+        font-size: 60px;
+
+      }
+
+      @media screen and (max-width: 1199px) {
+        font-size: 40px;
+
+      }
+    }
+
+    p {
+      font-size: 18px;
+
+      @media screen and (max-width: 991px) {
+        font-size: 16px;
+
+      }
+
+    }
+  }
+}
+
+
+.banner-img {
+  @media screen and (min-width: 1500px) {
+    margin-right: -150px;
+
+  }
+
+  @media screen and (min-width: 1920px) {
+    margin-right: -215px;
+
+  }
+}
+
+
+.banner-padding {
+  @media screen and (min-width: 1701px) {
+    padding-top: 145px;
+
+  }
+
+  @media screen and (min-width: 1500px) and (max-width: 1700px) {
+    padding-top: 140px;
+
+  }
+
+  @media #{$xl-layout} {
+    padding-top: 60px;
+
+  }
+
+  @media #{$lg-layout} {
+    padding-top: 30px;
+
+  }
+}

@@ -1,0 +1,191 @@
+/*============================================
+
+                08 -- Portfolio
+
+==============================================*/
+.portfolio-detail {
+    .portfolio_area_details {
+        .portfolio-post-content {
+            position: relative;
+
+            h2 {
+                font-size: 42px;
+                line-height: 58px;
+                margin-bottom: 28px;
+            }
+
+            img {
+                width: 100%;
+                height: auto;
+                border-radius: 15px;
+                margin: 29px 0 50px;
+            }
+        }
+
+        .helping-post {
+            background: $gray-100;
+            padding: 64px 100px 59px;
+            border-radius: 15px;
+            margin-top: 72px;
+            margin-bottom: 97px;
+
+            h3 {
+                color: $gray-600;
+                font-size: 40px;
+                line-height: 55px;
+                margin: 0 70px 46px;
+                text-align: center;
+            }
+
+            .loan-desc {
+                position: relative;
+                font-size: 19px;
+                line-height: 35px;
+                color: #606378;
+                margin: 0 0 9px;
+
+                h5 {
+                    font-weight: 700;
+                    margin: 0;
+                    font-size: 19px;
+                    line-height: 35px;
+                    color: #606378;
+                    display: inline-block;
+                    min-width: 155px;
+                }
+
+                p {
+                    margin: 0;
+                    display: inline-block;
+                    padding-left: 20px;
+                    word-break: break-all;
+                }
+            }
+        }
+
+        .related-portfolio {
+            position: relative;
+
+            h3 {
+                font-size: 40px;
+                line-height: 55px;
+                color: $gray-600;
+                margin-bottom: 56px;
+            }
+        }
+    }
+}
+
+.single-portfolio {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 50px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 18px 0px rgba(51, 60, 142, 0.1);
+
+    .portfolio-thumb {
+        position: relative;
+
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+        }
+    }
+
+    .portfoilo-overlay {
+        position: absolute;
+        top: 0;
+        z-index: 2;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        content: '';
+        transition-timing-function: cubic-bezier(0.07, 0.72, 0.24, 1);
+        transition-duration: 1s;
+        background-image: $bg-gradient;
+        border-radius: 15px;
+        opacity: 0;
+        visibility: hidden;
+        transition: all ease 400ms;
+
+        h4 {
+            font-size: 20px;
+            color: #fff;
+            line-height: .8;
+            font-weight: 800;
+            margin: 0 0 28px;
+        
+            a {
+                color: #fff;
+                z-index: 5;
+                top: -30px;
+                position: relative;
+                transition: all ease 1200ms;
+                &:hover {
+                    color: #000;
+                }
+            }
+        }
+        p {
+            font-size: 19px;
+            line-height: 30px;
+            color: #fff;
+            margin-bottom: 32px;
+            z-index: 5;
+            position: relative;
+            transition: all ease 1200ms;
+        }
+    
+        .portfolio-btn {
+            box-shadow: 0px 17px 43px 1px rgba(255, 255, 255, 0.1);
+            background-color: $gray-200;
+            padding: 0px 55px;
+            border-radius: 35px;
+            font-size: 16px;
+            color: $gray-700;
+            font-weight: 600;
+            transition-duration: 400ms;
+            height: 60px;
+            line-height: 60px;
+    
+            i {
+                font-size: 24px;
+                position: relative;
+                top: 3px;
+                line-height: 39px;
+            }
+    
+            &:hover {
+                background-color: $gray-700;
+                box-shadow: $gray-700-shadow;
+                color: $white;
+            }
+        }
+        .portfolio-aling {
+            left: 0;
+            margin: auto;
+            position: absolute;
+            right: 0;
+            text-align: center;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+            padding: 30px;
+        }
+    }
+}
+
+.single-portfolio:hover .portfoilo-overlay {
+    visibility: visible;
+    opacity: .90;
+    border-radius: 20px;
+  
+    h4 a {
+      top: 0;
+    }
+  
+    a.portfolio-btn {
+      bottom: 0;
+    }
+  }

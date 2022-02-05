@@ -1,3 +1,5 @@
+import { capl } from "@/contracts";
+
 export const format = (n: any) => {
   if (n < 1e3) {
     return n;
@@ -16,6 +18,17 @@ export const format = (n: any) => {
   }
 };
 
-export const calculateCAPLUSDPrice = (usd: any) => {
+export const calculateCAPLUSDPrice = (amount: number, unit: string, poolTokens: any ) => {
 
+  const USDC = poolTokens.balances[0];
+  const CAPL = poolTokens.balances[1];
+
+  // convert usdc to capl
+  if ( unit == "CAPL" ) {
+    return (CAPL / USDC) * amount;
+  }
+  // convert capl to usdc
+  if (unit == "USDC") {
+    return (USDC / CAPL) * amount;
+  }
 }
