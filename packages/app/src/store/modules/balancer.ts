@@ -33,7 +33,7 @@ const getters = {
 
   getBatchSwap() {
     return state.batchSwap;
-  }
+  },
 };
 
 const actions = {
@@ -41,7 +41,9 @@ const actions = {
     const provider = rootState.accounts.web3Provider;
     commit(
       "setBalancerVaultContract",
-      markRaw(new ethers.Contract(balancerVault[ChainID], balancerVaultABI, provider))
+      markRaw(
+        new ethers.Contract(balancerVault[ChainID], balancerVaultABI, provider)
+      )
     );
   },
 
@@ -54,17 +56,19 @@ const actions = {
       actions.setContracts({ commit, rootState });
     }
     const balancerVaultContract = state.balancerVaultContract;
-    
+
     // call getPoolTokens
     const poolTokens = await balancerVaultContract.getPoolTokens(poolID);
-    
+
     // parse balance
-    const balances = poolTokens.balances.map(obj => ethers.utils.formatUnits(obj, 18));
-    
+    const balances = poolTokens.balances.map((obj) =>
+      ethers.utils.formatUnits(obj, 18)
+    );
+
     // call setPoolTokens in mutations.
     commit("setPoolTokens", {
-      "tokens" : poolTokens.tokens,
-      "balances":  balances
+      tokens: poolTokens.tokens,
+      balances: balances,
     });
   },
 
@@ -73,23 +77,23 @@ const actions = {
     const pool_BAL_WETH = poolBAL_WETH[ChainID];
 
     const token_BAL = swapTokenBAL[ChainID].toLowerCase();
-    const token_USDC  = swapTokenUSDC[ChainID].toLowerCase();
+    const token_USDC = swapTokenUSDC[ChainID].toLowerCase();
     const token_WETH = swapTokenWETH[ChainID].toLowerCase();
     const tokenData = {};
     tokenData[token_BAL] = {
-      "symbol": "BAL",
-      "decimals": "18",
-      "limit": "0"
+      symbol: "BAL",
+      decimals: "18",
+      limit: "0",
     };
     tokenData[token_USDC] = {
-      "symbol": "USDC",
-      "decimals": "6",
-      "limit": 100
+      symbol: "USDC",
+      decimals: "6",
+      limit: 100,
     };
     tokenData[token_WETH] = {
-      "symbol": "WETH",
-      "decimals": "18",
-      "limit": 0
+      symbol: "WETH",
+      decimals: "18",
+      limit: 0,
     };
     const tokenAddresses = Object.keys(tokenData);
     tokenAddresses.sort();
@@ -99,10 +103,10 @@ const actions = {
     }
 
     const fundSettings = {
-      "sender": rootState.accounts.activeAccount,
-      "recipient": rootState.accounts.activeAccount,
-      "fromInternalBalance": false,
-      "toInternalBalance": false
+      sender: rootState.accounts.activeAccount,
+      recipient: rootState.accounts.activeAccount,
+      fromInternalBalance: false,
+      toInternalBalance: false,
     };
 
     const tokenLimits = [];
@@ -113,24 +117,27 @@ const actions = {
     }
 
     const swapKind = 0;
-    const swapSteps = [{
-      poolId: pool_WETH_USDC,
-      assetInIndex: tokenIndices[token_USDC],
-      assetOutIndex: tokenIndices[token_WETH],
-      amount: ethers.utils.formatUnits(100, 18),
-      userData: '0x',
-    }, {
-      poolId: pool_BAL_WETH,
-      assetInIndex: token_WETH,
-      assetOutIndex: token_BAL,
-      amount: 0,
-      userData: '0x',
-    }];
+    const swapSteps = [
+      {
+        poolId: pool_WETH_USDC,
+        assetInIndex: tokenIndices[token_USDC],
+        assetOutIndex: tokenIndices[token_WETH],
+        amount: ethers.utils.formatUnits(100, 18),
+        userData: "0x",
+      },
+      {
+        poolId: pool_BAL_WETH,
+        assetInIndex: token_WETH,
+        assetOutIndex: token_BAL,
+        amount: 0,
+        userData: "0x",
+      },
+    ];
     const fundStruct = {
       sender: ethers.utils.getAddress(fundSettings["sender"]),
       fromInternalBalance: fundSettings["fromInternalBalance"],
       recipient: ethers.utils.getAddress(fundSettings["recipient"]),
-      toInternalBalance: fundSettings["toInternalBalance"]
+      toInternalBalance: fundSettings["toInternalBalance"],
     };
     const deadline = ethers.utils.formatUnits(999999999999999999, 18);
 
@@ -139,7 +146,14 @@ const actions = {
     }
     const balancerVaultContract = state.balancerVaultContract;
 
-    const batchSwap = await balancerVaultContract.batchSwap(swapKind, swapSteps, checksumTokens, fundStruct, tokenLimits, deadline);
+    const batchSwap = await balancerVaultContract.batchSwap(
+      swapKind,
+      swapSteps,
+      checksumTokens,
+      fundStruct,
+      tokenLimits,
+      deadline
+    );
 
     commit("setBatchSwap", batchSwap);
   },
@@ -156,7 +170,7 @@ const mutations = {
 
   setBatchSwap(state, _batchSwap) {
     state.batchSwap = _batchSwap;
-  }
+  },
 };
 
 export default {
