@@ -1,11 +1,11 @@
 <template>
-  <div class="home">
+  <div class="home stack-page">
     <div class="swap-container">
-      <div class="inner-container">
+      <div class="inner-container reward-main-sec">
         <div class="rewards-container">
           <h1 class="panel-title">PENDING REWARDS</h1>
           <div class="rewards-content">
-            <div class="rewards-display">USDC: $0000.00</div>
+            <div class="rewards-display"><span>USDC:</span> $0000.00</div>
             <div class="rewards-section">
               <div class="rewards-section-item">CLAIM</div>
               <div class="rewards-section-item">COMPOUND</div>
@@ -13,13 +13,26 @@
           </div>
         </div>
       </div>
-      <DappFooter />
+      <div class="panel-container">
+        <div class="stack-bottom-area">
+          <div class="stack-bottom-area-inner">
+            <div class="stack-button-area">
+              <a href="javascript:void(0)" class="stack-btn"
+                >Total Locked Value</a
+              >
+              <a href="javascript:void(0)" class="stack-btn">Price of Capl</a>
+              <a href="javascript:void(0)" class="stack-btn">User Position</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <DappFooter /> -->
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import DappFooter from "@/components/DappFooter.vue";
+// import DappFooter from "@/components/DappFooter.vue";
 </script>
 
 <style>
