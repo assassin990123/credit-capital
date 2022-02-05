@@ -1,6 +1,12 @@
 <template>
   <div>
-    <h1>Global Header</h1>
+    <!-- PreLoader -->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner"></div>
+        </div>
+    </div>
+    <!--Preloader-->
     <Navbar />
   </div>
 </template>
@@ -10,5 +16,5 @@ import Navbar from "@/components/Navbar.vue";
 </script>
 
 <style>
-
+@import url("https://fonts.googleapis.com/css2?family=Kanit:ital@1&family=Orbitron&display=swap");
 </style>
