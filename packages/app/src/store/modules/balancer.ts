@@ -1,15 +1,8 @@
 // @ts-nocheck
 import { ethers } from "ethers";
-import { balancerVault as balancerVaultABI } from "../../contracts/abi";
-import {
-  balancerVault as balancerVault,
-  caplUSDCPoolId,
-  poolWETH_USDC,
-  poolBAL_WETH,
-  swapTokenBAL,
-  swapTokenUSDC,
-  swapTokenWETH,
-} from "../../contracts";
+import { balancerVault as balancerVaultABI } from "@/abi";
+import { contracts, pools, tokens } from "@/constants";
+import { findObjectContract, findObjectId } from "@/utils";
 import { markRaw } from "vue";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
@@ -42,14 +35,14 @@ const actions = {
     commit(
       "setBalancerVaultContract",
       markRaw(
-        new ethers.Contract(balancerVault[ChainID], balancerVaultABI, provider)
+        new ethers.Contract(findObjectContract('balancerVault', contracts, ChainID), balancerVaultABI, provider)
       )
     );
   },
 
   async getPoolTokens({ commit, rootState }) {
     // get poolID
-    const poolID = caplUSDCPoolId[ChainID];
+    const poolID = findObjectId("BAL/WETH", pools, ChainID);
 
     // if state.balancerVaultContract is null, call the `setContracts` function
     if (state.balancerVaultContract === null) {
@@ -58,7 +51,7 @@ const actions = {
     const balancerVaultContract = state.balancerVaultContract;
 
     // call getPoolTokens
-    const poolTokens = await balancerVaultContract.getPoolTokens(poolID);
+    const poolTokens = await balancerVaultContract.getPoolTokens(poolID.id[ChainID]);
 
     // parse balance
     const balances = poolTokens.balances.map((obj) =>
@@ -73,12 +66,13 @@ const actions = {
   },
 
   async batchSwap({ commit, rootState }) {
-    const pool_WETH_USDC = poolWETH_USDC[ChainID];
-    const pool_BAL_WETH = poolBAL_WETH[ChainID];
+    const pool_WETH_USDC = findObjectId("WETH/USDC", pools, ChainID);
+    const pool_BAL_WETH = findObjectId("BAL/WETH", pools, ChainID);
 
-    const token_BAL = swapTokenBAL[ChainID].toLowerCase();
-    const token_USDC = swapTokenUSDC[ChainID].toLowerCase();
-    const token_WETH = swapTokenWETH[ChainID].toLowerCase();
+    const token_BAL = findObjectContract("BAL", tokens, ChainID);
+    const token_USDC = findObjectContract("USDC", tokens, ChainID);
+    const token_WETH = findObjectContract("WETH", tokens, ChainID);
+    
     const tokenData = {};
     tokenData[token_BAL] = {
       symbol: "BAL",

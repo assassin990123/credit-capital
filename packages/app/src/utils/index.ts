@@ -1,5 +1,3 @@
-import { capl } from "@/contracts";
-
 export const format = (n: any) => {
   if (n < 1e3) {
     return n;
@@ -35,3 +33,34 @@ export const calculateCAPLUSDPrice = (
     return (USDC / CAPL) * amount;
   }
 };
+
+interface Constant {
+  symbol: string;
+  contracts: {
+    137: string;
+    42: string;
+  }
+}
+
+interface Pool {
+  symbol: string;
+  id: {
+    42: string;
+  }
+  contracts: {
+    137: string;
+    42: string;
+  }
+}
+
+export const findObjectContract = (flag: string, obj: Array<Constant>, chain: string) => {
+  const c = obj.find(o => o.symbol == flag)
+  // @ts-ignore
+  return c?.contracts[chain]
+}
+
+export const findObjectId = (flag: string, obj: Array<Pool>, chain: string ) => {
+  const c = obj.find(o => o.symbol == flag)
+  // @ts-ignore
+  return c?.id
+}
