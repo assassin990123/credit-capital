@@ -1,5 +1,5 @@
 <template>
-  <h1>Global Footer</h1>
+  <h1>DApp Footer</h1>
 </template>
 
 <script lang="ts">
@@ -10,4 +10,5 @@ export default {
 
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Kanit:ital@1&family=Orbitron&display=swap");
+
 </style>
