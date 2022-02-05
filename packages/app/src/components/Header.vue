@@ -1,12 +1,5 @@
 <template>
   <div>
-    <!-- PreLoader -->
-    <div id="preloader">
-        <div id="status">
-            <div class="spinner"></div>
-        </div>
-    </div>
-    <!--Preloader-->
     <Navbar />
   </div>
 </template>

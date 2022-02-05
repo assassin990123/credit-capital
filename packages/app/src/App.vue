@@ -9,13 +9,10 @@
 <script setup lang="ts">
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
-import "../public/js/vendors.js";
-import "../public/js/plugins.js";
-import jQuery from "../public/js/main.js";
 </script>
 
 <style>
-/*@import url("../public/css/vendors.css"); Disabled due to path issue*/
+@import url("../public/css/vendors.css");
 @import url("../public/css/plugins.css");
 @import url("../public/css/icons.css");
 @import url("../public/css/style.css");
