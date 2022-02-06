@@ -1,90 +1,95 @@
 <template>
-  <div class="home">
+  <div class="home stack-page">
     <div class="swap-container">
       <div class="treasury-row inner-container">
         <div class="treasury-column-1">
-          <div class="treasury-value-container">
+          <div class="treasury-value-container treasury-outstanding">
             <div class="treasury-value-header">
-              <div>OUTSTANDING ASSETS VALUE</div>
+              <div class="asset-value">Outstanding Assets Value</div>
               <div>(USD)</div>
             </div>
             <div class="treasury-value">$0.00</div>
           </div>
-          <div class="treasury-value-container">
+          <div class="treasury-value-container treasury-outstanding">
             <div class="treasury-value-header">
-              <div>TOTAL ASSETS UNDER MANAGEMENT</div>
+              <div class="asset-value">Total Assets Under <br>Management</div>
               <div>(USD VALUE)</div>
             </div>
             <div class="treasury-value">$0.00</div>
           </div>
         </div>
         <div class="treasury-column-2">
-          <div class="treasury-current-assets">
-            <div class="treasury-current-assets-header">
-              CURRENT ASSETS IN CONTRACT
+          <div class="treasury-current-assets treasury-outstanding">
+            <div class="treasury-current-assets-header tresury-custom">
+              Current Asset in Contract
+            </div>
+            <div class="treasury-current-assets-row ">
+              <div class="treasury-current-assets-token">
+                  Token
+              </div>
+              <div class="line"><hr> </div>
+              <div class="treasury-current-assets-amount">Amount</div>
             </div>
             <div class="treasury-current-assets-row">
               <div class="treasury-current-assets-token">
-                TOKEN ----------------------
+                Token
               </div>
-              <div class="treasury-current-assets-amount">AMOUNT</div>
+              <div class="line"><hr> </div>
+              <div class="treasury-current-assets-amount">Amount</div>
             </div>
             <div class="treasury-current-assets-row">
               <div class="treasury-current-assets-token">
-                TOKEN ----------------------
+                Token
               </div>
-              <div class="treasury-current-assets-amount">AMOUNT</div>
+              <div class="line"><hr> </div>
+              <div class="treasury-current-assets-amount">Amount</div>
             </div>
             <div class="treasury-current-assets-row">
               <div class="treasury-current-assets-token">
-                TOKEN ----------------------
+                Token
               </div>
-              <div class="treasury-current-assets-amount">AMOUNT</div>
+              <div class="line"><hr> </div>
+              <div class="treasury-current-assets-amount">Amount</div>
             </div>
             <div class="treasury-current-assets-row">
               <div class="treasury-current-assets-token">
-                TOKEN ----------------------
+                Token
               </div>
-              <div class="treasury-current-assets-amount">AMOUNT</div>
-            </div>
-            <div class="treasury-current-assets-row">
-              <div class="treasury-current-assets-token">
-                TOKEN ----------------------
-              </div>
-              <div class="treasury-current-assets-amount">AMOUNT</div>
+              <div class="line"><hr> </div>
+              <div class="treasury-current-assets-amount">Amount</div>
             </div>
           </div>
         </div>
       </div>
       <div class="treasury-row">
-        <div class="treasury-column-1 treasury-projections">
-          <div class="treasury-projections-header">
-            CURRENT REVENUE PROJECTIONS
+        <div class="treasury-column-1 treasury-projections treasury-outstanding">
+          <div class="treasury-projections-header asset-value">
+            Current Revenue Projections
           </div>
-          <div class="treasury-projections-row">
-            <div class="treasury-projections-column">DAILY</div>
-            <div class="treasury-projections-column">WEEKLY</div>
-            <div class="treasury-projections-column">MONTHLY</div>
+          <div class="treasury-projections-row treasury-projections-custom">
+            <div class="treasury-projections-column projection-custom">Daily</div>
+            <div class="treasury-projections-column projection-custom">Weekly</div>
+            <div class="treasury-projections-column projection-custom">Monthly</div>
           </div>
         </div>
         <div class="treasury-column-2">
           <Tab
-            :sections="['WITHDRAW', 'DEPOSIT', 'REVENUE']"
+            :sections="['Withdraw', 'Deposit', 'Revenue']"
             :value="selected"
             :onChange="onChangeTab"
           />
-          <div class="tab-content">
+          <div class="tab-content treasury-outstanding">
             <div class="tab-inner-content">
               <select class="tab-inner-content-item">
-                <option value="TOKEN">TOKEN</option>
+                <option value="TOKEN">Token</option>
               </select>
               <div class="tab-inner-content-item">
-                <div>AMOUNT</div>
-                <input type="text" />
+                <div>Amount</div>
+                <input class="tab-inner-inpunt" type="text" />
               </div>
               <div class="tab-inner-content-item">
-                <div>ADDRESS</div>
-                <input type="text" />
+                <div>Address</div>
+                <input class="tab-inner-inpunt" type="text" />
               </div>
               <button class="tab-inner-content-item">ENTER</button>
             </div>
@@ -170,6 +175,8 @@ const onChangeTab = (v) => (selected.value = v);
 }
 
 .treasury-current-assets-amount {
+  font-size: 22px;
+  font-weight: 700;
 }
 
 .treasury-projections {

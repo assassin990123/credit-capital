@@ -37,7 +37,8 @@
 //             27 -- Stack
 //             28 -- Reward
 //             29 -- Swap
-//             30 -- Footer
+//             30 -- Treasury
+//             31 -- Footer
 //
 ==============================================*/
 /*============================================
@@ -6197,7 +6198,123 @@ button:focus, input:focus, input:focus, textarea, textarea:focus {
 
 /*============================================
 
-                30 -- Footer
+                30 -- Treasury
+
+==============================================*/
+
+.treasury-value-container.treasury-outstanding, 
+.treasury-current-assets.treasury-outstanding,
+.treasury-column-1.treasury-projections.treasury-outstanding,
+.tab-content.treasury-outstanding{
+  margin: 0 0 50px 0;
+  border: 1px solid #fff;
+  border-radius: 25px;
+  -webkit-box-shadow: 0px 0px 22px 0px rgba(0, 0, 0, 0.17);
+  -moz-box-shadow: 0px 0px 22px 0px rgba(0, 0, 0, 0.17);
+  box-shadow: 0px 0px 22px 0px rgba(0, 0, 0, 0.17);
+  justify-content: center;
+  background: #fff;
+  color: #000;
+}
+
+.treasury-value-container.treasury-outstanding,
+.treasury-current-assets.treasury-outstanding,
+.treasury-column-1.treasury-projections.treasury-outstanding{
+  height: 50vh;
+}
+
+.tab-content.treasury-outstanding{
+  height: 40vh;
+}
+
+.treasury-current-assets-header.tresury-custom{
+  margin: 30px 0 30px 0;
+  text-transform: capitalize;
+  font-weight: 700;
+}
+
+.asset-value{
+  font-weight: 700;
+  text-transform: capitalize;
+  line-height: 25px;
+}
+
+.treasury-current-assets-token span{
+  display: flex;
+  flex-direction: row;
+}
+
+.line{
+ width: 60%;
+ text-align: center;
+ margin: auto;
+}
+
+.line hr{
+  height: 3px;
+  background: rgb(255,149,6);
+  background: linear-gradient(98deg, rgba(255,149,6,1) 0%, rgba(255,195,3,1) 100%);
+}
+
+.treasury-projections-row.treasury-projections-custom{
+  padding: 30px;
+} 
+
+.treasury-projections-column.projection-custom{
+  border-radius: 25px;
+  border: none;
+  height: 180px;
+  width: 25%;
+  background: #ff9506;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  padding-top: 30px;
+}
+
+.tab-container {
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.tab-item{
+  border: none !important;
+  font-weight: 700;
+}
+
+.tab-item-selected {
+  border-radius: 25px;
+  color: #000;
+}
+
+.tab-inner-content-item{
+  text-align: center;
+  font-weight: 700;
+}
+
+.tab-inner-inpunt{
+  border-radius: 25px;
+  padding: 0 10px;
+  border: 1px solid orange;
+}
+
+select.tab-inner-content-item {
+	margin-top: 30px !important;
+  border-radius: 25px;
+  border: 1px solid orange;
+  padding: 0 5px;
+}
+
+button.tab-inner-content-item{
+  margin-top: 30px !important;
+  border-radius: 25px;
+  border: 1px solid orange;
+  padding: 0 15px;
+}
+
+/*============================================
+
+                31 -- Footer
 
 ==============================================*/
 .footer-style .footer-logo img {
