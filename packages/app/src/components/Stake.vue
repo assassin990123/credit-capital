@@ -10,7 +10,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { useStore } from "@/store";
 import { format } from "@/utils";
 import { computed, ref, watchEffect } from "vue";
