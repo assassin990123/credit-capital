@@ -36,7 +36,8 @@
 //             26 -- download
 //             27 -- Stack
 //             28 -- Reward
-//             29 -- Footer
+//             29 -- Swap
+//             30 -- Footer
 //
 ==============================================*/
 /*============================================
@@ -6090,7 +6091,7 @@ button:focus, input:focus, input:focus, textarea, textarea:focus {
 
 /*============================================
 
-                27 -- Reward Page
+                28 -- Reward Page
 
 ==============================================*/
 
@@ -6196,7 +6197,7 @@ button:focus, input:focus, input:focus, textarea, textarea:focus {
 
 /*============================================
 
-                29 -- Footer
+                30 -- Footer
 
 ==============================================*/
 .footer-style .footer-logo img {
