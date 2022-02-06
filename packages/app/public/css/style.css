@@ -6139,6 +6139,63 @@ button:focus, input:focus, input:focus, textarea, textarea:focus {
 
 /*============================================
 
+                29 -- Swap
+
+==============================================*/
+
+.panel-content.swap-panel-content{
+  padding: 15px 72px 25px 72px;
+  border: none;
+  border-radius: 50px;
+  -webkit-box-shadow: 0px 0px 22px 0px rgba(0, 0, 0, 0.17);
+  -moz-box-shadow: 0px 0px 22px 0px rgba(0, 0, 0, 0.17);
+  box-shadow: 0px 0px 22px 0px rgba(0, 0, 0, 0.17);
+  justify-content: center;
+  background: #fff;
+  color: #000;
+}
+
+.panel-display.swap-panel-display{
+  border-radius: 25px;
+  border-color: #FFCA03;
+}
+
+.panel-display.swap-panel-display span{
+  font-weight: 500;
+  color: #7f7f7f;
+}
+
+.panel-explanation{
+  text-transform: capitalize;
+  font-weight: 700;
+
+}
+
+.ellipses{
+  font-size: 24px;
+  line-height: 24px;
+  font-weight: 700;
+  opacity: 0.5;
+}
+
+.btn-switch{
+  background: transparent;
+  border-radius: 10px;
+  font-size: 35px;
+  font-weight: 700;
+  line-height: 0%;
+  color: orangered;
+  border: 2px solid #FFCA03;
+}
+
+.btn-switch:hover{
+  background: #FF8900;
+  border: 2px solid #FF8900;
+  color: #fff;
+}
+
+/*============================================
+
                 29 -- Footer
 
 ==============================================*/
