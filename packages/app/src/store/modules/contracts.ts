@@ -37,6 +37,7 @@ const getters = {
 const actions = {
   async setContracts({ commit, rootState }: {commit: Commit, rootState: RootState}) {
     const provider = rootState.accounts.web3Provider;
+    const signer = provider.getSigner();
     try {
       commit(
         "setCAPLContract",
@@ -44,11 +45,11 @@ const actions = {
       );
       commit(
         "setVaultContract",
-        markRaw(new ethers.Contract(findObjectContract('rewardsVault', contracts, ChainID), vaultABI, provider))
+        markRaw(new ethers.Contract(findObjectContract('rewardsVault', contracts, ChainID), vaultABI, signer))
       );
       commit(
         "setRewardsContract",
-        markRaw(new ethers.Contract(findObjectContract('rewards', contracts, ChainID), rewardsABI, provider))
+        markRaw(new ethers.Contract(findObjectContract('rewards', contracts, ChainID), rewardsABI, signer))
       );
     } catch (e) {
       console.log(e)
@@ -81,7 +82,7 @@ const actions = {
     // get rewards contract
     const rewardsContract = state.rewardsContract;
     // get pending rewards
-    const pendingRewards = await rewardsContract?.pendingRewards(findObjectContract('USDC', contracts, ChainID), address);
+    const pendingRewards = await rewardsContract?.pendingRewards(findObjectContract('USDC', tokens, ChainID), address);
     // parse balance, set new value in the local state
     commit("setPendingRewards", ethers.utils.formatUnits(pendingRewards, 18));
   },
@@ -98,7 +99,7 @@ const actions = {
     // get rewards contract
     const rewardsContract = state.rewardsContract;
     // claim rewards
-    await rewardsContract?.claim(findObjectContract('USDC', contracts, ChainID), address);
+    await rewardsContract?.claim(findObjectContract('USDC', tokens, ChainID), address);
   }
 };
 

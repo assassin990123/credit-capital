@@ -5,9 +5,9 @@
         <div class="rewards-container">
           <h1 class="panel-title">PENDING REWARDS</h1>
           <div class="rewards-content">
-            <div class="rewards-display"><span>USDC:</span> ${{ pendingRewards }}</div>
+            <div class="rewards-display"><span>USDC:</span> ${{ formattedRewards }}</div>
             <div class="rewards-section">
-              <button class="rewards-section-item" @click="claim">CLAIM</button>
+              <button class="rewards-section-item" @click="claim" disabled>CLAIM</button>
               <div class="rewards-section-item">COMPOUND</div>
             </div>
           </div>
@@ -25,7 +25,7 @@
   import { format } from "@/utils";
   import { useStore } from "@/store";
 
-  const store = useStore();  
+  const store = useStore();
   const formattedRewards = ref(0);
   
   const connected = computed(() => store.getters.getConnected);
@@ -38,7 +38,7 @@
       formattedRewards.value = format(pendingRewards.value);
     }
     if (connected.value) {
-      // enable claim
+      // enable claim button
     }
   });
 </script>
