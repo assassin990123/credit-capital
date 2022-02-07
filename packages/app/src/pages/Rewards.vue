@@ -5,7 +5,7 @@
         <div class="rewards-container">
           <h1 class="panel-title">PENDING REWARDS</h1>
           <div class="rewards-content">
-            <div class="rewards-display"><span>USDC:</span> $0000.00</div>
+            <div class="rewards-display"><span>USDC:</span> ${{ pendingRewards }}</div>
             <div class="rewards-section">
               <div class="rewards-section-item">CLAIM</div>
               <div class="rewards-section-item">COMPOUND</div>
@@ -21,6 +21,18 @@
 
 <script lang="ts" setup>
   import DappFooter from "@/components/DappFooter.vue";
+  import { computed, watchEffect } from "vue";
+  import { useStore } from "@/store";
+
+  const store = useStore();
+  
+  const pendingRewards = computed(() => store.getters["contracts/getPendingRewards"]);
+
+  watchEffect(() => {
+    if (pendingRewards.value) {
+      // do web3 stuff
+    }
+  });
 </script>
 
 <style>
