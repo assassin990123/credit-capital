@@ -81,7 +81,7 @@ const actions = {
     // get rewards contract
     const rewardsContract = state.rewardsContract;
     // get pending rewards
-    const pendingRewards = rewardsContract.pendingRewards(findObjectContract('CAPL', contracts, ChainID), address);
+    const pendingRewards = rewardsContract?.pendingRewards(findObjectContract('CAPL', contracts, ChainID), address);
     // parse balance, set new value in the local state
     commit("setPendingRewards", ethers.utils.formatUnits(pendingRewards, 18));
   },

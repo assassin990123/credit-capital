@@ -203,4 +203,28 @@ export const rewardsABI = [
     stateMutability: "view",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_token",
+        type: "address"
+      },
+      {
+        internalType: "address",
+        name: "_user",
+        type: "address"
+      }
+    ],
+    name: "pendingRewards",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "pending",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
 ];

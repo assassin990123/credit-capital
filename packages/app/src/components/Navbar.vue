@@ -100,6 +100,7 @@ export default {
       showMoons,
       connectWeb3: () => {
         store.dispatch("accounts/connectWeb3");
+        store.dispatch("contracts/getPendingRewards");
       },
     };
   },
