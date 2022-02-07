@@ -1,5 +1,3 @@
-import { capl } from "@/contracts";
-
 export const format = (n: any) => {
   if (n < 1e3) {
     return n;
@@ -18,17 +16,51 @@ export const format = (n: any) => {
   }
 };
 
-export const calculateCAPLUSDPrice = (amount: number, unit: string, poolTokens: any ) => {
-
+export const calculateCAPLUSDPrice = (
+  amount: number,
+  unit: string,
+  poolTokens: any
+) => {
   const USDC = poolTokens.balances[0];
   const CAPL = poolTokens.balances[1];
 
   // convert usdc to capl
-  if ( unit == "CAPL" ) {
+  if (unit == "CAPL") {
     return (CAPL / USDC) * amount;
   }
   // convert capl to usdc
   if (unit == "USDC") {
     return (USDC / CAPL) * amount;
   }
+};
+
+interface Constant {
+  symbol: string;
+  contracts: {
+    137: string;
+    42: string;
+  }
+}
+
+interface Pool {
+  symbol: string;
+  id: {
+    42: string;
+  }
+  contracts: {
+    137: string;
+    42: string;
+  }
+}
+
+export const findObjectContract = (flag: string, obj: Array<Constant>, chain: string) => {
+  const c = obj.find(o => o.symbol == flag)
+  // @ts-ignore
+  return c?.contracts[chain]
+}
+
+export const findObjectId = (flag: string, obj: Array<Pool>, chain: string ) => {
+  const c = obj.find(o => o.symbol == flag)
+  // @ts-ignore
+  return c?.id
 }

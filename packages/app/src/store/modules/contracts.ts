@@ -1,14 +1,17 @@
-// @ts-nocheck
 import { ethers } from "ethers";
-import { caplABI, rewardsABI, vaultABI } from "../../contracts/abi";
-import { capl, vault, rewards } from "../../contracts";
+import { caplABI, rewardsABI, vaultABI } from "@/abi";
+import { contracts, tokens } from "@/constants";
 import { markRaw } from "vue";
+import { Commit } from "vuex";
+import { findObjectContract } from "@/utils";
+import { ContractState } from "@/models/contracts";
+import { RootState } from "@/models";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
-  ? Number(process.env.VUE_APP_NETWORK_ID)
-  : 1;
+  ? process.env.VUE_APP_NETWORK_ID
+  : "1";
 
-const state = {
+const state: ContractState = {
   rewardsContract: null,
   vaultContract: null,
   caplContract: null,
@@ -16,32 +19,36 @@ const state = {
 };
 
 const getters = {
-  getCAPLContract(state) {
+  getCAPLContract(state: ContractState) {
     return state.caplContract;
   },
-  getCAPLBalance(state) {
+  getCAPLBalance(state: ContractState) {
     return state.caplBalance;
   },
 };
 
 const actions = {
-  async setContracts({ commit, rootState }) {
+  async setContracts({ commit, rootState }: {commit: Commit, rootState: RootState}) {
     const provider = rootState.accounts.web3Provider;
-    commit(
-      "setCAPLContract",
-      markRaw(new ethers.Contract(capl[ChainID], caplABI, provider))
-    );
-    commit(
-      "setVaultContract",
-      markRaw(new ethers.Contract(vault[ChainID], vaultABI, provider))
-    );
-    commit(
-      "setRewardsContract",
-      markRaw(new ethers.Contract(rewards[ChainID], rewardsABI, provider))
-    );
+    try {
+      commit(
+        "setCAPLContract",
+        markRaw(new ethers.Contract(findObjectContract('CAPL', tokens, ChainID), caplABI, provider))
+      );
+      commit(
+        "setVaultContract",
+        markRaw(new ethers.Contract(findObjectContract('rewardsVault', contracts, ChainID), vaultABI, provider))
+      );
+      commit(
+        "setRewardsContract",
+        markRaw(new ethers.Contract(findObjectContract('rewards', contracts, ChainID), rewardsABI, provider))
+      );
+    } catch (e) {
+      console.log(e)
+    }
   },
 
-  async getCAPLBalance({ commit, rootState }) {
+  async getCAPLBalance({ commit, rootState }: {commit: Commit, rootState: RootState}) {
     // get address from rootstate,
     const address = rootState.accounts.activeAccount;
     // get contract from contract state (local state)
@@ -50,24 +57,24 @@ const actions = {
     }
 
     const caplContract = state.caplContract;
-    // get balance
-    const caplBalance = await caplContract.balanceOf(address);
+    // @ts-ignore
+    const caplBalance = await caplContract?.balanceOf(address);
     // parse balance, set new value in the local state
     commit("setCAPLBalance", ethers.utils.formatUnits(caplBalance, 18));
   },
 };
 
 const mutations = {
-  setCAPLContract(state, _contract) {
+  setCAPLContract(state: ContractState, _contract: object ){
     state.caplContract = _contract;
   },
-  setVaultContract(state, _contract) {
+  setVaultContract(state: ContractState, _contract: object) {
     state.vaultContract = _contract;
   },
-  setRewardsContract(state, _contract) {
+  setRewardsContract(state: ContractState, _contract: object) {
     state.rewardsContract = _contract;
   },
-  setCAPLBalance(state, _balance) {
+  setCAPLBalance(state: ContractState, _balance: number) {
     state.caplBalance = _balance;
   },
 };

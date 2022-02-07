@@ -530,6 +530,21 @@
 }
 
 .dashboard-portfolio-section button {
+<<<<<<< HEAD
+=======
+  margin-top: 20px;
+}
+
+.dashboard-portfolio-capl-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.dashboard-portfolio-capl-panel {
+  border: 1px solid #000000;
+  padding: 10px 10px 30px 10px;
+>>>>>>> a9b3d3f10b44406acc2a65d1ef44ccdbd6905daa
   margin-top: 20px;
 }
 
