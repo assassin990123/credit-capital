@@ -27,17 +27,18 @@
 
   const store = useStore();  
   const formattedRewards = ref(0);
+  
+  const connected = computed(() => store.getters.getConnected);
+  const pendingRewards = computed(() => store.getters["contracts/getPendingRewards"]);
 
-  // get pending rewards from the user staked amount
-  let pendingRewards = computed(() => store.getters["contracts/getPendingRewards"]);
-  // claim rewrads
-  const claim = () => (
-    store.dispatch("contracts/claim")
-  );
+  const claim = () => {store.dispatch("contracts/claim")};
 
   watchEffect(() => {
     if (pendingRewards.value > 0) {
       formattedRewards.value = format(pendingRewards.value);
+    }
+    if (connected.value) {
+      // enable claim
     }
   });
 </script>
