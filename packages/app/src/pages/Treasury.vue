@@ -20,25 +20,37 @@
         </div>
         <div class="treasury-column-2">
           <div class="treasury-current-assets">
-            <div class="treasury-current-assets-header">CURRENT ASSETS IN CONTRACT</div>
+            <div class="treasury-current-assets-header">
+              CURRENT ASSETS IN CONTRACT
+            </div>
             <div class="treasury-current-assets-row">
-              <div class="treasury-current-assets-token">TOKEN ----------------------</div>
+              <div class="treasury-current-assets-token">
+                TOKEN ----------------------
+              </div>
               <div class="treasury-current-assets-amount">AMOUNT</div>
             </div>
             <div class="treasury-current-assets-row">
-              <div class="treasury-current-assets-token">TOKEN ----------------------</div>
+              <div class="treasury-current-assets-token">
+                TOKEN ----------------------
+              </div>
               <div class="treasury-current-assets-amount">AMOUNT</div>
             </div>
             <div class="treasury-current-assets-row">
-              <div class="treasury-current-assets-token">TOKEN ----------------------</div>
+              <div class="treasury-current-assets-token">
+                TOKEN ----------------------
+              </div>
               <div class="treasury-current-assets-amount">AMOUNT</div>
             </div>
             <div class="treasury-current-assets-row">
-              <div class="treasury-current-assets-token">TOKEN ----------------------</div>
+              <div class="treasury-current-assets-token">
+                TOKEN ----------------------
+              </div>
               <div class="treasury-current-assets-amount">AMOUNT</div>
             </div>
             <div class="treasury-current-assets-row">
-              <div class="treasury-current-assets-token">TOKEN ----------------------</div>
+              <div class="treasury-current-assets-token">
+                TOKEN ----------------------
+              </div>
               <div class="treasury-current-assets-amount">AMOUNT</div>
             </div>
           </div>
@@ -46,7 +58,9 @@
       </div>
       <div class="treasury-row">
         <div class="treasury-column-1 treasury-projections">
-          <div class="treasury-projections-header">CURRENT REVENUE PROJECTIONS</div>
+          <div class="treasury-projections-header">
+            CURRENT REVENUE PROJECTIONS
+          </div>
           <div class="treasury-projections-row">
             <div class="treasury-projections-column">DAILY</div>
             <div class="treasury-projections-column">WEEKLY</div>
@@ -85,9 +99,8 @@
 import Tab from "@/components/Tab.vue";
 import { ref } from "vue";
 
-const selected = ref('WITHDRAW');
-const onChangeTab = (v) => selected.value = v;
-
+const selected = ref("WITHDRAW");
+const onChangeTab = (v) => (selected.value = v);
 </script>
 
 <style>
@@ -157,7 +170,6 @@ const onChangeTab = (v) => selected.value = v;
 }
 
 .treasury-current-assets-amount {
-  
 }
 
 .treasury-projections {
@@ -209,7 +221,8 @@ const onChangeTab = (v) => selected.value = v;
   width: 100px;
 }
 
-button.tab-inner-content-item, select.tab-inner-content-item {
+button.tab-inner-content-item,
+select.tab-inner-content-item {
   margin-top: 20px;
 }
 </style>

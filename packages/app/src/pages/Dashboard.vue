@@ -22,19 +22,33 @@
         </div>
         <div class="dashboard-daily-earning-capl-content">
           <div class="dashboard-daily-earning-capl-content-row">
-            <div class="dashboard-daily-earning-capl-content-title">Your Balance</div>
-            <div class="dashboard-daily-earning-capl-content-value">0.0000 CAPL (0.0000 USD)</div>
+            <div class="dashboard-daily-earning-capl-content-title">
+              Your Balance
+            </div>
+            <div class="dashboard-daily-earning-capl-content-value">
+              0.0000 CAPL (0.0000 USD)
+            </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
-            <div class="dashboard-daily-earning-capl-content-title">Your Staked Balance</div>
-            <div class="dashboard-daily-earning-capl-content-value">0.0000 USDC-CAPL Shares (0.0000 USD)</div>
+            <div class="dashboard-daily-earning-capl-content-title">
+              Your Staked Balance
+            </div>
+            <div class="dashboard-daily-earning-capl-content-value">
+              0.0000 USDC-CAPL Shares (0.0000 USD)
+            </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
-            <div class="dashboard-daily-earning-capl-content-title">Daily Revenue</div>
-            <div class="dashboard-daily-earning-capl-content-value">0 CAPL (0.0000 USD)</div>
+            <div class="dashboard-daily-earning-capl-content-title">
+              Daily Revenue
+            </div>
+            <div class="dashboard-daily-earning-capl-content-value">
+              0 CAPL (0.0000 USD)
+            </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
-            <div class="dashboard-daily-earning-capl-content-title">Daily Yield</div>
+            <div class="dashboard-daily-earning-capl-content-title">
+              Daily Yield
+            </div>
             <div class="dashboard-daily-earning-capl-content-value">∞%</div>
           </div>
         </div>
@@ -45,7 +59,9 @@
         <h2>VAULT</h2>
         <div>
           <div>Your Stakes USDC-CAPL Shares</div>
-          <div class="dashboard-revenue-projection-value">0.0000 LP Shares (0.0000) USD</div>
+          <div class="dashboard-revenue-projection-value">
+            0.0000 LP Shares (0.0000) USD
+          </div>
         </div>
         <div>
           <div>Your Daily Revenue</div>
@@ -79,7 +95,9 @@
       <div class="dashboard-portfolio-section">
         <div class="dashboard-portfolio-section-address">
           <h2>WALLET ADDRESS</h2>
-          <div class="dashboard-portfolio-section-address-value">0x00000000000000000000</div>
+          <div class="dashboard-portfolio-section-address-value">
+            0x00000000000000000000
+          </div>
         </div>
         <div class="dashboard-portfolio-section-title">Wallet Assets</div>
         <div class="dashboard-portfolio-section-panel">
@@ -375,7 +393,7 @@
 }
 
 .dashboard-portfolio-section button {
-	margin-top: 20px;
+  margin-top: 20px;
 }
 
 .dashboard-portfolio-capl-row {

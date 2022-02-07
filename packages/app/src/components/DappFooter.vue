@@ -1,5 +1,5 @@
 <template>
-  <h1>Global Footer</h1>
+  <h1>DApp Footer</h1>
 </template>
 
 <script setup lang="ts"></script>

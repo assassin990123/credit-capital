@@ -5,9 +5,10 @@
       @click="onChange(section)"
       :class="{
         'last-tab-item': index === sections.length - 1,
-        'tab-item-selected': section === value
+        'tab-item-selected': section === value,
       }"
-      v-for="(section, index) in sections" :key="section"
+      v-for="(section, index) in sections"
+      :key="section"
     >
       {{ section }}
     </div>
@@ -19,9 +20,9 @@ export default {
   props: {
     sections: [String],
     value: String,
-    onChange: Function
+    onChange: Function,
   },
-}
+};
 </script>
 
 <style>
@@ -45,4 +46,3 @@ export default {
   background-color: #efefef;
 }
 </style>
-
