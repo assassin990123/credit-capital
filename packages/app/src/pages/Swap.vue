@@ -65,7 +65,7 @@
           </div>
         </div>
       </div>
-      <Footer />
+      <DappFooter />
     </div>
   </div>
 </template>
@@ -100,6 +100,8 @@ import { calculateCAPLUSDPrice } from "@/utils";
       }
     },
   }
+<script lang="ts" setup>
+import DappFooter from "@/components/DappFooter.vue";
 </script>
 
 <style>

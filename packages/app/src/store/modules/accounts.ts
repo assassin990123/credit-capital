@@ -1,9 +1,9 @@
-// @ts-nocheck
 /*eslint prefer-const: "warn"*/
-import Web3 from "web3";
-import { ethers } from "ethers";
-import web3ModalSetup from "../../utils/web3ModalSetup";
+import detectEthereumProvider from '@metamask/detect-provider'
 import { markRaw } from "vue";
+import { Commit, Dispatch } from 'vuex';
+import { AccountState } from "@/models/accounts"
+import { ethers } from 'ethers';
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
@@ -13,67 +13,44 @@ const state = {
   activeAccount: null,
   activeBalance: 0,
   chainId: null,
-  chainName: null,
   web3Provider: null,
   isConnected: false,
-  web3Modal: null,
 };
 
 const getters = {
-  getActiveAccount(state) {
+  getActiveAccount(state: AccountState) {
     if (!state.activeAccount) {
-      return window.ethereum.selectedAddress;
+      return (window as any).ethereum.selectedAddress;
     }
-
     return state.activeAccount;
   },
-  getActiveBalanceWei(state) {
+  getActiveBalanceWei(state: AccountState) {
     return state.activeBalance;
   },
-  getActiveBalanceEth(state) {
-    return state.web3.utils.fromWei(state.activeBalance, "ether");
-  },
-  getChainId(state) {
+  getChainId(state: AccountState) {
     return state.chainId;
   },
-  getChainName(state) {
-    return state.chainName;
-  },
-  getWeb3(state) {
-    if (state.web3) {
-      return state.web3;
-    } else {
-      return new Web3(Web3.givenProvider);
-    }
-  },
-  getWeb3Modal(state) {
-    return state.web3Modal;
-  },
-  isUserConnected(state) {
+  isUserConnected(state: AccountState) {
     return state.isConnected;
   },
 };
 
 const actions = {
-  async connectWeb3({ commit, dispatch }) {
+  // @ts-ignore
+  async connectWeb3({ commit, dispatch }: { commit: Commit, dispatch: Dispatch }) {
     if (state.isConnected == true) return;
-    let selectedAccount;
-    let provider: any;
 
-    if (window.ethereum) {
-      await window.ethereum.enable();
-      provider = markRaw(new ethers.providers.Web3Provider(window.ethereum));
-      selectedAccount = window.ethereum.selectedAddress;
-    } else {
-      const web3Modal = web3ModalSetup();
-      provider = await web3Modal.connect();
-      selectedAccount = markRaw(provider.accounts[0]);
+    const provider:any = await detectEthereumProvider();
+
+    if (provider) {
+      const accounts = await (window as any).ethereum.request({ method: 'eth_requestAccounts' })
+      await actions.checkNetwork();
+      commit("setIsConnected", true);
+      commit("setActiveAccount", accounts[0]);
+      commit("setWeb3Provider", markRaw(new ethers.providers.Web3Provider(provider, "any")));
+      // listen in
+      await actions.ethereumListener({ commit })
     }
-    await actions.checkNetwork();
-    commit("setIsConnected", true);
-    commit("setActiveAccount", selectedAccount);
-    commit("setChainData", window.ethereum.chainId);
-    commit("setWeb3Provider", markRaw(provider));
 
     dispatch("contracts/setContracts", null, { root: true });
     dispatch("balancer/getPoolTokens", null, { root: true });
@@ -81,13 +58,8 @@ const actions = {
     // actions.fetchActiveBalance({ commit });
   },
 
-  async disconnectWeb3Modal({ commit }) {
-    commit("disconnectWallet");
-    commit("setIsConnected", false);
-  },
-
-  async ethereumListener({ commit }) {
-    window.ethereum.on("accountsChanged", (accounts) => {
+  async ethereumListener({ commit }: { commit: Function }) {
+    (window as any).ethereum.on("accountsChanged", (accounts: any) => {
       if (state.isConnected) {
         commit("setActiveAccount", accounts[0]);
         commit("setWeb3Provider", state.web3Provider);
@@ -95,7 +67,7 @@ const actions = {
       }
     });
 
-    window.ethereum.on("chainChanged", async (chainId) => {
+    (window as any).ethereum.on("chainChanged", async (chainId: any) => {
       await actions.checkNetwork();
       commit("setChainData", chainId);
       commit("setWeb3Provider", state.web3Provider);
@@ -103,17 +75,20 @@ const actions = {
     });
   },
 
-  async fetchActiveBalance({ commit }) {
-    const balance = await state.web3Provider.getBalance(state.activeAccount);
+  async fetchActiveBalance({ commit }: { commit: Function }) {
+    // @ts-ignore
+    // TODO: add  web3Provider type
+    const balance = await state.web3Provider?.getBalance(state.activeAccount);
     commit("setActiveBalance", balance);
   },
+  
   async checkNetwork() {
-    if (window.ethereum) {
+    if ((window as any).ethereum) {
       const hexadecimal = "0x" + parseInt(ChainID).toString(16);
 
       try {
         // check if the chain to connect to is installed
-        await window.ethereum.request({
+        await (window as any).ethereum.request({
           method: "wallet_switchEthereumChain",
           params: [{ chainId: hexadecimal }], // chainId must be in hexadecimal numbers
         });
@@ -122,7 +97,7 @@ const actions = {
         // if it is not, then install it into the user MetaMask
         if (error.code === 4902) {
           try {
-            await window.ethereum.request({
+            await (window as any).ethereum.request({
               method: "wallet_addEthereumChain",
               params: [
                 {
@@ -142,54 +117,25 @@ const actions = {
 };
 
 const mutations = {
-  setActiveAccount(state, selectedAddress) {
+  setActiveAccount(state: AccountState, selectedAddress: string) {
     state.activeAccount = selectedAddress;
   },
 
-  setActiveBalance(state, balance) {
+  setActiveBalance(state: AccountState, balance: number) {
     state.activeBalance = balance;
   },
 
-  setChainData(state, chainId) {
+  setChainData(state: AccountState, chainId: number) {
     state.chainId = chainId;
-
-    switch (chainId) {
-      case "0x1":
-        state.chainName = "Mainnet";
-        break;
-      case "0x2a":
-        state.chainName = "Kovan";
-        break;
-      case "0x3":
-        state.chainName = "Ropsten";
-        break;
-      case "0x4":
-        state.chainName = "Rinkeby";
-        break;
-      case "0x5":
-        state.chainName = "Goerli";
-        break;
-      case "0x539": // 1337 (often used on localhost)
-      case "0x1691": // 5777 (default in Ganache)
-      default:
-        state.chainName = "Localhost";
-        break;
-    }
   },
-
-  setWeb3Provider(state, web3Provider) {
-    state.web3Provider = web3Provider;
-  },
-
-  setIsConnected(state, isConnected) {
+  setIsConnected(state: AccountState, isConnected: boolean) {
     state.isConnected = isConnected;
     // add to persistent storage so that the user can be logged back in when revisiting website
-    localStorage.setItem("isConnected", isConnected);
+    localStorage.setItem("isConnected", `${isConnected}`);
   },
-
-  setWeb3ModalInstance(state, w3mObject) {
-    state.web3Modal = w3mObject;
-  },
+  setWeb3Provider(state: AccountState, provider: any) {
+    state.web3Provider = provider
+  }
 };
 
 export default {

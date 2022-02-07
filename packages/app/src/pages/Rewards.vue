@@ -13,13 +13,13 @@
           </div>
         </div>
       </div>
-      <Footer />
+      <DappFooter />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import Footer from "@/components/Footer.vue";
+import DappFooter from "@/components/DappFooter.vue";
 </script>
 
 <style>

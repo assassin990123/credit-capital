@@ -1,0 +1,87 @@
+/*============================================
+
+                17 -- Title
+
+==============================================*/
+.section-title {
+    h6 {
+        padding: 15px 0 15px 15px;
+        position: relative;
+        display: inline-block;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        margin-bottom: 15px;
+    }
+
+    p {
+        margin-bottom: 0;
+    }
+}
+
+.title-bdr {
+    position: relative;
+    width: 150px;
+    margin-bottom: 40px;
+}
+
+.text-center .title-bdr {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.left-bdr,
+.right-bdr {
+    height: 6px;
+    width: 60px;
+    background-image: $bg-gradient;
+    border-radius: 10px;
+    position: absolute;
+}
+
+.left-bdr {
+    left: 0px;
+    animation: left 2s infinite;
+}
+
+.right-bdr {
+    right: 0px;
+    animation: right 2s infinite;
+}
+
+@keyframes left {
+
+    0%,
+    50%,
+    100% {
+        width: 60px;
+    }
+
+    25% {
+        width: 120px;
+    }
+
+    75% {
+        width: 10px;
+    }
+}
+
+@keyframes right {
+
+    0%,
+    50%,
+    100% {
+        width: 60px;
+    }
+
+    25% {
+        width: 10px;
+    }
+
+    75% {
+        width: 120px;
+    }
+}

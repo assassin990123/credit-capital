@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import Stake from "@/components/Stake.vue";
 import { computed, watchEffect } from "vue";
 import { useStore } from "@/store";

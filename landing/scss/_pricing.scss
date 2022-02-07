@@ -1,0 +1,109 @@
+/*============================================
+
+               11 -- Pricing
+
+==============================================*/
+.pricing-area {
+    .pricing-item {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 42px 40px 45px 40px;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 1;
+        border: 1px solid rgba(158, 166, 186, 0.2);
+    
+        @media #{$layout-479} {
+            width: auto;
+    
+        }
+    
+        .pricing-tooltip {
+            position: absolute;
+            width: auto;
+            right: 20px;
+            left: auto;
+            top: 20px;
+            border-radius: 4px 4px 0 0;
+    
+            .pricing__tooltip {
+                display: inline-block;
+                border-radius: 8px;
+                padding: 6px 16px;
+                font-size: 15px;
+                color: #fff;
+                background-color: #32d123;
+            }
+        }
+    
+        .pricing-title {
+            padding-bottom: 33px;
+            border-bottom: none;
+            margin-bottom: 0;
+    
+    
+            .pricing-price  {
+                font-size: 60px;
+                font-weight: 600;
+                color: $theme-color-1;
+                margin-bottom: 0;
+    
+                small {
+                    font-size: 28px;
+                    font-weight: 600;
+                }
+            }
+    
+            .pricing-title {
+                font-size: 25px;
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+        }
+    
+        .pricing-list {
+            padding-bottom: 33px;
+    
+            li {
+                margin-bottom: 15px;
+                border-bottom: 1px solid rgba(158, 166, 186, 0.2);
+                padding-bottom: 15px;
+    
+                span {
+                    color: #2e3d62;
+                    float: right;
+                    margin-right: 0;
+                    font-weight: 500;
+    
+                }
+    
+                &:last-child {
+                    margin-bottom: 0;
+                    border-bottom: 0;
+                    padding-bottom: 0;
+                }
+            }
+        }
+    
+        .pricing-price {
+    
+            .pricing-meta {
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                font-weight: 500;
+                margin-top: 23px;
+                font-size: 12px;
+                text-align: center;
+            }
+        }
+    }
+    
+}
+
+
+
+@media (max-width: 320px) {
+    .pricing-item .pricing-title .pricing-price  {
+        font-size: 50px;
+    }
+}
