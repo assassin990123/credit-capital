@@ -93,9 +93,7 @@ import { calculateCAPLUSDPrice } from "@/utils";
         }
       },
       changeCAPLToUSDC() {
-
         if (this.store.getters['accounts/isUserConnected']) {
-
           const exchangedBalance = calculateCAPLUSDPrice(this.swapToken, "USDC", this.store.getters['balancer/getPoolTokens']);
           this.swapTokenResult = exchangedBalance;
         }

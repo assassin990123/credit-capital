@@ -76,6 +76,8 @@ const actions = {
     commit("setWeb3Provider", markRaw(provider));
 
     dispatch("contracts/setContracts", null, { root: true });
+    dispatch("balancer/getPoolTokens", null, { root: true });
+
     // actions.fetchActiveBalance({ commit });
   },
 
