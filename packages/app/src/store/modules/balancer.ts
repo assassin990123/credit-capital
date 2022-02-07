@@ -41,9 +41,9 @@ const actions = {
   },
 
   async getPoolTokens({ commit, rootState }) {
+
     // get poolID
     const poolID = findObjectId("BAL/WETH", pools, ChainID);
-
     // if state.balancerVaultContract is null, call the `setContracts` function
     if (state.balancerVaultContract === null) {
       actions.setContracts({ commit, rootState });
@@ -51,7 +51,7 @@ const actions = {
     const balancerVaultContract = state.balancerVaultContract;
 
     // call getPoolTokens
-    const poolTokens = await balancerVaultContract.getPoolTokens(poolID.id[ChainID]);
+    const poolTokens = await balancerVaultContract.getPoolTokens(poolID[ChainID]);
 
     // parse balance
     const balances = poolTokens.balances.map((obj) =>
