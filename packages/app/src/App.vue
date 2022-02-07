@@ -12,6 +12,10 @@ import Footer from "@/components/Footer.vue";
 </script>
 
 <style>
+@import url("../public/css/vendors.css");
+@import url("../public/css/plugins.css");
+@import url("../public/css/icons.css");
+@import url("../public/css/style.css");
 home,
 body {
   padding: 0;
