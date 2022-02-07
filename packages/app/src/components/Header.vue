@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Global Header</h1>
     <Navbar />
   </div>
 </template>
