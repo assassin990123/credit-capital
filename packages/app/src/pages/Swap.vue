@@ -12,10 +12,10 @@
             <div class="panel-display">
               <div>
                 <div>SEND</div>
-                <div>000</div>
+                <input type="text" @input="changeCAPLToUSDC()" v-model="swapToken" />
               </div>
               <div class="text-right">
-                <div>BALANCE: 000</div>
+                <div>BALANCE: {{ CAPLBalance }}</div>
                 <div>CAPL</div>
               </div>
             </div>
@@ -23,14 +23,14 @@
             <div class="panel-display">
               <div>
                 <div>RECEIVE</div>
-                <div>000</div>
+                <input type="text" v-model="swapTokenResult" disabled />
               </div>
               <div class="text-right">
                 <div>BALANCE: 000</div>
                 <div>USDC</div>
               </div>
             </div>
-            <button>ENTER</button>
+            <button @click="getBalance()">ENTER</button>
           </div>
         </div>
         <div class="panel">
@@ -70,8 +70,38 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import Footer from "@/components/Footer.vue";
+<script lang="ts">
+// import Footer from "@/components/Footer.vue";
+// import { computed } from "vue";
+import { useStore } from "@/store"; 
+import { calculateCAPLUSDPrice } from "@/utils";
+
+  export default {
+    data() {
+      return {
+        swapToken: "",
+        swapTokenResult: 0,
+        store: useStore(),
+        CAPLBalance: 0
+      }
+    },
+    methods: {
+      getBalance() {
+
+        if (this.store.getters['accounts/isUserConnected']) {
+          this.store.getters['balancer/getBatchSwap']
+        }
+      },
+      changeCAPLToUSDC() {
+
+        if (this.store.getters['accounts/isUserConnected']) {
+
+          const exchangedBalance = calculateCAPLUSDPrice(this.swapToken, "USDC", this.store.getters['balancer/getPoolTokens']);
+          this.swapTokenResult = exchangedBalance;
+        }
+      }
+    },
+  }
 </script>
 
 <style>

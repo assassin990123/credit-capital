@@ -2,7 +2,7 @@
 import { ethers } from "ethers";
 import Web3 from "web3";
 import { balancerVault as balancerVaultABI } from "../../contracts/abi";
-import { balancerVault as balancerVault, caplUSDCPoolId } from "../../contracts";
+import { balancerVault, caplUSDCPoolId } from "../../contracts";
 import { markRaw } from "vue";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
