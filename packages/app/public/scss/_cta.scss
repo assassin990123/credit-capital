@@ -1,0 +1,94 @@
+
+/*============================================
+
+                    07 -- Cta 
+
+==============================================*/
+.cta-area {
+    margin-bottom: -120px;
+    @media #{$md-layout} {
+        text-align: center;
+
+    }
+
+    @media #{$sm-layout} {
+        text-align: center;
+
+    }
+
+    @media #{$layout-479} {
+        text-align: center;
+
+    }
+
+    .get-start-box {
+        background-image: $bg-gradient;
+        border-radius: 8px;
+        box-shadow: $theme-shadow-1;
+        display: -ms-flexbox;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 40px 30px;
+        color:$white;
+        .section-heading {
+            .section__title {
+                color:$white;
+                font-size: 35px;
+                margin-bottom: 8px;
+            }
+
+            .section__sub {
+                font-size: 18px;
+                font-weight: 500;
+                color:$white;
+            }
+        }
+
+        .button-shared.text-end {
+            @media #{$md-layout} {
+                margin-top: 30px;
+                text-align: center !important;
+
+            }
+
+            @media #{$sm-layout} {
+                margin-top: 30px;
+                text-align: center !important;
+
+            }
+
+            @media #{$layout-479} {
+                margin-top: 30px;
+                text-align: center !important;
+
+            }
+
+            .cta-btn{
+                box-shadow: 0px 17px 43px 1px  rgba(255, 255, 255, 0.1);
+                background-color: $gray-200;
+                padding: 0px 55px;
+                border-radius: 35px;
+                font-size: 16px;
+                color: $gray-700;
+                font-weight: 600;
+                transition-duration: 400ms;
+                height: 60px;
+                line-height: 60px;
+            
+                i {
+                    font-size: 24px;
+                    position: relative;
+                    top: 3px;
+                    line-height: 39px;
+                }
+            
+                &:hover {
+                    background-color: $gray-700;
+                    box-shadow: $gray-700-shadow;
+                    color: $white;
+                }
+            }
+        }
+    }
+}

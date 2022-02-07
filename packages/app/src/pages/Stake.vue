@@ -1,29 +1,29 @@
 <template>
-  <div class="home">
+  <div class="home stack-page">
     <div class="swap-container">
       <div class="panel-container inner-container">
         <div class="panel stake-panel">
-          <h1 class="panel-title">STAKE</h1>
+          <h1 class="panel-title">Stake</h1>
           <div class="panel-content stake-panel-content">
-            <input type="text" />
-            <button>ENTER</button>
+            <input type="number" placeholder="0.00" class="input-custom" />
+            <button type="submit" class="btn-custom">ENTER</button>
           </div>
         </div>
         <div class="panel stake-panel">
-          <h1 class="panel-title">UNSTAKE</h1>
+          <h1 class="panel-title">Unstake</h1>
           <div class="panel-content stake-panel-content">
-            <input type="text" />
-            <button>ENTER</button>
+            <input type="number" placeholder="0.00" class="input-custom" />
+            <button type="submit" class="btn-custom">ENTER</button>
           </div>
         </div>
       </div>
-      <DappFooter />
+     <DappFooter />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import DappFooter from "@/components/DappFooter.vue";
+  import DappFooter from "@/components/DappFooter.vue";
 </script>
 
 <style>

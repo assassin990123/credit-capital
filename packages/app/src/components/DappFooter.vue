@@ -1,5 +1,17 @@
 <template>
-  <h1>DApp Footer</h1>
+  <div class="panel-container">
+        <div class="stack-bottom-area">
+          <div class="stack-bottom-area-inner">
+            <div class="stack-button-area">
+              <a href="javascript:void(0)" class="stack-btn"
+                >Total Locked Value</a
+              >
+              <a href="javascript:void(0)" class="stack-btn">Price of Capl</a>
+              <a href="javascript:void(0)" class="stack-btn">User Position</a>
+            </div>
+          </div>
+        </div>
+      </div>
 </template>
 
 <script setup lang="ts"></script>

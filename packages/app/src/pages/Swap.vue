@@ -1,67 +1,67 @@
 <template>
-  <div class="home">
+  <div class="home stack-page">
     <div class="swap-container">
       <div class="panel-container inner-container">
-        <div class="panel">
-          <h1 class="panel-title">SWAP</h1>
-          <div class="panel-content">
+        <div class="panel stake-panel">
+          <h1 class="panel-title">swap</h1>
+          <div class="panel-content swap-panel-content">
             <div class="panel-header">
-              <div class="panel-explanation">FUNCTIONALITY EXPLANATION</div>
-              <div>&hellip;</div>
+              <div class="panel-explanation">functionality explanation</div>
+              <div class="ellipses">&hellip;</div>
             </div>
-            <div class="panel-display">
+            <div class="panel-display swap-panel-display">
               <div>
-                <div>SEND</div>
-                <div>000</div>
+                <div class="panel-explanation"><span>send</span></div>
+                <div class="panel-explanation">000</div>
               </div>
               <div class="text-right">
-                <div>BALANCE: 000</div>
-                <div>CAPL</div>
+                <div class="panel-explanation"><span>balance:</span> 000</div>
+                <div class="panel-explanation">CAPL</div>
               </div>
             </div>
-            <button class="btn-switch">&darr;&uarr;</button>
-            <div class="panel-display">
+            <button class="btn-switch">&#8635;</button>
+            <div class="panel-display swap-panel-display">
               <div>
-                <div>RECEIVE</div>
-                <div>000</div>
+                <div class="panel-explanation"><span>receive</span></div>
+                <div class="panel-explanation">000</div>
               </div>
               <div class="text-right">
-                <div>BALANCE: 000</div>
-                <div>USDC</div>
+                <div class="panel-explanation"><span>balance:</span> 000</div>
+                <div class="panel-explanation">USDC</div>
               </div>
             </div>
-            <button>ENTER</button>
+            <button type="submit" class="btn-custom">Enter</button>
           </div>
         </div>
-        <div class="panel">
-          <h1 class="panel-title">LIQUIDITY</h1>
-          <div class="panel-content">
+        <div class="panel stake-panel">
+          <h1 class="panel-title">liquidity</h1>
+          <div class="panel-content  swap-panel-content">
             <div class="panel-header">
-              <div class="panel-explanation">FUNCTIONALITY EXPLANATION</div>
-              <div>&hellip;</div>
+              <div class="panel-explanation">functionality explanation</div>
+              <div class="ellipses">&hellip;</div>
             </div>
-            <div class="panel-display">
+            <div class="panel-display swap-panel-display">
               <div>
-                <div>AMOUNT</div>
-                <div>000</div>
+                <div class="panel-explanation"><span>amount</span></div>
+                <div class="panel-explanation">000</div>
               </div>
               <div class="text-right">
-                <div>BALANCE:</div>
-                <div>CAPL</div>
+                <div class="panel-explanation"><span>balance:</span></div>
+                <div class="panel-explanation">CAPL</div>
               </div>
             </div>
-            <button class="btn-switch">&darr;&uarr;</button>
-            <div class="panel-display">
+            <button class="btn-switch">&#8635;</button>
+            <div class="panel-display swap-panel-display">
               <div>
-                <div>AMOUNT</div>
-                <div>000</div>
+                <div class="panel-explanation"><span>amount</span></div>
+                <div class="panel-explanation">000</div>
               </div>
               <div class="text-right">
-                <div>BALANCE: 000</div>
-                <div>USDC</div>
+                <div class="panel-explanation"><span>balance:</span> 000</div>
+                <div class="panel-explanation">USDC</div>
               </div>
             </div>
-            <button>ADD</button>
+            <button type="submit" class="btn-custom">Add</button>
           </div>
         </div>
       </div>
