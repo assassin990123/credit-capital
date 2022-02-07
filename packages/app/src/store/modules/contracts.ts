@@ -81,10 +81,25 @@ const actions = {
     // get rewards contract
     const rewardsContract = state.rewardsContract;
     // get pending rewards
-    const pendingRewards = rewardsContract?.pendingRewards(findObjectContract('CAPL', contracts, ChainID), address);
+    const pendingRewards = await rewardsContract?.pendingRewards(findObjectContract('USDC', contracts, ChainID), address);
     // parse balance, set new value in the local state
     commit("setPendingRewards", ethers.utils.formatUnits(pendingRewards, 18));
   },
+
+  async claim({ commit, rootState }: {commit: Commit, rootState: RootState}) {
+    // get address from rootstate,
+    const address = rootState.accounts.activeAccount;
+
+    // if state.rewardsContract is null, call the `setContracts` function
+    if (state.rewardsContract === null) {
+      actions.setContracts({ commit, rootState });
+    }
+
+    // get rewards contract
+    const rewardsContract = state.rewardsContract;
+    // claim rewards
+    await rewardsContract?.claim(findObjectContract('USDC', contracts, ChainID), address);
+  }
 };
 
 const mutations = {

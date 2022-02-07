@@ -7,7 +7,7 @@
           <div class="rewards-content">
             <div class="rewards-display"><span>USDC:</span> ${{ pendingRewards }}</div>
             <div class="rewards-section">
-              <div class="rewards-section-item">CLAIM</div>
+              <button class="rewards-section-item" @click="claim">CLAIM</button>
               <div class="rewards-section-item">COMPOUND</div>
             </div>
           </div>
@@ -21,16 +21,23 @@
 
 <script lang="ts" setup>
   import DappFooter from "@/components/DappFooter.vue";
-  import { computed, watchEffect } from "vue";
+  import { computed, watchEffect, ref } from "vue";
+  import { format } from "@/utils";
   import { useStore } from "@/store";
 
-  const store = useStore();
-  
-  const pendingRewards = computed(() => store.getters["contracts/getPendingRewards"]);
+  const store = useStore();  
+  const formattedRewards = ref(0);
+
+  // get pending rewards from the user staked amount
+  let pendingRewards = computed(() => store.getters["contracts/getPendingRewards"]);
+  // claim rewrads
+  const claim = () => (
+    store.dispatch("contracts/claim")
+  );
 
   watchEffect(() => {
-    if (pendingRewards.value) {
-      // do web3 stuff
+    if (pendingRewards.value > 0) {
+      formattedRewards.value = format(pendingRewards.value);
     }
   });
 </script>
