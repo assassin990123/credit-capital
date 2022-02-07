@@ -6216,19 +6216,20 @@ button:focus, input:focus, input:focus, textarea, textarea:focus {
   background: #fff;
   color: #000;
 }
-
 .treasury-value-container.treasury-outstanding,
 .treasury-current-assets.treasury-outstanding,
 .treasury-column-1.treasury-projections.treasury-outstanding{
-  height: 50vh;
+  height: auto;
+  padding: 30px 30px 30px 30px;
 }
 
 .tab-content.treasury-outstanding{
-  height: 40vh;
+  height: auto;
+  padding: 100px 20px;
 }
 
 .treasury-current-assets-header.tresury-custom{
-  margin: 30px 0 30px 0;
+  margin: 0;
   text-transform: capitalize;
   font-weight: 700;
 }
@@ -6237,6 +6238,16 @@ button:focus, input:focus, input:focus, textarea, textarea:focus {
   font-weight: 700;
   text-transform: capitalize;
   line-height: 25px;
+}
+
+.treasury-value-header,
+.treasury-projections-header{
+  margin: 0 !important;
+}
+
+
+.treasury-current-assets-row{
+  margin: 0;
 }
 
 .treasury-current-assets-token span{
@@ -6250,6 +6261,13 @@ button:focus, input:focus, input:focus, textarea, textarea:focus {
  margin: auto;
 }
 
+
+@media only screen and (max-width: 479px) {
+  .line{
+    width: 40%;
+  }
+}
+
 .line hr{
   height: 3px;
   background: rgb(255,149,6);
@@ -6257,7 +6275,7 @@ button:focus, input:focus, input:focus, textarea, textarea:focus {
 }
 
 .treasury-projections-row.treasury-projections-custom{
-  padding: 30px;
+  padding: 50px 30px 30px 30px;
 } 
 
 .treasury-projections-column.projection-custom{
