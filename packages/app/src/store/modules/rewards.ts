@@ -19,10 +19,10 @@ const getters = {
   getPendingRewards(state: RewardsState) {
     return state.pendingRewards;
   },
-  getUserPosition() {
+  getUserPosition(state: RewardsState) {
     return state.userPosition;
   },
-  getUserStakedPosition() {
+  getUserStakedPosition(state: RewardsState) {
     return state.userStakedPosition;
   }
 };
