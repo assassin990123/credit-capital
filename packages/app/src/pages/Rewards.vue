@@ -13,8 +13,8 @@
           </div>
         </div>
       </div>
-      
-      <DappFooter /> 
+
+      <DappFooter />
     </div>
   </div>
 </template>

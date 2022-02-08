@@ -214,7 +214,9 @@ contract Vault is AccessControl, Pausable {
         uint256 unlockedAmount = getUnlockedAmount(_token, _user);
 
         if (unlockedAmount > 0) {
-            unchecked {lockedAmount = user.totalAmount - unlockedAmount;}
+            unchecked {
+                lockedAmount = user.totalAmount - unlockedAmount;
+            }
         }
 
         return lockedAmount;
