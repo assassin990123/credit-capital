@@ -34,7 +34,7 @@ export const calculateCAPLUSDPrice = (
   }
 };
 
-interface Constant {
+export interface Constant {
   symbol: string;
   contracts: {
     137: string;
@@ -42,7 +42,7 @@ interface Constant {
   }
 }
 
-interface Pool {
+export interface Pool {
   symbol: string;
   id: {
     42: string;
