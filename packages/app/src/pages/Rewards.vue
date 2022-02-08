@@ -5,7 +5,7 @@
         <div class="rewards-container">
           <h1 class="panel-title">PENDING REWARDS</h1>
           <div class="rewards-content">
-            <div class="rewards-display">{{claimCAPL + " CAPL"}} ({{claimUSDC + " USD"}})</div>
+            <div class="rewards-display">{{pendingRewardsCAPL + " CAPL"}} ({{pendingRewardsUSDC + " USD"}})</div>
             <!-- <div class="rewards-display"><span>USDC:</span> 0000 </div> -->
             <div class="rewards-section">
               <button class="rewards-section-item" type="button" @click="reward()">CLAIM</button>
@@ -26,8 +26,17 @@ import { useStore } from "@/store";
 import { calculateCAPLUSDPrice } from "@/utils";
 
 const store = useStore();
-let claimCAPL = 0;
-let claimUSDC = 0;
+let pendingRewardsCAPL = 0;
+let pendingRewardsUSDC = 0;
+
+if (store.getters["accounts/isUserConnected"]) {
+  pendingRewardsCAPL = store.getters["rewards/pendingRewards"];
+  pendingRewardsUSDC = calculateCAPLUSDPrice(
+    pendingRewardsCAPL,
+    "USDC",
+    store.getters["balancer/getPoolTokens"]
+  );
+}
 
 function reward() {
   if (store.getters["accounts/isUserConnected"]) {
