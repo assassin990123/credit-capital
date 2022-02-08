@@ -1,15 +1,21 @@
 <template>
   <div>
-    <Navbar id="navigation" />
+    <Header />
     <router-view />
+    <Footer />
   </div>
 </template>
 
 <script setup lang="ts">
-import Navbar from "@/components/Navbar.vue";
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 </script>
 
 <style>
+@import url("../public/css/vendors.css");
+@import url("../public/css/plugins.css");
+@import url("../public/css/icons.css");
+@import url("../public/css/style.css");
 home,
 body {
   padding: 0;

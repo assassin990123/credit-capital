@@ -1,76 +1,96 @@
 <template>
-  <div class="home">
+  <div class="home stack-page">
     <div class="swap-container">
       <div class="treasury-row inner-container">
         <div class="treasury-column-1">
-          <div class="treasury-value-container">
+          <div class="treasury-value-container treasury-outstanding">
             <div class="treasury-value-header">
-              <div>OUTSTANDING ASSETS VALUE</div>
+              <div class="asset-value">Outstanding Assets Value</div>
               <div>(USD)</div>
             </div>
             <div class="treasury-value">$0.00</div>
           </div>
-          <div class="treasury-value-container">
+          <div class="treasury-value-container treasury-outstanding">
             <div class="treasury-value-header">
-              <div>TOTAL ASSETS UNDER MANAGEMENT</div>
+              <div class="asset-value">
+                Total Assets Under <br />
+                Management
+              </div>
               <div>(USD VALUE)</div>
             </div>
             <div class="treasury-value">$0.00</div>
           </div>
         </div>
         <div class="treasury-column-2">
-          <div class="treasury-current-assets">
-            <div class="treasury-current-assets-header">CURRENT ASSETS IN CONTRACT</div>
-            <div class="treasury-current-assets-row">
-              <div class="treasury-current-assets-token">TOKEN ----------------------</div>
-              <div class="treasury-current-assets-amount">AMOUNT</div>
+          <div class="treasury-current-assets treasury-outstanding">
+            <div class="treasury-current-assets-header tresury-custom">
+              Current Asset in Contract
             </div>
             <div class="treasury-current-assets-row">
-              <div class="treasury-current-assets-token">TOKEN ----------------------</div>
-              <div class="treasury-current-assets-amount">AMOUNT</div>
+              <div class="treasury-current-assets-token">Token</div>
+              <div class="line"><hr /></div>
+              <div class="treasury-current-assets-amount">Amount</div>
             </div>
             <div class="treasury-current-assets-row">
-              <div class="treasury-current-assets-token">TOKEN ----------------------</div>
-              <div class="treasury-current-assets-amount">AMOUNT</div>
+              <div class="treasury-current-assets-token">Token</div>
+              <div class="line"><hr /></div>
+              <div class="treasury-current-assets-amount">Amount</div>
             </div>
             <div class="treasury-current-assets-row">
-              <div class="treasury-current-assets-token">TOKEN ----------------------</div>
-              <div class="treasury-current-assets-amount">AMOUNT</div>
+              <div class="treasury-current-assets-token">Token</div>
+              <div class="line"><hr /></div>
+              <div class="treasury-current-assets-amount">Amount</div>
             </div>
             <div class="treasury-current-assets-row">
-              <div class="treasury-current-assets-token">TOKEN ----------------------</div>
-              <div class="treasury-current-assets-amount">AMOUNT</div>
+              <div class="treasury-current-assets-token">Token</div>
+              <div class="line"><hr /></div>
+              <div class="treasury-current-assets-amount">Amount</div>
+            </div>
+            <div class="treasury-current-assets-row">
+              <div class="treasury-current-assets-token">Token</div>
+              <div class="line"><hr /></div>
+              <div class="treasury-current-assets-amount">Amount</div>
             </div>
           </div>
         </div>
       </div>
       <div class="treasury-row">
-        <div class="treasury-column-1 treasury-projections">
-          <div class="treasury-projections-header">CURRENT REVENUE PROJECTIONS</div>
-          <div class="treasury-projections-row">
-            <div class="treasury-projections-column">DAILY</div>
-            <div class="treasury-projections-column">WEEKLY</div>
-            <div class="treasury-projections-column">MONTHLY</div>
+        <div
+          class="treasury-column-1 treasury-projections treasury-outstanding"
+        >
+          <div class="treasury-projections-header asset-value">
+            Current Revenue Projections
+          </div>
+          <div class="treasury-projections-row treasury-projections-custom">
+            <div class="treasury-projections-column projection-custom">
+              Daily
+            </div>
+            <div class="treasury-projections-column projection-custom">
+              Weekly
+            </div>
+            <div class="treasury-projections-column projection-custom">
+              Monthly
+            </div>
           </div>
         </div>
         <div class="treasury-column-2">
           <Tab
-            :sections="['WITHDRAW', 'DEPOSIT', 'REVENUE']"
+            :sections="['Withdraw', 'Deposit', 'Revenue']"
             :value="selected"
             :onChange="onChangeTab"
           />
-          <div class="tab-content">
+          <div class="tab-content treasury-outstanding">
             <div class="tab-inner-content">
               <select class="tab-inner-content-item">
-                <option value="TOKEN">TOKEN</option>
+                <option value="TOKEN">Token</option>
               </select>
               <div class="tab-inner-content-item">
-                <div>AMOUNT</div>
-                <input type="text" />
+                <div>Amount</div>
+                <input class="tab-inner-inpunt" type="text" />
               </div>
               <div class="tab-inner-content-item">
-                <div>ADDRESS</div>
-                <input type="text" />
+                <div>Address</div>
+                <input class="tab-inner-inpunt" type="text" />
               </div>
               <button class="tab-inner-content-item">ENTER</button>
             </div>
@@ -85,9 +105,8 @@
 import Tab from "@/components/Tab.vue";
 import { ref } from "vue";
 
-const selected = ref('WITHDRAW');
-const onChangeTab = (v) => selected.value = v;
-
+const selected = ref("WITHDRAW");
+const onChangeTab = (v) => (selected.value = v);
 </script>
 
 <style>
@@ -157,7 +176,8 @@ const onChangeTab = (v) => selected.value = v;
 }
 
 .treasury-current-assets-amount {
-  
+  font-size: 22px;
+  font-weight: 700;
 }
 
 .treasury-projections {
@@ -209,7 +229,62 @@ const onChangeTab = (v) => selected.value = v;
   width: 100px;
 }
 
-button.tab-inner-content-item, select.tab-inner-content-item {
+button.tab-inner-content-item,
+select.tab-inner-content-item {
   margin-top: 20px;
+}
+
+@media only screen and (max-width: 1200px) {
+  .treasury-row,
+  .treasury-column-1,
+  .treasury-column-2,
+  .treasury-value-container,
+  .treasury-projections-row,
+  .treasury-projections-column,
+  .treasury-projections-column.projection-custom {
+    width: auto;
+    flex-direction: column;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .treasury-projections-row.treasury-projections-custom {
+    margin: 0;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .treasury-projections-column.projection-custom {
+    margin: 20px;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .tab-content.treasury-outstanding {
+    padding: 30px 0;
+  }
+}
+
+@media only screen and (max-width: 479px) {
+  select.tab-inner-content-item,
+  button.tab-inner-content-item {
+    margin: 20px !important;
+    padding: 0 13px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .tab-inner-content {
+    width: auto;
+    flex-direction: column;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  select.tab-inner-content-item,
+  button.tab-inner-content-item {
+    margin: 20px !important;
+    padding: 0 13px;
+  }
 }
 </style>

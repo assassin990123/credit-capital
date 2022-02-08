@@ -1,28 +1,145 @@
 <template>
-  <div class="footer-container">
-    <div class="footer-item">TOTAL LOCKED VALUE</div>
-    <div class="footer-item">PRICE OF CAPL</div>
-    <div class="footer-item">USER POSITION</div>
-  </div>
+  <!-- Footer -->
+  <footer class="footer-style bg-gray-100 pt-200">
+    <!-- Container -->
+    <div class="container">
+      <!-- row -->
+      <div class="row">
+        <!-- col -->
+        <div class="col-xl-3 col-lg-3 col-md-4">
+          <div class="footer-logo">
+            <a href="/index.html"><img src="/images/logo.png" alt="" /></a>
+          </div>
+        </div>
+        <!-- /col -->
+        <!-- col -->
+        <div class="col-xl-9 col-lg-9 col-md-8 mb-30">
+          <div class="footer-top-wrapper">
+            <ul class="footer-top-link text-end">
+              <li><a href="#">Home</a></li>
+              <li><a href="#">About CreditCapital</a></li>
+              <li><a href="#">Dashboard</a></li>
+              <li><a href="#">Liquidity Pools</a></li>
+              <li><a href="#">Documentation</a></li>
+            </ul>
+          </div>
+        </div>
+        <!-- /col -->
+        <!-- col -->
+      </div>
+      <!-- /row -->
+      <div class="footer-middle-area mt-30 pb-30 pt-60">
+        <!-- row -->
+        <div class="row">
+          <!-- col -->
+          <div class="col-xl-3 col-lg-3 col-md-6">
+            <div class="footer-wrapper mb-30">
+              <h3 class="footer-title">About Us</h3>
+              <div class="footer-text">
+                <p>
+                  The CreditCapital platform provides a factory that allows you,
+                  the user, to deploy a Hedge Fund smart contract that can
+                  safeguard your crypto assets.
+                </p>
+              </div>
+              <div class="footer-icon">
+                <a href="#"><i class="uil uil-facebook-f"></i></a>
+                <a href="#"><i class="uil uil-twitter"></i></a>
+                <a href="#"><i class="uil uil-instagram-alt"></i></a>
+                <a href="#"><i class="uil uil-youtube"></i></a>
+              </div>
+            </div>
+          </div>
+          <!-- /col -->
+          <!-- col -->
+          <div class="col-xl-3 col-lg-3 col-md-6">
+            <div class="footer-wrapper mb-30">
+              <h3 class="footer-title">Platform</h3>
+              <div class="footer-link">
+                <ul>
+                  <li><a href="#">Sign Up</a></li>
+                  <li><a href="#">Dashboard</a></li>
+                  <li><a href="#">Liquidity Pools</a></li>
+                  <li><a href="#">The Vault</a></li>
+                  <li><a href="#">Swap Wizard</a></li>
+                </ul>
+              </div>
+              <div></div>
+            </div>
+          </div>
+          <!-- /col -->
+          <!-- col -->
+          <div class="col-xl-3 col-lg-3 col-md-6">
+            <div class="footer-wrapper mb-30">
+              <h3 class="footer-title">Info</h3>
+              <div class="footer-link">
+                <ul>
+                  <li><a href="#">About</a></li>
+                  <li><a href="#">Conditions</a></li>
+                  <li><a href="#">FAQ</a></li>
+                  <li><a href="#">Documentation</a></li>
+                  <li><a href="#">Terms of Use</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- /col -->
+          <!-- col -->
+          <div class="col-xl-3 col-lg-3 col-md-6" style="display: none">
+            <div class="footer-wrapper mb-30">
+              <h3 class="footer-title">Subscribe</h3>
+              <div class="subscribes-form">
+                <form action="#">
+                  <input placeholder="Enter email " type="email" />
+                  <button class="btn theme-btn-1 width-100 mt-10">
+                    <i class="lab la-telegram-plane me-2"></i>subscribe
+                  </button>
+                </form>
+              </div>
+              <div class="footer-info">
+                <p>
+                  Get the latest updates via email. Any time you may unsubscribe
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- /col -->
+        </div>
+        <!-- /row -->
+      </div>
+      <div class="footer-bottom-area pt-25 pb-25">
+        <!-- row -->
+        <div class="row">
+          <!-- col -->
+          <div class="col-xl-6 col-lg-6 col-md-6">
+            <div class="copyright">
+              <p>
+                © Copyrights 2022 <a href="/index.html">CreditCapital.</a> All
+                rights reserved.
+              </p>
+            </div>
+          </div>
+          <!-- col -->
+          <!-- /col -->
+          <div class="col-xl-6 col-lg-6 col-md-6">
+            <div class="footer-bottom-link text-end">
+              <ul>
+                <li><a href="#">Home</a></li>
+              </ul>
+            </div>
+          </div>
+          <!-- /col -->
+        </div>
+        <!-- /row -->
+      </div>
+    </div>
+    <!-- /Container -->
+  </footer>
+  <!-- /Footer -->
 </template>
 
-<script lang="ts"></script>
+<script setup lang="ts"></script>
 
 <style>
-.footer-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  border: 1px solid #000000;
-  padding: 20px;
-  margin: 0 5% 30px;
-}
-
-.footer-item {
-  border: 1px solid #000000;
-  padding: 20px;
-  flex: 1;
-  margin: 0 5%;
-  text-align: center;
-}
+@import url("https://fonts.googleapis.com/css2?family=Kanit:ital@1&family=Orbitron&display=swap");
 </style>

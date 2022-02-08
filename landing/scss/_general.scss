@@ -1,0 +1,115 @@
+/*============================================
+
+                 02 -- General
+
+==============================================*/
+body {
+    font-family: $font-1;
+    overflow-x: hidden !important;
+    font-size: $font-size-base;
+    color: $body-color;
+    font-weight: 400;
+    line-height: 2;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    font-family: $font-2;
+    line-height: 1.5;
+    font-weight: 600;
+    color:$gray-600;
+}
+
+a {
+    color: $gray-500;
+    text-decoration: none !important;
+    outline: none;
+
+}
+
+p {
+    line-height: 30px !important;
+}
+
+ul {
+    li {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        transition: all 0.6s ease-in-out;
+    }
+}
+
+dl,
+ol,
+ul {
+    margin-top: 0;
+    margin-bottom: 0rem;
+    margin-right: 0;
+    margin-left: 0;
+    padding: 0;
+}
+
+a:hover {
+    text-decoration: none;
+    color: $theme-color-1;
+}
+img {
+    max-width: 100%;
+}
+.btn:focus {
+    outline: 0px;
+    appearance: none;
+}
+
+:focus {
+    outline: -webkit-focus-ring-color auto 0px;
+}
+
+button:focus {
+    outline: 0px dotted;
+    outline: 0px auto -webkit-focus-ring-color;
+}
+button:focus, input:focus, input:focus, textarea, textarea:focus {
+    outline: 0;
+  }
+  button:focus, input:focus, input:focus, textarea, textarea:focus {
+    outline: 0;
+  }
+.form-control:focus {
+    box-shadow: none;
+}
+
+//li (list inline item)
+.list-inline-item:not(:last-child) {
+    margin-right: 0px;
+    margin-bottom: 0px;
+}
+
+// Rounded
+.rounded {
+    border-radius: 5px !important;
+}
+
+.rounded-pill {
+    border-radius: 10px !important;
+}
+
+.media-body {
+    flex: 1;
+}
+
+.media {
+    display: flex;
+    align-items: flex-start;
+}

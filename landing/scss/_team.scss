@@ -1,0 +1,96 @@
+/*============================================
+
+                  15 -- Team
+
+==============================================*/
+
+.team-block {
+    position: relative;
+    display: block;
+    margin-bottom: 93px;
+  
+    .image-box {
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+      max-width: 100%;
+      background-image: $bg-gradient;
+
+  
+      img {
+        width: 100%;
+        transition: all 500ms ease;
+      }
+    }
+  
+    &:hover .image-box img {
+      opacity: 0.2;
+    }
+  
+    .lower-content {
+      position: relative;
+      display: block;
+      padding-top: 20px;
+  
+      h3 {
+        position: relative;
+        display: block;
+        font-size: 24px;
+        line-height: 30px;
+        font-weight: 600;
+        color: $gray-600;
+        margin-bottom: 7px;
+  
+        a {
+          position: relative;
+          display: inline-block;
+          color: $gray-600;
+
+          &:hover {
+            color: $theme-color-1;
+          }
+        }
+      }
+  
+      .designation {
+        position: relative;
+        display: block;
+        font-size: 18px;
+        font-family: $font-1;
+        color: #7379a0;
+      }
+    }
+  
+    .image-holder {
+      position: relative;
+  
+      .social-list {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        display: table;
+        text-align: center;
+        transform: translate(-50%, 0%);
+        opacity: 0;
+        transition: all 500ms ease;
+      }
+    }
+  
+    &:hover .image-holder .social-list {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+  
+    .image-holder .social-list li {
+      position: relative;
+      display: inline-block;
+      margin: 0px 10px;
+  
+      a {
+        position: relative;
+        display: inline-block;
+        font-size: 20px;
+        color: #fff;
+      }
+    }
+  }

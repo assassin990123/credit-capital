@@ -1,0 +1,115 @@
+/*============================================
+
+                    16 -- FAQ
+
+==============================================*/
+.faq-accordion-tab .tabs {
+  padding-left: 0;
+  list-style-type: none;
+  margin-bottom: 60px;
+  text-align: center;
+
+  li {
+    margin-left: 10px;
+    margin-right: 10px;
+
+    a {
+      color: $gray-600;
+      text-decoration: none;
+      border-radius: 5px;
+      padding: 20px;
+      display: block;
+      box-shadow: 2px 8px 20px 0 rgba(25, 42, 70, 0.13) !important;
+      font-size: 17px;
+      font-weight: 800;
+
+      i {
+        font-size: 30px;
+        font-weight: 400;
+      }
+
+      span {
+        display: block;
+        margin-top: 8px;
+      }
+
+      &:hover {
+        background: $bg-gradient;
+        color: #ffffff;
+      }
+    }
+
+    &.current a {
+      background-color: $theme-color-1;
+      color: #ffffff;
+    }
+  }
+}
+
+.faq-accordion .accordion {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 0;
+
+  .accordion-item {
+    border:none;
+    border-radius: 5px;
+    display: block;
+    box-shadow: 2px 8px 20px 0 rgba(25, 42, 70, 0.13) !important;
+    background: #ffffff;
+    margin-bottom: 15px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .accordion-title {
+    padding: 20px 25px 17px 60px;
+    color: $gray-600;
+    text-decoration: none;
+    position: relative;
+    display: block;
+    font-size: 18px;
+    font-weight: 800;
+
+    i {
+      position: absolute;
+      left: 25px;
+      top: 28px;
+      font-size: 18px;
+      -webkit-transition: 0.5s;
+      transition: 0.5s;
+    }
+
+    &.active i {
+      -webkit-transform: rotate(180deg);
+      transform: rotate(180deg);
+    }
+  }
+
+  .accordion-content {
+    display: none;
+    position: relative;
+    margin-top: -5px;
+    padding-bottom: 20px;
+    padding-right: 25px;
+    padding-left: 60px;
+
+    p {
+      line-height: 1.8;
+    }
+
+    &.show {
+      display: block;
+    }
+  }
+}
+
+.tab .tabs-item {
+  display: none;
+
+  &:first-child {
+    display: block;
+  }
+}

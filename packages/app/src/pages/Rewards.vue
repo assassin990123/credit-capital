@@ -1,25 +1,35 @@
 <template>
-  <div class="home">
+  <div class="home stack-page">
     <div class="swap-container">
-      <div class="inner-container">
+      <div class="inner-container reward-main-sec">
         <div class="rewards-container">
           <h1 class="panel-title">PENDING REWARDS</h1>
           <div class="rewards-content">
-            <div class="rewards-display">USDC: $0000.00</div>
+            <div class="rewards-display"><span>USDC:</span> $0000.00</div>
             <div class="rewards-section">
-              <div class="rewards-section-item">CLAIM</div>
+              <button class="rewards-section-item" type="button" @click="reward()">CLAIM</button>
               <div class="rewards-section-item">COMPOUND</div>
             </div>
           </div>
         </div>
       </div>
-      <Footer />
+
+      <DappFooter />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import Footer from "@/components/Footer.vue";
+import DappFooter from "@/components/DappFooter.vue";
+import { useStore } from "@/store";
+
+const store = useStore();
+
+function reward() {
+  if (store.getters["accounts/isUserConnected"]) {
+    store.dispatch("rewards/claim");
+  }
+}
 </script>
 
 <style>

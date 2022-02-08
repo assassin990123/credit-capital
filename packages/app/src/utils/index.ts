@@ -15,3 +15,56 @@ export const format = (n: any) => {
     return +(n / 1e12).toFixed(1) + " T";
   }
 };
+
+export const calculateCAPLUSDPrice = (
+  amount: number,
+  unit: string,
+  poolTokens: any
+) => {
+  const USDC = poolTokens.balances[0];
+  const CAPL = poolTokens.balances[1];
+
+  // convert usdc to capl
+  if (unit == "CAPL") {
+    return (CAPL / USDC) * amount;
+  }
+  // convert capl to usdc
+  if (unit == "USDC") {
+    return (USDC / CAPL) * amount;
+  }
+};
+
+export interface Constant {
+  symbol: string;
+  contracts: {
+    137: string;
+    42: string;
+  };
+}
+
+export interface Pool {
+  symbol: string;
+  id: {
+    42: string;
+  };
+  contracts: {
+    137: string;
+    42: string;
+  };
+}
+
+export const findObjectContract = (
+  flag: string,
+  obj: Array<Constant>,
+  chain: string
+) => {
+  const c = obj.find((o) => o.symbol == flag);
+  // @ts-ignore
+  return c?.contracts[chain];
+};
+
+export const findObjectId = (flag: string, obj: Array<Pool>, chain: string) => {
+  const c = obj.find((o) => o.symbol == flag);
+  // @ts-ignore
+  return c?.id[chain];
+};
