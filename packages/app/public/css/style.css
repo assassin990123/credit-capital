@@ -779,6 +779,46 @@ button:focus, input:focus, input:focus, textarea, textarea:focus {
                 04 -- Header
 
 ==============================================*/
+
+/* start of Navigation */
+
+
+.nav-btn{
+  display: flex;
+  flex-direction: row;
+  
+}
+
+.nav-item.nav-item-custom{
+align-self: center;
+padding-right: 5px;
+
+}
+
+.btn-custom-nav{
+color: #fff;
+background:#FF8800;
+font-weight: bold;
+font-family: Nunito, sans-serif;
+font-size: 17px;
+height: auto;
+width: auto;
+padding: 0 20px;
+
+}
+
+.capl{
+border: 1px solid #FF8800;
+padding: 5px 20px;
+border-radius: 25px;
+color: #000;
+font-weight: 800;
+
+}
+
+/* End of navigation */
+
+
 .acavo-responsive-nav {
   display: none;
 }
@@ -812,7 +852,7 @@ button:focus, input:focus, input:focus, textarea, textarea:focus {
 }
 
 .acavo-nav .navbar .navbar-nav {
-  margin-left: auto;
+  margin-left: 25px;
 }
 
 .acavo-nav .navbar .navbar-nav .nav-item {
@@ -1291,7 +1331,8 @@ button:focus, input:focus, input:focus, textarea, textarea:focus {
 .others-option-for-responsive .dot-menu .inner {
   display: -webkit-box;
   display: -ms-flexbox;
-  display: flex;
+  /* display: flex; */
+  display: none;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;

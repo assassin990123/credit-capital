@@ -23,17 +23,23 @@
                     <div class="collapse navbar-collapse mean-menu">
                         <ul class="navbar-nav">
                             <li class="nav-item"><router-link to="/">Home</router-link></li>
-                            <li class="nav-item"><router-link to="dashboard">Dashboard</router-link></li>
-                            <li class="nav-item"><router-link to="stake">Stake/Unstake</router-link></li>
+                            <li class="nav-item"><router-link to="stake">Stake</router-link></li>
                             <li class="nav-item"><router-link to="reward">Rewards</router-link></li>
-                            <li class="nav-item"><router-link to="swap">Swap/Liquidity</router-link></li>
+                            <li class="nav-item"><router-link to="swap">Swap</router-link></li>
                             <li class="nav-item"><router-link to="treasury">Treasury</router-link></li>
-                            <li class="nav-item"><button class="connectButton" @click="connectWeb3">
+                        </ul>
+                    </div>
+                    <div class="">
+                        <ul class="nav-btn">
+                            <li class="nav-item nav-item-custom"><span class="capl"> Capl: &dollar;0.000</span></li>
+                             <li class="nav-item nav-item-custom"><router-link to="dashboard"><button class="connectButton btn-custom-nav">Dashboard</button></router-link></li>
+                            <li class="nav-item nav-item-custom"><button class="connectButton btn-custom-nav" @click="connectWeb3">
                               {{ buttonString }}
                             </button>
                             </li>
                         </ul>
                     </div>
+
                 </nav>
             </div>
         </div>
@@ -73,7 +79,7 @@ export default {
   setup() {
     const store = useStore();
 
-    let buttonString = ref("Connect");
+    let buttonString = ref("Connect Wallet");
 
     const isConnected = computed(
       () => store.getters["accounts/isUserConnected"]
@@ -83,7 +89,7 @@ export default {
     watchEffect(() => {
       isConnected.value
         ? (buttonString.value = shortenAddress(wallet.value))
-        : (buttonString.value = "Connect");
+        : (buttonString.value = "Connect Wallet");
     });
 
     const shortenAddress = (address: string, chars = 3): string => {
@@ -155,4 +161,5 @@ export default {
 /** MEDIA QUERIES */
 @media screen and (min-width: 1000px) {
 }
+
 </style>
