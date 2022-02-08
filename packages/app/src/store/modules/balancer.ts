@@ -71,7 +71,7 @@ const actions = {
     // call getPoolTokens
     // @ts-ignore
     const poolTokens = await balancerVaultContract.getPoolTokens(
-      poolID.id[ChainID]
+      poolID
     );
 
     // parse balance
