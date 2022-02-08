@@ -66,5 +66,5 @@ export const findObjectContract = (
 export const findObjectId = (flag: string, obj: Array<Pool>, chain: string) => {
   const c = obj.find((o) => o.symbol == flag);
   // @ts-ignore
-  return c?.id;
+  return c?.id[chain];
 };
