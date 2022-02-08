@@ -1,17 +1,17 @@
 <template>
-    <!-- Start Navbar Area -->
-    <div class="navbar-area">
-        <div class="acavo-responsive-nav">
-            <div class="container">
-                <div class="acavo-responsive-menu">
-                    <div class="logo">
-                        <a href="/index.html">
-                            <img src="/images/logo-white.png" alt="logo">
-                        </a>
-                    </div>
-                </div>
-            </div>
+  <!-- Start Navbar Area -->
+  <div class="navbar-area">
+    <div class="acavo-responsive-nav">
+      <div class="container">
+        <div class="acavo-responsive-menu">
+          <div class="logo">
+            <a href="/index.html">
+              <img src="/images/logo-white.png" alt="logo" />
+            </a>
+          </div>
         </div>
+      </div>
+    </div>
 
         <div class="acavo-nav">
             <div class="container">
@@ -44,30 +44,21 @@
             </div>
         </div>
 
-        <div class="others-option-for-responsive">
-            <div class="container">
-                <div class="dot-menu">
-                    <div class="inner">
-                        <div class="circle circle-one"></div>
-                        <div class="circle circle-two"></div>
-                        <div class="circle circle-three"></div>
-                    </div>
-                </div>
-
-                <div class="container">
-                    <div class="option-inner">
-                        <div class="others-option">
-                            <div class="option-item">
-                                <a href="contact.html" class="btn theme-btn-1">Get Started <i
-                                        class="las la-angle-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="container">
+          <div class="option-inner">
+            <div class="others-option">
+              <div class="option-item">
+                <a href="contact.html" class="btn theme-btn-1"
+                  >Get Started <i class="las la-angle-right"></i
+                ></a>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-    <!-- End Navbar Area -->
+  </div>
+  <!-- End Navbar Area -->
 </template>
 
 <script lang="ts">

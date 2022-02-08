@@ -12,7 +12,13 @@
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>send</span></div>
-                <div class="panel-explanation">000</div>
+                <div class="panel-explanation">
+                  <input
+                    type="text"
+                    @input="exchangeCAPLToUSDC()"
+                    v-model="swapToken"
+                  />
+                </div>
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span> 000</div>
@@ -23,19 +29,21 @@
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>receive</span></div>
-                <div class="panel-explanation">000</div>
+                <div class="panel-explanation">{{ swapTokenResult }}</div>
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span> 000</div>
                 <div class="panel-explanation">USDC</div>
               </div>
             </div>
-            <button type="submit" class="btn-custom">Enter</button>
+            <button type="button" @click="swap()" class="btn-custom">
+              Enter
+            </button>
           </div>
         </div>
         <div class="panel stake-panel">
           <h1 class="panel-title">liquidity</h1>
-          <div class="panel-content  swap-panel-content">
+          <div class="panel-content swap-panel-content">
             <div class="panel-header">
               <div class="panel-explanation">functionality explanation</div>
               <div class="ellipses">&hellip;</div>
@@ -70,8 +78,33 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import DappFooter from "@/components/DappFooter.vue";
+<script setup lang="ts">
+// import Footer from "@/components/Footer.vue";
+import { ref } from "vue";
+// import DappFooter from "@/components/DappFooter.vue";
+import { useStore } from "@/store";
+import { calculateCAPLUSDPrice } from "@/utils";
+
+const store = useStore();
+let swapToken = ref(0);
+let swapTokenResult = ref(0);
+
+function swap() {
+  if (store.getters["accounts/isUserConnected"]) {
+    store.dispatch("balancer/batchSwap");
+  }
+}
+
+function exchangeCAPLToUSDC() {
+  if (store.getters["accounts/isUserConnected"]) {
+    const exchangedBalance = calculateCAPLUSDPrice(
+      swapToken.value,
+      "USDC",
+      store.getters["balancer/getPoolTokens"]
+    );
+    swapTokenResult.value = exchangedBalance;
+  }
+}
 </script>
 
 <style>

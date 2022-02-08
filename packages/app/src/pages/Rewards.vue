@@ -7,20 +7,29 @@
           <div class="rewards-content">
             <div class="rewards-display"><span>USDC:</span> $0000.00</div>
             <div class="rewards-section">
-              <div class="rewards-section-item">CLAIM</div>
+              <button class="rewards-section-item" type="button" @click="reward()">CLAIM</button>
               <div class="rewards-section-item">COMPOUND</div>
             </div>
           </div>
         </div>
       </div>
-      
-      <DappFooter /> 
+
+      <DappFooter />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import DappFooter from "@/components/DappFooter.vue";
+import DappFooter from "@/components/DappFooter.vue";
+import { useStore } from "@/store";
+
+const store = useStore();
+
+function reward() {
+  if (store.getters["accounts/isUserConnected"]) {
+    store.dispatch("rewards/claim");
+  }
+}
 </script>
 
 <style>
