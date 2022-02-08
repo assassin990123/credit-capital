@@ -1,22 +1,24 @@
-// @ts-nocheck
 import { ethers } from "ethers";
+import { Commit } from "vuex";
 import { balancerVault as balancerVaultABI } from "@/abi";
 import { contracts, pools, tokens } from "@/constants";
-import { findObjectContract, findObjectId } from "@/utils";
+import { findObjectContract, findObjectId, Pool, Constant } from "@/utils";
+import { BalancerState } from "@/models/balancer";
+import { RootState } from "@/models";
 import { markRaw } from "vue";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
-  ? Number(process.env.VUE_APP_NETWORK_ID)
-  : 1;
+  ? process.env.VUE_APP_NETWORK_ID
+  : "1";
 
-const state = {
+const state: BalancerState = {
   balancerVaultContract: null,
   poolTokens: {},
   batchSwap: {},
 };
 
 const getters = {
-  getBalancerVaultContract(state) {
+  getBalancerVaultContract() {
     return state.balancerVaultContract;
   },
 
@@ -30,7 +32,7 @@ const getters = {
 };
 
 const actions = {
-  async setContracts({ commit, rootState }) {
+  async setContracts({ commit, rootState }: {commit: Commit, rootState: RootState}) {
     const provider = rootState.accounts.web3Provider;
     commit(
       "setBalancerVaultContract",
@@ -40,10 +42,10 @@ const actions = {
     );
   },
 
-  async getPoolTokens({ commit, rootState }) {
-
+  async getPoolTokens({ commit, rootState }: {commit: Commit, rootState: RootState}) {
     // get poolID
-    const poolID = findObjectId("BAL/WETH", pools, ChainID);
+    const poolID = findObjectId("BAL/WETH", pools as Pool[], ChainID);
+
     // if state.balancerVaultContract is null, call the `setContracts` function
     if (state.balancerVaultContract === null) {
       actions.setContracts({ commit, rootState });
@@ -51,10 +53,11 @@ const actions = {
     const balancerVaultContract = state.balancerVaultContract;
 
     // call getPoolTokens
-    const poolTokens = await balancerVaultContract.getPoolTokens(poolID[ChainID]);
+    // @ts-ignore
+    const poolTokens = await balancerVaultContract.getPoolTokens(poolID.id[ChainID]);
 
     // parse balance
-    const balances = poolTokens.balances.map((obj) =>
+    const balances = poolTokens.balances.map((obj: any) =>
       ethers.utils.formatUnits(obj, 18)
     );
 
@@ -65,15 +68,15 @@ const actions = {
     });
   },
 
-  async batchSwap({ commit, rootState }) {
-    const pool_WETH_USDC = findObjectId("WETH/USDC", pools, ChainID);
-    const pool_BAL_WETH = findObjectId("BAL/WETH", pools, ChainID);
+  async batchSwap({ commit, rootState }: {commit: Commit, rootState: RootState}) {
+    const pool_WETH_USDC = findObjectId("WETH/USDC", pools as Pool[], ChainID);
+    const pool_BAL_WETH = findObjectId("BAL/WETH", pools as Pool[], ChainID);
 
     const token_BAL = findObjectContract("BAL", tokens, ChainID);
     const token_USDC = findObjectContract("USDC", tokens, ChainID);
     const token_WETH = findObjectContract("WETH", tokens, ChainID);
     
-    const tokenData = {};
+    const tokenData: any = {};
     tokenData[token_BAL] = {
       symbol: "BAL",
       decimals: "18",
@@ -91,12 +94,12 @@ const actions = {
     };
     const tokenAddresses = Object.keys(tokenData);
     tokenAddresses.sort();
-    const tokenIndices = {};
+    const tokenIndices: any = {};
     for (let i = 0; i < tokenAddresses.length; i++) {
       tokenIndices[tokenAddresses[i]] = i;
     }
 
-    const fundSettings = {
+    const fundSettings: any = {
       sender: rootState.accounts.activeAccount,
       recipient: rootState.accounts.activeAccount,
       fromInternalBalance: false,
@@ -140,7 +143,8 @@ const actions = {
     }
     const balancerVaultContract = state.balancerVaultContract;
 
-    const batchSwap = await balancerVaultContract.batchSwap(
+    // @ts-ignore
+    const batchSwap = await balancerVaultContract?.batchSwap(
       swapKind,
       swapSteps,
       checksumTokens,
@@ -154,15 +158,15 @@ const actions = {
 };
 
 const mutations = {
-  setBalancerVaultContract(state, _contract) {
+  setBalancerVaultContract(state: BalancerState, _contract: object) {
     state.balancerVaultContract = _contract;
   },
 
-  setPoolTokens(state, _poolTokens) {
+  setPoolTokens(state: BalancerState, _poolTokens: object) {
     state.poolTokens = _poolTokens;
   },
 
-  setBatchSwap(state, _batchSwap) {
+  setBatchSwap(state: BalancerState, _batchSwap: object) {
     state.batchSwap = _batchSwap;
   },
 };
