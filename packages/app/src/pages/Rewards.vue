@@ -20,9 +20,12 @@
 </template>
 
 <script lang="ts" setup>
+  // @ts-ignore
   import DappFooter from "@/components/DappFooter.vue";
   import { computed, watchEffect, ref } from "vue";
+  // @ts-ignore
   import { format } from "@/utils";
+  // @ts-ignore
   import { useStore } from "@/store";
 
   const store = useStore();

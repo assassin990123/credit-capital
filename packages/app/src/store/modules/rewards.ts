@@ -10,20 +10,24 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   : "1";
 
 const state: RewardsState = {
+  // userPosition: 0,
   pendingRewards: 0,
 };
 
 const getters = {
   getPendingRewards(state: RewardsState) {
     return state.pendingRewards;
-  }
+  },
+  // getUserPosition(state: RewardsState) {
+  //   return state.userPosition;
+  // }
 };
 
 const actions = {  
   async getPendingRewards({ commit, rootState, dispatch }: {commit: Commit, rootState: RootState, dispatch: Dispatch}) {
     // get address from rootstate,
     const address = rootState.accounts.activeAccount;
-    console.log(rootState);
+
     // if state.rewardsContract is null, call the `setContracts` function
     if (rootState.contracts.rewardsContract === null) {
         dispatch("contracts/setContracts", null, { root: true });
@@ -53,6 +57,55 @@ const actions = {
     } catch (error) {
       console.log(error);
     }
+  },
+  
+  // async getUserPosition({ commit, rootState, dispatch }: { commit: Commit, rootState: RootState, dispatch: Dispatch}) {
+  //   // get address from rootstate,
+  //   const address = rootState.accounts.activeAccount;
+  //   // if state.vaultContract or state.vaultContract is null, call the `setContracts` function
+  //   if (rootState.contracts.vaultContract === null) {
+  //     dispatch("contracts/setContracts", null, { root: true });
+  //   }
+
+  //   const vaultContract = rootState.contracts.vaultContract;
+  //   // get userposition
+  //   // @ts-ignore
+  //   const userPosition = await vaultContract?.getUserPosition(findObjectContract('USDC', tokens, ChainID), address);
+
+  //   // parse balance, set new value in the local state
+  //   commit("setUserPosition", ethers.utils.formatUnits(userPosition, 18));
+  // },
+
+  async stake({ rootState, dispatch }: {rootState: RootState, dispatch: Dispatch}, amount: number) {
+    // if state.rewardsContract is null, call the `setContracts` function
+    if (rootState.contracts.rewardsContract === null) {
+      dispatch("contracts/setContracts", null, { root: true });
+    }
+
+    const rewardsContract = rootState.contracts.rewardsContract;
+    // claim rewards
+    try {
+      // @ts-ignore
+      await rewardsContract?.deposit(findObjectContract('USDC', tokens, ChainID), amount);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  async unstake({ rootState, dispatch }: {rootState: RootState, dispatch: Dispatch}, amount: number) {
+    // if state.rewardsContract is null, call the `setContracts` function
+    if (rootState.contracts.rewardsContract === null) {
+      dispatch("contracts/setContracts", null, { root: true });
+    }
+
+    const rewardsContract = rootState.contracts.rewardsContract;
+    // claim rewards
+    try {
+      // @ts-ignore
+      await rewardsContract?.unstake(findObjectContract('USDC', tokens, ChainID), amount);
+    } catch (error) {
+      console.log(error);
+    }
   }
 };
 
@@ -60,6 +113,9 @@ const mutations = {
   setPendingRewards(state: RewardsState, _pendingRewards: number) {
     state.pendingRewards = _pendingRewards;
   },
+  // setUserPosition(state: RewardsState, _userPosition: number) {
+  //   state.userPosition = _userPosition;
+  // }
 };
 
 export default {
