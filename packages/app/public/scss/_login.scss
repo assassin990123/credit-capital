@@ -17,7 +17,7 @@
     left: 0px;
     width: 100%;
     height: 100%;
-    background-image: url('../images/bg/overlay.png');
+    background-image: url("../images/bg/overlay.png");
     opacity: 30%;
   }
 
@@ -31,10 +31,8 @@
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
 
     .input-group {
-
       position: relative;
       margin-bottom: 1.5rem;
-
 
       .login-form-icon {
         position: absolute;
@@ -75,12 +73,10 @@
           opacity: 1;
         }
       }
-
     }
   }
 
   .login-form {
-
     .login-social-icon {
       background: $bg-gradient;
       box-shadow: $theme-shadow-1;
@@ -141,15 +137,13 @@
           }
         }
       }
-
     }
-
   }
 
   .form-check {
     display: inline-flex;
 
-    input[type='checkbox'] {
+    input[type="checkbox"] {
       position: absolute;
       left: 0;
       z-index: -1;
@@ -164,7 +158,7 @@
 
     &::before {
       border-radius: 0.25rem;
-      transition: .4s;
+      transition: 0.4s;
       position: absolute;
       top: 6px;
       left: 0rem;
@@ -201,7 +195,7 @@
       color: #97a4af;
     }
 
-    input:checked~.form-check-box {
+    input:checked ~ .form-check-box {
       &::before {
         color: #fff;
         border-color: $theme-color-1;

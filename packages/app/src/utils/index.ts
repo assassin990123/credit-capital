@@ -39,28 +39,32 @@ export interface Constant {
   contracts: {
     137: string;
     42: string;
-  }
+  };
 }
 
 export interface Pool {
   symbol: string;
   id: {
     42: string;
-  }
+  };
   contracts: {
     137: string;
     42: string;
-  }
+  };
 }
 
-export const findObjectContract = (flag: string, obj: Array<Constant>, chain: string) => {
-  const c = obj.find(o => o.symbol == flag)
+export const findObjectContract = (
+  flag: string,
+  obj: Array<Constant>,
+  chain: string
+) => {
+  const c = obj.find((o) => o.symbol == flag);
   // @ts-ignore
-  return c?.contracts[chain]
-}
+  return c?.contracts[chain];
+};
 
-export const findObjectId = (flag: string, obj: Array<Pool>, chain: string ) => {
-  const c = obj.find(o => o.symbol == flag)
+export const findObjectId = (flag: string, obj: Array<Pool>, chain: string) => {
+  const c = obj.find((o) => o.symbol == flag);
   // @ts-ignore
-  return c?.id
-}
+  return c?.id;
+};

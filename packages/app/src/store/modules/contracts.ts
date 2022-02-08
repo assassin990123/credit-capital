@@ -26,19 +26,37 @@ const getters = {
 };
 
 const actions = {
-  async setContracts({ commit, rootState }: {commit: Commit, rootState: RootState}) {
+  async setContracts({
+    commit,
+    rootState,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+  }) {
     const provider = rootState.accounts.web3Provider;
     try {
       commit(
         "setCAPLContract",
-        markRaw(new ethers.Contract(findObjectContract('CAPL', tokens, ChainID), caplABI, provider))
+        markRaw(
+          new ethers.Contract(
+            findObjectContract("CAPL", tokens, ChainID),
+            caplABI,
+            provider
+          )
+        )
       );
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   },
 
-  async getCAPLBalance({ commit, rootState }: {commit: Commit, rootState: RootState}) {
+  async getCAPLBalance({
+    commit,
+    rootState,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+  }) {
     // get address from rootstate,
     const address = rootState.accounts.activeAccount;
     // get contract from contract state (local state)
@@ -55,7 +73,7 @@ const actions = {
 };
 
 const mutations = {
-  setCAPLContract(state: ContractState, _contract: object ){
+  setCAPLContract(state: ContractState, _contract: object) {
     state.caplContract = _contract;
   },
   setCAPLBalance(state: ContractState, _balance: number) {

@@ -17,13 +17,13 @@
           </div>
         </div>
       </div>
-     <DappFooter />
+      <DappFooter />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import DappFooter from "@/components/DappFooter.vue";
+import DappFooter from "@/components/DappFooter.vue";
 </script>
 
 <style>

@@ -1,9 +1,9 @@
 /*eslint prefer-const: "warn"*/
-import detectEthereumProvider from '@metamask/detect-provider'
+import detectEthereumProvider from "@metamask/detect-provider";
 import { markRaw } from "vue";
-import { Commit, Dispatch } from 'vuex';
-import { AccountState } from "@/models/accounts"
-import { ethers } from 'ethers';
+import { Commit, Dispatch } from "vuex";
+import { AccountState } from "@/models/accounts";
+import { ethers } from "ethers";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
@@ -37,19 +37,30 @@ const getters = {
 
 const actions = {
   // @ts-ignore
-  async connectWeb3({ commit, dispatch }: { commit: Commit, dispatch: Dispatch }) {
+  async connectWeb3({
+    commit,
+    dispatch,
+  }: {
+    commit: Commit;
+    dispatch: Dispatch;
+  }) {
     if (state.isConnected == true) return;
 
-    const provider:any = await detectEthereumProvider();
+    const provider: any = await detectEthereumProvider();
 
     if (provider) {
-      const accounts = await (window as any).ethereum.request({ method: 'eth_requestAccounts' })
+      const accounts = await (window as any).ethereum.request({
+        method: "eth_requestAccounts",
+      });
       await actions.checkNetwork();
       commit("setIsConnected", true);
       commit("setActiveAccount", accounts[0]);
-      commit("setWeb3Provider", markRaw(new ethers.providers.Web3Provider(provider, "any")));
+      commit(
+        "setWeb3Provider",
+        markRaw(new ethers.providers.Web3Provider(provider, "any"))
+      );
       // listen in
-      await actions.ethereumListener({ commit })
+      await actions.ethereumListener({ commit });
     }
 
     dispatch("contracts/setContracts", null, { root: true });
@@ -81,7 +92,7 @@ const actions = {
     const balance = await state.web3Provider?.getBalance(state.activeAccount);
     commit("setActiveBalance", balance);
   },
-  
+
   async checkNetwork() {
     if ((window as any).ethereum) {
       const hexadecimal = "0x" + parseInt(ChainID).toString(16);
@@ -134,8 +145,8 @@ const mutations = {
     localStorage.setItem("isConnected", `${isConnected}`);
   },
   setWeb3Provider(state: AccountState, provider: any) {
-    state.web3Provider = provider
-  }
+    state.web3Provider = provider;
+  },
 };
 
 export default {

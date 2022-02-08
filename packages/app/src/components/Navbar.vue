@@ -1,67 +1,79 @@
 <template>
-    <!-- Start Navbar Area -->
-    <div class="navbar-area">
-        <div class="acavo-responsive-nav">
-            <div class="container">
-                <div class="acavo-responsive-menu">
-                    <div class="logo">
-                        <a href="/index.html">
-                            <img src="/images/logo-white.png" alt="logo">
-                        </a>
-                    </div>
-                </div>
-            </div>
+  <!-- Start Navbar Area -->
+  <div class="navbar-area">
+    <div class="acavo-responsive-nav">
+      <div class="container">
+        <div class="acavo-responsive-menu">
+          <div class="logo">
+            <a href="/index.html">
+              <img src="/images/logo-white.png" alt="logo" />
+            </a>
+          </div>
         </div>
-
-        <div class="acavo-nav">
-            <div class="container">
-                <nav class="navbar navbar-expand-md navbar-light">
-                    <a class="navbar-brand" href="/index.html">
-                        <img src="/images/logo-white.png" alt="logo">
-                    </a>
-
-                    <div class="collapse navbar-collapse mean-menu">
-                        <ul class="navbar-nav">
-                            <li class="nav-item"><router-link to="/">Home</router-link></li>
-                            <li class="nav-item"><router-link to="dashboard">Dashboard</router-link></li>
-                            <li class="nav-item"><router-link to="stake">Stake/Unstake</router-link></li>
-                            <li class="nav-item"><router-link to="reward">Rewards</router-link></li>
-                            <li class="nav-item"><router-link to="swap">Swap/Liquidity</router-link></li>
-                            <li class="nav-item"><router-link to="treasury">Treasury</router-link></li>
-                            <li class="nav-item"><button class="connectButton" @click="connectWeb3">
-                              {{ buttonString }}
-                            </button>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-            </div>
-        </div>
-
-        <div class="others-option-for-responsive">
-            <div class="container">
-                <div class="dot-menu">
-                    <div class="inner">
-                        <div class="circle circle-one"></div>
-                        <div class="circle circle-two"></div>
-                        <div class="circle circle-three"></div>
-                    </div>
-                </div>
-
-                <div class="container">
-                    <div class="option-inner">
-                        <div class="others-option">
-                            <div class="option-item">
-                                <a href="contact.html" class="btn theme-btn-1">Get Started <i
-                                        class="las la-angle-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-    <!-- End Navbar Area -->
+
+    <div class="acavo-nav">
+      <div class="container">
+        <nav class="navbar navbar-expand-md navbar-light">
+          <a class="navbar-brand" href="/index.html">
+            <img src="/images/logo-white.png" alt="logo" />
+          </a>
+
+          <div class="collapse navbar-collapse mean-menu">
+            <ul class="navbar-nav">
+              <li class="nav-item"><router-link to="/">Home</router-link></li>
+              <li class="nav-item">
+                <router-link to="dashboard">Dashboard</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link to="stake">Stake/Unstake</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link to="reward">Rewards</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link to="swap">Swap/Liquidity</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link to="treasury">Treasury</router-link>
+              </li>
+              <li class="nav-item">
+                <button class="connectButton" @click="connectWeb3">
+                  {{ buttonString }}
+                </button>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div class="others-option-for-responsive">
+      <div class="container">
+        <div class="dot-menu">
+          <div class="inner">
+            <div class="circle circle-one"></div>
+            <div class="circle circle-two"></div>
+            <div class="circle circle-three"></div>
+          </div>
+        </div>
+
+        <div class="container">
+          <div class="option-inner">
+            <div class="others-option">
+              <div class="option-item">
+                <a href="contact.html" class="btn theme-btn-1"
+                  >Get Started <i class="las la-angle-right"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Navbar Area -->
 </template>
 
 <script lang="ts">

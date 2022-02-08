@@ -32,17 +32,33 @@ const getters = {
 };
 
 const actions = {
-  async setContracts({ commit, rootState }: {commit: Commit, rootState: RootState}) {
+  async setContracts({
+    commit,
+    rootState,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+  }) {
     const provider = rootState.accounts.web3Provider;
     commit(
       "setBalancerVaultContract",
       markRaw(
-        new ethers.Contract(findObjectContract('balancerVault', contracts, ChainID), balancerVaultABI, provider)
+        new ethers.Contract(
+          findObjectContract("balancerVault", contracts, ChainID),
+          balancerVaultABI,
+          provider
+        )
       )
     );
   },
 
-  async getPoolTokens({ commit, rootState }: {commit: Commit, rootState: RootState}) {
+  async getPoolTokens({
+    commit,
+    rootState,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+  }) {
     // get poolID
     const poolID = findObjectId("BAL/WETH", pools as Pool[], ChainID);
 
@@ -54,7 +70,9 @@ const actions = {
 
     // call getPoolTokens
     // @ts-ignore
-    const poolTokens = await balancerVaultContract.getPoolTokens(poolID.id[ChainID]);
+    const poolTokens = await balancerVaultContract.getPoolTokens(
+      poolID.id[ChainID]
+    );
 
     // parse balance
     const balances = poolTokens.balances.map((obj: any) =>
@@ -68,14 +86,20 @@ const actions = {
     });
   },
 
-  async batchSwap({ commit, rootState }: {commit: Commit, rootState: RootState}) {
+  async batchSwap({
+    commit,
+    rootState,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+  }) {
     const pool_WETH_USDC = findObjectId("WETH/USDC", pools as Pool[], ChainID);
     const pool_BAL_WETH = findObjectId("BAL/WETH", pools as Pool[], ChainID);
 
     const token_BAL = findObjectContract("BAL", tokens, ChainID);
     const token_USDC = findObjectContract("USDC", tokens, ChainID);
     const token_WETH = findObjectContract("WETH", tokens, ChainID);
-    
+
     const tokenData: any = {};
     tokenData[token_BAL] = {
       symbol: "BAL",

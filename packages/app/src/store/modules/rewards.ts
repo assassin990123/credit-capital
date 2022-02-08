@@ -24,23 +24,41 @@ const getters = {
 };
 
 const actions = {
-  async setContracts({ commit, rootState }: {commit: Commit, rootState: RootState}) {
+  async setContracts({
+    commit,
+    rootState,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+  }) {
     const provider = rootState.accounts.web3Provider;
     try {
       commit(
         "setVaultContract",
-        markRaw(new ethers.Contract(findObjectContract('rewardsVault', contracts, ChainID), vaultABI, provider))
+        markRaw(
+          new ethers.Contract(
+            findObjectContract("rewardsVault", contracts, ChainID),
+            vaultABI,
+            provider
+          )
+        )
       );
       commit(
         "setRewardsContract",
-        markRaw(new ethers.Contract(findObjectContract('rewards', contracts, ChainID), rewardsABI, provider))
+        markRaw(
+          new ethers.Contract(
+            findObjectContract("rewards", contracts, ChainID),
+            rewardsABI,
+            provider
+          )
+        )
       );
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   },
 
-  async claim({ commit, rootState }: {commit: Commit, rootState: RootState}) {
+  async claim({ commit, rootState }: { commit: Commit; rootState: RootState }) {
     if (state.rewardsContract === null) {
       actions.setContracts({ commit, rootState });
     }
@@ -49,7 +67,7 @@ const actions = {
     // @ts-ignore
     const claim = await rewardsContract?.claim(
       rootState.accounts.activeAccount,
-      rootState.accounts.activeAccount,
+      rootState.accounts.activeAccount
     );
 
     commit("setClaim", claim);
