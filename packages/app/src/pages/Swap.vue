@@ -73,36 +73,28 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 // import Footer from "@/components/Footer.vue";
-// import { computed } from "vue";
+import { ref } from "vue";
 // import DappFooter from "@/components/DappFooter.vue";
 import { useStore } from "@/store"; 
 import { calculateCAPLUSDPrice } from "@/utils";
 
-export default {
-  data() {
-    return {
-      swapToken: 0,
-      swapTokenResult: 0,
-      store: useStore(),
-      CAPLBalance: 0
-    }
-  },
-  methods: {
-    swap() {
-      if (this.store.getters['accounts/isUserConnected']) {
-        this.store.dispatch("balancer/batchSwap");
-      }
-    },
-    exchangeCAPLToUSDC() {
-      // console.log(this.store.getters.isUserConnected)
-      if (this.store.getters['accounts/isUserConnected']) {
-        const exchangedBalance = calculateCAPLUSDPrice(this.swapToken, "USDC", this.store.getters['balancer/getPoolTokens']);
-        this.swapTokenResult = exchangedBalance;
-      }
-    }
-  },
+const store = useStore();
+let swapToken = ref(0);
+let swapTokenResult = ref(0);
+
+function swap() {
+  if (store.getters['accounts/isUserConnected']) {
+    store.dispatch("balancer/batchSwap");
+  }
+}
+
+function exchangeCAPLToUSDC() {
+  if (store.getters['accounts/isUserConnected']) {
+    const exchangedBalance = calculateCAPLUSDPrice(swapToken.value, "USDC", store.getters['balancer/getPoolTokens']);
+    swapTokenResult.value = exchangedBalance;
+  }
 }
 </script>
 
