@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-container inner-container dashboard-cus-main">
+  <div class="dashboard-container dashboard-cus-main">
     <div class="dashboard-daily-earning">
       <div class="dashboard-daily-earning-panel">
         <div class="title-cus">
@@ -63,29 +63,29 @@
             0.0000 LP Shares (0.0000) USD
           </div>
         </div>
-        <div>
+        <div class="revenue-block-main">
           <div>Your Daily Revenue</div>
-          <div class="dashboard-revenue-projection-value">0</div>
-          <div>0</div>
+          <div class="dashboard-revenue-projection-value">3.3354 CAPL</div>
+          <div class="green-txt">(3.4546 USD)</div>
         </div>
       </div>
       <div class="dashboard-revenue-projection-content">
-        <h2>REVENUE PROJECTIONS</h2>
+        <h2 class="orange-txt">REVENUE PROJECTIONS</h2>
         <div class="dashboard-revenue-projection-content-row">
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Weekly Revenue</div>
-            <div class="dashboard-revenue-projection-value">0</div>
-            <div>0</div>
+            <div class="dashboard-revenue-projection-value">23.3476 CAPL</div>
+            <div class="green-txt">24.1823 USD</div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Monthly Revenue</div>
-            <div class="dashboard-revenue-projection-value">0</div>
-            <div>0</div>
+            <div class="dashboard-revenue-projection-value">23.3476 CAPL</div>
+            <div class="green-txt">24.1823 USD</div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Annual Revenue</div>
-            <div class="dashboard-revenue-projection-value">0</div>
-            <div>0</div>
+            <div class="dashboard-revenue-projection-value">23.3476 CAPL</div>
+            <div class="green-txt">24.1823 USD</div>
           </div>
         </div>
       </div>
@@ -247,11 +247,6 @@
   flex-direction: row;
   width: 100%;
   padding: 40px 30px;
-  background-color: #fff;
-  -webkit-box-shadow: 0px 0px 22px 0px rgba(0, 0, 0, 0.17);
-  -moz-box-shadow: 0px 0px 22px 0px rgba(0, 0, 0, 0.17);
-  box-shadow: 0px 0px 22px 0px rgba(0, 0, 0, 0.17);
-  border-radius: 20px;
 }
 
 .dashboard-cus-main .dashboard-daily-earning-panel {
@@ -262,8 +257,8 @@
   padding: 40px 20px;
   width: 35%;
   text-align: center;
-  background-color: #fdf6e4;
-  border-radius: 20px;
+  background-color: #fff;
+  border-radius: 50px;
   -webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
@@ -274,13 +269,13 @@
   border-bottom: 1px solid #e6e6e6;
 }
 .dashboard-cus-main .title-cus h2 {
-  color: #000000;
+  color: #2c2c2c;
   margin: 0 0 10px 0;
 }
 .dashboard-cus-main .dashboard-daily-earning-panel-value {
   font-size: 22px;
   font-weight: bold;
-  color: #565972;
+  color: #247109;
 }
 .dashboard-cus-main .title-cus:last-child {
   border: none;
@@ -306,7 +301,7 @@
 }
 .dashboard-cus-main .dashboard-daily-earning-capl-header h2 {
   margin: 0px;
-  color: #000000;
+  color: #2c2c2c;
 }
 .dashboard-cus-main .dashboard-daily-earning-capl-content {
   flex: 1;
@@ -325,19 +320,22 @@
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
-  border-bottom: 1px solid #e6e6e6;
+  border-bottom: 1px solid rgba(255, 137, 0, 0.6);
   margin-bottom: 20px;
   padding: 15px;
   color: #000000;
 }
 
+.dashboard-cus-main .dashboard-daily-earning-capl-content-row div {
+  color: #2c2c2c;
+}
 .dashboard-cus-main .dashboard-revenue-projection {
   display: flex;
   flex-direction: row;
   padding: 40px 30px;
   background-color: #fff;
   box-shadow: 0px 0px 22px 0px rgb(0 0 0 / 17%);
-  border-radius: 20px;
+  border-radius: 60px;
   margin-top: 60px;
 }
 
@@ -349,29 +347,39 @@
   margin-right: 40px;
   text-align: center;
   padding: 40px 20px;
-  background-color: #fdf6e4;
   border-radius: 20px;
-  box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 10%);
+  border: 2px solid #ff8900;
 }
 .dashboard-cus-main .dashboard-revenue-projection-vault h2 {
-  color: #000;
+  color: #2c2c2c;
   margin: 0 0 15px 0;
 }
 .dashboard-cus-main .dashboard-revenue-projection-vault div {
-  color: #565972;
+  color: #2c2c2c;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: bold;
+}
+.dashboard-cus-main .revenue-block-main {
+  margin: 80px 0 0 0;
+}
+.dashboard-cus-main .revenue-block-main .dashboard-revenue-projection-value {
+  font-weight: bold;
+  color: #2c2c2c;
+}
+.dashboard-cus-main .revenue-block-main .green-txt {
+  color: #247109;
 }
 
 .dashboard-revenue-projection-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   text-align: center;
 }
-.dashboard-cus-main .dashboard-revenue-projection-content h2 {
-  color: #000000;
+.dashboard-cus-main .dashboard-revenue-projection-content h2.orange-txt {
+  color: #ff8900;
+  margin: 0 0 30px 0;
 }
 
 .dashboard-cus-main .dashboard-revenue-projection-content-row {
@@ -381,21 +389,24 @@
 }
 
 .dashboard-cus-main .dashboard-revenue-projection-content-column {
-  padding: 40px;
+  padding: 25px 80px;
   background-color: #fff;
   border-radius: 15px;
   border: 2px solid #ff8900;
   margin: 0 25px;
 }
 .dashboard-cus-main .dashboard-revenue-projection-content-column > div {
-  color: #000;
+  color: #2c2c2c;
   font-weight: bold;
+}
+.dashboard-cus-main .dashboard-revenue-projection-content-column .green-txt {
+  color: #247109;
 }
 .dashboard-cus-main .protfolio-title-main {
   margin: 50px 0;
 }
 .dashboard-cus-main .protfolio-title-main h2 {
-  color: #000000;
+  color: #2c2c2c;
   margin: 0px;
 }
 .dashboard-cus-main .dashboard-portfolio-section {
@@ -406,7 +417,7 @@
   border: none;
 }
 .dashboard-cus-main .dashboard-portfolio-section-address h2 {
-  color: #000000;
+  color: #2c2c2c;
   margin: 0px;
 }
 .dashboard-cus-main .dashboard-revenue-projection-value {
@@ -494,8 +505,11 @@
 }
 .dashboard-cus-main .dashboard-portfolio-section-panel-row {
   padding: 15px;
-  border-bottom: 1px solid #e6e6e6;
+  border-bottom: 1px solid rgba(255, 137, 0, 0.6);
   margin: 0 0 20px 0;
+}
+.dashboard-cus-main .dashboard-portfolio-section-panel-row div {
+  color: #2c2c2c;
 }
 
 .dashboard-cus-main .dashboard-portfolio-section-address h2 {
@@ -545,7 +559,7 @@
 .dashboard-cus-main .dashboard-portfolio-capl-row div {
   font-size: 18px;
   font-weight: bold;
-  color: #000;
+  color: #2c2c2c;
 }
 
 .dashboard-cus-main .dashboard-portfolio-capl-panel {
@@ -562,12 +576,12 @@
   flex-direction: row;
   justify-content: space-between;
   padding: 15px;
-  border-bottom: 1px solid #e6e6e6;
+  border-bottom: 1px solid rgba(255, 137, 0, 0.6);
   margin: 0 0 15px 0;
 }
 .dashboard-cus-main .dashboard-portfolio-capl-panel-row div {
   font-weight: bold;
-  color: #000;
+  color: #2c2c2c;
 }
 
 .dashboard-cus-main .dashboard-platform {
@@ -595,10 +609,10 @@
   justify-content: space-between;
 }
 .dashboard-cus-main .dashboard-platform-header h2 {
-  color: #000;
+  color: #2c2c2c;
 }
 .dashboard-cus-main .dashboard-platform-header div {
-  color: #000;
+  color: #2c2c2c;
   font-size: 19px;
   font-weight: bold;
 }
@@ -649,17 +663,18 @@
   padding: 10px;
 }
 .dashboard-cus-main .dashboard-platform-token-column h3 {
-  color: #000;
+  color: #2c2c2c;
   font-weight: bold;
 }
 .dashboard-cus-main .dashboard-platform-token-market-row {
   padding: 15px;
-  border-bottom: 1px solid #e6e6e6;
+  border-bottom: 1px solid rgba(255, 137, 0, 0.6);
   margin: 0px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   font-size: 16px;
+  color: #2c2c2c;
 }
 
 .dashboard-platform-assets {
@@ -680,7 +695,7 @@
 .dashboard-cus-main .dashboard-platform-assets div {
   font-size: 18px;
   font-weight: bold;
-  color: #000;
+  color: #2c2c2c;
 }
 
 .dashboard-cus-main .dashboard-platform-assets-panel {
@@ -694,7 +709,7 @@
 .dashboard-cus-main .dashboard-platform-assets-panel div {
   font-size: 18px;
   font-weight: bold;
-  color: #000;
+  color: #2c2c2c;
 }
 
 .dashboard-platform-assets-panel-row {
@@ -707,7 +722,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  border-bottom: 1px solid #e6e6e6;
+  border-bottom: 1px solid rgba(255, 137, 0, 0.6);
   margin: 0 0 15px 0;
   padding: 15px;
 }
@@ -715,5 +730,10 @@
   font-weight: bold;
   color: #000;
   font-size: 16px;
+}
+.dashboard-cus-main {
+  background-color: #fdf6e4;
+  background-image: url(/images/hero/banner-4.png);
+  background-repeat: no-repeat;
 }
 </style>
