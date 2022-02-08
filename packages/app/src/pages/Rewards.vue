@@ -7,7 +7,7 @@
           <div class="rewards-content">
             <div class="rewards-display"><span>USDC:</span> ${{ formattedRewards }}</div>
             <div class="rewards-section">
-              <button class="rewards-section-item" @click="claim" disabled>CLAIM</button>
+              <button class="rewards-section-item" @click="claim">CLAIM</button>
               <div class="rewards-section-item">COMPOUND</div>
             </div>
           </div>
@@ -29,9 +29,9 @@
   const formattedRewards = ref(0);
   
   const connected = computed(() => store.getters.getConnected);
-  const pendingRewards = computed(() => store.getters["contracts/getPendingRewards"]);
+  const pendingRewards = computed(() => store.getters["rewards/getPendingRewards"]);
 
-  const claim = () => {store.dispatch("contracts/claim")};
+  const claim = () => {store.dispatch("rewards/claim")};
 
   watchEffect(() => {
     if (pendingRewards.value > 0) {

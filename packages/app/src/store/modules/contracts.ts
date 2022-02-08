@@ -16,7 +16,6 @@ const state: ContractState = {
   vaultContract: null,
   caplContract: null,
   caplBalance: 0,
-  pendingRewards: 0,
 };
 
 const getters = {
@@ -29,15 +28,11 @@ const getters = {
   getRewardsContract(state: ContractState) {
     return state.rewardsContract;
   },
-  getPendingRewards(state: ContractState) {
-    return state.pendingRewards;
-  }
 };
 
 const actions = {
   async setContracts({ commit, rootState }: {commit: Commit, rootState: RootState}) {
     const provider = rootState.accounts.web3Provider;
-    const signer = provider.getSigner();
     try {
       commit(
         "setCAPLContract",
@@ -45,11 +40,11 @@ const actions = {
       );
       commit(
         "setVaultContract",
-        markRaw(new ethers.Contract(findObjectContract('rewardsVault', contracts, ChainID), vaultABI, signer))
+        markRaw(new ethers.Contract(findObjectContract('rewardsVault', contracts, ChainID), vaultABI, provider))
       );
       commit(
         "setRewardsContract",
-        markRaw(new ethers.Contract(findObjectContract('rewards', contracts, ChainID), rewardsABI, signer))
+        markRaw(new ethers.Contract(findObjectContract('rewards', contracts, ChainID), rewardsABI, provider))
       );
     } catch (e) {
       console.log(e)
@@ -70,37 +65,6 @@ const actions = {
     // parse balance, set new value in the local state
     commit("setCAPLBalance", ethers.utils.formatUnits(caplBalance, 18));
   },
-  
-  async getPendingRewards({ commit, rootState }: {commit: Commit, rootState: RootState}) {
-    // get address from rootstate,
-    const address = rootState.accounts.activeAccount;
-    // if state.rewardsContract is null, call the `setContracts` function
-    if (state.rewardsContract === null) {
-      actions.setContracts({ commit, rootState });
-    }
-
-    // get rewards contract
-    const rewardsContract = state.rewardsContract;
-    // get pending rewards
-    const pendingRewards = await rewardsContract?.pendingRewards(findObjectContract('USDC', tokens, ChainID), address);
-    // parse balance, set new value in the local state
-    commit("setPendingRewards", ethers.utils.formatUnits(pendingRewards, 18));
-  },
-
-  async claim({ commit, rootState }: {commit: Commit, rootState: RootState}) {
-    // get address from rootstate,
-    const address = rootState.accounts.activeAccount;
-
-    // if state.rewardsContract is null, call the `setContracts` function
-    if (state.rewardsContract === null) {
-      actions.setContracts({ commit, rootState });
-    }
-
-    // get rewards contract
-    const rewardsContract = state.rewardsContract;
-    // claim rewards
-    await rewardsContract?.claim(findObjectContract('USDC', tokens, ChainID), address);
-  }
 };
 
 const mutations = {
@@ -115,9 +79,6 @@ const mutations = {
   },
   setCAPLBalance(state: ContractState, _balance: number) {
     state.caplBalance = _balance;
-  },
-  setPendingRewards(state: ContractState, _pendingRewards: number) {
-    state.pendingRewards = _pendingRewards;
   },
 };
 

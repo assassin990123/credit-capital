@@ -3,5 +3,4 @@ export interface ContractState {
     vaultContract: object | null,
     caplContract: object | null,
     caplBalance: number,
-    pendingRewards: number,
 }
