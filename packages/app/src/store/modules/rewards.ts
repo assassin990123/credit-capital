@@ -10,17 +10,21 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   : "1";
 
 const state: RewardsState = {
-  // userPosition: 0,
   pendingRewards: 0,
+  userPosition: 0,
+  userStakedPosition: 0,
 };
 
 const getters = {
   getPendingRewards(state: RewardsState) {
     return state.pendingRewards;
   },
-  // getUserPosition(state: RewardsState) {
-  //   return state.userPosition;
-  // }
+  getUserPosition() {
+    return state.userPosition;
+  },
+  getUserStakedPosition() {
+    return state.userStakedPosition;
+  }
 };
 
 const actions = {  
@@ -59,22 +63,22 @@ const actions = {
     }
   },
   
-  // async getUserPosition({ commit, rootState, dispatch }: { commit: Commit, rootState: RootState, dispatch: Dispatch}) {
-  //   // get address from rootstate,
-  //   const address = rootState.accounts.activeAccount;
-  //   // if state.vaultContract or state.vaultContract is null, call the `setContracts` function
-  //   if (rootState.contracts.vaultContract === null) {
-  //     dispatch("contracts/setContracts", null, { root: true });
-  //   }
+  async getUserPosition({ commit, rootState, dispatch }: { commit: Commit, rootState: RootState, dispatch: Dispatch}) {
+    // get address from rootstate,
+    const address = rootState.accounts.activeAccount;
+    // if state.vaultContract or state.vaultContract is null, call the `setContracts` function
+    if (rootState.contracts.vaultContract === null) {
+      dispatch("contracts/setContracts", null, { root: true });
+    }
 
-  //   const vaultContract = rootState.contracts.vaultContract;
-  //   // get userposition
-  //   // @ts-ignore
-  //   const userPosition = await vaultContract?.getUserPosition(findObjectContract('USDC', tokens, ChainID), address);
+    const vaultContract = rootState.contracts.vaultContract;
+    // get userposition
+    // @ts-ignore
+    const userPosition = await vaultContract?.getUserPosition(findObjectContract('USDC', tokens, ChainID), address);
 
-  //   // parse balance, set new value in the local state
-  //   commit("setUserPosition", ethers.utils.formatUnits(userPosition, 18));
-  // },
+    // parse balance, set new value in the local state
+    commit("setUserPosition", ethers.utils.formatUnits(userPosition, 18));
+  },
 
   async stake({ rootState, dispatch }: {rootState: RootState, dispatch: Dispatch}, amount: number) {
     // if state.rewardsContract is null, call the `setContracts` function
@@ -113,9 +117,12 @@ const mutations = {
   setPendingRewards(state: RewardsState, _pendingRewards: number) {
     state.pendingRewards = _pendingRewards;
   },
-  // setUserPosition(state: RewardsState, _userPosition: number) {
-  //   state.userPosition = _userPosition;
-  // }
+  setUserPosition(state: RewardsState, _userPosition: number) {
+    state.userPosition = _userPosition;
+  },
+  setUserStakedPosition(state: RewardsState, _userStakedPosition: number) {
+    state.userStakedPosition = _userStakedPosition;
+  }
 };
 
 export default {

@@ -31,10 +31,14 @@
   const store = useStore();
   const formattedRewards = ref(0);
   
-  const connected = computed(() => store.getters.getConnected);
+  const connected = computed(() => store.getters["accounts/isUserConnected"]);
   const pendingRewards = computed(() => store.getters["rewards/getPendingRewards"]);
 
-  const claim = () => {store.dispatch("rewards/claim")};
+  const claim = () => {
+    if (connected.value) {
+      store.dispatch("rewards/claim");
+    }
+  };
 
   watchEffect(() => {
     if (pendingRewards.value > 0) {

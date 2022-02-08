@@ -1,4 +1,5 @@
 export interface RewardsState {
-    // userPosition: number,
-    pendingRewards: number,
+  pendingRewards: number | null;
+  userPosition: number | null;
+  userStakedPosition: number | null;
 }
