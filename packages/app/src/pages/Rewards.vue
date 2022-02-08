@@ -5,10 +5,11 @@
         <div class="rewards-container">
           <h1 class="panel-title">PENDING REWARDS</h1>
           <div class="rewards-content">
-            <div class="rewards-display"><span>USDC:</span> $0000.00</div>
+            <div class="rewards-display">{{claimCAPL + " CAPL"}} ({{claimUSDC + " USD"}})</div>
+            <!-- <div class="rewards-display"><span>USDC:</span> 0000 </div> -->
             <div class="rewards-section">
               <button class="rewards-section-item" type="button" @click="reward()">CLAIM</button>
-              <div class="rewards-section-item">COMPOUND</div>
+              <!-- <div class="rewards-section-item">COMPOUND</div> -->
             </div>
           </div>
         </div>
@@ -22,8 +23,11 @@
 <script lang="ts" setup>
 import DappFooter from "@/components/DappFooter.vue";
 import { useStore } from "@/store";
+import { calculateCAPLUSDPrice } from "@/utils";
 
 const store = useStore();
+let claimCAPL = 0;
+let claimUSDC = 0;
 
 function reward() {
   if (store.getters["accounts/isUserConnected"]) {
