@@ -1495,6 +1495,13 @@ font-weight: 800;
 }
 
 /*-- Header Responsive --*/
+@media only screen and (max-width: 575px) {
+  .others-option-for-responsive .dot-menu .inner {
+    display: flex;
+  }
+}
+
+
 @media only screen and (max-width: 1199px) {
   .navbar-area {
     padding-top: 20px;
@@ -6129,6 +6136,35 @@ font-weight: 800;
   background-color: #fdf6e4;
   background-image: url(/images/hero/banner-4.png);
   background-repeat: no-repeat;
+}
+
+
+@media only screen and (max-width: 575px) {
+  .stack-button-area{
+    flex-direction: column;
+    
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .stack-bottom-area{
+    width: auto;
+    margin: 50px 10%;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .stack-bottom-area-inner{
+    padding: 10px 0;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .stack-btn{
+    padding: 0 20px;
+    margin: 20px 0;
+    border: 1px solid #FFCA03;
+  }
 }
 
 /*============================================
