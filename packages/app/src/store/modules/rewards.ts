@@ -23,12 +23,14 @@ const actions = {
   async getPendingRewards({ commit, rootState, dispatch }: {commit: Commit, rootState: RootState, dispatch: Dispatch}) {
     // get address from rootstate,
     const address = rootState.accounts.activeAccount;
+    console.log(rootState);
     // if state.rewardsContract is null, call the `setContracts` function
     if (rootState.contracts.rewardsContract === null) {
         dispatch("contracts/setContracts", null, { root: true });
     }
 
     const rewardsContract = rootState.contracts.rewardsContract;
+    // @ts-ignore
     const pendingRewards = await rewardsContract?.pendingRewards(findObjectContract('USDC', tokens, ChainID), address);
 
     // parse balance, set new value in the local state
@@ -46,9 +48,10 @@ const actions = {
     const rewardsContract = rootState.contracts.rewardsContract;
     // claim rewards
     try {
+      // @ts-ignore
       await rewardsContract?.claim(findObjectContract('USDC', tokens, ChainID), address);
     } catch (error) {
-      console.log(error.reason);
+      console.log(error);
     }
   }
 };
