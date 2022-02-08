@@ -12,7 +12,10 @@
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>send</span></div>
-                <div class="panel-explanation">000</div>
+                <div class="panel-explanation">
+                  <input type="text" @input="exchangeCAPLToUSDC()" v-model="swapToken">
+                </div>
+
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span> 000</div>
@@ -23,14 +26,14 @@
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>receive</span></div>
-                <div class="panel-explanation">000</div>
+                <div class="panel-explanation">{{swapTokenResult}}</div>
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span> 000</div>
                 <div class="panel-explanation">USDC</div>
               </div>
             </div>
-            <button type="submit" class="btn-custom">Enter</button>
+            <button type="button" @click="swap()" class="btn-custom">Enter</button>
           </div>
         </div>
         <div class="panel stake-panel">
@@ -70,8 +73,37 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import DappFooter from "@/components/DappFooter.vue";
+<script lang="ts">
+// import Footer from "@/components/Footer.vue";
+// import { computed } from "vue";
+// import DappFooter from "@/components/DappFooter.vue";
+import { useStore } from "@/store"; 
+import { calculateCAPLUSDPrice } from "@/utils";
+
+export default {
+  data() {
+    return {
+      swapToken: 0,
+      swapTokenResult: 0,
+      store: useStore(),
+      CAPLBalance: 0
+    }
+  },
+  methods: {
+    swap() {
+      if (this.store.getters['accounts/isUserConnected']) {
+        this.store.dispatch("balancer/batchSwap");
+      }
+    },
+    exchangeCAPLToUSDC() {
+      // console.log(this.store.getters.isUserConnected)
+      if (this.store.getters['accounts/isUserConnected']) {
+        const exchangedBalance = calculateCAPLUSDPrice(this.swapToken, "USDC", this.store.getters['balancer/getPoolTokens']);
+        this.swapTokenResult = exchangedBalance;
+      }
+    }
+  },
+}
 </script>
 
 <style>
