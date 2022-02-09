@@ -90,6 +90,7 @@ const actions = {
     const vaultContract = rootState.contracts.vaultContract;
 
     // get user locked amount
+    // @ts-ignore
     const userStakedPosition = await vaultContract?.getUserStakedPosition(findObjectContract('USDC', tokens, ChainID), address);
     // parse balance, set new value in the local state
     commit("setUserStakedPosition", ethers.utils.formatUnits(userStakedPosition, 18));
