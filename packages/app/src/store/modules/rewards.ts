@@ -10,7 +10,7 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   : "1";
 
 const state: RewardsState = {
-  pendingRewards: 10,
+  pendingRewards: 0,
   userPosition: 0,
   userStakedPosition: 0,
 };
@@ -54,6 +54,7 @@ const actions = {
     }
 
     const rewardsContract = rootState.contracts.rewardsContract;
+    
     // claim rewards
     try {
       // @ts-ignore

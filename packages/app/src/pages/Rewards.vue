@@ -6,7 +6,7 @@
           <h1 class="panel-title">PENDING REWARDS</h1>
           <div class="rewards-content">
             <div class="rewards-display">{{pendingRewardsCAPL + " CAPL"}} ({{pendingRewardsUSDC + " USD"}})</div>
-            <div class="rewards-section">
+            <div class="rewards-section ">
               <button class="rewards-section-item" @click="claim">CLAIM</button>
             <!-- <div class="rewards-section-item">COMPOUND</div> -->
             </div>
@@ -40,10 +40,12 @@
   
   const claim = () => {
     
-    if (connected.value) {
-      store.dispatch("rewards/claim");
-    } else {
+    if (!connected.value) {
       toast.info("Please connect your wallet!");
+    } else if (pendingRewards.value <= 0) {
+      toast.info("Please check your balance!");
+    } else {
+      store.dispatch("rewards/claim");
     }
   };
 
@@ -81,8 +83,8 @@
 }
 
 .rewards-section {
-  display: flex;
-  flex-direction: row;
+  /* display: flex;
+  flex-direction: row; */
   justify-content: space-between;
   margin-top: 50px;
 }
@@ -92,17 +94,4 @@
   padding: 10px 20px;
   font-size: 36px;
 }
-.Vue-Toastification__toast--default.my-custom-toast-class {
-        background-color: red;
-    }
-
-    /* Applied to the toast body when using regular strings as content */
-    .Vue-Toastification__toast-body.custom-class-1 {
-        font-size: 30px;
-    }
-
-    /* Applied to a wrapper div when using a custom component as content */
-    .Vue-Toastification__toast-component-body.custom-class-2 {
-        width: 100%;
-    }
 </style>
