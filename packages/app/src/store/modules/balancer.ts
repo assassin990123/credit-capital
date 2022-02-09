@@ -203,16 +203,12 @@ const actions = {
 
     const token_CAPL = findObjectContract("CAPL", tokens, ChainID);
     const token_USDC = findObjectContract("USDC", tokens, ChainID);
-    const token_WETH = findObjectContract("WETH", tokens, ChainID);
 
     const assets = [{
       token: token_CAPL,
       maxAmountsIn: ethers.utils.formatUnits(100, 18),
     }, {
       token: token_USDC,
-      maxAmountsIn: ethers.utils.formatUnits(100, 18),
-    }, {
-      token: token_WETH,
       maxAmountsIn: ethers.utils.formatUnits(100, 18),
     }];
     assets.sort((asset1, asset2) => {
