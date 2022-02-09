@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
-import { Commit } from "vuex";
-import { balancerVault as balancerVaultABI } from "@/abi";
+import { Commit, Dispatch } from "vuex";
 import { contracts, pools, tokens } from "@/constants";
 import { findObjectContract, findObjectId, Pool, Constant } from "@/utils";
 import { BalancerState } from "@/models/balancer";
@@ -12,17 +11,12 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   : "1";
 
 const state: BalancerState = {
-  balancerVaultContract: null,
   poolTokens: {},
   batchSwap: {},
   joinPool: {},
 };
 
 const getters = {
-  getBalancerVaultContract() {
-    return state.balancerVaultContract;
-  },
-
   getPoolTokens() {
     return state.poolTokens;
   },
@@ -37,41 +31,23 @@ const getters = {
 };
 
 const actions = {
-  async setContracts({
-    commit,
-    rootState,
-  }: {
-    commit: Commit;
-    rootState: RootState;
-  }) {
-    const provider = rootState.accounts.web3Provider;
-    commit(
-      "setBalancerVaultContract",
-      markRaw(
-        new ethers.Contract(
-          findObjectContract("balancerVault", contracts, ChainID),
-          balancerVaultABI,
-          provider
-        )
-      )
-    );
-  },
-
   async getPoolTokens({
     commit,
     rootState,
+    dispatch,
   }: {
     commit: Commit;
     rootState: RootState;
+    dispatch: Dispatch;
   }) {
     // get poolID
     const poolID = findObjectId("BAL/WETH", pools as Pool[], ChainID);
 
-    // if state.balancerVaultContract is null, call the `setContracts` function
-    if (state.balancerVaultContract === null) {
-      actions.setContracts({ commit, rootState });
+    if (rootState.contracts.balancerVaultContract === null) {
+      dispatch("contracts/setContracts", null, { root: true });
     }
-    const balancerVaultContract = state.balancerVaultContract;
+
+    const balancerVaultContract = rootState.contracts.balancerVaultContract;
 
     // call getPoolTokens
     // @ts-ignore
@@ -93,9 +69,11 @@ const actions = {
   async batchSwap({
     commit,
     rootState,
+    dispatch,
   }: {
     commit: Commit;
     rootState: RootState;
+    dispatch: Dispatch;
   }) {
     const pool_WETH_USDC = findObjectId("WETH/USDC", pools as Pool[], ChainID);
     const pool_BAL_WETH = findObjectId("BAL/WETH", pools as Pool[], ChainID);
@@ -137,7 +115,7 @@ const actions = {
     const tokenLimits = [];
     const checksumTokens = [];
     for (const token of tokenAddresses) {
-      tokenLimits.push(ethers.utils.formatUnits(tokenData[token]["limit"], 18));
+      tokenLimits.push(ethers.BigNumber.from((tokenData[token]["limit"] * Math.pow(10, tokenData[token]["decimals"])).toString()));
       checksumTokens.push(ethers.utils.getAddress(token));
     }
 
@@ -147,14 +125,14 @@ const actions = {
         poolId: pool_WETH_USDC,
         assetInIndex: tokenIndices[token_USDC],
         assetOutIndex: tokenIndices[token_WETH],
-        amount: ethers.utils.formatUnits(100, 18),
+        amount: ethers.BigNumber.from((100 * Math.pow(10, tokenData[token_USDC]["decimals"])).toString()),
         userData: "0x",
       },
       {
         poolId: pool_BAL_WETH,
         assetInIndex: tokenIndices[token_WETH],
         assetOutIndex: tokenIndices[token_BAL],
-        amount: 0,
+        amount: ethers.BigNumber.from((0 * Math.pow(10, tokenData[token_USDC]["decimals"])).toString()),
         userData: "0x",
       },
     ];
@@ -164,12 +142,13 @@ const actions = {
       recipient: ethers.utils.getAddress(fundSettings["recipient"]),
       toInternalBalance: fundSettings["toInternalBalance"],
     };
-    const deadline = ethers.utils.formatUnits(999999999999999999, 18);
+    const deadline = ethers.BigNumber.from('999999999999999999');
 
-    if (state.balancerVaultContract === null) {
-      actions.setContracts({ commit, rootState });
+    if (rootState.contracts.balancerVaultContract === null) {
+      dispatch("contracts/setContracts", null, { root: true });
     }
-    const balancerVaultContract = state.balancerVaultContract;
+
+    const balancerVaultContract = rootState.contracts.balancerVaultContract;
 
     // @ts-ignore
     const batchSwap = await balancerVaultContract?.batchSwap(
@@ -187,14 +166,17 @@ const actions = {
   async joinPool({
     commit,
     rootState,
+    dispatch,
   }: {
     commit: Commit;
     rootState: RootState;
+    dispatch: Dispatch;
   }) {
-    if (state.balancerVaultContract === null) {
-      actions.setContracts({ commit, rootState });
+    if (rootState.contracts.balancerVaultContract === null) {
+      dispatch("contracts/setContracts", null, { root: true });
     }
-    const balancerVaultContract = state.balancerVaultContract;
+
+    const balancerVaultContract = rootState.contracts.balancerVaultContract;
 
     const poolID = findObjectId("CAPL/USDC", pools as Pool[], ChainID);
     const sender = rootState.accounts.activeAccount;
@@ -205,10 +187,10 @@ const actions = {
 
     const assets = [{
       token: token_CAPL,
-      maxAmountsIn: ethers.utils.formatUnits(100, 18),
+      maxAmountsIn: ethers.BigNumber.from((100 * Math.pow(10, 18)).toString()),
     }, {
       token: token_USDC,
-      maxAmountsIn: ethers.utils.formatUnits(100, 18),
+      maxAmountsIn: ethers.BigNumber.from((100 * Math.pow(10, 18)).toString()),
     }];
     assets.sort((asset1, asset2) => {
       if (asset1.token > asset2.token) {
@@ -239,10 +221,6 @@ const actions = {
 };
 
 const mutations = {
-  setBalancerVaultContract(state: BalancerState, _contract: object) {
-    state.balancerVaultContract = _contract;
-  },
-
   setPoolTokens(state: BalancerState, _poolTokens: object) {
     state.poolTokens = _poolTokens;
   },
