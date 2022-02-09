@@ -32,19 +32,25 @@ const getters = {
 
 const actions = {
   async setContracts({ commit, rootState }: {commit: Commit, rootState: RootState}) {
-    const provider = rootState.accounts.web3Provider;
+    let providerOrSigner = rootState.accounts.web3Provider;
+
+    // if user connected pass the signer to the contract instance.
+    if (rootState.accounts.isConnected) {
+      providerOrSigner = providerOrSigner.getSigner();
+    }
+
     try {
       commit(
         "setCAPLContract",
-        markRaw(new ethers.Contract(findObjectContract('CAPL', tokens, ChainID), caplABI, provider))
+        markRaw(new ethers.Contract(findObjectContract('CAPL', tokens, ChainID), caplABI, providerOrSigner))
       );
       commit(
         "setVaultContract",
-        markRaw(new ethers.Contract(findObjectContract('rewardsVault', contracts, ChainID), vaultABI, provider))
+        markRaw(new ethers.Contract(findObjectContract('rewardsVault', contracts, ChainID), vaultABI, providerOrSigner))
       );
       commit(
         "setRewardsContract",
-        markRaw(new ethers.Contract(findObjectContract('rewards', contracts, ChainID), rewardsABI, provider))
+        markRaw(new ethers.Contract(findObjectContract('rewards', contracts, ChainID), rewardsABI, providerOrSigner))
       );
     } catch (e) {
       console.log(e)
