@@ -172,7 +172,7 @@
             <div>$1.0357 USD</div>
             <div>Current Price</div>
           </div>
-          <button class="buy-btn">Buy</button>
+          <button @click="$router.push('swap#')" class="buy-btn">Buy</button>
         </div>
         <div class="dashboard-portfolio-section-title">Tokenomics</div>
         <div class="dashboard-platform-token">

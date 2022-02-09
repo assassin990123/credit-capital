@@ -170,4 +170,19 @@ function exchangeCAPLToUSDC() {
 .text-right {
   text-align: right;
 }
+
+@media only screen and (max-width: 575px) {
+  .panel-container {
+    flex-direction: column;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .panel-content.swap-panel-content  {
+    padding: 25px 30px 25px 30px;
+  }
+}
+
+
+
 </style>

@@ -824,6 +824,46 @@ textarea:focus {
                 04 -- Header
 
 ==============================================*/
+
+/* start of Navigation */
+
+
+.nav-btn{
+  display: flex;
+  flex-direction: row;
+  
+}
+
+.nav-item.nav-item-custom{
+align-self: center;
+padding-right: 5px;
+
+}
+
+.btn-custom-nav{
+color: #fff;
+background:#FF8800;
+font-weight: bold;
+font-family: Nunito, sans-serif;
+font-size: 17px;
+height: auto;
+width: auto;
+padding: 0 20px;
+
+}
+
+.capl{
+border: 1px solid #FF8800;
+padding: 5px 20px;
+border-radius: 25px;
+color: #000;
+font-weight: 800;
+
+}
+
+/* End of navigation */
+
+
 .acavo-responsive-nav {
   display: none;
 }
@@ -857,7 +897,7 @@ textarea:focus {
 }
 
 .acavo-nav .navbar .navbar-nav {
-  margin-left: auto;
+  margin-left: 25px;
 }
 
 .acavo-nav .navbar .navbar-nav .nav-item {
@@ -2005,7 +2045,8 @@ textarea:focus {
 .others-option-for-responsive .dot-menu .inner {
   display: -webkit-box;
   display: -ms-flexbox;
-  display: flex;
+  /* display: flex; */
+  display: none;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
@@ -2231,6 +2272,13 @@ textarea:focus {
 }
 
 /*-- Header Responsive --*/
+@media only screen and (max-width: 575px) {
+  .others-option-for-responsive .dot-menu .inner {
+    display: flex;
+  }
+}
+
+
 @media only screen and (max-width: 1199px) {
   .navbar-area {
     padding-top: 20px;
@@ -7477,6 +7525,35 @@ textarea:focus {
   background-color: #fdf6e4;
   background-image: url(/images/hero/banner-4.png);
   background-repeat: no-repeat;
+}
+
+
+@media only screen and (max-width: 575px) {
+  .stack-button-area{
+    flex-direction: column;
+    
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .stack-bottom-area{
+    width: auto;
+    margin: 50px 10%;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .stack-bottom-area-inner{
+    padding: 10px 0;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .stack-btn{
+    padding: 0 20px;
+    margin: 20px 0;
+    border: 1px solid #FFCA03;
+  }
 }
 
 /*============================================
