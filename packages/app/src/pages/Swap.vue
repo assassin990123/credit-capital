@@ -69,7 +69,7 @@
                 <div class="panel-explanation">USDC</div>
               </div>
             </div>
-            <button type="submit" class="btn-custom">Add</button>
+            <button type="submit" @click="joinPool()" class="btn-custom">Add</button>
           </div>
         </div>
       </div>
@@ -92,6 +92,12 @@ let swapTokenResult = ref(0);
 function swap() {
   if (store.getters["accounts/isUserConnected"]) {
     store.dispatch("balancer/batchSwap");
+  }
+}
+
+function joinPool() {
+  if (store.getters["accounts/isUserConnected"]) {
+    store.dispatch("balancer/joinPool");
   }
 }
 
