@@ -28,16 +28,22 @@
   // @ts-ignore
   import { calculateCAPLUSDPrice, format } from "@/utils";
 
+  import { useToast } from "vue-toastification";
+  
   const store = useStore();
   const pendingRewardsCAPL = ref(0);
   const pendingRewardsUSDC = ref(0);
   
   const connected = computed(() => store.getters["accounts/isUserConnected"]);
   const pendingRewards = computed(() => store.getters["rewards/getPendingRewards"]);
-
+  const toast = useToast();
+  
   const claim = () => {
+    
     if (connected.value) {
       store.dispatch("rewards/claim");
+    } else {
+      toast.info("Please connect your wallet!");
     }
   };
 
@@ -86,4 +92,17 @@
   padding: 10px 20px;
   font-size: 36px;
 }
+.Vue-Toastification__toast--default.my-custom-toast-class {
+        background-color: red;
+    }
+
+    /* Applied to the toast body when using regular strings as content */
+    .Vue-Toastification__toast-body.custom-class-1 {
+        font-size: 30px;
+    }
+
+    /* Applied to a wrapper div when using a custom component as content */
+    .Vue-Toastification__toast-component-body.custom-class-2 {
+        width: 100%;
+    }
 </style>
