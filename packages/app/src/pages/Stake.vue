@@ -39,10 +39,14 @@
   const connected = computed(() => store.getters.getConnected);
 
   const stake = () => {
-    store.dispatch("rewards/stake", { amount: stakeAmount.value });
+    if (connected.value) {
+      store.dispatch("rewards/stake", { amount: stakeAmount.value });
+    }
   };
   const unstake = () => {
-    store.dispatch("rewards/unstake", { amount: unstakeAmount.value })
+    if (connected.value) {
+      store.dispatch("rewards/unstake", { amount: unstakeAmount.value })
+    }
   };
   const userPosition = computed(
     () => store.getters["rewards/getUserPosition"]
@@ -51,9 +55,6 @@
   watchEffect(() => {
     if (userPosition.value) {
       formatedUserPosition.value = format(userPosition.value);
-    }
-    if (connected.value) {
-      // enable stake button
     }
   });
 </script>
