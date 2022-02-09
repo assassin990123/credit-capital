@@ -15,6 +15,7 @@ const state: BalancerState = {
   balancerVaultContract: null,
   poolTokens: {},
   batchSwap: {},
+  joinPool: {},
 };
 
 const getters = {
@@ -28,6 +29,10 @@ const getters = {
 
   getBatchSwap() {
     return state.batchSwap;
+  },
+
+  getJoinPool() {
+    return state.joinPool;
   },
 };
 
@@ -148,8 +153,8 @@ const actions = {
       },
       {
         poolId: pool_BAL_WETH,
-        assetInIndex: token_WETH,
-        assetOutIndex: token_BAL,
+        assetInIndex: tokenIndices[token_WETH],
+        assetOutIndex: tokenIndices[token_BAL],
         amount: 0,
         userData: "0x",
       },
@@ -179,6 +184,63 @@ const actions = {
 
     commit("setBatchSwap", batchSwap);
   },
+
+  async joinPool({
+    commit,
+    rootState,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+  }) {
+    if (state.balancerVaultContract === null) {
+      actions.setContracts({ commit, rootState });
+    }
+    const balancerVaultContract = state.balancerVaultContract;
+
+    const poolID = findObjectId("BAL/WETH", pools as Pool[], ChainID);
+    const sender = rootState.accounts.activeAccount;
+    const recipient = rootState.accounts.activeAccount;
+
+    const token_BAL = findObjectContract("BAL", tokens, ChainID);
+    const token_USDC = findObjectContract("USDC", tokens, ChainID);
+    const token_WETH = findObjectContract("WETH", tokens, ChainID);
+
+    const assets = [{
+      token: token_BAL,
+      maxAmountsIn: ethers.utils.formatUnits(100, 18),
+    }, {
+      token: token_USDC,
+      maxAmountsIn: ethers.utils.formatUnits(100, 18),
+    }, {
+      token: token_WETH,
+      maxAmountsIn: ethers.utils.formatUnits(100, 18),
+    }];
+    assets.sort((asset1, asset2) => {
+      if (asset1.token > asset2.token) {
+        return 1;
+      }
+      if (asset1.token < asset2.token) {
+        return -1;
+      }
+      return 0;
+    });
+    const request: any = {
+      assets: assets.map(asset => asset.token),
+      maxAmountsIn: assets.map(asset => asset.maxAmountsIn),
+      userData: '0x',
+      fromInternalBalance: false,
+    }
+
+    // @ts-ignore
+    const joinPool = await balancerVaultContract?.joinPool(
+      poolID,
+      sender,
+      recipient,
+      request,
+    );
+
+    commit("setJoinPool", joinPool);
+  },
 };
 
 const mutations = {
@@ -192,6 +254,10 @@ const mutations = {
 
   setBatchSwap(state: BalancerState, _batchSwap: object) {
     state.batchSwap = _batchSwap;
+  },
+
+  setJoinPool(state: BalancerState, _joinPool: object) {
+    state.joinPool = _joinPool;
   },
 };
 
