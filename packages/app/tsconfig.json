@@ -24,6 +24,6 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
-  ],
+, "src/store/modules/stake"  ],
   "exclude": ["node_modules"]
 }

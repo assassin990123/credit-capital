@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { caplABI } from "@/abi";
+import { caplABI, rewardsABI, vaultABI } from "@/abi";
 import { contracts, tokens } from "@/constants";
 import { markRaw } from "vue";
 import { Commit } from "vuex";
@@ -12,6 +12,8 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   : "1";
 
 const state: ContractState = {
+  rewardsContract: null,
+  vaultContract: null,
   caplContract: null,
   caplBalance: 0,
 };
@@ -23,40 +25,33 @@ const getters = {
   getCAPLBalance(state: ContractState) {
     return state.caplBalance;
   },
+  getRewardsContract(state: ContractState) {
+    return state.rewardsContract;
+  },
 };
 
 const actions = {
-  async setContracts({
-    commit,
-    rootState,
-  }: {
-    commit: Commit;
-    rootState: RootState;
-  }) {
+  async setContracts({ commit, rootState }: {commit: Commit, rootState: RootState}) {
     const provider = rootState.accounts.web3Provider;
     try {
       commit(
         "setCAPLContract",
-        markRaw(
-          new ethers.Contract(
-            findObjectContract("CAPL", tokens, ChainID),
-            caplABI,
-            provider
-          )
-        )
+        markRaw(new ethers.Contract(findObjectContract('CAPL', tokens, ChainID), caplABI, provider))
+      );
+      commit(
+        "setVaultContract",
+        markRaw(new ethers.Contract(findObjectContract('rewardsVault', contracts, ChainID), vaultABI, provider))
+      );
+      commit(
+        "setRewardsContract",
+        markRaw(new ethers.Contract(findObjectContract('rewards', contracts, ChainID), rewardsABI, provider))
       );
     } catch (e) {
-      console.log(e);
+      console.log(e)
     }
   },
 
-  async getCAPLBalance({
-    commit,
-    rootState,
-  }: {
-    commit: Commit;
-    rootState: RootState;
-  }) {
+  async getCAPLBalance({ commit, rootState }: {commit: Commit, rootState: RootState}) {
     // get address from rootstate,
     const address = rootState.accounts.activeAccount;
     // get contract from contract state (local state)
@@ -73,8 +68,14 @@ const actions = {
 };
 
 const mutations = {
-  setCAPLContract(state: ContractState, _contract: object) {
+  setCAPLContract(state: ContractState, _contract: object ){
     state.caplContract = _contract;
+  },
+  setVaultContract(state: ContractState, _contract: object) {
+    state.vaultContract = _contract;
+  },
+  setRewardsContract(state: ContractState, _contract: object) {
+    state.rewardsContract = _contract;
   },
   setCAPLBalance(state: ContractState, _balance: number) {
     state.caplBalance = _balance;

@@ -1,4 +1,6 @@
 export interface ContractState {
-  caplContract: object | null;
-  caplBalance: number;
+    rewardsContract: object | null,
+    vaultContract: object | null,
+    caplContract: object | null,
+    caplBalance: number,
 }
