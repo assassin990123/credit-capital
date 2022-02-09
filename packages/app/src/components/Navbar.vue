@@ -12,7 +12,6 @@
         </div>
       </div>
     </div>
-
     <div class="acavo-nav">
       <div class="container">
         <nav class="navbar navbar-expand-md navbar-light">
@@ -84,7 +83,7 @@ export default {
   setup() {
     const store = useStore();
 
-    let buttonString = ref("Connect");
+    let buttonString = ref("Connect Wallet");
 
     const isConnected = computed(
       () => store.getters["accounts/isUserConnected"]
@@ -94,7 +93,7 @@ export default {
     watchEffect(() => {
       isConnected.value
         ? (buttonString.value = shortenAddress(wallet.value))
-        : (buttonString.value = "Connect");
+        : (buttonString.value = "Connect Wallet");
     });
 
     const shortenAddress = (address: string, chars = 3): string => {
@@ -166,4 +165,5 @@ export default {
 /** MEDIA QUERIES */
 @media screen and (min-width: 1000px) {
 }
+
 </style>
