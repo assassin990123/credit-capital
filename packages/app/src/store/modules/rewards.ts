@@ -10,7 +10,7 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   : "1";
 
 const state: RewardsState = {
-  pendingRewards: 0,
+  pendingRewards: 10,
   userPosition: 0,
   userStakedPosition: 0,
 };
