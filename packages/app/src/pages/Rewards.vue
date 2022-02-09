@@ -24,11 +24,9 @@
   import DappFooter from "@/components/DappFooter.vue";
   import { computed, watchEffect, ref } from "vue";
   // @ts-ignore
-  import { format } from "@/utils";
-  // @ts-ignore
   import { useStore } from "@/store";
   // @ts-ignore
-  import { calculateCAPLUSDPrice } from "@/utils";
+  import { calculateCAPLUSDPrice, format } from "@/utils";
 
   const store = useStore();
   const pendingRewardsCAPL = ref(0);
@@ -43,14 +41,15 @@
     }
   };
 
-  watchEffect(() => {
+  watchEffect(async() => {
     if (connected.value && pendingRewards.value > 0) {
+      await store.dispatch("balancer/getPoolTokens");
       pendingRewardsCAPL.value = format(pendingRewards.value);
-      pendingRewardsUSDC.value = calculateCAPLUSDPrice(
+      pendingRewardsUSDC.value = format(calculateCAPLUSDPrice(
         pendingRewards.value,
         "USDC",
         store.getters["balancer/getPoolTokens"]
-      );
+      ));
     }
   });
 </script>

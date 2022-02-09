@@ -108,7 +108,7 @@ export default {
       isConnected,
       buttonString,
       showMoons,
-      connectWeb3: () => {
+      connectWeb3: async()=> {
         store.dispatch("accounts/connectWeb3");
       },
     };
