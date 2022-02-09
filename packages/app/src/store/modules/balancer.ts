@@ -83,10 +83,6 @@ const actions = {
     const balances = poolTokens.balances.map((obj: any) =>
       ethers.utils.formatUnits(obj, 18)
     );
-      console.log("setPoolTokens", {
-        tokens: poolTokens.tokens,
-        balances: balances,
-      })
     // call setPoolTokens in mutations.
     commit("setPoolTokens", {
       tokens: poolTokens.tokens,

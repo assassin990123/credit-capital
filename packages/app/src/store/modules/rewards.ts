@@ -54,6 +54,7 @@ const actions = {
     }
 
     const rewardsContract = rootState.contracts.rewardsContract;
+    
     // claim rewards
     try {
       // @ts-ignore
