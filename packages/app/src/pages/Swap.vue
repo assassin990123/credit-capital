@@ -83,7 +83,7 @@
 import { ref } from "vue";
 // import DappFooter from "@/components/DappFooter.vue";
 import { useStore } from "@/store";
-import { calculateCAPLUSDPrice } from "@/utils";
+import { calculateCAPLUSDPrice, format } from "@/utils";
 
 const store = useStore();
 let swapToken = ref(0);
@@ -104,13 +104,13 @@ function joinPool() {
 async function exchangeCAPLToUSDC() {
   if (store.getters["accounts/isUserConnected"]) {
     await store.dispatch("balancer/getPoolTokens");
-    
+
     const exchangedBalance = calculateCAPLUSDPrice(
       swapToken.value,
       "USDC",
       store.getters["balancer/getPoolTokens"]
     );
-    swapTokenResult.value = exchangedBalance;
+    swapTokenResult.value = format(exchangedBalance);
   }
 }
 </script>
