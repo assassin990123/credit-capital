@@ -81,6 +81,22 @@ const actions = {
     commit("setUserPosition", ethers.utils.formatUnits(userPosition, 18));
   },
 
+  async getUserStakedPosition({ commit, rootState, dispatch }: { commit: Commit, rootState: RootState, dispatch: Dispatch}) {
+    // get address from rootstate,
+    const address = rootState.accounts.activeAccount;
+    // if state.vaultContract or state.vaultContract is null, call the `setContracts` function
+    if (rootState.contracts.vaultContract === null) {
+      dispatch("contracts/setContracts", null, { root: true });
+    }
+    const vaultContract = rootState.contracts.vaultContract;
+
+    // get user locked amount
+    // @ts-ignore
+    const userStakedPosition = await vaultContract?.getUserStakedPosition(findObjectContract('USDC', tokens, ChainID), address);
+    // parse balance, set new value in the local state
+    commit("setUserStakedPosition", ethers.utils.formatUnits(userStakedPosition, 18));
+  },
+
   async stake({ rootState, dispatch }: {rootState: RootState, dispatch: Dispatch}, amount: number) {
     // if state.rewardsContract is null, call the `setContracts` function
     if (rootState.contracts.rewardsContract === null) {
