@@ -64,7 +64,7 @@ const actions = {
     }
 
     dispatch("contracts/setContracts", null, { root: true });
-    dispatch("balancer/getPoolTokens", null, { root: true });
+    // dispatch("balancer/getPoolTokens", null, { root: true });
 
     // actions.fetchActiveBalance({ commit });
   },

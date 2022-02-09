@@ -101,8 +101,10 @@ function joinPool() {
   }
 }
 
-function exchangeCAPLToUSDC() {
+async function exchangeCAPLToUSDC() {
   if (store.getters["accounts/isUserConnected"]) {
+    await store.dispatch("balancer/getPoolTokens");
+    
     const exchangedBalance = calculateCAPLUSDPrice(
       swapToken.value,
       "USDC",
