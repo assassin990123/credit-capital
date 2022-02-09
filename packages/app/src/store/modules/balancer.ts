@@ -197,7 +197,7 @@ const actions = {
     }
     const balancerVaultContract = state.balancerVaultContract;
 
-    const poolID = findObjectId("BAL/WETH", pools as Pool[], ChainID);
+    const poolID = findObjectId("CAPL/USDC", pools as Pool[], ChainID);
     const sender = rootState.accounts.activeAccount;
     const recipient = rootState.accounts.activeAccount;
 
