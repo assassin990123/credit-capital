@@ -12,13 +12,13 @@
         </div>
         <div class="title-cus">
           <h2>TVL</h2>
-          <div class="dashboard-daily-earning-panel-value">{{ tvl.toFixed(4) }} USD</div>
+          <div class="dashboard-daily-earning-panel-value">{{ tvl?.toFixed(4) }} USD</div>
         </div>
       </div>
       <div class="dashboard-daily-earning-capl">
         <div class="dashboard-daily-earning-capl-header">
           <h2>CAPL</h2>
-          <h2>{{ totalCAPL.toFixed(4) }} USD</h2>
+          <h2>{{ totalCAPL?.toFixed(4) }} USD</h2>
         </div>
         <div class="dashboard-daily-earning-capl-content">
           <div class="dashboard-daily-earning-capl-content-row">
@@ -26,7 +26,7 @@
               Your Balance
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ userCAPL.toFixed(4) }} CAPL ({{ userCAPLToUSD.toFixed(4) }} USD)
+              {{ userCAPL?.toFixed(4) }} CAPL ({{ userCAPLToUSD?.toFixed(4) }} USD)
             </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
@@ -34,7 +34,7 @@
               Your Staked Balance
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ stakedBalance.toFixed(4) }} USDC-CAPL Shares ({{ stakedBalance.toFixed(4) }} USD)
+              {{ stakedBalance?.toFixed(4) }} USDC-CAPL Shares ({{ stakedBalance?.toFixed(4) }} USD)
             </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
@@ -113,7 +113,7 @@
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC Tokens</div>
-            <div>{{ usdcBalance.toFixed(4) }} ({{ usdcBalance.toFixed(4) }} USD)</div>
+            <div>{{ usdcBalance?.toFixed(4) }} ({{ usdcBalance?.toFixed(4) }} USD)</div>
           </div>
         </div>
         <div class="dashboard-portfolio-section-title">Vault Assets</div>
@@ -236,19 +236,35 @@
 
 <script lang="ts" setup>
   import { useStore } from "@/store";
-  import { computed } from "vue";
+  import { computed, watchEffect, ref } from "vue";
   import { calculateCAPLUSDPrice } from "@/utils";
 
   const store = useStore();
 
   const dailyEarnings = computed(() => store.getters['dashboard/getDailyEarnings'])
   const tvl = computed(() => store.getters['dashboard/getTVL'])
-  const totalCAPL = computed(() => store.getters['dashboard/getTotalCAPL'])
-  const userCAPL = computed(() => store.getters['dashboard/getUserCAPL'])
+  const totalCAPL = computed(() => store.getters['contracts/getCAPLBalance'])
+  const userCAPL = computed(() => store.getters['accounts/getActiveBalanceWei'])
   const stakedBalance = computed(() => store.getters['dashboard/getStakedBalance'])
-  const walletAddress = computed(() => store.getters['dashboard/getWalletAddress'])
   const usdcBalance = computed(() => store.getters['dashboard/getUsdcBalance'])
   const userCAPLToUSD  = calculateCAPLUSDPrice(userCAPL, 'CAPL', store.getters["balancer/getPoolTokens"]);
+
+  let walletAddress = ref("Connect Wallet")
+
+  const isConnected = computed(
+    () => store.getters["accounts/isUserConnected"]
+  );
+  const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
+
+  const shortenAddress = (address: string, chars = 3): string => {
+    return `${address.slice(0, chars)}...${address.slice(-chars)}`;
+  };
+
+  watchEffect(() => {
+    isConnected.value
+      ? (walletAddress.value = shortenAddress(wallet.value))
+      : (walletAddress.value = "Connect Wallet");
+  });
 
 </script>
 
