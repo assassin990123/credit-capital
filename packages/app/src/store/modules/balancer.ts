@@ -201,12 +201,12 @@ const actions = {
     const sender = rootState.accounts.activeAccount;
     const recipient = rootState.accounts.activeAccount;
 
-    const token_BAL = findObjectContract("BAL", tokens, ChainID);
+    const token_CAPL = findObjectContract("CAPL", tokens, ChainID);
     const token_USDC = findObjectContract("USDC", tokens, ChainID);
     const token_WETH = findObjectContract("WETH", tokens, ChainID);
 
     const assets = [{
-      token: token_BAL,
+      token: token_CAPL,
       maxAmountsIn: ethers.utils.formatUnits(100, 18),
     }, {
       token: token_USDC,
