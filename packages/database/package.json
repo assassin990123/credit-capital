@@ -1,0 +1,94 @@
+{
+  "name": "price-data",
+  "version": "1.0.1",
+  "description": "pulls latest token pair info from balancer vault and saves into a db",
+  "main": "build/index.js",
+  "typings": "build/index.d.ts",
+  "private": true,
+  "keywords": [],
+  "scripts": {
+    "start": "run-s build start:prod",
+    "start:dev": "nodemon",
+    "start:prod": "node build/index.js",
+    "build": "run-p build:*",
+    "build:main": "tsc -p tsconfig.json",
+    "fix": "run-s fix:*",
+    "fix:prettier": "prettier \"src/**/*.ts\" --write",
+    "fix:lint": "eslint src --ext .ts --fix",
+    "watch:build": "tsc -p tsconfig.json -w",
+    "watch:test": "nyc --silent ava --watch",
+    "version": "standard-version",
+    "reset-hard": "git clean -dfx && git reset --hard && yarn",
+    "prepare-release": "run-s reset-hard test cov:check doc:html version doc:publish"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "dependencies": {
+    "@bitauth/libauth": "^1.17.1",
+    "@supabase/supabase-js": "^1.30.0",
+    "dotenv": "^16.0.0",
+    "ethereumjs-tx": "^2.1.2",
+    "ethers": "^5.5.4",
+    "web3": "^1.7.0"
+  },
+  "devDependencies": {
+    "@ava/typescript": "^1.1.1",
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.0.1",
+    "@typescript-eslint/parser": "^4.0.1",
+    "ava": "^3.12.1",
+    "codecov": "^3.5.0",
+    "cspell": "^4.1.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^7.8.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-functional": "^3.0.2",
+    "eslint-plugin-import": "^2.22.0",
+    "gh-pages": "^3.1.0",
+    "nodemon": "^2.0.15",
+    "npm-run-all": "^4.1.5",
+    "nyc": "^15.1.0",
+    "open-cli": "^6.0.1",
+    "prettier": "^2.1.1",
+    "standard-version": "^9.0.0",
+    "ts-node": "^9.0.0",
+    "typedoc": "^0.19.0",
+    "typescript": "^4.0.2"
+  },
+  "files": [
+    "build",
+    "!**/*.spec.*",
+    "!**/*.json",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "ava": {
+    "failFast": true,
+    "timeout": "60s",
+    "typescript": {
+      "rewritePaths": {
+        "src/": "build/main/"
+      }
+    },
+    "files": [
+      "!build/module/**"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "prettier": {
+    "singleQuote": true
+  },
+  "nyc": {
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "exclude": [
+      "**/*.spec.js"
+    ]
+  }
+}
