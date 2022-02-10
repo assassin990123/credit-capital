@@ -30,9 +30,7 @@
               Your Balance
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ userCAPL?.toFixed(4) }} CAPL ({{
-                userCAPLToUSD?.toFixed(4)
-              }}
+              {{ userCAPL?.toFixed(4) }} CAPL ({{ userCAPLToUSD?.toFixed(4) }}
               USD)
             </div>
           </div>

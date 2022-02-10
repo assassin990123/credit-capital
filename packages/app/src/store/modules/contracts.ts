@@ -122,8 +122,12 @@ const actions = {
   },
 
   async approve(
-    { commit, rootState }: { commit: Commit, rootState: RootState },
-    { contract, amount, address }: { contract: object, amount: number, address: string }
+    { commit, rootState }: { commit: Commit; rootState: RootState },
+    {
+      contract,
+      amount,
+      address,
+    }: { contract: object; amount: number; address: string }
   ) {
     if (contract === null) {
       actions.setContracts({ commit, rootState });
