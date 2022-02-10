@@ -256,7 +256,6 @@ contract RewardsV2 is Pausable, AccessControl {
 
     function claim(address _token, address _user)
         external
-        onlyRole(MINTER_ROLE)
     {
         IPool.Pool memory pool = updatePool(_token);
         IUserPositions.UserPosition memory user = vault.getUserPosition(
