@@ -1,8 +1,4 @@
-import { store } from "@/store";
 import { useToast } from "vue-toastification";
-const ChainID = process.env.VUE_APP_NETWORK_ID
-  ? process.env.VUE_APP_NETWORK_ID
-  : "1";
 
 const toast = useToast();
 

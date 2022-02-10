@@ -244,7 +244,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { useStore } from "@/store";
 import { computed, watchEffect, ref } from "vue";
 import { calculateCAPLUSDPrice } from "@/utils";
@@ -255,19 +255,16 @@ const dailyEarnings = computed(
   () => store.getters["dashboard/getDailyEarnings"]
 );
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
-const totalCAPL = computed(() => store.getters["contracts/getCAPLBalance"]);
-const userCAPL = computed(() => store.getters["accounts/getActiveBalanceWei"]);
-const stakedBalance = computed(
-  () => store.getters["dashboard/getStakedBalance"]
-);
+const userCAPL = computed(() => store.getters["contracts/getCAPLBalance"]);
+const stakedBalance = computed(() => store.getters["rewards/getUserPosition"]);
 const usdcBalance = computed(() => store.getters["contracts/getUSDCBalance"]);
 const userCAPLToUSD = calculateCAPLUSDPrice(
-  userCAPL,
+  Number(userCAPL.value),
   "CAPL",
   store.getters["balancer/getPoolTokens"]
 );
 
-let walletAddress = ref("Connect Wallet");
+let walletAddress = ref("Connect");
 
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 const wallet = computed(() => store.getters["accounts/getActiveAccount"]);

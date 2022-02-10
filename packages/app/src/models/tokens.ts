@@ -1,2 +1,1 @@
-export interface TokenState {
-}
+export interface TokenState {}
