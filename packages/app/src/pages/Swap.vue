@@ -21,7 +21,7 @@
                 </div>
               </div>
               <div class="text-right">
-                <div class="panel-explanation"><span>balance:</span> 000</div>
+                <div class="panel-explanation"><span>balance:</span>&nbsp;000</div>
                 <div class="panel-explanation">CAPL</div>
               </div>
             </div>

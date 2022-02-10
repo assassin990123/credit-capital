@@ -7631,6 +7631,38 @@ align-self: center;
   color: #fff;
 }
 
+.panel-explanation > input{
+  padding-left: 10px;
+  border-radius: 25px;
+  width: 80%;
+  border: 1px solid #ffca03;
+}
+
+@media only screen and (max-width: 575px) {
+  .panel-container.inner-container {
+    flex-direction: column;
+  }
+}
+
+
+@media only screen and (max-width: 575px) {
+  .panel-content.swap-panel-content {
+    padding: 20px 30px;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .panel.stake-panel{
+   margin-top: 30px;
+  }
+}
+
+
+ 
+
+
+
+
 /*============================================
 
                 30 -- Treasury
