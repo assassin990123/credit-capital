@@ -48,7 +48,7 @@ const claim = () => {
   if (!connected.value) {
     toast.info("Please connect your wallet!");
   } else if (pendingRewards.value <= 0) {
-    toast.info("Please check your balance!");
+    toast.info("Rewards balance is 0!");
   } else {
     store.dispatch("rewards/claim");
   }

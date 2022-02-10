@@ -11,7 +11,6 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
 
 const state = {
   activeAccount: null,
-  activeBalance: 0,
   chainId: null,
   web3Provider: null,
   isConnected: false,
@@ -23,9 +22,6 @@ const getters = {
       return (window as any).ethereum.selectedAddress;
     }
     return state.activeAccount;
-  },
-  getActiveBalanceWei(state: AccountState) {
-    return state.activeBalance;
   },
   getChainId(state: AccountState) {
     return state.chainId;
@@ -65,8 +61,6 @@ const actions = {
 
     dispatch("contracts/setContracts", null, { root: true });
     // dispatch("balancer/getPoolTokens", null, { root: true });
-
-    // actions.fetchActiveBalance({ commit });
   },
 
   async ethereumListener({ commit }: { commit: Function }) {
@@ -74,7 +68,6 @@ const actions = {
       if (state.isConnected) {
         commit("setActiveAccount", accounts[0]);
         commit("setWeb3Provider", state.web3Provider);
-        actions.fetchActiveBalance({ commit });
       }
     });
 
@@ -82,15 +75,7 @@ const actions = {
       await actions.checkNetwork();
       commit("setChainData", chainId);
       commit("setWeb3Provider", state.web3Provider);
-      // actions.fetchActiveBalance({ commit });
     });
-  },
-
-  async fetchActiveBalance({ commit }: { commit: Function }) {
-    // @ts-ignore
-    // TODO: add  web3Provider type
-    const balance = await state.web3Provider?.getBalance(state.activeAccount);
-    commit("setActiveBalance", balance);
   },
 
   async checkNetwork() {
@@ -130,10 +115,6 @@ const actions = {
 const mutations = {
   setActiveAccount(state: AccountState, selectedAddress: string) {
     state.activeAccount = selectedAddress;
-  },
-
-  setActiveBalance(state: AccountState, balance: number) {
-    state.activeBalance = balance;
   },
 
   setChainData(state: AccountState, chainId: number) {

@@ -244,7 +244,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { useStore } from "@/store";
 import { computed, watchEffect, ref } from "vue";
 import { calculateCAPLUSDPrice } from "@/utils";
@@ -256,9 +256,7 @@ const dailyEarnings = computed(
 );
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
 const userCAPL = computed(() => store.getters["contracts/getCAPLBalance"]);
-const stakedBalance = computed(
-  () => store.getters["dashboard/getStakedBalance"]
-);
+const stakedBalance = computed(() => store.getters["rewards/getUserPosition"]);
 const usdcBalance = computed(() => store.getters["contracts/getUSDCBalance"]);
 const userCAPLToUSD = calculateCAPLUSDPrice(
   Number(userCAPL.value),
