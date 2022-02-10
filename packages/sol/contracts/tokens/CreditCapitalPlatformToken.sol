@@ -31,7 +31,7 @@ contract CreditCapitalPlatformToken is
         grantRole(keccak256(bytes (_role)), _user);
     }
     
-    function mint(address to, uint256 amount) external onlyRole(MINTER) {
+    function mint(address to, uint256 amount) external onlyRole(MINTER_ROLE) {
         _mint(to, amount);
     }
 
