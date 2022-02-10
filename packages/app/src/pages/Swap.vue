@@ -37,7 +37,7 @@
               </div>
             </div>
             <button type="button" @click="swap()" class="btn-custom">
-              Enter
+              {{ swapButtonString }}
             </button>
           </div>
         </div>
@@ -92,11 +92,34 @@ const store = useStore();
 const toast = useToast();
 let swapToken = ref(0);
 let swapTokenResult = ref(0);
+let swapButtonString = ref("Enter");
 
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
-function swap() {
+async function swap() {
   if (isConnected.value) {
-    store.dispatch("balancer/batchSwap");
+    const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
+    const contract = computed(() => store.getters["contracts/getBalancerVaultContract"]);
+
+    if (swapButtonString.value === 'Approve') {
+      await store.dispatch("tokens/approve", {
+        contract: contract.value,
+        amount: parseFloat(swapToken.value),
+        address: wallet.value,
+      });
+      swapButtonString.value = "Enter";
+    } else {
+      const allowance = await store.dispatch("tokens/checkAllowance", {
+        contract: contract.value,
+        amount: parseFloat(swapToken.value),
+        address: wallet.value,
+      });
+
+      if (allowance) {
+        store.dispatch("balancer/batchSwap");
+      } else {
+        swapButtonString.value = "Approve";
+      }
+    }
   } else if (!isConnected.value) {
     toast.info("Please connect your wallet!");
   }
@@ -109,6 +132,7 @@ function joinPool() {
 }
 
 async function exchangeCAPLToUSDC() {
+  swapButtonString.value = "Enter";
   if (isConnected.value) {
     await store.dispatch("balancer/getPoolTokens");
 

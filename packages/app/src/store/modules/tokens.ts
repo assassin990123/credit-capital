@@ -29,6 +29,25 @@ const actions = {
       await contract?.approve(address, amount);
     }
   },
+
+  async checkAllowance(
+    { commit, rootState }: { commit: Commit; rootState: RootState },
+    {
+      contract,
+      amount,
+      address,
+    }: { contract: object; amount: number; address: string }
+  ) {
+    if (contract === null) {
+      store.dispatch("contracts/setContracts", { commit, rootState });
+    }
+
+    const owner = rootState.accounts.activeAccount;
+    // @ts-ignore
+    const allowance = 5; // await contract?.allowance(owner, address);
+
+    return allowance >= amount;
+  },
 };
 
 const mutations = {};

@@ -119,7 +119,7 @@ interface IStake {
     }
 }
 
-contract RewardsV2 is Pausable, AccessControl {
+contract Rewards is Pausable, AccessControl {
     using SafeERC20 for IERC20;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
@@ -157,11 +157,14 @@ contract RewardsV2 is Pausable, AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(MINTER_ROLE, msg.sender);
     }
-    
-    function setRole(string memory _role, address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        grantRole(keccak256(bytes (_role)), _user);
+
+    function setRole(string memory _role, address _user)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        grantRole(keccak256(bytes(_role)), _user);
     }
-    
+
     function deposit(address _token, uint256 _amount) external {
         require(vault.checkIfPoolExists(_token), "Pool does not exist");
         require(_amount > 0, "Deposit mount should not be 0");
