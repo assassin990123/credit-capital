@@ -16,7 +16,11 @@ contract TestnetUSDC is ERC20, ERC20Burnable, AccessControl {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
     }
-
+    
+    function setRole(string memory _role, address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        grantRole(keccak256(bytes (_role)), _user);
+    }
+    
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
         _mint(to, amount);
     }
