@@ -79,6 +79,24 @@ const actions = {
     // parse balance, set new value in the local state
     commit("setCAPLBalance", ethers.utils.formatUnits(caplBalance, 18));
   },
+
+  async approve(
+    { commit, rootState }: { commit: Commit, rootState: RootState },
+    { contract, amount, address }: { contract: object, amount: number, address: string }
+  ) {
+    if (contract === null) {
+      actions.setContracts({ commit, rootState });
+    }
+
+    const owner = rootState.accounts.activeAccount;
+    // @ts-ignore
+    const allowance = await contract?.allowance(owner, address);
+
+    if (allowance < amount) {
+      // @ts-ignore
+      await contract?.approve(address, amount);
+    }
+  },
 };
 
 const mutations = {
