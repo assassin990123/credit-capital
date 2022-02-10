@@ -80,32 +80,32 @@
 
 <script setup lang="ts">
 // import Footer from "@/components/Footer.vue";
-import { ref, computed } from "vue";
+import { ref } from "vue";
 // import DappFooter from "@/components/DappFooter.vue";
 import { useStore } from "@/store";
 import { calculateCAPLUSDPrice, format } from "@/utils";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification";
 import { checkConnection, checkBalance } from "@/utils/notifications";
 const store = useStore();
-const toast = useToast();
+// const toast = useToast();
 let swapToken = ref(0);
 let swapTokenResult = ref(0);
 
-const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
+// const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 function swap() {
-  if (checkConnection()) {
+  if (checkConnection(store) && checkBalance(swapToken.value)) {
     store.dispatch("balancer/batchSwap");
   }
 }
 
 function joinPool() {
-  if (checkConnection()) {
+  if (checkConnection(store)) {
     store.dispatch("balancer/joinPool");
   }
 }
 
 async function exchangeCAPLToUSDC() {
-  if (checkConnection() && checkBalance(swapToken.value)) {
+  if (checkConnection(store) && checkBalance(swapToken.value)) {
     await store.dispatch("balancer/getPoolTokens");
 
     const exchangedBalance = calculateCAPLUSDPrice(
