@@ -255,19 +255,18 @@ const dailyEarnings = computed(
   () => store.getters["dashboard/getDailyEarnings"]
 );
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
-const totalCAPL = computed(() => store.getters["contracts/getCAPLBalance"]);
-const userCAPL = computed(() => store.getters["accounts/getActiveBalanceWei"]);
+const userCAPL = computed(() => store.getters["contracts/getCAPLBalance"]);
 const stakedBalance = computed(
   () => store.getters["dashboard/getStakedBalance"]
 );
 const usdcBalance = computed(() => store.getters["contracts/getUSDCBalance"]);
 const userCAPLToUSD = calculateCAPLUSDPrice(
-  userCAPL,
+  Number(userCAPL.value),
   "CAPL",
   store.getters["balancer/getPoolTokens"]
 );
 
-let walletAddress = ref("Connect Wallet");
+let walletAddress = ref("Connect");
 
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 const wallet = computed(() => store.getters["accounts/getActiveAccount"]);

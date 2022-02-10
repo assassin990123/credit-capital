@@ -3,13 +3,9 @@ import { TokenState } from "@/models/tokens";
 import { RootState } from "@/models";
 import { Commit } from "vuex";
 
-const state: TokenState = {
+const state: TokenState = {};
 
-};
-
-const getters = {
-
-};
+const getters = {};
 
 const actions = {
   async approve(
