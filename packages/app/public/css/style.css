@@ -824,6 +824,45 @@ textarea:focus {
                 04 -- Header
 
 ==============================================*/
+
+.nav-btn-custom{
+  display: flex; flex-direction: row;
+}
+
+.nav-btn-custom .nav-item{
+  padding-left: 20px;
+}
+
+.nav-item .connectButton{
+  color: #fff;
+  background-color: #FF9D0F;
+  font-family: Nunito, sans-serif;
+  width: auto;
+  height: auto;
+  border-radius: 25px;
+  padding: 0 10px;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.nav-item span{
+  border: 1px solid #FF9D0F;
+  border-radius: 25px;
+  padding: 5px 10px;
+  font-weight: 700;
+  color: #000;
+
+}
+
+.nav-btn-custom .nav-item{
+align-self: center;
+}
+
+.collapse.navbar-collapse.mean-menu .navbar-nav{
+  margin: 0 0 0 50px;
+}
+
+
 .acavo-responsive-nav {
   display: none;
 }
@@ -2005,7 +2044,7 @@ textarea:focus {
 .others-option-for-responsive .dot-menu .inner {
   display: -webkit-box;
   display: -ms-flexbox;
-  display: flex;
+  display: none;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
@@ -2231,6 +2270,15 @@ textarea:focus {
 }
 
 /*-- Header Responsive --*/
+
+
+
+@media only screen and (max-width: 575px) {
+  .others-option-for-responsive .dot-menu .inner {
+  display: flex;
+  }
+}
+
 @media only screen and (max-width: 1199px) {
   .navbar-area {
     padding-top: 20px;

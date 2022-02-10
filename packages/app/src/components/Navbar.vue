@@ -23,27 +23,33 @@
           <div class="collapse navbar-collapse mean-menu">
             <ul class="navbar-nav">
               <li class="nav-item"><router-link to="/">Home</router-link></li>
+              
               <li class="nav-item">
-                <router-link to="dashboard">Dashboard</router-link>
-              </li>
-              <li class="nav-item">
-                <router-link to="stake">Stake/Unstake</router-link>
+                <router-link to="stake">Stake</router-link>
               </li>
               <li class="nav-item">
                 <router-link to="reward">Rewards</router-link>
               </li>
               <li class="nav-item">
-                <router-link to="swap">Swap/Liquidity</router-link>
+                <router-link to="swap">Swap</router-link>
               </li>
               <li class="nav-item">
                 <router-link to="treasury">Treasury</router-link>
               </li>
-              <li class="nav-item">
+             </ul>
+          </div>
+          <div>
+              <ul class="nav-btn-custom">
+                <li class="nav-item"> <span>Capl: &dollar;0.000</span> </li>
+                <li class="nav-item">
+                <router-link to="dashboard"><button class="connectButton">Dashboard</button> </router-link>
+              </li>
+                 <li class="nav-item">
                 <button class="connectButton" @click="connectWeb3">
                   {{ buttonString }}
                 </button>
               </li>
-            </ul>
+              </ul>
           </div>
         </nav>
       </div>
@@ -85,7 +91,7 @@ export default {
   setup() {
     const store = useStore();
 
-    let buttonString = ref("Connect");
+    let buttonString = ref("Connect Wallet");
 
     const isConnected = computed(
       () => store.getters["accounts/isUserConnected"]
@@ -95,7 +101,7 @@ export default {
     watchEffect(() => {
       isConnected.value
         ? (buttonString.value = shortenAddress(wallet.value))
-        : (buttonString.value = "Connect");
+        : (buttonString.value = "Connect Wallet");
     });
 
     const shortenAddress = (address: string, chars = 3): string => {
