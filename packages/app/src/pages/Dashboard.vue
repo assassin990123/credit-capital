@@ -4,7 +4,7 @@
       <div class="dashboard-daily-earning-panel">
         <div class="title-cus">
           <h2>DAILY EARNINGS</h2>
-          <div class="dashboard-daily-earning-panel-value">0</div>
+          <div class="dashboard-daily-earning-panel-value">{{ dailyEarnings }}</div>
         </div>
         <div class="title-cus">
           <h2>APR</h2>
@@ -12,13 +12,13 @@
         </div>
         <div class="title-cus">
           <h2>TVL</h2>
-          <div class="dashboard-daily-earning-panel-value">0.0000 USD</div>
+          <div class="dashboard-daily-earning-panel-value">{{ tvl.toFixed(4) }} USD</div>
         </div>
       </div>
       <div class="dashboard-daily-earning-capl">
         <div class="dashboard-daily-earning-capl-header">
           <h2>CAPL</h2>
-          <h2>1.0357 USD</h2>
+          <h2>{{ totalCAPL.toFixed(4) }} USD</h2>
         </div>
         <div class="dashboard-daily-earning-capl-content">
           <div class="dashboard-daily-earning-capl-content-row">
@@ -26,7 +26,7 @@
               Your Balance
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              0.0000 CAPL (0.0000 USD)
+              {{ userCAPL.toFixed(4) }} CAPL ({{ userCAPLToUSD.toFixed(4) }} USD)
             </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
@@ -34,7 +34,7 @@
               Your Staked Balance
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              0.0000 USDC-CAPL Shares (0.0000 USD)
+              {{ stakedBalance.toFixed(4) }} USDC-CAPL Shares ({{ stakedBalance.toFixed(4) }} USD)
             </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
@@ -98,7 +98,7 @@
         <div class="dashboard-portfolio-section-address">
           <h2>WALLET ADDRESS</h2>
           <div class="dashboard-portfolio-section-address-value">
-            0x00000000000000000000
+            {{ walletAddress }}
           </div>
         </div>
         <div class="dashboard-portfolio-section-title">Wallet Assets</div>
@@ -113,7 +113,7 @@
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC Tokens</div>
-            <div>0.0000 (0.0000 USD)</div>
+            <div>{{ usdcBalance.toFixed(4) }} ({{ usdcBalance.toFixed(4) }} USD)</div>
           </div>
         </div>
         <div class="dashboard-portfolio-section-title">Vault Assets</div>
@@ -234,7 +234,23 @@
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+  import { useStore } from "@/store";
+  import { computed } from "vue";
+  import { calculateCAPLUSDPrice } from "@/utils";
+
+  const store = useStore();
+
+  const dailyEarnings = computed(() => store.getters['dashboard/getDailyEarnings'])
+  const tvl = computed(() => store.getters['dashboard/getTVL'])
+  const totalCAPL = computed(() => store.getters['dashboard/getTotalCAPL'])
+  const userCAPL = computed(() => store.getters['dashboard/getUserCAPL'])
+  const stakedBalance = computed(() => store.getters['dashboard/getStakedBalance'])
+  const walletAddress = computed(() => store.getters['dashboard/getWalletAddress'])
+  const usdcBalance = computed(() => store.getters['dashboard/getUsdcBalance'])
+  const userCAPLToUSD  = calculateCAPLUSDPrice(userCAPL, 'CAPL', store.getters["balancer/getPoolTokens"]);
+
+</script>
 
 <style>
 .dashboard-container.dashboard-cus-main {

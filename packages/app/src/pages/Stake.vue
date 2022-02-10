@@ -62,9 +62,6 @@
     if (userPosition.value) {
       formatedUserPosition.value = format(userPosition.value);
     }
-    if (connected.value) {
-      // enable stake button
-    }
   });
 </script>
 

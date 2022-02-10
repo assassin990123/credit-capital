@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { caplABI, rewardsABI, vaultABI } from "@/abi";
+import { caplABI, rewardsABI, vaultABI, balancerVault as balancerVaultABI } from "@/abi";
 import { contracts, tokens } from "@/constants";
 import { markRaw } from "vue";
 import { Commit } from "vuex";
@@ -12,6 +12,7 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   : "1";
 
 const state: ContractState = {
+  balancerVaultContract: null,
   rewardsContract: null,
   vaultContract: null,
   caplContract: null,
@@ -28,23 +29,36 @@ const getters = {
   getRewardsContract(state: ContractState) {
     return state.rewardsContract;
   },
+  getBalancerVaultContract(state: ContractState) {
+    return state.balancerVaultContract;
+  },
 };
 
 const actions = {
   async setContracts({ commit, rootState }: {commit: Commit, rootState: RootState}) {
-    const provider = rootState.accounts.web3Provider;
+    let providerOrSigner = rootState.accounts.web3Provider;
+
+    // if user connected pass the signer to the contract instance.
+    if (rootState.accounts.isConnected) {
+      providerOrSigner = providerOrSigner.getSigner();
+    }
+
     try {
       commit(
         "setCAPLContract",
-        markRaw(new ethers.Contract(findObjectContract('CAPL', tokens, ChainID), caplABI, provider))
+        markRaw(new ethers.Contract(findObjectContract('CAPL', tokens, ChainID), caplABI, providerOrSigner))
       );
       commit(
         "setVaultContract",
-        markRaw(new ethers.Contract(findObjectContract('rewardsVault', contracts, ChainID), vaultABI, provider))
+        markRaw(new ethers.Contract(findObjectContract('rewardsVault', contracts, ChainID), vaultABI, providerOrSigner))
       );
       commit(
         "setRewardsContract",
-        markRaw(new ethers.Contract(findObjectContract('rewards', contracts, ChainID), rewardsABI, provider))
+        markRaw(new ethers.Contract(findObjectContract('rewards', contracts, ChainID), rewardsABI, providerOrSigner))
+      );
+      commit(
+        "setBalancerVaultContract",
+        markRaw(new ethers.Contract(findObjectContract('balancerVault', contracts, ChainID), balancerVaultABI, providerOrSigner))
       );
     } catch (e) {
       console.log(e)
@@ -79,6 +93,9 @@ const mutations = {
   },
   setCAPLBalance(state: ContractState, _balance: number) {
     state.caplBalance = _balance;
+  },
+  setBalancerVaultContract(state: ContractState, _contract: object) {
+    state.balancerVaultContract = _contract;
   },
 };
 

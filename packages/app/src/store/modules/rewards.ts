@@ -98,6 +98,7 @@ const actions = {
   },
 
   async stake({ rootState, dispatch }: {rootState: RootState, dispatch: Dispatch}, amount: number) {
+    console.log(amount);
     // if state.rewardsContract is null, call the `setContracts` function
     if (rootState.contracts.rewardsContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -123,7 +124,7 @@ const actions = {
     // claim rewards
     try {
       // @ts-ignore
-      await rewardsContract?.unstake(findObjectContract('USDC', tokens, ChainID), amount);
+      await rewardsContract?.withdraw(findObjectContract('USDC', tokens, ChainID), amount);
     } catch (error) {
       console.log(error);
     }
