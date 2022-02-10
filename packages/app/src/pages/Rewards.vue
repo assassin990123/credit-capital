@@ -27,24 +27,18 @@
   import { useStore } from "@/store";
   // @ts-ignore
   import { calculateCAPLUSDPrice, format } from "@/utils";
+  import { checkConnection, checkBalance } from "@/utils/notifications";
 
-  import { useToast } from "vue-toastification";
-  
   const store = useStore();
   const pendingRewardsCAPL = ref(0);
   const pendingRewardsUSDC = ref(0);
   
   const connected = computed(() => store.getters["accounts/isUserConnected"]);
   const pendingRewards = computed(() => store.getters["rewards/getPendingRewards"]);
-  const toast = useToast();
   
   const claim = () => {
     
-    if (!connected.value) {
-      toast.info("Please connect your wallet!");
-    } else if (pendingRewards.value <= 0) {
-      toast.info("Please check your balance!");
-    } else {
+    if (checkConnection(store) && checkBalance(pendingRewards.value)) {
       store.dispatch("rewards/claim");
     }
   };

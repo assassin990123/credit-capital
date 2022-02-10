@@ -19,6 +19,7 @@ export const checkConnection = (store: any) => {
 export const checkBalance = (balance: number) => {
     if (balance <= 0) {
         toast.warning("invalid balance!");
+        return false;
     }
 
     return true;

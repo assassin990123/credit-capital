@@ -38,7 +38,6 @@
   const stakeAmount = ref(0);
   const unstakeAmount = ref(0);
 
-  const connected = computed(() => store.getters["accounts/isUserConnected"]);
 
   const stake = () => {
 
