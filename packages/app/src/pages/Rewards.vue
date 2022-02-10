@@ -5,10 +5,14 @@
         <div class="rewards-container">
           <h1 class="panel-title">PENDING REWARDS</h1>
           <div class="rewards-content">
-            <div class="rewards-display">{{pendingRewardsCAPL + " CAPL"}} ({{pendingRewardsUSDC + " USD"}})</div>
-            <div class="rewards-section ">
+            <div class="rewards-display">
+              {{ pendingRewardsCAPL + " CAPL" }} ({{
+                pendingRewardsUSDC + " USD"
+              }})
+            </div>
+            <div class="rewards-section">
               <button class="rewards-section-item" @click="claim">CLAIM</button>
-            <!-- <div class="rewards-section-item">COMPOUND</div> -->
+              <!-- <div class="rewards-section-item">COMPOUND</div> -->
             </div>
           </div>
         </div>
@@ -20,46 +24,49 @@
 </template>
 
 <script lang="ts" setup>
-  // @ts-ignore
-  import DappFooter from "@/components/DappFooter.vue";
-  import { computed, watchEffect, ref } from "vue";
-  // @ts-ignore
-  import { useStore } from "@/store";
-  // @ts-ignore
-  import { calculateCAPLUSDPrice, format } from "@/utils";
+// @ts-ignore
+import DappFooter from "@/components/DappFooter.vue";
+import { computed, watchEffect, ref } from "vue";
+// @ts-ignore
+import { useStore } from "@/store";
+// @ts-ignore
+import { calculateCAPLUSDPrice, format } from "@/utils";
 
-  import { useToast } from "vue-toastification";
-  
-  const store = useStore();
-  const pendingRewardsCAPL = ref(0);
-  const pendingRewardsUSDC = ref(0);
-  
-  const connected = computed(() => store.getters["accounts/isUserConnected"]);
-  const pendingRewards = computed(() => store.getters["rewards/getPendingRewards"]);
-  const toast = useToast();
-  
-  const claim = () => {
-    
-    if (!connected.value) {
-      toast.info("Please connect your wallet!");
-    } else if (pendingRewards.value <= 0) {
-      toast.info("Please check your balance!");
-    } else {
-      store.dispatch("rewards/claim");
-    }
-  };
+import { useToast } from "vue-toastification";
 
-  watchEffect(async() => {
-    if (connected.value && pendingRewards.value > 0) {
-      await store.dispatch("balancer/getPoolTokens");
-      pendingRewardsCAPL.value = format(pendingRewards.value);
-      pendingRewardsUSDC.value = format(calculateCAPLUSDPrice(
+const store = useStore();
+const pendingRewardsCAPL = ref(0);
+const pendingRewardsUSDC = ref(0);
+
+const connected = computed(() => store.getters["accounts/isUserConnected"]);
+const pendingRewards = computed(
+  () => store.getters["rewards/getPendingRewards"]
+);
+const toast = useToast();
+
+const claim = () => {
+  if (!connected.value) {
+    toast.info("Please connect your wallet!");
+  } else if (pendingRewards.value <= 0) {
+    toast.info("Please check your balance!");
+  } else {
+    store.dispatch("rewards/claim");
+  }
+};
+
+watchEffect(async () => {
+  if (connected.value && pendingRewards.value > 0) {
+    await store.dispatch("balancer/getPoolTokens");
+    pendingRewardsCAPL.value = format(pendingRewards.value);
+    pendingRewardsUSDC.value = format(
+      calculateCAPLUSDPrice(
         pendingRewards.value,
         "USDC",
         store.getters["balancer/getPoolTokens"]
-      ));
-    }
-  });
+      )
+    );
+  }
+});
 </script>
 
 <style>

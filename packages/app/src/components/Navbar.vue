@@ -108,7 +108,7 @@ export default {
       isConnected,
       buttonString,
       showMoons,
-      connectWeb3: async()=> {
+      connectWeb3: async () => {
         store.dispatch("accounts/connectWeb3");
       },
     };
@@ -165,5 +165,4 @@ export default {
 /** MEDIA QUERIES */
 @media screen and (min-width: 1000px) {
 }
-
 </style>

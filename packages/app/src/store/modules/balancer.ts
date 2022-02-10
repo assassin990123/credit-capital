@@ -51,9 +51,7 @@ const actions = {
 
     // call getPoolTokens
     // @ts-ignore
-    const poolTokens = await balancerVaultContract.getPoolTokens(
-      poolID
-    );
+    const poolTokens = await balancerVaultContract.getPoolTokens(poolID);
 
     // parse balance
     const balances = poolTokens.balances.map((obj: any) =>
@@ -115,7 +113,14 @@ const actions = {
     const tokenLimits = [];
     const checksumTokens = [];
     for (const token of tokenAddresses) {
-      tokenLimits.push(ethers.BigNumber.from((tokenData[token]["limit"] * Math.pow(10, tokenData[token]["decimals"])).toString()));
+      tokenLimits.push(
+        ethers.BigNumber.from(
+          (
+            tokenData[token]["limit"] *
+            Math.pow(10, tokenData[token]["decimals"])
+          ).toString()
+        )
+      );
       checksumTokens.push(ethers.utils.getAddress(token));
     }
 
@@ -125,14 +130,18 @@ const actions = {
         poolId: pool_WETH_USDC,
         assetInIndex: tokenIndices[token_USDC],
         assetOutIndex: tokenIndices[token_WETH],
-        amount: ethers.BigNumber.from((100 * Math.pow(10, tokenData[token_USDC]["decimals"])).toString()),
+        amount: ethers.BigNumber.from(
+          (100 * Math.pow(10, tokenData[token_USDC]["decimals"])).toString()
+        ),
         userData: "0x",
       },
       {
         poolId: pool_BAL_WETH,
         assetInIndex: tokenIndices[token_WETH],
         assetOutIndex: tokenIndices[token_BAL],
-        amount: ethers.BigNumber.from((0 * Math.pow(10, tokenData[token_USDC]["decimals"])).toString()),
+        amount: ethers.BigNumber.from(
+          (0 * Math.pow(10, tokenData[token_USDC]["decimals"])).toString()
+        ),
         userData: "0x",
       },
     ];
@@ -142,7 +151,7 @@ const actions = {
       recipient: ethers.utils.getAddress(fundSettings["recipient"]),
       toInternalBalance: fundSettings["toInternalBalance"],
     };
-    const deadline = ethers.BigNumber.from('999999999999999999');
+    const deadline = ethers.BigNumber.from("999999999999999999");
 
     if (rootState.contracts.balancerVaultContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -185,13 +194,20 @@ const actions = {
     const token_CAPL = findObjectContract("CAPL", tokens, ChainID);
     const token_USDC = findObjectContract("USDC", tokens, ChainID);
 
-    const assets = [{
-      token: token_CAPL,
-      maxAmountsIn: ethers.BigNumber.from((100 * Math.pow(10, 18)).toString()),
-    }, {
-      token: token_USDC,
-      maxAmountsIn: ethers.BigNumber.from((100 * Math.pow(10, 18)).toString()),
-    }];
+    const assets = [
+      {
+        token: token_CAPL,
+        maxAmountsIn: ethers.BigNumber.from(
+          (100 * Math.pow(10, 18)).toString()
+        ),
+      },
+      {
+        token: token_USDC,
+        maxAmountsIn: ethers.BigNumber.from(
+          (100 * Math.pow(10, 18)).toString()
+        ),
+      },
+    ];
     assets.sort((asset1, asset2) => {
       if (asset1.token > asset2.token) {
         return 1;
@@ -202,18 +218,18 @@ const actions = {
       return 0;
     });
     const request: any = {
-      assets: assets.map(asset => asset.token),
-      maxAmountsIn: assets.map(asset => asset.maxAmountsIn),
-      userData: '0x',
+      assets: assets.map((asset) => asset.token),
+      maxAmountsIn: assets.map((asset) => asset.maxAmountsIn),
+      userData: "0x",
       fromInternalBalance: false,
-    }
+    };
 
     // @ts-ignore
     const joinPool = await balancerVaultContract?.joinPool(
       poolID,
       sender,
       recipient,
-      request,
+      request
     );
 
     commit("setJoinPool", joinPool);

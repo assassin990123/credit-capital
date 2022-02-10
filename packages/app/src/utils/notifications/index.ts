@@ -7,19 +7,18 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
 const toast = useToast();
 
 export const checkConnection = (store: any) => {
-    if (!store.getters["accounts/isUserConnected"]) {
+  if (!store.getters["accounts/isUserConnected"]) {
+    toast.warning("Please connect your wallet!");
+    return false;
+  }
 
-        toast.warning("Please connect your wallet!");
-        return false;
-    }
-
-    return true;
-}
+  return true;
+};
 
 export const checkBalance = (balance: number) => {
-    if (balance <= 0) {
-        toast.warning("invalid balance!");
-    }
+  if (balance <= 0) {
+    toast.warning("invalid balance!");
+  }
 
-    return true;
-}
+  return true;
+};

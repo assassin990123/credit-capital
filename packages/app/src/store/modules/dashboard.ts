@@ -23,16 +23,12 @@ const getters = {
   },
   getUsdcBalance(state: DashboardState) {
     return state.usdcBalance;
-  }
+  },
 };
 
-const actions = {
+const actions = {};
 
-};
-
-const mutations = {
-
-};
+const mutations = {};
 
 export default {
   namespaced: true,
@@ -40,4 +36,4 @@ export default {
   getters,
   actions,
   mutations,
-}
+};

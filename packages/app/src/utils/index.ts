@@ -27,7 +27,7 @@ export const calculateCAPLUSDPrice = (
 
   const CAPL = poolTokens.balances[0];
   const USDC = poolTokens.balances[1];
-  
+
   // convert usdc to capl
   if (unit == "CAPL") {
     return (CAPL / USDC) * amount;
