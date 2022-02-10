@@ -260,7 +260,7 @@ const userCAPL = computed(() => store.getters["accounts/getActiveBalanceWei"]);
 const stakedBalance = computed(
   () => store.getters["dashboard/getStakedBalance"]
 );
-const usdcBalance = computed(() => store.getters["dashboard/getUsdcBalance"]);
+const usdcBalance = computed(() => store.getters["contracts/getUSDCBalance"]);
 const userCAPLToUSD = calculateCAPLUSDPrice(
   userCAPL,
   "CAPL",

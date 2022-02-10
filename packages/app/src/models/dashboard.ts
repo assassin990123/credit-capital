@@ -3,5 +3,4 @@ export interface DashboardState {
   tvl: number | null;
   userCAPL: number | null;
   stakedBalance: number | null;
-  usdcBalance: number | null;
 }

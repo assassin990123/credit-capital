@@ -5,7 +5,6 @@ const state: DashboardState = {
   tvl: 0,
   userCAPL: 0,
   stakedBalance: 0,
-  usdcBalance: 0,
 };
 
 const getters = {
@@ -20,9 +19,6 @@ const getters = {
   },
   getStakedBalance(state: DashboardState) {
     return state.stakedBalance;
-  },
-  getUsdcBalance(state: DashboardState) {
-    return state.usdcBalance;
   },
 };
 
