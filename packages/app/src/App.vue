@@ -9,6 +9,12 @@
 <script setup lang="ts">
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
+import { useStore } from "@/store";
+
+const store = useStore();
+
+// create contract instances with provider
+store.dispatch("contracts/setContracts");
 </script>
 
 <style>

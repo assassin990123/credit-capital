@@ -1,5 +1,10 @@
 import { ethers } from "ethers";
-import { caplABI } from "@/abi";
+import {
+  caplABI,
+  rewardsABI,
+  vaultABI,
+  balancerVault as balancerVaultABI,
+} from "@/abi";
 import { contracts, tokens } from "@/constants";
 import { markRaw } from "vue";
 import { Commit } from "vuex";
@@ -12,8 +17,12 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   : "1";
 
 const state: ContractState = {
+  balancerVaultContract: null,
+  rewardsContract: null,
+  vaultContract: null,
   caplContract: null,
   caplBalance: 0,
+  usdcBalance: 0,
 };
 
 const getters = {
@@ -22,6 +31,15 @@ const getters = {
   },
   getCAPLBalance(state: ContractState) {
     return state.caplBalance;
+  },
+  getUSDCBalance(state: ContractState) {
+    return state.usdcBalance;
+  },
+  getRewardsContract(state: ContractState) {
+    return state.rewardsContract;
+  },
+  getBalancerVaultContract(state: ContractState) {
+    return state.balancerVaultContract;
   },
 };
 
@@ -33,7 +51,13 @@ const actions = {
     commit: Commit;
     rootState: RootState;
   }) {
-    const provider = rootState.accounts.web3Provider;
+    let providerOrSigner = rootState.accounts.web3Provider;
+
+    // if user connected pass the signer to the contract instance.
+    if (rootState.accounts.isConnected) {
+      providerOrSigner = providerOrSigner.getSigner();
+    }
+
     try {
       commit(
         "setCAPLContract",
@@ -41,7 +65,37 @@ const actions = {
           new ethers.Contract(
             findObjectContract("CAPL", tokens, ChainID),
             caplABI,
-            provider
+            providerOrSigner
+          )
+        )
+      );
+      commit(
+        "setVaultContract",
+        markRaw(
+          new ethers.Contract(
+            findObjectContract("rewardsVault", contracts, ChainID),
+            vaultABI,
+            providerOrSigner
+          )
+        )
+      );
+      commit(
+        "setRewardsContract",
+        markRaw(
+          new ethers.Contract(
+            findObjectContract("rewards", contracts, ChainID),
+            rewardsABI,
+            providerOrSigner
+          )
+        )
+      );
+      commit(
+        "setBalancerVaultContract",
+        markRaw(
+          new ethers.Contract(
+            findObjectContract("balancerVault", contracts, ChainID),
+            balancerVaultABI,
+            providerOrSigner
           )
         )
       );
@@ -76,8 +130,17 @@ const mutations = {
   setCAPLContract(state: ContractState, _contract: object) {
     state.caplContract = _contract;
   },
+  setVaultContract(state: ContractState, _contract: object) {
+    state.vaultContract = _contract;
+  },
+  setRewardsContract(state: ContractState, _contract: object) {
+    state.rewardsContract = _contract;
+  },
   setCAPLBalance(state: ContractState, _balance: number) {
     state.caplBalance = _balance;
+  },
+  setBalancerVaultContract(state: ContractState, _contract: object) {
+    state.balancerVaultContract = _contract;
   },
 };
 

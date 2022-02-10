@@ -21,8 +21,12 @@ export const calculateCAPLUSDPrice = (
   unit: string,
   poolTokens: any
 ) => {
-  const USDC = poolTokens.balances[0];
-  const CAPL = poolTokens.balances[1];
+  if (poolTokens == null || poolTokens.balances == undefined) {
+    return;
+  }
+
+  const CAPL = poolTokens.balances[0];
+  const USDC = poolTokens.balances[1];
 
   // convert usdc to capl
   if (unit == "CAPL") {

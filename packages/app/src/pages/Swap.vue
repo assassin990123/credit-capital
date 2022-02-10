@@ -69,7 +69,9 @@
                 <div class="panel-explanation">USDC</div>
               </div>
             </div>
-            <button type="submit" class="btn-custom">Add</button>
+            <button type="submit" @click="joinPool()" class="btn-custom">
+              Add
+            </button>
           </div>
         </div>
       </div>
@@ -80,29 +82,44 @@
 
 <script setup lang="ts">
 // import Footer from "@/components/Footer.vue";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 // import DappFooter from "@/components/DappFooter.vue";
 import { useStore } from "@/store";
-import { calculateCAPLUSDPrice } from "@/utils";
+import { calculateCAPLUSDPrice, format } from "@/utils";
+import { useToast } from "vue-toastification";
 
 const store = useStore();
+const toast = useToast();
 let swapToken = ref(0);
 let swapTokenResult = ref(0);
 
+const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 function swap() {
-  if (store.getters["accounts/isUserConnected"]) {
+  if (isConnected.value) {
     store.dispatch("balancer/batchSwap");
+  } else if (!isConnected.value) {
+    toast.info("Please connect your wallet!");
   }
 }
 
-function exchangeCAPLToUSDC() {
-  if (store.getters["accounts/isUserConnected"]) {
+function joinPool() {
+  if (isConnected.value) {
+    store.dispatch("balancer/joinPool");
+  }
+}
+
+async function exchangeCAPLToUSDC() {
+  if (isConnected.value) {
+    await store.dispatch("balancer/getPoolTokens");
+
     const exchangedBalance = calculateCAPLUSDPrice(
       swapToken.value,
       "USDC",
       store.getters["balancer/getPoolTokens"]
     );
-    swapTokenResult.value = exchangedBalance;
+    swapTokenResult.value = format(exchangedBalance);
+  } else if (!isConnected.value) {
+    toast.info("Please connect your wallet!");
   }
 }
 </script>
@@ -178,11 +195,8 @@ function exchangeCAPLToUSDC() {
 }
 
 @media only screen and (max-width: 575px) {
-  .panel-content.swap-panel-content  {
+  .panel-content.swap-panel-content {
     padding: 25px 30px 25px 30px;
   }
 }
-
-
-
 </style>
