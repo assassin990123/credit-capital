@@ -30,23 +30,29 @@
   import { format } from "@/utils";
   // @ts-ignore
   import { useStore } from "@/store";
+  // @ts-ignore
+  import { checkConnection, checkBalance } from "@/utils/notifications";
 
   const store = useStore();
   const formatedUserPosition = ref(0);
   const stakeAmount = ref(0);
   const unstakeAmount = ref(0);
 
-  const connected = computed(() => store.getters.getConnected);
+  const connected = computed(() => store.getters["accounts/isUserConnected"]);
 
   const stake = () => {
-    if (connected.value) {
+
+    if (checkConnection(store) && checkBalance(stakeAmount.value)) {
+      // enable stake button
       store.dispatch("rewards/stake", { amount: stakeAmount.value });
     }
   };
   const unstake = () => {
-    if (connected.value) {
+    // check connection
+    if (checkConnection(store) && checkBalance(unstakeAmount.value)) {
       store.dispatch("rewards/unstake", { amount: unstakeAmount.value })
     }
+    
   };
   const userPosition = computed(
     () => store.getters["rewards/getUserPosition"]
