@@ -1,6 +1,7 @@
 import { store } from "@/store";
 import { useToast } from "vue-toastification";
 import Balance from "./Balance.vue";
+import Connection from "./Connection.vue";
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
   : "1";
@@ -10,7 +11,7 @@ const toast = useToast();
 export const checkConnection = (store: any) => {
     if (!store.getters["accounts/isUserConnected"]) {
 
-        toast.warning("Please connect your wallet!");
+        toast.info(Connection);
         return false;
     }
 
