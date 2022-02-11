@@ -1,8 +1,8 @@
 import { useToast } from "vue-toastification";
-import Balance from "./Balance.vue";
-import Connection from "./Connection.vue";
-import ConnectionSuccess from "./ConnectionSuccess.vue";
-import ConnectionFaild from "./ConnectionFaild.vue";
+import Balance from "../../components/notifications/Balance.vue";
+import Connection from "../../components/notifications/Connection.vue";
+import ConnectionSuccess from "../../components/notifications/ConnectionSuccess.vue";
+import ConnectionFaild from "../../components/notifications/ConnectionFaild.vue";
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
   : "1";
