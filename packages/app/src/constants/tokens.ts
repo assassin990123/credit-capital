@@ -14,6 +14,13 @@ export const tokens = [
     },
   },
   {
+    symbol: "LP",
+    contracts: {
+      137: "",
+      42: "0x270c10cb22cf7dfcbb6435b9a0886bd05e5818e9",
+    },
+  },
+  {
     symbol: "USDC",
     contracts: {
       137: "",

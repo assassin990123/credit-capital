@@ -6,42 +6,43 @@ import { ethers } from "ethers";
 
 const state: TokenState = {
   capl: {
-    balancerVaultAllowance: 0,
-    rewardsAllowance: 0,
+    allowance: 0,
   },
   usdc: {
-    balancerVaultAllowance: 0,
-    rewardsAllowance: 0,
+    allowance: 0,
+  },
+  lp: {
+    allowance: 0,
   },
 };
 
 const getters = {
   getCAPLBalancerVaultAllowance(state: TokenState) {
-    return state.capl.balancerVaultAllowance;
+    return state.capl.allowance;
   },
   getUSDCBalancerVaultAllowance(state: TokenState) {
-    return state.usdc.balancerVaultAllowance;
+    return state.usdc.allowance;
   },
   getCAPLRewardsAllowance(state: TokenState) {
-    return state.capl.rewardsAllowance;
+    return state.capl.allowance;
   },
   getUSDCRewardsAllowance(state: TokenState) {
-    return state.usdc.rewardsAllowance;
+    return state.usdc.allowance;
   },
 };
 
 const mutations = {
   setCAPLBalancerVaultAllowance(state: TokenState, allowance: number) {
-    state.capl.balancerVaultAllowance = allowance;
+    state.capl.allowance = allowance;
   },
   setUSDCBalancerVaultAllowance(state: TokenState, allowance: number) {
-    state.usdc.balancerVaultAllowance = allowance;
+    state.usdc.allowance = allowance;
   },
   setCAPLRewardsAllowance(state: TokenState, allowance: number) {
-    state.capl.rewardsAllowance = allowance;
+    state.capl.allowance = allowance;
   },
-  setUSDCRewardsAllowance(state: TokenState, allowance: number) {
-    state.usdc.rewardsAllowance;
+  setLPRewardsAllowance(state: TokenState, allowance: number) {
+    state.lp.allowance;
   },
 };
 
@@ -79,10 +80,14 @@ const actions = {
 
     const caplContract = rootState.contracts.caplContract;
     const usdcContract = rootState.contracts.usdcContract;
+    const lpContract = rootState.contracts.lpContract;
 
     const balancerVaultAddress =
       // @ts-ignore
       rootState.contracts.balancerVaultContract.address;
+
+    // @ts-ignore
+    const rewardsAddress = rootState.contracts.rewardsContract.address;
 
     if (!caplContract || !usdcContract)
       store.dispatch("contracts/setContracts", { commit, rootState });
@@ -96,25 +101,31 @@ const actions = {
     try {
       // TODO: ERC20 TYPES
       // @ts-ignore
-      let caplAllowance = await caplContract!.allowance(
+      let caplBalancerVaultAllowance = await caplContract!.allowance(
         user,
         balancerVaultAddress
       );
-      caplAllowance = Number(
-        ethers.utils.formatEther(caplAllowance.toString())
+      caplBalancerVaultAllowance = Number(
+        ethers.utils.formatEther(caplBalancerVaultAllowance.toString())
       );
       // @ts-ignore
-      let usdcAllowance = await usdcContract!.allowance(
+      let usdcBalancerVaultAllowance = await usdcContract!.allowance(
         user,
         balancerVaultAddress
       );
-      usdcAllowance = Number(
-        ethers.utils.formatUnits(usdcAllowance.toString())
+      usdcBalancerVaultAllowance = Number(
+        ethers.utils.formatUnits(usdcBalancerVaultAllowance.toString(), 6)
+      );
+      // @ts-ignore
+      const lpRewardsAllowance = await lpContract!.allowance(
+        user,
+        rewardsAddress
       );
 
       // console.log(`CAPL allowance: ${caplAllowance}, USDC allowance: ${usdcAllowance}`)
-      commit("setCAPLBalancerVaultAllowance", caplAllowance);
-      commit("setUSDCBalancerVaultAllowance", usdcAllowance);
+      commit("setCAPLBalancerVaultAllowance", caplBalancerVaultAllowance);
+      commit("setUSDCBalancerVaultAllowance", usdcBalancerVaultAllowance);
+      commit("setLPRewardsAllowance", lpRewardsAllowance);
     } catch (e) {
       console.log(e);
     }

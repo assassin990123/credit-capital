@@ -5,12 +5,13 @@ import {
   vaultABI,
   balancerVault as balancerVaultABI,
 } from "@/abi";
-import { contracts, tokens } from "@/constants";
+import { contracts, pools, tokens } from "@/constants";
 import { markRaw } from "vue";
 import { Commit } from "vuex";
 import { findObjectContract } from "@/utils";
 import { ContractState } from "@/models/contracts";
 import { RootState } from "@/models";
+import { lpABI } from "@/abi/lp";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
@@ -22,6 +23,7 @@ const state: ContractState = {
   vaultContract: null,
   caplContract: null,
   usdcContract: null,
+  lpContract: null,
   caplBalance: 0,
   usdcBalance: 0,
 };
@@ -113,6 +115,16 @@ const actions = {
           )
         )
       );
+      commit(
+        "setCAPLUSDCTokenContract",
+        markRaw(
+          new ethers.Contract(
+            findObjectContract("LP", tokens, ChainID),
+            lpABI,
+            providerOrSigner
+          )
+        )
+      );
     } catch (e) {
       console.log(e);
     }
@@ -158,6 +170,9 @@ const mutations = {
   },
   setUSDCContract(state: ContractState, _contract: object) {
     state.usdcContract = _contract;
+  },
+  setCAPLUSDCTokenContract(state: ContractState, _contract: object) {
+    state.lpContract = _contract;
   },
 };
 

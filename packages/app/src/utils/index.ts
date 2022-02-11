@@ -59,7 +59,7 @@ export interface Pool {
 
 export const findObjectContract = (
   flag: string,
-  obj: Array<Constant>,
+  obj: Array<Constant | Pool>,
   chain: string
 ) => {
   const c = obj.find((o) => o.symbol == flag);

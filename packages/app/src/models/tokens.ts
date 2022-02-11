@@ -1,9 +1,9 @@
 interface tokenInfo {
-  balancerVaultAllowance: number;
-  rewardsAllowance: number;
+  allowance: number;
 }
 
 export interface TokenState {
   capl: tokenInfo;
   usdc: tokenInfo;
+  lp: tokenInfo;
 }

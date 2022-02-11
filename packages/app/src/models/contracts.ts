@@ -4,6 +4,7 @@ export interface ContractState {
   vaultContract: object | null;
   caplContract: object | null;
   usdcContract: object | null;
+  lpContract: object | null;
   caplBalance: number;
   usdcBalance: number;
 }
