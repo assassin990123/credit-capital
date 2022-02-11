@@ -72,3 +72,27 @@ export const findObjectId = (flag: string, obj: Array<Pool>, chain: string) => {
   // @ts-ignore
   return c?.id[chain];
 };
+
+export const shortenAddress = (address: string, chars = 3): string => {
+  return `${address.slice(0, chars)}...${address.slice(-chars)}`;
+};
+
+export const checkAllowance = (
+  state: any,
+  symbol: string,
+  amount: number,
+  flag: string
+): boolean => {
+  let allowance;
+
+  if (flag == "balancer") {
+    symbol == "CAPL"
+      ? (allowance = state.getters["tokens/getCAPLBalancerVaultAllowance"])
+      : (allowance = state.getters["tokens/getUSDCBalancerVaultAllowance"]);
+  } else {
+    // will need to check approval for deposit tokens in rewards
+    // assume flag is 'rewards'
+  }
+
+  return allowance >= amount;
+};

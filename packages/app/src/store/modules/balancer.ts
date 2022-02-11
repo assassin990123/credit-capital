@@ -1,10 +1,9 @@
 import { ethers } from "ethers";
 import { Commit, Dispatch } from "vuex";
-import { contracts, pools, tokens } from "@/constants";
+import { pools, tokens } from "@/constants";
 import { findObjectContract, findObjectId, Pool, Constant } from "@/utils";
 import { BalancerState } from "@/models/balancer";
 import { RootState } from "@/models";
-import { markRaw } from "vue";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
@@ -41,7 +40,7 @@ const actions = {
     dispatch: Dispatch;
   }) {
     // get poolID
-    const poolID = findObjectId("BAL/WETH", pools as Pool[], ChainID);
+    const poolID = findObjectId("CAPL/USDC", pools as Pool[], ChainID);
 
     if (rootState.contracts.balancerVaultContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -52,11 +51,15 @@ const actions = {
     // call getPoolTokens
     // @ts-ignore
     const poolTokens = await balancerVaultContract.getPoolTokens(poolID);
+    // calculate token amount based on received values...
+    const usdcBalance = poolTokens.balances[0];
+    const caplBalance = poolTokens.balances[1];
 
-    // parse balance
-    const balances = poolTokens.balances.map((obj: any) =>
-      ethers.utils.formatUnits(obj, 18)
-    );
+    const balances = [
+      ethers.utils.formatUnits(usdcBalance, 6),
+      ethers.utils.formatEther(caplBalance),
+    ];
+
     // call setPoolTokens in mutations.
     commit("setPoolTokens", {
       tokens: poolTokens.tokens,
@@ -73,26 +76,19 @@ const actions = {
     rootState: RootState;
     dispatch: Dispatch;
   }) {
-    const pool_WETH_USDC = findObjectId("WETH/USDC", pools as Pool[], ChainID);
-    const pool_BAL_WETH = findObjectId("BAL/WETH", pools as Pool[], ChainID);
+    const pool_CAPL_USDC = findObjectId("CAPL/USDC", pools as Pool[], ChainID);
 
-    const token_BAL = findObjectContract("BAL", tokens, ChainID);
+    const token_CAPL = findObjectContract("CAPL", tokens, ChainID);
     const token_USDC = findObjectContract("USDC", tokens, ChainID);
-    const token_WETH = findObjectContract("WETH", tokens, ChainID);
 
     const tokenData: any = {};
-    tokenData[token_BAL] = {
-      symbol: "BAL",
-      decimals: "18",
-      limit: "0",
-    };
     tokenData[token_USDC] = {
       symbol: "USDC",
       decimals: "6",
       limit: 100,
     };
-    tokenData[token_WETH] = {
-      symbol: "WETH",
+    tokenData[token_CAPL] = {
+      symbol: "CAPL",
       decimals: "18",
       limit: 0,
     };
@@ -127,20 +123,20 @@ const actions = {
     const swapKind = 0;
     const swapSteps = [
       {
-        poolId: pool_WETH_USDC,
-        assetInIndex: tokenIndices[token_USDC],
-        assetOutIndex: tokenIndices[token_WETH],
+        poolId: pool_CAPL_USDC,
+        assetInIndex: tokenIndices[token_CAPL],
+        assetOutIndex: tokenIndices[token_USDC],
         amount: ethers.BigNumber.from(
           (100 * Math.pow(10, tokenData[token_USDC]["decimals"])).toString()
         ),
         userData: "0x",
       },
       {
-        poolId: pool_BAL_WETH,
-        assetInIndex: tokenIndices[token_WETH],
-        assetOutIndex: tokenIndices[token_BAL],
+        poolId: pool_CAPL_USDC,
+        assetInIndex: tokenIndices[token_CAPL],
+        assetOutIndex: tokenIndices[token_USDC],
         amount: ethers.BigNumber.from(
-          (0 * Math.pow(10, tokenData[token_USDC]["decimals"])).toString()
+          (0 * Math.pow(10, tokenData[token_CAPL]["decimals"])).toString()
         ),
         userData: "0x",
       },

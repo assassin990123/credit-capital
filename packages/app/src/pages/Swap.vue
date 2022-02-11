@@ -16,16 +16,16 @@
                   <input
                     type="text"
                     @input="exchangeCAPLToUSDC()"
-                    v-model="swapToken"
+                    v-model="swapAmount"
                   />
                 </div>
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span> 000</div>
-                <div class="panel-explanation">CAPL</div>
+                <div class="panel-explanation">{{ swapTokenSymbol }}</div>
               </div>
             </div>
-            <button class="btn-switch">&#8635;</button>
+            <button class="btn-switch" @click="switchTokens">&#8635;</button>
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>receive</span></div>
@@ -33,10 +33,10 @@
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span> 000</div>
-                <div class="panel-explanation">USDC</div>
+                <div class="panel-explanation">{{ swapToTokenSymbol }}</div>
               </div>
             </div>
-            <button type="button" @click="swap()" class="btn-custom">
+            <button type="button" @click="handleSwap()" class="btn-custom">
               {{ swapButtonString }}
             </button>
           </div>
@@ -82,44 +82,50 @@
 
 <script setup lang="ts">
 // import Footer from "@/components/Footer.vue";
-import { ref, computed } from "vue";
+import { ref, computed, Ref, watchEffect } from "vue";
 // import DappFooter from "@/components/DappFooter.vue";
 import { useStore } from "@/store";
-import { calculateCAPLUSDPrice, format } from "@/utils";
+import { calculateCAPLUSDPrice, checkAllowance, format } from "@/utils";
 import { useToast } from "vue-toastification";
 
-const store = useStore();
+const store: any = useStore();
 const toast = useToast();
-let swapToken = ref(0);
+let swapAmount = ref(0);
+let swapTokenSymbol: Ref<string> = ref("CAPL");
+let swapToTokenSymbol: Ref<string> = ref("USDC");
+
 let swapTokenResult = ref(0);
-let swapButtonString = ref("Enter");
+let swapButtonString = ref("Swap");
 
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
+
+watchEffect(async () => {
+  (await checkAllowance(
+    store,
+    swapTokenSymbol.value,
+    Number(swapAmount.value),
+    "balancer"
+  ))
+    ? (swapButtonString.value = "Swap")
+    : (swapButtonString.value = "Approve");
+});
+
+const handleSwap = async () => {
+  if (!isConnected.value) return;
+  swapButtonString.value == "Swap" ? await swap() : await approve();
+};
+
+const approve = async () => {
+  const symbol = swapTokenSymbol.value;
+  await store.dispatch("tokens/approveBalancerVault", {
+    symbol,
+    amount: swapAmount.value,
+  });
+};
+
 async function swap() {
   if (isConnected.value) {
-    const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
-    const contract = computed(() => store.getters["contracts/getBalancerVaultContract"]);
-
-    if (swapButtonString.value === 'Approve') {
-      await store.dispatch("tokens/approve", {
-        contract: contract.value,
-        amount: parseFloat(swapToken.value),
-        address: wallet.value,
-      });
-      swapButtonString.value = "Enter";
-    } else {
-      const allowance = await store.dispatch("tokens/checkAllowance", {
-        contract: contract.value,
-        amount: parseFloat(swapToken.value),
-        address: wallet.value,
-      });
-
-      if (allowance) {
-        store.dispatch("balancer/batchSwap");
-      } else {
-        swapButtonString.value = "Approve";
-      }
-    }
+    await store.dispatch("balancer/batchSwap");
   } else if (!isConnected.value) {
     toast.info("Please connect your wallet!");
   }
@@ -131,14 +137,23 @@ function joinPool() {
   }
 }
 
+const switchTokens = () => {
+  if (swapTokenSymbol.value == "CAPL") {
+    swapTokenSymbol.value = "USDC";
+    swapToTokenSymbol.value = "CAPL";
+  } else {
+    swapTokenSymbol.value = "CAPL";
+    swapToTokenSymbol.value = "USDC";
+  }
+};
+
 async function exchangeCAPLToUSDC() {
-  swapButtonString.value = "Enter";
   if (isConnected.value) {
     await store.dispatch("balancer/getPoolTokens");
 
     const exchangedBalance = calculateCAPLUSDPrice(
-      swapToken.value,
-      "USDC",
+      swapAmount.value,
+      swapTokenSymbol.value,
       store.getters["balancer/getPoolTokens"]
     );
     swapTokenResult.value = format(exchangedBalance);
@@ -188,9 +203,6 @@ async function exchangeCAPLToUSDC() {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-
-.panel-explanation {
 }
 
 .panel-display {

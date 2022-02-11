@@ -21,6 +21,7 @@ const state: ContractState = {
   rewardsContract: null,
   vaultContract: null,
   caplContract: null,
+  usdcContract: null,
   caplBalance: 0,
   usdcBalance: 0,
 };
@@ -51,12 +52,15 @@ const actions = {
     commit: Commit;
     rootState: RootState;
   }) {
-    let providerOrSigner = rootState.accounts.web3Provider;
-
     // if user connected pass the signer to the contract instance.
-    if (rootState.accounts.isConnected) {
-      providerOrSigner = providerOrSigner.getSigner();
-    }
+    let providerOrSigner;
+    const signer = rootState.accounts.signer;
+
+    signer
+      ? (providerOrSigner = signer)
+      : (providerOrSigner = new ethers.providers.Web3Provider(
+          window.ethereum as any
+        ));
 
     try {
       commit(
@@ -64,6 +68,16 @@ const actions = {
         markRaw(
           new ethers.Contract(
             findObjectContract("CAPL", tokens, ChainID),
+            caplABI,
+            providerOrSigner
+          )
+        )
+      );
+      commit(
+        "setUSDCContract",
+        markRaw(
+          new ethers.Contract(
+            findObjectContract("USDC", tokens, ChainID),
             caplABI,
             providerOrSigner
           )
@@ -141,6 +155,9 @@ const mutations = {
   },
   setBalancerVaultContract(state: ContractState, _contract: object) {
     state.balancerVaultContract = _contract;
+  },
+  setUSDCContract(state: ContractState, _contract: object) {
+    state.usdcContract = _contract;
   },
 };
 
