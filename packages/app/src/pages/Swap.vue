@@ -85,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, Ref, watchEffect } from "vue";
+import { ref, Ref, watchEffect } from "vue";
 import { useStore } from "@/store";
 import {
   calculateCAPLUSDPrice,
@@ -93,11 +93,9 @@ import {
   checkAllowance,
   format,
 } from "@/utils";
-import { useToast } from "vue-toastification";
 import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store: any = useStore();
-const toast = useToast();
 let swapAmount = ref(0);
 let swapTokenSymbol: Ref<string> = ref("CAPL");
 let swapToTokenSymbol: Ref<string> = ref("USDC");
@@ -111,7 +109,6 @@ let caplLiquidity: Ref<number> = ref(0);
 let addLiquidityButtonString: Ref<string> = ref("Add Liquidity");
 let approvalFlag: Ref<string | null> = ref(null);
 
-const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 
 // this loops checks the store values for the token allowances and dynamically changes button text based on that info
 watchEffect(async () => {
@@ -210,7 +207,7 @@ const switchTokens = () => {
 // conversion rates for swaps
 // TODO: conversion rates for liquidity
 async function exchangeCAPLToUSDC() {
-  if (checkConnection(store) && checkBalance(swapToken.value)) {
+  if (checkConnection(store) && checkBalance(swapAmount.value)) {
     await store.dispatch("balancer/getPoolTokens");
 
     const exchangedBalance = calculateCAPLUSDPrice(
