@@ -257,9 +257,7 @@ contract Rewards is Pausable, AccessControl {
             user.rewardDebt;
     }
 
-    function claim(address _token, address _user)
-        external
-    {
+    function claim(address _token, address _user) external {
         IPool.Pool memory pool = updatePool(_token);
         IUserPositions.UserPosition memory user = vault.getUserPosition(
             _token,

@@ -5,12 +5,13 @@ import {
   vaultABI,
   balancerVault as balancerVaultABI,
 } from "@/abi";
-import { contracts, tokens } from "@/constants";
+import { contracts, pools, tokens } from "@/constants";
 import { markRaw } from "vue";
 import { Commit } from "vuex";
 import { findObjectContract } from "@/utils";
 import { ContractState } from "@/models/contracts";
 import { RootState } from "@/models";
+import { lpABI } from "@/abi/lp";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
@@ -21,6 +22,8 @@ const state: ContractState = {
   rewardsContract: null,
   vaultContract: null,
   caplContract: null,
+  usdcContract: null,
+  lpContract: null,
   caplBalance: 0,
   usdcBalance: 0,
 };
@@ -51,12 +54,15 @@ const actions = {
     commit: Commit;
     rootState: RootState;
   }) {
-    let providerOrSigner = rootState.accounts.web3Provider;
-
     // if user connected pass the signer to the contract instance.
-    if (rootState.accounts.isConnected) {
-      providerOrSigner = providerOrSigner.getSigner();
-    }
+    let providerOrSigner;
+    const signer = rootState.accounts.signer;
+
+    signer
+      ? (providerOrSigner = signer)
+      : (providerOrSigner = new ethers.providers.Web3Provider(
+          window.ethereum as any
+        ));
 
     try {
       commit(
@@ -64,6 +70,16 @@ const actions = {
         markRaw(
           new ethers.Contract(
             findObjectContract("CAPL", tokens, ChainID),
+            caplABI,
+            providerOrSigner
+          )
+        )
+      );
+      commit(
+        "setUSDCContract",
+        markRaw(
+          new ethers.Contract(
+            findObjectContract("USDC", tokens, ChainID),
             caplABI,
             providerOrSigner
           )
@@ -95,6 +111,16 @@ const actions = {
           new ethers.Contract(
             findObjectContract("balancerVault", contracts, ChainID),
             balancerVaultABI,
+            providerOrSigner
+          )
+        )
+      );
+      commit(
+        "setCAPLUSDCTokenContract",
+        markRaw(
+          new ethers.Contract(
+            findObjectContract("LP", tokens, ChainID),
+            lpABI,
             providerOrSigner
           )
         )
@@ -141,6 +167,12 @@ const mutations = {
   },
   setBalancerVaultContract(state: ContractState, _contract: object) {
     state.balancerVaultContract = _contract;
+  },
+  setUSDCContract(state: ContractState, _contract: object) {
+    state.usdcContract = _contract;
+  },
+  setCAPLUSDCTokenContract(state: ContractState, _contract: object) {
+    state.lpContract = _contract;
   },
 };
 

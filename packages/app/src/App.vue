@@ -10,11 +10,23 @@
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import { useStore } from "@/store";
+import { computed, watchEffect } from "vue";
 
 const store = useStore();
-
 // create contract instances with provider
 store.dispatch("contracts/setContracts");
+const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
+
+// watch for user connection
+watchEffect(async () => {
+  if (isConnected.value) {
+    setInterval(w3Lopp, 2000);
+  }
+});
+
+const w3Lopp = () => {
+  store.dispatch("tokens/getAllowances");
+};
 </script>
 
 <style>

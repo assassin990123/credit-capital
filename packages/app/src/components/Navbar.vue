@@ -84,6 +84,7 @@
 import { computed } from "vue";
 import { useStore } from "@/store";
 import { ref, watchEffect } from "vue";
+import { shortenAddress } from "@/utils";
 
 export default {
   setup() {
@@ -101,10 +102,6 @@ export default {
         ? (buttonString.value = shortenAddress(wallet.value))
         : (buttonString.value = "Connect Wallet");
     });
-
-    const shortenAddress = (address: string, chars = 3): string => {
-      return `${address.slice(0, chars)}...${address.slice(-chars)}`;
-    };
 
     function showMoons() {
       store.commit("showMoons", true);

@@ -9,11 +9,12 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
   : "1";
 
-const state = {
+  const state: AccountState = {
   activeAccount: null,
   chainId: null,
   web3Provider: null,
   isConnected: false,
+  signer: null,
 };
 
 const getters = {
@@ -42,7 +43,9 @@ const actions = {
   }) {
     if (state.isConnected == true) return;
 
-    const provider: any = await detectEthereumProvider();
+    let provider: any = await detectEthereumProvider();
+
+    provider = new ethers.providers.Web3Provider(provider);
 
     if (provider) {
       const accounts = await (window as any).ethereum.request({
@@ -51,16 +54,16 @@ const actions = {
       await actions.checkNetwork();
       commit("setIsConnected", true);
       commit("setActiveAccount", accounts[0]);
-      commit(
-        "setWeb3Provider",
-        markRaw(new ethers.providers.Web3Provider(provider, "any"))
-      );
+      commit("setWeb3Provider", markRaw(provider));
+      const signer = provider.getSigner(state.activeAccount);
+      commit("setWeb3Signer", markRaw(signer));
       // listen in
       await actions.ethereumListener({ commit });
     }
 
     dispatch("contracts/setContracts", null, { root: true });
-    // dispatch("balancer/getPoolTokens", null, { root: true });
+    dispatch("balancer/getPoolTokens", null, { root: true });
+    dispatch("tokens/getAllowances", null, { root: true });
   },
 
   async ethereumListener({ commit }: { commit: Function }) {
@@ -127,6 +130,9 @@ const mutations = {
   },
   setWeb3Provider(state: AccountState, provider: any) {
     state.web3Provider = provider;
+  },
+  setWeb3Signer(state: AccountState, signer: any) {
+    state.signer = signer;
   },
 };
 
