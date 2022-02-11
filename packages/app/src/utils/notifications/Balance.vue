@@ -7,7 +7,7 @@
             <span></span>
         </div>
         <div>
-            <div class="toastnotification-content">Balance invalid!</div>
+            <div class="toastnotification-content">Not Enough!</div>
         </div>
     </div>
 </template>
