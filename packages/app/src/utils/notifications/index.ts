@@ -1,5 +1,6 @@
 import { store } from "@/store";
 import { useToast } from "vue-toastification";
+import Balance from "./Balance.vue";
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
   : "1";
@@ -15,10 +16,9 @@ export const checkConnection = (store: any) => {
 
     return true;
 }
-
 export const checkBalance = (balance: number) => {
     if (balance <= 0) {
-        toast.warning("invalid balance!");
+        toast.info(Balance);
         return false;
     }
 
