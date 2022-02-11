@@ -158,13 +158,6 @@ contract Rewards is Pausable, AccessControl {
         _setupRole(MINTER_ROLE, msg.sender);
     }
 
-    function setRole(string memory _role, address _user)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        grantRole(keccak256(bytes(_role)), _user);
-    }
-
     function deposit(address _token, uint256 _amount) external {
         require(vault.checkIfPoolExists(_token), "Pool does not exist");
         require(_amount > 0, "Deposit mount should not be 0");
