@@ -39,7 +39,7 @@
 <script setup lang="ts">
 // @ts-ignore
 import DappFooter from "@/components/DappFooter.vue";
-import { watchEffect, ref, Ref } from "vue";
+import { watchEffect, ref, Ref, computed } from "vue";
 // @ts-ignore
 import { checkAllowance } from "@/utils";
 // @ts-ignore
@@ -49,8 +49,8 @@ import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store = useStore();
 const stakeAmount = ref(0);
-const unstakeAmount = ref(0);
 const stakeButtonText: Ref<string> = ref("Stake");
+const unstakeAmount = computed(() => store.getters["rewards/getUserUnlockedAmount"]);
 
 // this function checks the allowance a user has alloted our rewards contract via the LP token
 watchEffect(async () => {
@@ -62,6 +62,7 @@ watchEffect(async () => {
   ))
     ? (stakeButtonText.value = "Stake")
     : (stakeButtonText.value = "Approve");
+
 });
 
 const handleStake = async () => {
