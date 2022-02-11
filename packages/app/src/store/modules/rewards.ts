@@ -13,6 +13,7 @@ const state: RewardsState = {
   pendingRewards: 0,
   userPosition: 0,
   userStakedPosition: 0,
+  userUnlockedAmount: 0,
 };
 
 const getters = {
@@ -25,6 +26,9 @@ const getters = {
   getUserStakedPosition(state: RewardsState) {
     return state.userStakedPosition;
   },
+  getUserUnlockedAmount(state: RewardsState) {
+    return state.userUnlockedAmount;
+  }
 };
 
 const actions = {
@@ -142,20 +146,49 @@ const actions = {
     );
   },
 
+  async getUserUnlockedAmount(
+    { rootState, dispatch }: { rootState: RootState; dispatch: Dispatch }
+  ) {
+    // if state.vaultContract is null, call the `setContracts` function
+    if (rootState.contracts.vaultContract === null) {
+      dispatch("contracts/setContracts", null, { root: true });
+    }
+
+    const vaultContract = rootState.contracts.vaultContract;
+    // @ts-ignore
+    const lpContractAddress = rootState.contracts.lpContract.address;
+    // @ts-ignore
+    const activeAccount = rootState.accounts.activeAccount.address;
+
+    // deposit lptoken
+    if (vaultContract) {
+      try {
+        // @ts-ignore
+        await vaultContract?.getUnlockedAmount(
+          lpContractAddress,
+          activeAccount
+        );
+
+      } catch (error) {
+        console.log(error);
+      } 
+    }
+  },
+
   async stake(
     { rootState, dispatch }: { rootState: RootState; dispatch: Dispatch },
-    amount: number
+    { amount }: { amount: number }
   ) {
-    console.log(amount);
     // if state.rewardsContract is null, call the `setContracts` function
     if (rootState.contracts.rewardsContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
     }
 
     const rewardsContract = rootState.contracts.rewardsContract;
-    const lpContractAddress = rootState.contracts.lpContract;
+    // @ts-ignore
+    const lpContractAddress = rootState.contracts.lpContract.address;
 
-    // claim rewards
+    // deposit lptoken
     if (rewardsContract && amount > 0) {
       try {
         // @ts-ignore
@@ -164,8 +197,6 @@ const actions = {
           ethers.utils.parseUnits(amount.toString(), 18)
         );
 
-        // @ts-ignore
-        console.log(await rewardsContract?.getUserStakedPosition(lpContractAddress, rootState.accounts.activeAccount));
       } catch (error) {
         console.log(error);
       } 
@@ -174,7 +205,7 @@ const actions = {
 
   async unstake(
     { rootState, dispatch }: { rootState: RootState; dispatch: Dispatch },
-    amount: number
+    { amount }: { amount: number }
   ) {
     // if state.rewardsContract is null, call the `setContracts` function
     if (rootState.contracts.rewardsContract === null) {
@@ -182,7 +213,8 @@ const actions = {
     }
 
     const rewardsContract = rootState.contracts.rewardsContract;
-    const lpContractAddress = rootState.contracts.lpContract;
+    // @ts-ignore
+    const lpContractAddress = rootState.contracts.lpContract.address;
 
     // claim rewards
     if (rewardsContract && amount > 0) {
