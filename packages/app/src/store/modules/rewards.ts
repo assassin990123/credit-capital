@@ -153,15 +153,22 @@ const actions = {
     }
 
     const rewardsContract = rootState.contracts.rewardsContract;
+    const lpContractAddress = rootState.contracts.lpContract;
+
     // claim rewards
-    try {
-      // @ts-ignore
-      await rewardsContract?.deposit(
-        findObjectContract("USDC", tokens, ChainID),
-        amount
-      );
-    } catch (error) {
-      console.log(error);
+    if (rewardsContract && amount > 0) {
+      try {
+        // @ts-ignore
+        await rewardsContract?.deposit(
+          lpContractAddress,
+          ethers.utils.parseUnits(amount.toString(), 18)
+        );
+
+        // @ts-ignore
+        console.log(await rewardsContract?.getUserStakedPosition(lpContractAddress, rootState.accounts.activeAccount));
+      } catch (error) {
+        console.log(error);
+      } 
     }
   },
 
@@ -175,15 +182,19 @@ const actions = {
     }
 
     const rewardsContract = rootState.contracts.rewardsContract;
+    const lpContractAddress = rootState.contracts.lpContract;
+
     // claim rewards
-    try {
-      // @ts-ignore
-      await rewardsContract?.withdraw(
-        findObjectContract("USDC", tokens, ChainID),
-        amount
-      );
-    } catch (error) {
-      console.log(error);
+    if (rewardsContract && amount > 0) {
+      try {
+        // @ts-ignore
+        await rewardsContract?.withdraw(
+          lpContractAddress,
+          ethers.utils.parseUnits(amount.toString(), 18)
+        );
+      } catch (error) {
+        console.log(error);
+      } 
     }
   },
 };
