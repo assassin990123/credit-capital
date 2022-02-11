@@ -16,12 +16,12 @@
                   <input
                     type="text"
                     @input="exchangeCAPLToUSDC()"
-                    v-model="swapAmount"
+                    v-model="swapToken"
+                    class="input-custom"
                   />
                 </div>
               </div>
               <div class="text-right">
-                <div class="panel-explanation"><span>balance:</span> 000</div>
                 <div class="panel-explanation">{{ swapTokenSymbol }}</div>
               </div>
             </div>
@@ -51,14 +51,20 @@
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>amount</span></div>
-                <div class="panel-explanation">000</div>
+                <div class="panel-explanation"> <input
+                    type="text"
+                    @input="liquidity()"
+                    v-model="liquidityToken"
+                    class="input-custom"
+
+                  /></div>
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span></div>
                 <div class="panel-explanation">CAPL</div>
               </div>
             </div>
-            <button class="btn-switch">&#8635;</button>
+            <button class="btn-switch" @click="resetInput2()">&#8635;</button>
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>amount</span></div>
@@ -223,6 +229,16 @@ async function exchangeCAPLToUSDC() {
     toast.info("Please connect your wallet!");
   }
 }
+function liquidity() {
+  if (store.getters["accounts/isUserConnected"]) {
+    const exchangedBalance = calculateCAPLUSDPrice(
+      liquidityToken.value,
+      "USDC",
+      store.getters["balancer/getPoolTokens"]
+    );
+    liquidityTokenResult.value = exchangedBalance;
+  }
+}
 </script>
 
 <style>
@@ -285,6 +301,20 @@ async function exchangeCAPLToUSDC() {
 .text-right {
   text-align: right;
 }
+.input-custom {
+    display: inline-block;
+    padding: 0px;
+    margin-top: 10px;
+    border-radius: 20px;
+    background: transparent;
+    border: 1px solid #ff8900;
+    text-align: center;
+    font-weight: bold;
+    color: #2f2c23;
+    font-size: 22px;
+    max-width: 150px;
+    margin: 0 auto 35px auto;}
+
 
 @media only screen and (max-width: 575px) {
   .panel-container {

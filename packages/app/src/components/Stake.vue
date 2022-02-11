@@ -1,83 +1,217 @@
 <template>
-  <div class="card">
-    <div class="card-top">
-      <div>Token Balance</div>
-      <div id="-balance" class="number-styles">{{ formattedBalance }}</div>
-      <div>pending rewards</div>
-      <div class="number-styles">{{ formattedRewards }}</div>
+  <div class="home stack-page">
+    <div class="swap-container">
+      <div class="panel-container inner-container">
+        <div class="panel stake-panel">
+          <h1 class="panel-title">swap</h1>
+          <div class="panel-content swap-panel-content">
+            <div class="panel-header">
+              <div class="panel-explanation">functionality explanation</div>
+              <div class="ellipses">&hellip;</div>
+            </div>
+            <div class="panel-display swap-panel-display">
+              <div>
+                <div class="panel-explanation"><span>send</span></div>
+                <div class="panel-explanation">
+                  <input
+                    type="text"
+                    @input="exchangeCAPLToUSDC()"
+                    v-model="swapToken"
+                    class="input-custom"
+
+                  />
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="panel-explanation"><span>balance:</span> 000</div>
+                <div class="panel-explanation">CAPL</div>
+              </div>
+            </div>
+            <button @click="resetInput()" class="btn-switch">&#8635;</button>
+            <div class="panel-display swap-panel-display">
+              <div>
+                <div class="panel-explanation"><span>receive</span></div>
+                <div class="panel-explanation">{{ swapTokenResult }}</div>
+              </div>
+              <div class="text-right">
+                <div class="panel-explanation"><span>balance:</span> 000</div>
+                <div class="panel-explanation">USDC</div>
+              </div>
+            </div>
+            <button type="button" @click="swap()"  class="btn-custom">
+              Enter
+            </button>
+          </div>
+        </div>
+        <div class="panel stake-panel">
+          <h1 class="panel-title">liquidity</h1>
+          <div class="panel-content swap-panel-content">
+            <div class="panel-header">
+              <div class="panel-explanation">functionality explanation</div>
+              <div class="ellipses">&hellip;</div>
+            </div>
+            <div class="panel-display swap-panel-display">
+              <div>
+                <div class="panel-explanation"><span>amount</span></div>
+                <div class="panel-explanation"> <input
+                    type="text"
+                    @input="liquidity()"
+                    v-model="liquidityToken"
+                    class="input-custom"
+
+                  /></div>
+              </div>
+              <div class="text-right">
+                <div class="panel-explanation"><span>balance:</span></div>
+                <div class="panel-explanation">CAPL</div>
+              </div>
+            </div>
+            <button class="btn-switch" @click="resetInput2()">&#8635;</button>
+            <div class="panel-display swap-panel-display">
+              <div>
+                <div class="panel-explanation"><span>amount</span></div>
+                <div class="panel-explanation">000</div>
+              </div>
+              <div class="text-right">
+                <div class="panel-explanation"><span>balance:</span> 000</div>
+                <div class="panel-explanation">USDC</div>
+              </div>
+            </div>
+            <button type="submit" class="btn-custom">Add</button>
+          </div>
+        </div>
+      </div>
+      <DappFooter />
     </div>
-    <button class="connectButton">Claim</button>
   </div>
 </template>
 
 <script setup lang="ts">
+// import Footer from "@/components/Footer.vue";
+import { ref } from "vue";
+// import DappFooter from "@/components/DappFooter.vue";
 import { useStore } from "@/store";
-import { format } from "@/utils";
-import { computed, ref, watchEffect } from "vue";
+import { calculateCAPLUSDPrice } from "@/utils";
 
 const store = useStore();
+let swapToken = ref("");
+let swapTokenResult = ref("");
+let liquidityToken = ref("");
+let liquidityTokenResult = ref("");
 
-const formattedBalance = ref(0);
-const formattedRewards = ref(0);
+function resetInput() {
+  this.swapToken = "";
+ 
+      //this.email = "";
 
-let balance = computed(() => store.getters.getBalance);
-let pendingRewards = computed(() => store.getters.getPendingRewards);
+}
+function resetInput2(){
+   this.liquidityToken = "";
+}
 
-watchEffect(() => {
-  if (balance.value > 0) {
-    formattedBalance.value = format(balance.value);
+function swap() {
+  if (store.getters["accounts/isUserConnected"]) {
+    store.dispatch("balancer/batchSwap");
   }
-  if (pendingRewards.value > 0) {
-    formattedRewards.value = format(pendingRewards.value);
+}
+
+function exchangeCAPLToUSDC() {
+  if (store.getters["accounts/isUserConnected"]) {
+    const exchangedBalance = calculateCAPLUSDPrice(
+      swapToken.value,
+      "USDC",
+      store.getters["balancer/getPoolTokens"]
+    );
+    swapTokenResult.value = exchangedBalance;
   }
-});
+}
+function liquidity() {
+  if (store.getters["accounts/isUserConnected"]) {
+    const exchangedBalance = calculateCAPLUSDPrice(
+      liquidityToken.value,
+      "USDC",
+      store.getters["balancer/getPoolTokens"]
+    );
+    liquidityTokenResult.value = exchangedBalance;
+  }
+}
 </script>
 
 <style>
-.card {
-  height: 65%;
-  width: 80%;
-  backdrop-filter: blur(0px) saturate(180%);
-  -webkit-backdrop-filter: blur(0px) saturate(180%);
-  background-color: rgba(17, 25, 40, 0.85);
-  border-radius: 12px;
-  border: 2px solid rgba(255, 255, 255, 0.125);
+.swap-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+
+.inner-container {
+  margin-top: 90px;
+}
+
+.panel-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.panel {
+  flex: 1;
+  margin: 0 8%;
+}
+
+.panel-title {
+  text-align: center;
+}
+
+.panel-content {
+  border: 1px solid #000000;
+  padding: 10px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  align-items: center;
-  min-width: 300px;
 }
-.card-top {
-  width: 100%;
-  height: 75%;
+
+.panel-header {
   display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  position: relative;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
-.card {
-  color: #e0e1e4;
-  font-size: 1.5em;
-  font-family: "Kanit", sans-serif;
-  font-family: "Orbitron", sans-serif;
+.panel-explanation {
 }
 
-.number-styles {
-  color: #6441a5;
-  min-width: 45px;
-  min-height: 45px;
-  font-size: 1.5em;
-  filter: drop-shadow(0 0 0.15rem #b2a2ed);
+.panel-display {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px 15px;
+  margin: 20px 0;
+  border: 1px solid #000000;
 }
 
-/** MEDIA QUERIES */
-@media screen and (min-width: 1000px) {
-  .card {
-    height: 50%;
-    width: 20%;
-  }
+.btn-switch {
+  width: 50px;
+  height: 40px;
+  margin: auto;
 }
+
+.text-right {
+  text-align: right;
+}
+.input-custom {
+    display: inline-block;
+    padding: 0px;
+    margin-top: 10px;
+    border-radius: 20px;
+    background: transparent;
+    border: 1px solid #ff8900;
+    text-align: center;
+    font-weight: bold;
+    color: #2f2c23;
+    font-size: 22px;
+    max-width: 150px;
+    margin: 0 auto 35px auto;}
+
 </style>
