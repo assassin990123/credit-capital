@@ -823,10 +823,10 @@ textarea:focus {
 
                 04 -- Header
 
-==============================================*/
-
+==============================================
 .nav-btn-custom{
-  display: flex; flex-direction: row;
+  display: flex; 
+  flex-direction: row;
 }
 
 .nav-btn-custom .nav-item{
@@ -862,7 +862,6 @@ align-self: center;
   margin: 0 0 0 50px;
 }
 
-
 .acavo-responsive-nav {
   display: none;
 }
@@ -896,7 +895,7 @@ align-self: center;
 }
 
 .acavo-nav .navbar .navbar-nav {
-  margin-left: auto;
+  margin-left: 25px;
 }
 
 .acavo-nav .navbar .navbar-nav .nav-item {
@@ -2270,8 +2269,6 @@ align-self: center;
 }
 
 /*-- Header Responsive --*/
-
-
 
 @media only screen and (max-width: 575px) {
   .others-option-for-responsive .dot-menu .inner {
@@ -7527,6 +7524,38 @@ align-self: center;
   background-repeat: no-repeat;
 }
 
+@media only screen and (max-width: 575px) {
+  .panel-content.stake-panel-content{
+   padding: 50px 0;
+   height: auto;
+   border-radius: 25px;
+  }
+}
+
+
+@media only screen and (max-width: 575px) {
+  .stack-bottom-area-inner{
+   padding: 50px 0;
+
+
+@media only screen and (max-width: 575px) {
+  .stack-bottom-area{
+    width: auto;
+    margin: 50px 10%;
+    flex-direction: column;
+  }
+}
+    
+
+@media only screen and (max-width: 575px) {
+  .stack-button-area .stack-btn{
+   padding: 0 20px;
+   margin: 10px 0;
+   border: 1px solid #ffca03;
+  }
+}
+
+
 /*============================================
 
                 28 -- Reward Page
@@ -7572,8 +7601,29 @@ align-self: center;
 }
 
 .reward-main-sec .rewards-section {
-  margin: 50px 0 50px 0;
+  margin: 50px auto 50px auto;
 }
+
+@media only screen and (max-width: 575px) {
+  .rewards-content .rewards-section{
+   flex-direction: column;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .rewards-section > button{
+   margin-bottom: 30px;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .rewards-content .rewards-display{
+   margin: 0;
+   padding: 70px 0;
+   font-size: 30px;
+  }
+}
+
 
 /*============================================
 
@@ -7629,6 +7679,32 @@ align-self: center;
   background: #ff8900;
   border: 2px solid #ff8900;
   color: #fff;
+}
+
+.panel-explanation > input{
+  padding-left: 10px;
+  border-radius: 25px;
+  width: 80%;
+  border: 1px solid #ffca03;
+}
+
+@media only screen and (max-width: 575px) {
+  .panel-container.inner-container {
+    flex-direction: column;
+  }
+}
+
+
+@media only screen and (max-width: 575px) {
+  .panel-content.swap-panel-content {
+    padding: 20px 30px;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .panel.stake-panel{
+   margin-top: 30px;
+  }
 }
 
 /*============================================

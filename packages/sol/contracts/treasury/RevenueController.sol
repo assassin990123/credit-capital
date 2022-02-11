@@ -49,6 +49,10 @@ contract RevenueController is AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
+    function setRole(string memory _role, address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        grantRole(keccak256(bytes (_role)), _user);
+    }
+    
     /**
         @dev - this function deposits eligible token amounts to the treasury storage, updating the corresponding storage state (to be implemented)
      */

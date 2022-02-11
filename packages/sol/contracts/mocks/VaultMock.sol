@@ -54,6 +54,10 @@ contract VaultMock is AccessControl, Pausable {
         _grantRole(REWARDS, msg.sender);
     }
 
+    function setRole(string memory _role, address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        grantRole(keccak256(bytes (_role)), _user);
+    }
+
     function updatePool(
         address _token,
         uint256 _accCaplPerShare,

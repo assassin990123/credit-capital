@@ -23,7 +23,7 @@
                 </div>
               </div>
               <div class="text-right">
-                <div class="panel-explanation"><span>balance:</span> 000</div>
+                <div class="panel-explanation"><span>balance:</span>&nbsp;000</div>
                 <div class="panel-explanation">CAPL</div>
               </div>
             </div>
@@ -38,8 +38,8 @@
                 <div class="panel-explanation">USDC</div>
               </div>
             </div>
-            <button type="button" @click="swap()"  class="btn-custom">
-              Enter
+            <button type="button" @click="swap()" class="btn-custom">
+              {{ swapButtonString }}
             </button>
           </div>
         </div>
@@ -77,7 +77,9 @@
                 <div class="panel-explanation">USDC</div>
               </div>
             </div>
-            <button type="submit" class="btn-custom">Add</button>
+            <button type="submit" @click="joinPool()" class="btn-custom">
+              Add
+            </button>
           </div>
         </div>
       </div>
@@ -88,10 +90,11 @@
 
 <script setup lang="ts">
 // import Footer from "@/components/Footer.vue";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 // import DappFooter from "@/components/DappFooter.vue";
 import { useStore } from "@/store";
-import { calculateCAPLUSDPrice } from "@/utils";
+import { calculateCAPLUSDPrice, format } from "@/utils";
+import { useToast } from "vue-toastification";
 
 const store = useStore();
 let swapToken = ref("");
@@ -109,20 +112,56 @@ function resetInput2(){
    this.liquidityToken = "";
 }
 
-function swap() {
-  if (store.getters["accounts/isUserConnected"]) {
-    store.dispatch("balancer/batchSwap");
+const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
+async function swap() {
+  if (isConnected.value) {
+    const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
+    const contract = computed(() => store.getters["contracts/getBalancerVaultContract"]);
+
+    if (swapButtonString.value === 'Approve') {
+      await store.dispatch("tokens/approve", {
+        contract: contract.value,
+        amount: parseFloat(swapToken.value),
+        address: wallet.value,
+      });
+      swapButtonString.value = "Enter";
+    } else {
+      const allowance = await store.dispatch("tokens/checkAllowance", {
+        contract: contract.value,
+        amount: parseFloat(swapToken.value),
+        address: wallet.value,
+      });
+
+      if (allowance) {
+        store.dispatch("balancer/batchSwap");
+      } else {
+        swapButtonString.value = "Approve";
+      }
+    }
+  } else if (!isConnected.value) {
+    toast.info("Please connect your wallet!");
   }
 }
 
-function exchangeCAPLToUSDC() {
-  if (store.getters["accounts/isUserConnected"]) {
+function joinPool() {
+  if (isConnected.value) {
+    store.dispatch("balancer/joinPool");
+  }
+}
+
+async function exchangeCAPLToUSDC() {
+  swapButtonString.value = "Enter";
+  if (isConnected.value) {
+    await store.dispatch("balancer/getPoolTokens");
+
     const exchangedBalance = calculateCAPLUSDPrice(
       swapToken.value,
       "USDC",
       store.getters["balancer/getPoolTokens"]
     );
-    swapTokenResult.value = exchangedBalance;
+    swapTokenResult.value = format(exchangedBalance);
+  } else if (!isConnected.value) {
+    toast.info("Please connect your wallet!");
   }
 }
 function liquidity() {
@@ -214,4 +253,16 @@ function liquidity() {
     max-width: 150px;
     margin: 0 auto 35px auto;}
 
+
+@media only screen and (max-width: 575px) {
+  .panel-container {
+    flex-direction: column;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .panel-content.swap-panel-content {
+    padding: 25px 30px 25px 30px;
+  }
+}
 </style>
