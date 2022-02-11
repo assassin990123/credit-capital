@@ -6,6 +6,7 @@ export const pools = [
       42: "0x3a19030ed746bd1c3f2b0f996ff9479af04c5f0a000200000000000000000004",
     },
     contracts: {
+      137: "",
       42: "",
     },
   },
@@ -28,7 +29,7 @@ export const pools = [
     },
     contracts: {
       137: "",
-      42: "",
+      42: "0x270c10cb22cf7dfcbb6435b9a0886bd05e5818e9",
     },
   },
 ];

@@ -5,15 +5,29 @@
         <div class="panel stake-panel">
           <h1 class="panel-title">Stake</h1>
           <div class="panel-content stake-panel-content">
-            <input type="number" placeholder="0.00" class="input-custom" v-model="stakeAmount"/>
-            <button type="submit" class="btn-custom" @click="stake">ENTER</button>
+            <input
+              type="number"
+              placeholder="0.00"
+              class="input-custom"
+              v-model="stakeAmount"
+            />
+            <button type="submit" class="btn-custom" @click="handleStake">
+              {{ stakeButtonText }}
+            </button>
           </div>
         </div>
         <div class="panel stake-panel">
           <h1 class="panel-title">Unstake</h1>
           <div class="panel-content stake-panel-content">
-            <input type="number" placeholder="0.00" class="input-custom" v-model="unstakeAmount"/>
-            <button type="submit" class="btn-custom" @click="unstake">ENTER</button>
+            <input
+              type="number"
+              placeholder="0.00"
+              class="input-custom"
+              v-model="unstakeAmount"
+            />
+            <button type="submit" class="btn-custom" @click="unstake">
+              ENTER
+            </button>
           </div>
         </div>
       </div>
@@ -22,46 +36,57 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-  // @ts-ignore
-  import DappFooter from "@/components/DappFooter.vue";
-  import { computed, watchEffect, ref } from "vue";
-  // @ts-ignore
-  import { format } from "@/utils";
-  // @ts-ignore
-  import { useStore } from "@/store";
-  // @ts-ignore
-  import { checkConnection, checkBalance } from "@/utils/notifications";
+<script setup lang="ts">
+// @ts-ignore
+import DappFooter from "@/components/DappFooter.vue";
+import { watchEffect, ref, Ref } from "vue";
+// @ts-ignore
+import { checkAllowance } from "@/utils";
+// @ts-ignore
+import { useStore } from "@/store";
+// @ts-ignore
+import { checkConnection, checkBalance } from "@/utils/notifications";
 
-  const store = useStore();
-  const formatedUserPosition = ref(0);
-  const stakeAmount = ref(0);
-  const unstakeAmount = ref(0);
+const store = useStore();
+const stakeAmount = ref(0);
+const unstakeAmount = ref(0);
+const stakeButtonText: Ref<string> = ref("Stake");
 
+// this function checks the allowance a user has alloted our rewards contract via the LP token
+watchEffect(async () => {
+  (await checkAllowance(
+    store,
+    "LP", // static for now
+    stakeAmount.value,
+    "stake"
+  ))
+    ? (stakeButtonText.value = "Stake")
+    : (stakeButtonText.value = "Approve");
+});
 
-  const stake = () => {
+const handleStake = async () => {
+  if (checkConnection(store) && checkBalance(stakeAmount.value)) {
+    stakeButtonText.value == "Stake" ? await stake() : await approve();
+  }
+};
 
-    if (checkConnection(store) && checkBalance(stakeAmount.value)) {
-      // enable stake button
-      store.dispatch("rewards/stake", { amount: stakeAmount.value });
-    }
-  };
-  const unstake = () => {
-    // check connection
-    if (checkConnection(store) && checkBalance(unstakeAmount.value)) {
-      store.dispatch("rewards/unstake", { amount: unstakeAmount.value })
-    }
-    
-  };
-  const userPosition = computed(
-    () => store.getters["rewards/getUserPosition"]
-  );
-
-  watchEffect(() => {
-    if (userPosition.value) {
-      formatedUserPosition.value = format(userPosition.value);
-    }
+const approve = async () => {
+  await store.dispatch("tokens/approveRewards", {
+    amount: stakeAmount.value,
   });
+};
+
+const stake = () => {
+  store.dispatch("rewards/stake", { amount: stakeAmount.value });
+};
+
+const unstake = () => {
+  // check connection
+  if (checkConnection(store) && checkBalance(unstakeAmount.value)) {
+    store.dispatch("rewards/unstake", { amount: unstakeAmount.value });
+  }
+};
+// userPosition = computed(() => store.getters["rewards/getUserPosition"]);
 </script>
 
 <style>

@@ -1,4 +1,3 @@
-import { store } from "@/store";
 import { useToast } from "vue-toastification";
 import Balance from "./Balance.vue";
 import Connection from "./Connection.vue";

@@ -234,62 +234,57 @@ select.tab-inner-content-item {
   margin-top: 20px;
 }
 
-
 @media only screen and (max-width: 1200px) {
-    .treasury-row,
-    .treasury-column-1,
-    .treasury-column-2,
-    .treasury-value-container,
-    .treasury-projections-row,
-    .treasury-projections-column,
-    .treasury-projections-column.projection-custom
-    {
-      width: auto;
-      flex-direction: column;
-    }
+  .treasury-row,
+  .treasury-column-1,
+  .treasury-column-2,
+  .treasury-value-container,
+  .treasury-projections-row,
+  .treasury-projections-column,
+  .treasury-projections-column.projection-custom {
+    width: auto;
+    flex-direction: column;
+  }
 }
 
 @media only screen and (max-width: 1200px) {
-    .treasury-projections-row.treasury-projections-custom{
-      margin: 0;
-    }
+  .treasury-projections-row.treasury-projections-custom {
+    margin: 0;
+  }
 }
 
 @media only screen and (max-width: 1200px) {
-    .treasury-projections-column.projection-custom{
-      margin: 20px;
-    }
+  .treasury-projections-column.projection-custom {
+    margin: 20px;
+  }
 }
 
 @media only screen and (max-width: 1200px) {
-    .tab-content.treasury-outstanding{
-      padding: 30px 0;
-    }
+  .tab-content.treasury-outstanding {
+    padding: 30px 0;
+  }
 }
 
-  @media only screen and (max-width: 479px) {
-      select.tab-inner-content-item,
-      button.tab-inner-content-item{
-      margin: 20px !important;
-      padding: 0 13px;
-    }
-} 
+@media only screen and (max-width: 479px) {
+  select.tab-inner-content-item,
+  button.tab-inner-content-item {
+    margin: 20px !important;
+    padding: 0 13px;
+  }
+}
 
-
- @media only screen and (max-width: 600px) {
-      .tab-inner-content{
-      width: auto;
-      flex-direction: column;
-    }
-} 
+@media only screen and (max-width: 600px) {
+  .tab-inner-content {
+    width: auto;
+    flex-direction: column;
+  }
+}
 
 @media only screen and (max-width: 1200px) {
-     select.tab-inner-content-item,
-      button.tab-inner-content-item{
-      margin: 20px !important;
-      padding: 0 13px;
-    }
+  select.tab-inner-content-item,
+  button.tab-inner-content-item {
+    margin: 20px !important;
+    padding: 0 13px;
+  }
 }
-
- 
 </style>

@@ -166,5 +166,4 @@ export default {
 /** MEDIA QUERIES */
 @media screen and (min-width: 1000px) {
 }
-
 </style>
