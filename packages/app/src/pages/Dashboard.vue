@@ -22,7 +22,7 @@
       <div class="dashboard-daily-earning-capl">
         <div class="dashboard-daily-earning-capl-header">
           <h2>CAPL</h2>
-          <h2>{{ totalCAPL?.toFixed(4) }} USD</h2>
+          <h2>{{ caplInUSD?.toFixed(4) }} USD</h2>
         </div>
         <div class="dashboard-daily-earning-capl-content">
           <div class="dashboard-daily-earning-capl-content-row">
@@ -30,7 +30,9 @@
               Your Balance
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ userCAPL?.toFixed(4) }} CAPL ({{ userCAPLToUSD?.toFixed(4) }}
+              {{ caplBalance?.toFixed(4) }} CAPL ({{
+                userCAPLToUSD?.toFixed(4)
+              }}
               USD)
             </div>
           </div>
@@ -246,40 +248,35 @@
 
 <script setup lang="ts">
 import { useStore } from "@/store";
-import { computed, watchEffect, ref } from "vue";
-import { calculateCAPLUSDPrice, shortenAddress } from "@/utils";
+import { computed, watchEffect, ref, Ref } from "vue";
+import { caplUSDConversion, shortenAddress } from "@/utils";
 
 const store = useStore();
+
 const dailyEarnings = computed(
   () => store.getters["dashboard/getDailyEarnings"]
 );
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
-const userCAPL = computed(() => store.getters["contracts/getCAPLBalance"]);
+
+const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
+const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
+
+// TODO: Update
 const stakedBalance = computed(() => store.getters["rewards/getUserPosition"]);
-const usdcBalance = computed(() => store.getters["contracts/getUSDCBalance"]);
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
 let walletAddress = ref("Connect");
 let userCAPLToUSD = ref(0);
-let totalCAPL = ref(0);
+let caplInUSD: Ref<number> = ref(0);
 
-watchEffect(async () => {
-  await store.dispatch("balancer/getPoolTokens");
-  totalCAPL.value = calculateCAPLUSDPrice(
-    1,
-    "CAPL",
-    store.getters["balancer/getPoolTokens"]
-  );
+watchEffect(() => {
+  caplInUSD.value = caplUSDConversion(1, store);
+  userCAPLToUSD.value = caplUSDConversion(caplBalance.value, store);
 
-  userCAPLToUSD.value = calculateCAPLUSDPrice(
-    Number(userCAPL.value),
-    "CAPL",
-    store.getters["balancer/getPoolTokens"]
-  );
   isConnected.value
     ? (walletAddress.value = shortenAddress(wallet.value))
-    : (walletAddress.value = "Connect Wallet");
+    : (walletAddress.value = "Connect");
 });
 </script>
 

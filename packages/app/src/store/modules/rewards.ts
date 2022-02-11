@@ -28,7 +28,7 @@ const getters = {
   },
   getUserUnlockedAmount(state: RewardsState) {
     return state.userUnlockedAmount;
-  }
+  },
 };
 
 const actions = {
@@ -146,14 +146,14 @@ const actions = {
     );
   },
 
-  async getUserUnlockedAmount(
-    { commit,
-      rootState, 
-      dispatch 
+  async getUserUnlockedAmount({
+    commit,
+    rootState,
+    dispatch,
   }: {
     commit: Commit;
     rootState: RootState;
-    dispatch: Dispatch 
+    dispatch: Dispatch;
   }) {
     // if state.vaultContract is null, call the `setContracts` function
     if (rootState.contracts.vaultContract === null) {
@@ -199,10 +199,9 @@ const actions = {
           lpContractAddress,
           ethers.utils.parseUnits(amount.toString(), 18)
         );
-
       } catch (error) {
         console.log(error);
-      } 
+      }
     }
   },
 
@@ -229,7 +228,7 @@ const actions = {
         );
       } catch (error) {
         console.log(error);
-      } 
+      }
     }
   },
 };

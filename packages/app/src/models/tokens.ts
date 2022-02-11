@@ -1,5 +1,6 @@
 interface tokenInfo {
   allowance: number;
+  balance: number;
 }
 
 export interface TokenState {

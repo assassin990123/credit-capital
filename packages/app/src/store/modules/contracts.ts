@@ -24,19 +24,11 @@ const state: ContractState = {
   caplContract: null,
   usdcContract: null,
   lpContract: null,
-  caplBalance: 0,
-  usdcBalance: 0,
 };
 
 const getters = {
   getCAPLContract(state: ContractState) {
     return state.caplContract;
-  },
-  getCAPLBalance(state: ContractState) {
-    return state.caplBalance;
-  },
-  getUSDCBalance(state: ContractState) {
-    return state.usdcBalance;
   },
   getRewardsContract(state: ContractState) {
     return state.rewardsContract;
@@ -129,27 +121,6 @@ const actions = {
       console.log(e);
     }
   },
-
-  async getCAPLBalance({
-    commit,
-    rootState,
-  }: {
-    commit: Commit;
-    rootState: RootState;
-  }) {
-    // get address from rootstate,
-    const address = rootState.accounts.activeAccount;
-    // get contract from contract state (local state)
-    if (state.caplContract === null) {
-      actions.setContracts({ commit, rootState });
-    }
-
-    const caplContract = state.caplContract;
-    // @ts-ignore
-    const caplBalance = await caplContract?.balanceOf(address);
-    // parse balance, set new value in the local state
-    commit("setCAPLBalance", ethers.utils.formatUnits(caplBalance, 18));
-  },
 };
 
 const mutations = {
@@ -161,9 +132,6 @@ const mutations = {
   },
   setRewardsContract(state: ContractState, _contract: object) {
     state.rewardsContract = _contract;
-  },
-  setCAPLBalance(state: ContractState, _balance: number) {
-    state.caplBalance = _balance;
   },
   setBalancerVaultContract(state: ContractState, _contract: object) {
     state.balancerVaultContract = _contract;

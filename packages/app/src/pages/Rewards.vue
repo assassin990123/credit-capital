@@ -24,28 +24,29 @@
 </template>
 
 <script lang="ts" setup>
-  // @ts-ignore
-  import DappFooter from "@/components/DappFooter.vue";
-  import { computed, watchEffect, ref } from "vue";
-  // @ts-ignore
-  import { useStore } from "@/store";
-  // @ts-ignore
-  import { calculateCAPLUSDPrice, format } from "@/utils";
-  import { checkConnection, checkBalance } from "@/utils/notifications";
+// @ts-ignore
+import DappFooter from "@/components/DappFooter.vue";
+import { computed, watchEffect, ref } from "vue";
+// @ts-ignore
+import { useStore } from "@/store";
+// @ts-ignore
+import { calculateCAPLUSDPrice, format } from "@/utils";
+import { checkConnection, checkBalance } from "@/utils/notifications";
 
-  const store = useStore();
-  const pendingRewardsCAPL = ref(0);
-  const pendingRewardsUSDC = ref(0);
-  
-  const connected = computed(() => store.getters["accounts/isUserConnected"]);
-  const pendingRewards = computed(() => store.getters["rewards/getPendingRewards"]);
-  
-  const claim = () => {
-    
-    if (checkConnection(store) && checkBalance(pendingRewards.value)) {
-      store.dispatch("rewards/claim");
-    }
-  };
+const store = useStore();
+const pendingRewardsCAPL = ref(0);
+const pendingRewardsUSDC = ref(0);
+
+const connected = computed(() => store.getters["accounts/isUserConnected"]);
+const pendingRewards = computed(
+  () => store.getters["rewards/getPendingRewards"]
+);
+
+const claim = () => {
+  if (checkConnection(store) && checkBalance(pendingRewards.value)) {
+    store.dispatch("rewards/claim");
+  }
+};
 
 watchEffect(async () => {
   if (connected.value && pendingRewards.value > 0) {
