@@ -12,7 +12,7 @@ const deployContract = async (contract, params) => {
 const deployContracts = async (deployer) => {
   const capl = await deployContract("CreditCapitalPlatformToken", [100]);
   const vault = await deployContract("VaultMock", [null]);
-  const rewards = await deployContract("RewardsV2", [
+  const rewards = await deployContract("Rewards", [
     vault.address,
     capl.address,
   ]);

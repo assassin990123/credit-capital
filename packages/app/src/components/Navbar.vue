@@ -5,25 +5,23 @@
       <div class="container">
         <div class="acavo-responsive-menu">
           <div class="logo">
-            <a href="/index.html">
+            <router-link to="/">
               <img src="/images/logo-white.png" alt="logo" />
-            </a>
+            </router-link>
           </div>
         </div>
       </div>
     </div>
-
     <div class="acavo-nav">
       <div class="container">
         <nav class="navbar navbar-expand-md navbar-light">
-          <a class="navbar-brand" href="/index.html">
+          <router-link to="/">
             <img src="/images/logo-white.png" alt="logo" />
-          </a>
+          </router-link>
 
           <div class="collapse navbar-collapse mean-menu">
             <ul class="navbar-nav">
               <li class="nav-item"><router-link to="/">Home</router-link></li>
-              
               <li class="nav-item">
                 <router-link to="stake">Stake</router-link>
               </li>
@@ -116,7 +114,7 @@ export default {
       isConnected,
       buttonString,
       showMoons,
-      connectWeb3: () => {
+      connectWeb3: async () => {
         store.dispatch("accounts/connectWeb3");
       },
     };

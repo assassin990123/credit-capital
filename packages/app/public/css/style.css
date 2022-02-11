@@ -823,10 +823,10 @@ textarea:focus {
 
                 04 -- Header
 
-==============================================*/
-
+==============================================
 .nav-btn-custom{
-  display: flex; flex-direction: row;
+  display: flex; 
+  flex-direction: row;
 }
 
 .nav-btn-custom .nav-item{
@@ -862,7 +862,6 @@ align-self: center;
   margin: 0 0 0 50px;
 }
 
-
 .acavo-responsive-nav {
   display: none;
 }
@@ -896,7 +895,7 @@ align-self: center;
 }
 
 .acavo-nav .navbar .navbar-nav {
-  margin-left: auto;
+  margin-left: 25px;
 }
 
 .acavo-nav .navbar .navbar-nav .nav-item {
@@ -2270,8 +2269,6 @@ align-self: center;
 }
 
 /*-- Header Responsive --*/
-
-
 
 @media only screen and (max-width: 575px) {
   .others-option-for-responsive .dot-menu .inner {
@@ -7539,14 +7536,16 @@ align-self: center;
 @media only screen and (max-width: 575px) {
   .stack-bottom-area-inner{
    padding: 50px 0;
-  }
-}
+
 
 @media only screen and (max-width: 575px) {
-  .stack-button-area{
-   flex-direction: column;
+  .stack-bottom-area{
+    width: auto;
+    margin: 50px 10%;
+    flex-direction: column;
   }
 }
+    
 
 @media only screen and (max-width: 575px) {
   .stack-button-area .stack-btn{
@@ -7555,7 +7554,6 @@ align-self: center;
    border: 1px solid #ffca03;
   }
 }
-
 
 
 /*============================================
@@ -7603,7 +7601,7 @@ align-self: center;
 }
 
 .reward-main-sec .rewards-section {
-  margin: 50px 0 50px 0;
+  margin: 50px auto 50px auto;
 }
 
 @media only screen and (max-width: 575px) {
@@ -7708,12 +7706,6 @@ align-self: center;
    margin-top: 30px;
   }
 }
-
-
- 
-
-
-
 
 /*============================================
 

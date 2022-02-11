@@ -5,10 +5,14 @@
         <div class="rewards-container">
           <h1 class="panel-title">PENDING REWARDS</h1>
           <div class="rewards-content">
-            <div class="rewards-display"><span>USDC:</span> $0000.00</div>
+            <div class="rewards-display">
+              {{ pendingRewardsCAPL + " CAPL" }} ({{
+                pendingRewardsUSDC + " USD"
+              }})
+            </div>
             <div class="rewards-section">
-              <button class="rewards-section-item" type="button" @click="reward()">CLAIM</button>
-              <div class="rewards-section-item">COMPOUND</div>
+              <button class="rewards-section-item" @click="claim">CLAIM</button>
+              <!-- <div class="rewards-section-item">COMPOUND</div> -->
             </div>
           </div>
         </div>
@@ -20,16 +24,49 @@
 </template>
 
 <script lang="ts" setup>
+// @ts-ignore
 import DappFooter from "@/components/DappFooter.vue";
+import { computed, watchEffect, ref } from "vue";
+// @ts-ignore
 import { useStore } from "@/store";
+// @ts-ignore
+import { calculateCAPLUSDPrice, format } from "@/utils";
+
+import { useToast } from "vue-toastification";
 
 const store = useStore();
+const pendingRewardsCAPL = ref(0);
+const pendingRewardsUSDC = ref(0);
 
-function reward() {
-  if (store.getters["accounts/isUserConnected"]) {
+const connected = computed(() => store.getters["accounts/isUserConnected"]);
+const pendingRewards = computed(
+  () => store.getters["rewards/getPendingRewards"]
+);
+const toast = useToast();
+
+const claim = () => {
+  if (!connected.value) {
+    toast.info("Please connect your wallet!");
+  } else if (pendingRewards.value <= 0) {
+    toast.info("Rewards balance is 0!");
+  } else {
     store.dispatch("rewards/claim");
   }
-}
+};
+
+watchEffect(async () => {
+  if (connected.value && pendingRewards.value > 0) {
+    await store.dispatch("balancer/getPoolTokens");
+    pendingRewardsCAPL.value = format(pendingRewards.value);
+    pendingRewardsUSDC.value = format(
+      calculateCAPLUSDPrice(
+        pendingRewards.value,
+        "USDC",
+        store.getters["balancer/getPoolTokens"]
+      )
+    );
+  }
+});
 </script>
 
 <style>
@@ -53,8 +90,8 @@ function reward() {
 }
 
 .rewards-section {
-  display: flex;
-  flex-direction: row;
+  /* display: flex;
+  flex-direction: row; */
   justify-content: space-between;
   margin-top: 50px;
 }
