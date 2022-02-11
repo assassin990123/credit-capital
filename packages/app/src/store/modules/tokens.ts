@@ -23,11 +23,8 @@ const getters = {
   getUSDCBalancerVaultAllowance(state: TokenState) {
     return state.usdc.allowance;
   },
-  getCAPLRewardsAllowance(state: TokenState) {
-    return state.capl.allowance;
-  },
-  getUSDCRewardsAllowance(state: TokenState) {
-    return state.usdc.allowance;
+  getLPAllowance(state: TokenState) {
+    return state.lp.allowance;
   },
 };
 
@@ -38,11 +35,8 @@ const mutations = {
   setUSDCBalancerVaultAllowance(state: TokenState, allowance: number) {
     state.usdc.allowance = allowance;
   },
-  setCAPLRewardsAllowance(state: TokenState, allowance: number) {
-    state.capl.allowance = allowance;
-  },
   setLPRewardsAllowance(state: TokenState, allowance: number) {
-    state.lp.allowance;
+    state.lp.allowance = allowance;
   },
 };
 
@@ -60,12 +54,29 @@ const actions = {
     // @ts-ignore
     const address = rootState.contracts.balancerVaultContract.address;
     // @ts-ignore
-    if (contract && amount > 0)
+    if (contract && amount > 0) {
       // @ts-ignore
       await contract?.approve(
         address,
         ethers.utils.parseUnits(amount.toString(), decimals)
       );
+    }
+  },
+  async approveRewards(
+    { commit, rootState }: { commit: Commit; rootState: RootState },
+    { amount }: { amount: number }
+  ) {
+    const contract = rootState.contracts.lpContract;
+    // @ts-ignore
+    const rewardsAddress = rootState.contracts.rewardsContract.address;
+
+    if (contract && amount > 0) {
+      // @ts-ignore
+      await contract?.approve(
+        rewardsAddress,
+        ethers.utils.parseUnits(amount.toString(), 18)
+      );
+    }
   },
 
   async getAllowances({
@@ -117,10 +128,15 @@ const actions = {
         ethers.utils.formatUnits(usdcBalancerVaultAllowance.toString(), 6)
       );
       // @ts-ignore
-      const lpRewardsAllowance = await lpContract!.allowance(
+      let lpRewardsAllowance = await lpContract!.allowance(
         user,
         rewardsAddress
       );
+      lpRewardsAllowance = Number(
+        ethers.utils.formatUnits(lpRewardsAllowance.toString(), 18)
+      );
+
+      console.log(lpRewardsAllowance);
 
       // console.log(`CAPL allowance: ${caplAllowance}, USDC allowance: ${usdcAllowance}`)
       commit("setCAPLBalancerVaultAllowance", caplBalancerVaultAllowance);

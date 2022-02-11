@@ -12,7 +12,7 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
 const state: BalancerState = {
   poolTokens: {},
   batchSwap: {},
-  joinPool: {},
+  addLiquidity: {},
 };
 
 const getters = {
@@ -22,10 +22,6 @@ const getters = {
 
   getBatchSwap() {
     return state.batchSwap;
-  },
-
-  getJoinPool() {
-    return state.joinPool;
   },
 };
 
@@ -168,7 +164,7 @@ const actions = {
     commit("setBatchSwap", batchSwap);
   },
 
-  async joinPool({
+  async addLiquidity({
     commit,
     rootState,
     dispatch,
@@ -221,14 +217,7 @@ const actions = {
     };
 
     // @ts-ignore
-    const joinPool = await balancerVaultContract?.joinPool(
-      poolID,
-      sender,
-      recipient,
-      request
-    );
-
-    commit("setJoinPool", joinPool);
+    await balancerVaultContract?.joinPool(poolID, sender, recipient, request);
   },
 };
 
@@ -239,10 +228,6 @@ const mutations = {
 
   setBatchSwap(state: BalancerState, _batchSwap: object) {
     state.batchSwap = _batchSwap;
-  },
-
-  setJoinPool(state: BalancerState, _joinPool: object) {
-    state.joinPool = _joinPool;
   },
 };
 

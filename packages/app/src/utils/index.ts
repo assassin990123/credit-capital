@@ -89,10 +89,41 @@ export const checkAllowance = (
     symbol == "CAPL"
       ? (allowance = state.getters["tokens/getCAPLBalancerVaultAllowance"])
       : (allowance = state.getters["tokens/getUSDCBalancerVaultAllowance"]);
-  } else {
-    // will need to check approval for deposit tokens in rewards
-    // assume flag is 'rewards'
+  } else if (flag == "stake") {
+    allowance = state.getters["tokens/getLPAllowance"];
   }
 
   return allowance >= amount;
+};
+
+export const checkAllAllowances = (
+  state: any,
+  amounts: Array<number>
+): { approvalRequired: boolean; flag: string | null } => {
+  const usdcBalancerVaultAllowance =
+    state.getters["tokens/getUSDCBalancerVaultAllowance"];
+  const caplBalancerVaultAllowance =
+    state.getters["tokens/getCAPLBalancerVaultAllowance"];
+
+  let count = 0;
+  let approvalRequired = false;
+  let flag: string | null = null;
+
+  // known:
+  // amounts[0] -> usdc, amounts[1] -> capl
+  if (usdcBalancerVaultAllowance < amounts[0]) {
+    count++;
+    approvalRequired = true;
+    flag = "USDC";
+  }
+  if (caplBalancerVaultAllowance < amounts[1]) {
+    count++;
+    approvalRequired = true;
+    flag = "CAPL";
+  }
+  if (count == 2) flag = "All";
+
+  return { approvalRequired, flag };
+  // if both tokens require approval, count == 2
+  // if
 };

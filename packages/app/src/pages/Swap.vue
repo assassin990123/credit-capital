@@ -69,8 +69,12 @@
                 <div class="panel-explanation">USDC</div>
               </div>
             </div>
-            <button type="submit" @click="joinPool()" class="btn-custom">
-              Add
+            <button
+              type="submit"
+              @click="handleAddLiquidity()"
+              class="btn-custom"
+            >
+              {{ addLiquidityButtonString }}
             </button>
           </div>
         </div>
@@ -81,12 +85,16 @@
 </template>
 
 <script setup lang="ts">
-// import Footer from "@/components/Footer.vue";
 import { ref, computed, Ref, watchEffect } from "vue";
-// import DappFooter from "@/components/DappFooter.vue";
 import { useStore } from "@/store";
-import { calculateCAPLUSDPrice, checkAllowance, format } from "@/utils";
+import {
+  calculateCAPLUSDPrice,
+  checkAllAllowances,
+  checkAllowance,
+  format,
+} from "@/utils";
 import { useToast } from "vue-toastification";
+import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store: any = useStore();
 const toast = useToast();
@@ -97,8 +105,15 @@ let swapToTokenSymbol: Ref<string> = ref("USDC");
 let swapTokenResult = ref(0);
 let swapButtonString = ref("Swap");
 
+let usdcLiquidity: Ref<number> = ref(0);
+let caplLiquidity: Ref<number> = ref(0);
+
+let addLiquidityButtonString: Ref<string> = ref("Add Liquidity");
+let approvalFlag: Ref<string | null> = ref(null);
+
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 
+// this loops checks the store values for the token allowances and dynamically changes button text based on that info
 watchEffect(async () => {
   (await checkAllowance(
     store,
@@ -108,13 +123,35 @@ watchEffect(async () => {
   ))
     ? (swapButtonString.value = "Swap")
     : (swapButtonString.value = "Approve");
+
+  const { approvalRequired, flag } = await checkAllAllowances(store, [
+    usdcLiquidity.value,
+    caplLiquidity.value,
+  ]);
+  approvalFlag.value = flag;
+  approvalRequired
+    ? addLiquidityButtonString.value == "Add Liquidity"
+    : addLiquidityButtonString.value == "Approve";
 });
 
+// handles swapping button logic, dependant on current string
 const handleSwap = async () => {
-  if (!isConnected.value) return;
-  swapButtonString.value == "Swap" ? await swap() : await approve();
+  if (checkConnection(store) && checkBalance(swapAmount.value)) {
+    swapButtonString.value == "Swap" ? await swap() : await approve();
+  }
 };
 
+// handles adding liquidity button logic, dependant on current string
+// we can assume that if usdcLiquidity > 0 then caplLiquidity > 0
+const handleAddLiquidity = async () => {
+  if (checkConnection(store) && checkBalance(usdcLiquidity.value)) {
+    addLiquidityButtonString.value == "Add Liquidity"
+      ? await addLiquidity()
+      : await approveAll();
+  }
+};
+
+// approves a single token for swapping
 const approve = async () => {
   const symbol = swapTokenSymbol.value;
   await store.dispatch("tokens/approveBalancerVault", {
@@ -123,20 +160,43 @@ const approve = async () => {
   });
 };
 
+// handles three cases
+// 1. USDC Approvals, 2. CAPL approvals, 3. Both tokens approvals
+// TODO: Refactor these store.dispatch calls into individual functions
+const approveAll = async () => {
+  if (!approvalFlag.value) return;
+
+  if (approvalFlag.value == "USDC") {
+    await store.dispatch("tokens/approveBalancerVault", {
+      symbol: "USDC",
+      amount: usdcLiquidity.value,
+    });
+  } else if (approvalFlag.value == "CAPL") {
+    await store.dispatch("tokens/approveBalancerVault", {
+      symbol: "CAPL",
+      amount: caplLiquidity.value,
+    });
+  } else {
+    await store.dispatch("tokens/approveBalancerVault", {
+      symbol: "USDC",
+      amount: usdcLiquidity.value,
+    });
+    await store.dispatch("tokens/approveBalancerVault", {
+      symbol: "CAPL",
+      amount: caplLiquidity.value,
+    });
+  }
+};
+
 async function swap() {
-  if (isConnected.value) {
-    await store.dispatch("balancer/batchSwap");
-  } else if (!isConnected.value) {
-    toast.info("Please connect your wallet!");
-  }
+  await store.dispatch("balancer/batchSwap");
 }
 
-function joinPool() {
-  if (isConnected.value) {
-    store.dispatch("balancer/joinPool");
-  }
+function addLiquidity() {
+  store.dispatch("balancer/addLiquidity");
 }
 
+// allows for a user to switch between swapping USDC and CAPL
 const switchTokens = () => {
   if (swapTokenSymbol.value == "CAPL") {
     swapTokenSymbol.value = "USDC";
@@ -147,6 +207,8 @@ const switchTokens = () => {
   }
 };
 
+// conversion rates for swaps
+// TODO: conversion rates for liquidity
 async function exchangeCAPLToUSDC() {
   if (isConnected.value) {
     await store.dispatch("balancer/getPoolTokens");
