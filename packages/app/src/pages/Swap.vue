@@ -16,7 +16,7 @@
                   <input
                     type="text"
                     @input="exchangeCAPLToUSDC()"
-                    v-model="swapToken"
+                    v-model="swapAmount"
                     class="input-custom"
                   />
                 </div>
