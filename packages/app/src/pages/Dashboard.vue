@@ -119,20 +119,19 @@
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>CAPL Tokens</div>
-            <div>0.0000 (0.0000 USD)</div>
+            {{ caplBalance?.toFixed(4) }} CAPL ({{ userCAPLToUSD?.toFixed(4) }}
+            USD)
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC Tokens</div>
-            <div>
-              {{ usdcBalance?.toFixed(4) }} ({{ usdcBalance?.toFixed(4) }} USD)
-            </div>
+            <div>{{ usdcBalance?.toFixed(4) }} USDC</div>
           </div>
         </div>
         <div class="dashboard-portfolio-section-title">Vault Assets</div>
         <div class="dashboard-portfolio-section-panel">
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC-CAPL Shares</div>
-            <div>0 (0.0000 USD)</div>
+            <div>{{ lpBalance }} (0.0000 USD)</div>
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>Pending Rewards</div>
@@ -260,6 +259,8 @@ const tvl = computed(() => store.getters["dashboard/getTVL"]);
 
 const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
 const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
+// TODO: LP -> USD conversion
+const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
 
 // TODO: Update
 const stakedBalance = computed(() => store.getters["rewards/getUserPosition"]);

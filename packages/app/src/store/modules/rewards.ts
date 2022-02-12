@@ -14,6 +14,8 @@ const state: RewardsState = {
   userPosition: 0,
   userStakedPosition: 0,
   userUnlockedAmount: 0,
+  totalStaked: 0,
+  caplPerSecond: 0,
 };
 
 const getters = {
@@ -111,7 +113,6 @@ const actions = {
       findObjectContract("USDC", tokens, ChainID),
       address
     );
-
     // parse balance, set new value in the local state
     commit("setUserPosition", ethers.utils.formatUnits(userPosition, 18));
   },
@@ -231,6 +232,36 @@ const actions = {
       }
     }
   },
+  async getTotalStaked({
+    commit,
+    rootState,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+  }) {
+    const rewardsContract = rootState.contracts.rewardsContract;
+    // @ts-ignore
+    const lpAddress = rootState.contracts.lpContract?.address;
+    // @ts-ignore
+    const totalSupply = rewardsContract?.getTotalStaked(lpAddress);
+
+    commit("setTotalStaked", ethers.utils.parseEther(totalSupply.toString()));
+  },
+  async getCaplPerSecond({
+    commit,
+    rootState,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+  }) {
+    const rewardsContract = rootState.contracts.rewardsContract;
+    // @ts-ignore
+    const lpAddress = rootState.contracts.lpContract?.address;
+    // @ts-ignore
+    const totalSupply = rewardsContract?.getCaplPerSecond(lpAddress);
+
+    commit("setCaplPerSecond", ethers.utils.parseEther(totalSupply.toString()));
+  },
 };
 
 const mutations = {
@@ -245,6 +276,12 @@ const mutations = {
   },
   setUserUnlockedAmount(state: RewardsState, _userUnlockedAmount: number) {
     state.userUnlockedAmount = _userUnlockedAmount;
+  },
+  setCaplPerSecond(state: RewardsState, _caplPerSecond: number) {
+    state.caplPerSecond = _caplPerSecond;
+  },
+  setTotalStake(state: RewardsState, _totalStake: number) {
+    state.totalStaked = _totalStake;
   },
 };
 

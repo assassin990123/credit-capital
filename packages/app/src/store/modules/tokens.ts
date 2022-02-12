@@ -55,6 +55,9 @@ const mutations = {
   setUSDCBalance(state: TokenState, _balance: number) {
     state.usdc.balance = _balance;
   },
+  setLPBalance(state: TokenState, _balance: number) {
+    state.lp.balance = _balance;
+  },
 };
 
 const actions = {
@@ -178,6 +181,7 @@ const actions = {
     const address = rootState.accounts.activeAccount;
     const caplContract = rootState.contracts.caplContract;
     const usdcContract = rootState.contracts.usdcContract;
+    const lpContract = rootState.contracts.lpContract;
 
     // get contract from contract state (local state)
     if (!caplContract || !usdcContract) {
@@ -187,8 +191,12 @@ const actions = {
     const caplBalance = await caplContract?.balanceOf(address);
     // @ts-ignore
     const usdcBalance = await usdcContract?.balanceOf(address);
+    // @ts-ignore
+    const lpBalance = await lpContract?.balanceOf(address);
+
     // parse balance, set new value in the local state
     commit("setCAPLBalance", Number(ethers.utils.formatEther(caplBalance)));
+    commit("setLPBalance", Number(ethers.utils.formatEther(lpBalance)));
     commit("setUSDCBalance", Number(ethers.utils.formatUnits(usdcBalance, 6)));
   },
 };
