@@ -212,7 +212,7 @@ const actions = {
     // @ts-ignore
     const lpAddress = rootState.contracts.lpContract?.address;
     // @ts-ignore
-    const totalSupply = rewardsContract?.getTotalStaked(lpAddress);
+    const totalSupply = rewardsContract?.getTokenSupply(lpAddress);
 
     commit("setTotalStaked", ethers.utils.parseEther(totalSupply.toString()));
   },
@@ -227,9 +227,13 @@ const actions = {
     // @ts-ignore
     const lpAddress = rootState.contracts.lpContract?.address;
     // @ts-ignore
-    const totalSupply = rewardsContract?.getCaplPerSecond(lpAddress);
+    const pool = rewardsContract?.getPool(lpAddress);
+    // we now have the pool struct, IPool, need to unpack
+    console.log(pool) // for test
+    
+    const rewardsPerSecond = Number(pool.rewardsPerBlock.toString())
 
-    commit("setCaplPerSecond", ethers.utils.parseEther(totalSupply.toString()));
+    commit("setCaplPerSecond", ethers.utils.parseEther(rewardsPerSecond.toString()));
   },
 };
 

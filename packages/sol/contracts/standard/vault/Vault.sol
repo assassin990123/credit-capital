@@ -246,7 +246,6 @@ contract Vault is AccessControl, Pausable {
     function getTokenSupply(address _token) external view returns (uint256) {
         return IERC20(_token).balanceOf(address(this));
     }
-
     /*
         Admin functions
     */
