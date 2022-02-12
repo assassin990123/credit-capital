@@ -9,10 +9,12 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   : "1";
 
 const toast = useToast();
-
+let toastID:any;
 export const checkConnection = (store: any) => {
   if (!store.getters["accounts/isUserConnected"]) {
-    toast.info(Connection);
+    dismissNotification();
+    console.log(toastID);
+    toastID = toast.info(Connection);
     return false;
   }
 
@@ -20,7 +22,8 @@ export const checkConnection = (store: any) => {
 };
 export const checkBalance = (balance: number) => {
   if (balance <= 0) {
-    toast.info(Balance);
+    dismissNotification();
+    toastID = toast.info(Balance);
     return false;
   }
 
@@ -29,10 +32,18 @@ export const checkBalance = (balance: number) => {
 
 export const showConnectResult = (store: any) => {
   if (store.getters["accounts/isUserConnected"]) {
-    toast.success(ConnectionSuccess);
+    dismissNotification();
+    toastID = toast.success(ConnectionSuccess);
     return true;
   }
 
-  toast.error(ConnectionFaild);
+  toastID = toast.error(ConnectionFaild);
   return false;
 };
+
+function dismissNotification () {
+  console.log(toastID)
+  if (toastID || toastID === 0) {
+    toast.dismiss(toastID);
+  }
+}
