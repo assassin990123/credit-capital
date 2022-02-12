@@ -4,6 +4,7 @@
     "@nomiclabs/hardhat-ethers": "^2.0.3",
     "@openzeppelin/contracts": "^4.4.1",
     "chai": "^4.3.4",
+    "dotenv": "^16.0.0",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.5.2",
     "hardhat": "^2.8.0",
@@ -13,7 +14,8 @@
   "scripts": {
     "lint": "prettier --write \"contracts/**/*.sol\" \"interfaces/*.sol\" \"test/**/*.js\"",
     "compile": "yarn hardhat compile",
-    "test": "yarn hardhat test"
+    "test": "yarn hardhat test",
+    "deploy-testnet": "npx hardhat run scripts/deploy.js --network kovan"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-waffle": "^2.0.1",

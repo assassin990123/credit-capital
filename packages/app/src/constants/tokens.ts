@@ -3,7 +3,7 @@ export const tokens = [
     symbol: "CAPL",
     contracts: {
       137: "",
-      42: "0xe6264813D43Ef97cCE76E66be873040eBe9be09A",
+      42: "0x3CD89f230A94e3404F46CBFBaB8A23e476da74A1",
     },
   },
   {
