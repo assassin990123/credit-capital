@@ -229,11 +229,14 @@ const actions = {
     // @ts-ignore
     const pool = rewardsContract?.getPool(lpAddress);
     // we now have the pool struct, IPool, need to unpack
-    console.log(pool) // for test
-    
-    const rewardsPerSecond = Number(pool.rewardsPerBlock.toString())
+    console.log(pool); // for test
 
-    commit("setCaplPerSecond", ethers.utils.parseEther(rewardsPerSecond.toString()));
+    const rewardsPerSecond = Number(pool.rewardsPerBlock.toString());
+
+    commit(
+      "setCaplPerSecond",
+      ethers.utils.parseEther(rewardsPerSecond.toString())
+    );
   },
 };
 
