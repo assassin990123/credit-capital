@@ -3,15 +3,6 @@ const fs = require('fs');
 
 async function main() {
   /**
-   * Token contracts - CreditCapitalPlatformToken
-   */
-   const CAPL = await hre.ethers.getContractFactory("CreditCapitalPlatformToken");
-   const capl = await CAPL.deploy(process.env.CAPL_CAP);
-   await capl.deployed();
-   console.log("capl deployed to:", capl.address);
-   await saveContractABI("capl", "CreditCapitalPlatformToken");
-
-  /**
    * Standard contracts - Rewards, Vault
    */
   const Vault = await hre.ethers.getContractFactory("Vault");
@@ -21,14 +12,13 @@ async function main() {
   await saveContractABI("vault", "Vault");
 
   const Rewards = await hre.ethers.getContractFactory("Rewards");
-  const rewards = await Rewards.deploy(vault.address, capl.address);
+  const rewards = await Rewards.deploy(vault.address, process.env.CAPL_ADDRESS);
   await rewards.deployed();
   console.log("rewards deployed to:", rewards.address);
   await saveContractABI("rewards", "Rewards");
 
   /**
    * Treasury contracts - RevenueController, TreasuryStorage
-   */  
   const TreasuryStorage = await hre.ethers.getContractFactory("TreasuryStorage");
   const treasurystorage = await TreasuryStorage.deploy(process.env.LP_TOKEN_ADDRESS);
   await treasurystorage.deployed();
@@ -40,15 +30,17 @@ async function main() {
   await revenuecontroller.deployed();
   console.log("revenuecontroller deployed to:", revenuecontroller.address);
   await saveContractABI("revenuecontroller", "RevenueController");
+   */  
 
   // save deployed address in config file
   let config = `
-  export const capl = "${capl.address}"
   export const vaultcontractaddress = "${vault.address}"
   export const rewardscontractaddress = "${rewards.address}"
-  export const treasurystorage = "${treasurystorage.address}"
-  export const revenuecontroller = "${revenuecontroller.address}"
   `
+  /*
+    export const treasurystorage = "${treasurystorage.address}"
+  export const revenuecontroller = "${revenuecontroller.address}"
+  */
 
   let data = JSON.stringify(config);
   fs.writeFileSync('config.js', JSON.parse(data));

@@ -52,7 +52,7 @@ contract Vault is AccessControl, Pausable {
     constructor() {
         // RBAC
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(REWARDS, msg.sender);
+        grantRole(REWARDS, msg.sender);
     }
 
     function updatePool(
