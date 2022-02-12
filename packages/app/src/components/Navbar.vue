@@ -9,17 +9,21 @@
               <img src="/images/logo-white.png" alt="logo" />
             </router-link>
           </div>
+            <button>  <a href="javascript:void(0);">
+                  Toggle
+                  </a></button>
         </div>
       </div>
     </div>
     <div class="acavo-nav">
       <div class="container">
         <nav class="navbar navbar-expand-md navbar-light">
+          <div class="logo-mobile">
           <router-link to="/">
             <img src="/images/logo-white.png" alt="logo" />
           </router-link>
-
-          <div class="collapse navbar-collapse mean-menu">
+          </div>
+          <div class="navbar-collapse mean-menu">
             <ul class="navbar-nav">
               <li class="nav-item"><router-link to="/">Home</router-link></li>
               <li class="nav-item">

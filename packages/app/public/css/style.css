@@ -827,6 +827,7 @@ textarea:focus {
 .nav-btn-custom{
   display: flex; 
   flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .nav-btn-custom .nav-item{
@@ -861,6 +862,42 @@ align-self: center;
 .collapse.navbar-collapse.mean-menu .navbar-nav{
   margin: 0 0 0 50px;
 }
+
+@media only screen and (max-width: 575px){
+  .navbar-area > .acavo-nav {
+    display: block;
+  }
+  .logo-mobile{
+    display: none;
+  }
+  .acavo-nav{
+    background: #000;
+    margin-top: 10px;
+    padding: 30px 0;
+  }
+  .acavo-responsive-menu{
+    display: flex;
+  }
+  .navbar-collapse.mean-menu ul.navbar-nav li.nav-item a{
+    color: #fff;
+    margin: 10px 0;
+  }
+
+  .acavo-nav .navbar .navbar-nav .nav-item{
+    margin: 10px 0;
+  }
+
+  .nav-item span{
+    color: #fff;
+    margin-left: 8px;
+  }
+
+  .nav-btn-custom{
+    margin: 20px 0;
+  }
+}
+
+
 
 .acavo-responsive-nav {
   display: none;
@@ -2272,7 +2309,7 @@ align-self: center;
 
 @media only screen and (max-width: 575px) {
   .others-option-for-responsive .dot-menu .inner {
-  display: flex;
+  display: none;
   }
 }
 

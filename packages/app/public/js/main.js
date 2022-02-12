@@ -4,6 +4,7 @@
    Created: May 2021
    File Description: Main js file of the template
 */
+
 (function ($) {
   "use strict";
 
@@ -34,6 +35,7 @@
     meanScreenWidth: "1199",
   });
 
+ 
   /*===========================================
 
                        FAQ
