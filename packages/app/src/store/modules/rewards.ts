@@ -49,8 +49,10 @@ const actions = {
 
     const rewardsContract = rootState.contracts.rewardsContract;
     // @ts-ignore
+    const lpAddress = rootState.contracts.lpContract.address;
+    // @ts-ignore
     const pendingRewards = await rewardsContract?.pendingRewards(
-      findObjectContract("USDC", tokens, ChainID),
+      lpAddress,
       address
     );
 
@@ -67,6 +69,9 @@ const actions = {
   }) {
     // get address from rootstate,
     const address = rootState.accounts.activeAccount;
+    // @ts-ignore
+    const lpAddress = rootState.contracts.lpContract.address;
+
     // if state.rewardsContract is null, call the `setContracts` function
     if (rootState.contracts.rewardsContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -77,10 +82,7 @@ const actions = {
     // claim rewards
     try {
       // @ts-ignore
-      await rewardsContract?.claim(
-        findObjectContract("USDC", tokens, ChainID),
-        address
-      );
+      await rewardsContract?.claim(lpAddress, address);
     } catch (error) {
       console.log(error);
     }
@@ -187,15 +189,14 @@ const actions = {
     const rewardsContract = rootState.contracts.rewardsContract;
     // @ts-ignore
     const lpContractAddress = rootState.contracts.lpContract.address;
+    // @ts-ignore
+    const userAddress = rootState.accounts.activeAccount;
 
     // claim rewards
     if (rewardsContract && amount > 0) {
       try {
         // @ts-ignore
-        await rewardsContract?.withdraw(
-          lpContractAddress,
-          ethers.utils.parseUnits(amount.toString(), 18)
-        );
+        await rewardsContract?.withdraw(lpContractAddress, userAddress);
       } catch (error) {
         console.log(error);
       }
