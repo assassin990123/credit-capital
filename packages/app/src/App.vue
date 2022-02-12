@@ -26,6 +26,7 @@ watchEffect(async () => {
 
 const w3Lopp = () => {
   store.dispatch("tokens/getAllowances");
+  store.dispatch("tokens/getTokenBalances");
 };
 </script>
 

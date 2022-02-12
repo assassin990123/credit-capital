@@ -20,9 +20,9 @@ export const calculateCAPLUSDPrice = (
   amount: number,
   unit: string,
   poolTokens: any
-) => {
+): number => {
   if (poolTokens == null || poolTokens.balances == undefined) {
-    return;
+    return 0;
   }
 
   const CAPL = poolTokens.balances[0];
@@ -36,6 +36,8 @@ export const calculateCAPLUSDPrice = (
   if (unit == "USDC") {
     return (USDC / CAPL) * amount;
   }
+
+  return 0;
 };
 
 export interface Constant {
@@ -126,4 +128,12 @@ export const checkAllAllowances = (
   return { approvalRequired, flag };
   // if both tokens require approval, count == 2
   // if
+};
+
+export const caplUSDConversion = (amount: number, store: any): number => {
+  return calculateCAPLUSDPrice(
+    amount,
+    "CAPL",
+    store.getters["balancer/getPoolTokens"]
+  );
 };

@@ -46,13 +46,6 @@ contract TreasuryStorage is AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    function setRole(string memory _role, address _user)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        grantRole(keccak256(bytes(_role)), _user);
-    }
-
     /**
         Read functions
      */

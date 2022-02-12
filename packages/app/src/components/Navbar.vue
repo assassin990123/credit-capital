@@ -84,6 +84,7 @@
 import { computed } from "vue";
 import { useStore } from "@/store";
 import { ref, watchEffect } from "vue";
+import { showConnectResult } from "@/utils/notifications";
 import { shortenAddress } from "@/utils";
 
 export default {
@@ -112,7 +113,8 @@ export default {
       buttonString,
       showMoons,
       connectWeb3: async () => {
-        store.dispatch("accounts/connectWeb3");
+        await store.dispatch("accounts/connectWeb3");
+        showConnectResult(store);
       },
     };
   },

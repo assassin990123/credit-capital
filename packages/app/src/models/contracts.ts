@@ -5,6 +5,4 @@ export interface ContractState {
   caplContract: object | null;
   usdcContract: object | null;
   lpContract: object | null;
-  caplBalance: number;
-  usdcBalance: number;
 }

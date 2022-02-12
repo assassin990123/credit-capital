@@ -1,22 +1,26 @@
 import { store } from "@/store";
 import { TokenState } from "@/models/tokens";
 import { RootState } from "@/models";
-import { Commit } from "vuex";
+import { Commit, Dispatch } from "vuex";
 import { ethers } from "ethers";
 
 const state: TokenState = {
   capl: {
     allowance: 0,
+    balance: 0,
   },
   usdc: {
     allowance: 0,
+    balance: 0,
   },
   lp: {
     allowance: 0,
+    balance: 0,
   },
 };
 
 const getters = {
+  // allowances
   getCAPLBalancerVaultAllowance(state: TokenState) {
     return state.capl.allowance;
   },
@@ -25,6 +29,13 @@ const getters = {
   },
   getLPAllowance(state: TokenState) {
     return state.lp.allowance;
+  },
+  // balances
+  getCAPLBalance(state: TokenState) {
+    return state.capl.balance;
+  },
+  getUSDCBalance(state: TokenState) {
+    return state.usdc.balance;
   },
 };
 
@@ -37,6 +48,12 @@ const mutations = {
   },
   setLPRewardsAllowance(state: TokenState, allowance: number) {
     state.lp.allowance = allowance;
+  },
+  setCAPLBalance(state: TokenState, _balance: number) {
+    state.capl.balance = _balance;
+  },
+  setUSDCBalance(state: TokenState, _balance: number) {
+    state.usdc.balance = _balance;
   },
 };
 
@@ -82,9 +99,11 @@ const actions = {
   async getAllowances({
     commit,
     rootState,
+    dispatch,
   }: {
     commit: Commit;
     rootState: RootState;
+    dispatch: Dispatch;
   }) {
     const connected = rootState.accounts.isConnected;
     if (!connected) return;
@@ -101,7 +120,7 @@ const actions = {
     const rewardsAddress = rootState.contracts.rewardsContract.address;
 
     if (!caplContract || !usdcContract)
-      store.dispatch("contracts/setContracts", { commit, rootState });
+      dispatch("contracts/setContracts", { commit, rootState });
 
     const user = rootState.accounts.activeAccount;
     // @ts-ignore
@@ -145,6 +164,32 @@ const actions = {
     } catch (e) {
       console.log(e);
     }
+  },
+  async getTokenBalances({
+    commit,
+    rootState,
+    dispatch,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+    dispatch: Dispatch;
+  }) {
+    // get address from rootstate,
+    const address = rootState.accounts.activeAccount;
+    const caplContract = rootState.contracts.caplContract;
+    const usdcContract = rootState.contracts.usdcContract;
+
+    // get contract from contract state (local state)
+    if (!caplContract || !usdcContract) {
+      dispatch("contracts/setContracts", { commit, rootState });
+    }
+    // @ts-ignore
+    const caplBalance = await caplContract?.balanceOf(address);
+    // @ts-ignore
+    const usdcBalance = await usdcContract?.balanceOf(address);
+    // parse balance, set new value in the local state
+    commit("setCAPLBalance", Number(ethers.utils.formatEther(caplBalance)));
+    commit("setUSDCBalance", Number(ethers.utils.formatUnits(usdcBalance, 6)));
   },
 };
 
