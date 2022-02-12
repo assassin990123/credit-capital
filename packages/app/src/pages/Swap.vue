@@ -17,11 +17,11 @@
                     type="text"
                     @input="exchangeCAPLToUSDC()"
                     v-model="swapAmount"
+                    class="input-custom"
                   />
                 </div>
               </div>
               <div class="text-right">
-                <div class="panel-explanation"><span>balance:</span> 000</div>
                 <div class="panel-explanation">{{ swapTokenSymbol }}</div>
               </div>
             </div>
@@ -51,14 +51,21 @@
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>amount</span></div>
-                <div class="panel-explanation">000</div>
+                <div class="panel-explanation">
+                  <input
+                    type="text"
+                    @input="liquidity()"
+                    v-model="liquidityAmount"
+                    class="input-custom"
+                  />
+                </div>
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span></div>
                 <div class="panel-explanation">CAPL</div>
               </div>
             </div>
-            <button class="btn-switch">&#8635;</button>
+            <button class="btn-switch" @click="resetInput2()">&#8635;</button>
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>amount</span></div>
@@ -85,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, Ref, watchEffect } from "vue";
+import { ref, Ref, watchEffect } from "vue";
 import { useStore } from "@/store";
 import {
   calculateCAPLUSDPrice,
@@ -93,11 +100,9 @@ import {
   checkAllowance,
   format,
 } from "@/utils";
-import { useToast } from "vue-toastification";
 import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store: any = useStore();
-const toast = useToast();
 let swapAmount = ref(0);
 let swapTokenSymbol: Ref<string> = ref("CAPL");
 let swapToTokenSymbol: Ref<string> = ref("USDC");
@@ -108,10 +113,10 @@ let swapButtonString = ref("Swap");
 let usdcLiquidity: Ref<number> = ref(0);
 let caplLiquidity: Ref<number> = ref(0);
 
+// liquidity stuff
+let liquidityAmount: Ref<number> = ref(0);
 let addLiquidityButtonString: Ref<string> = ref("Add Liquidity");
 let approvalFlag: Ref<string | null> = ref(null);
-
-const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 
 // this loops checks the store values for the token allowances and dynamically changes button text based on that info
 watchEffect(async () => {
@@ -196,6 +201,10 @@ function addLiquidity() {
   store.dispatch("balancer/addLiquidity");
 }
 
+function resetInput2() {
+  // todo: implement...
+}
+
 // allows for a user to switch between swapping USDC and CAPL
 const switchTokens = () => {
   if (swapTokenSymbol.value == "CAPL") {
@@ -210,7 +219,7 @@ const switchTokens = () => {
 // conversion rates for swaps
 // TODO: conversion rates for liquidity
 async function exchangeCAPLToUSDC() {
-  if (isConnected.value) {
+  if (checkConnection(store) && checkBalance(swapAmount.value)) {
     await store.dispatch("balancer/getPoolTokens");
 
     const exchangedBalance = calculateCAPLUSDPrice(
@@ -219,8 +228,18 @@ async function exchangeCAPLToUSDC() {
       store.getters["balancer/getPoolTokens"]
     );
     swapTokenResult.value = format(exchangedBalance);
-  } else if (!isConnected.value) {
-    toast.info("Please connect your wallet!");
+  }
+}
+function liquidity() {
+  if (store.getters["accounts/isUserConnected"]) {
+    /*
+    const exchangedBalance = calculateCAPLUSDPrice(
+      liquidityToken.value,
+      "USDC",
+      store.getters["balancer/getPoolTokens"]
+    );
+    liquidityTokenResult.value = exchangedBalance;
+    */
   }
 }
 </script>
@@ -284,6 +303,20 @@ async function exchangeCAPLToUSDC() {
 
 .text-right {
   text-align: right;
+}
+.input-custom {
+  display: inline-block;
+  padding: 0px;
+  margin-top: 10px;
+  border-radius: 20px;
+  background: transparent;
+  border: 1px solid #ff8900;
+  text-align: center;
+  font-weight: bold;
+  color: #2f2c23;
+  font-size: 22px;
+  max-width: 150px;
+  margin: 0 auto 35px auto;
 }
 
 @media only screen and (max-width: 575px) {

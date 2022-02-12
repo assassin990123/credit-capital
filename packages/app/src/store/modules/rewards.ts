@@ -11,24 +11,22 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
 
 const state: RewardsState = {
   pendingRewards: 0,
-  userPosition: 0,
   userStakedPosition: 0,
   userUnlockedAmount: 0,
+  totalStaked: 0,
+  caplPerSecond: 0,
 };
 
 const getters = {
   getPendingRewards(state: RewardsState) {
     return state.pendingRewards;
   },
-  getUserPosition(state: RewardsState) {
-    return state.userPosition;
-  },
   getUserStakedPosition(state: RewardsState) {
     return state.userStakedPosition;
   },
   getUserUnlockedAmount(state: RewardsState) {
     return state.userUnlockedAmount;
-  }
+  },
 };
 
 const actions = {
@@ -51,8 +49,10 @@ const actions = {
 
     const rewardsContract = rootState.contracts.rewardsContract;
     // @ts-ignore
+    const lpAddress = rootState.contracts.lpContract.address;
+    // @ts-ignore
     const pendingRewards = await rewardsContract?.pendingRewards(
-      findObjectContract("USDC", tokens, ChainID),
+      lpAddress,
       address
     );
 
@@ -69,6 +69,9 @@ const actions = {
   }) {
     // get address from rootstate,
     const address = rootState.accounts.activeAccount;
+    // @ts-ignore
+    const lpAddress = rootState.contracts.lpContract.address;
+
     // if state.rewardsContract is null, call the `setContracts` function
     if (rootState.contracts.rewardsContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -79,41 +82,10 @@ const actions = {
     // claim rewards
     try {
       // @ts-ignore
-      await rewardsContract?.claim(
-        findObjectContract("USDC", tokens, ChainID),
-        address
-      );
+      await rewardsContract?.claim(lpAddress, address);
     } catch (error) {
       console.log(error);
     }
-  },
-
-  async getUserPosition({
-    commit,
-    rootState,
-    dispatch,
-  }: {
-    commit: Commit;
-    rootState: RootState;
-    dispatch: Dispatch;
-  }) {
-    // get address from rootstate,
-    const address = rootState.accounts.activeAccount;
-    // if state.vaultContract or state.vaultContract is null, call the `setContracts` function
-    if (rootState.contracts.vaultContract === null) {
-      dispatch("contracts/setContracts", null, { root: true });
-    }
-
-    const vaultContract = rootState.contracts.vaultContract;
-    // get userposition
-    // @ts-ignore
-    const userPosition = await vaultContract?.getUserPosition(
-      findObjectContract("USDC", tokens, ChainID),
-      address
-    );
-
-    // parse balance, set new value in the local state
-    commit("setUserPosition", ethers.utils.formatUnits(userPosition, 18));
   },
 
   async getUserStakedPosition({
@@ -146,14 +118,14 @@ const actions = {
     );
   },
 
-  async getUserUnlockedAmount(
-    { commit,
-      rootState, 
-      dispatch 
+  async getUserUnlockedAmount({
+    commit,
+    rootState,
+    dispatch,
   }: {
     commit: Commit;
     rootState: RootState;
-    dispatch: Dispatch 
+    dispatch: Dispatch;
   }) {
     // if state.vaultContract is null, call the `setContracts` function
     if (rootState.contracts.vaultContract === null) {
@@ -199,10 +171,9 @@ const actions = {
           lpContractAddress,
           ethers.utils.parseUnits(amount.toString(), 18)
         );
-
       } catch (error) {
         console.log(error);
-      } 
+      }
     }
   },
 
@@ -218,19 +189,55 @@ const actions = {
     const rewardsContract = rootState.contracts.rewardsContract;
     // @ts-ignore
     const lpContractAddress = rootState.contracts.lpContract.address;
+    // @ts-ignore
+    const userAddress = rootState.accounts.activeAccount;
 
     // claim rewards
     if (rewardsContract && amount > 0) {
       try {
         // @ts-ignore
-        await rewardsContract?.withdraw(
-          lpContractAddress,
-          ethers.utils.parseUnits(amount.toString(), 18)
-        );
+        await rewardsContract?.withdraw(lpContractAddress, userAddress);
       } catch (error) {
         console.log(error);
-      } 
+      }
     }
+  },
+  async getTotalStaked({
+    commit,
+    rootState,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+  }) {
+    const rewardsContract = rootState.contracts.rewardsContract;
+    // @ts-ignore
+    const lpAddress = rootState.contracts.lpContract?.address;
+    // @ts-ignore
+    const totalSupply = rewardsContract?.getTokenSupply(lpAddress);
+
+    commit("setTotalStaked", ethers.utils.parseEther(totalSupply.toString()));
+  },
+  async getCaplPerSecond({
+    commit,
+    rootState,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+  }) {
+    const rewardsContract = rootState.contracts.rewardsContract;
+    // @ts-ignore
+    const lpAddress = rootState.contracts.lpContract?.address;
+    // @ts-ignore
+    const pool = rewardsContract?.getPool(lpAddress);
+    // we now have the pool struct, IPool, need to unpack
+    console.log(pool); // for test
+
+    const rewardsPerSecond = Number(pool.rewardsPerBlock.toString());
+
+    commit(
+      "setCaplPerSecond",
+      ethers.utils.parseEther(rewardsPerSecond.toString())
+    );
   },
 };
 
@@ -238,14 +245,17 @@ const mutations = {
   setPendingRewards(state: RewardsState, _pendingRewards: number) {
     state.pendingRewards = _pendingRewards;
   },
-  setUserPosition(state: RewardsState, _userPosition: number) {
-    state.userPosition = _userPosition;
-  },
   setUserStakedPosition(state: RewardsState, _userStakedPosition: number) {
     state.userStakedPosition = _userStakedPosition;
   },
   setUserUnlockedAmount(state: RewardsState, _userUnlockedAmount: number) {
     state.userUnlockedAmount = _userUnlockedAmount;
+  },
+  setCaplPerSecond(state: RewardsState, _caplPerSecond: number) {
+    state.caplPerSecond = _caplPerSecond;
+  },
+  setTotalStake(state: RewardsState, _totalStake: number) {
+    state.totalStaked = _totalStake;
   },
 };
 

@@ -22,7 +22,7 @@
       <div class="dashboard-daily-earning-capl">
         <div class="dashboard-daily-earning-capl-header">
           <h2>CAPL</h2>
-          <h2>{{ totalCAPL?.toFixed(4) }} USD</h2>
+          <h2>{{ caplInUSD?.toFixed(4) }} USD</h2>
         </div>
         <div class="dashboard-daily-earning-capl-content">
           <div class="dashboard-daily-earning-capl-content-row">
@@ -30,7 +30,9 @@
               Your Balance
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ userCAPL?.toFixed(4) }} CAPL ({{ userCAPLToUSD?.toFixed(4) }}
+              {{ caplBalance?.toFixed(4) }} CAPL ({{
+                userCAPLToUSD?.toFixed(4)
+              }}
               USD)
             </div>
           </div>
@@ -117,20 +119,19 @@
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>CAPL Tokens</div>
-            <div>0.0000 (0.0000 USD)</div>
+            {{ caplBalance?.toFixed(4) }} CAPL ({{ userCAPLToUSD?.toFixed(4) }}
+            USD)
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC Tokens</div>
-            <div>
-              {{ usdcBalance?.toFixed(4) }} ({{ usdcBalance?.toFixed(4) }} USD)
-            </div>
+            <div>{{ usdcBalance?.toFixed(4) }} USDC</div>
           </div>
         </div>
         <div class="dashboard-portfolio-section-title">Vault Assets</div>
         <div class="dashboard-portfolio-section-panel">
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC-CAPL Shares</div>
-            <div>0 (0.0000 USD)</div>
+            <div>{{ lpBalance }} (0.0000 USD)</div>
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>Pending Rewards</div>
@@ -220,8 +221,8 @@
         </div>
         <div class="dashboard-platform-assets-panel">
           <div class="dashboard-platform-assets-panel-row">
-            <div>USDC-CAPL Total Liquidity</div>
-            <div>0.0000 LP (0.0000 USD)</div>
+            <div>USDC-CAPL Total&nbsp;Liquidity</div>
+            <div>0.0000 LP (0.0000&nbsp;USD)</div>
           </div>
         </div>
         <div class="dashboard-portfolio-section-title">Treasury Assets</div>
@@ -246,40 +247,37 @@
 
 <script setup lang="ts">
 import { useStore } from "@/store";
-import { computed, watchEffect, ref } from "vue";
-import { calculateCAPLUSDPrice, shortenAddress } from "@/utils";
+import { computed, watchEffect, ref, Ref } from "vue";
+import { caplUSDConversion, shortenAddress } from "@/utils";
 
 const store = useStore();
+
 const dailyEarnings = computed(
   () => store.getters["dashboard/getDailyEarnings"]
 );
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
-const userCAPL = computed(() => store.getters["contracts/getCAPLBalance"]);
+
+const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
+const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
+// TODO: LP -> USD conversion
+const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
+
+// TODO: Update
 const stakedBalance = computed(() => store.getters["rewards/getUserPosition"]);
-const usdcBalance = computed(() => store.getters["contracts/getUSDCBalance"]);
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
 let walletAddress = ref("Connect");
 let userCAPLToUSD = ref(0);
-let totalCAPL = ref(0);
+let caplInUSD: Ref<number> = ref(0);
 
-watchEffect(async () => {
-  await store.dispatch("balancer/getPoolTokens");
-  totalCAPL.value = calculateCAPLUSDPrice(
-    1,
-    "CAPL",
-    store.getters["balancer/getPoolTokens"]
-  );
+watchEffect(() => {
+  caplInUSD.value = caplUSDConversion(1, store);
+  userCAPLToUSD.value = caplUSDConversion(caplBalance.value, store);
 
-  userCAPLToUSD.value = calculateCAPLUSDPrice(
-    Number(userCAPL.value),
-    "CAPL",
-    store.getters["balancer/getPoolTokens"]
-  );
   isConnected.value
     ? (walletAddress.value = shortenAddress(wallet.value))
-    : (walletAddress.value = "Connect Wallet");
+    : (walletAddress.value = "Connect");
 });
 </script>
 
@@ -782,5 +780,121 @@ watchEffect(async () => {
   background-color: #fdf6e4;
   background-image: url(/images/hero/banner-4.png);
   background-repeat: no-repeat;
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-container.dashboard-cus-main {
+    padding: 0;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .dashboard-daily-earning-panel {
+    width: auto;
+    margin: 100px 0 35px 0;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .dashboard-revenue-projection {
+    flex-direction: column;
+    margin: 50px 30px;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .dashboard-revenue-projection-vault {
+    width: auto;
+    margin: 0 0 50px 0;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .dashboard-revenue-projection-content-row {
+    flex-direction: column;
+    margin: 0;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .dashboard-revenue-projection-content-column {
+    margin: 0 0 30px 0;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .dashboard-portfolio {
+    flex-direction: column;
+    padding: 0 30px;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .dashboard-portfolio-section {
+    width: auto;
+    margin: 0 0 50px 0;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .dashboard-portfolio-section-address {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .dashboard-portfolio-section-title {
+    text-align: center;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .dashboard-platform {
+    flex-direction: column;
+    margin: 0 30px;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .dashboard-platform-section {
+    width: auto;
+    margin-bottom: 50px;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-platform-header {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .buy-btn {
+    margin: 30px 0;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .dashboard-platform-token {
+    flex-direction: column;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-platform-token-column {
+    width: auto;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .dashboard-cus-main .dashboard-daily-earning {
+    flex-direction: column;
+  }
 }
 </style>

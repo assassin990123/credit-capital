@@ -50,7 +50,9 @@ import { checkConnection, checkBalance } from "@/utils/notifications";
 const store = useStore();
 const stakeAmount = ref(0);
 const stakeButtonText: Ref<string> = ref("Stake");
-const unstakeAmount = computed(() => store.getters["rewards/getUserUnlockedAmount"]);
+const unstakeAmount = computed(
+  () => store.getters["rewards/getUserUnlockedAmount"]
+);
 
 // this function checks the allowance a user has alloted our rewards contract via the LP token
 watchEffect(async () => {
@@ -62,7 +64,6 @@ watchEffect(async () => {
   ))
     ? (stakeButtonText.value = "Stake")
     : (stakeButtonText.value = "Approve");
-
 });
 
 const handleStake = async () => {

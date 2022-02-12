@@ -31,8 +31,7 @@ import { computed, watchEffect, ref } from "vue";
 import { useStore } from "@/store";
 // @ts-ignore
 import { calculateCAPLUSDPrice, format } from "@/utils";
-
-import { useToast } from "vue-toastification";
+import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store = useStore();
 const pendingRewardsCAPL = ref(0);
@@ -42,14 +41,9 @@ const connected = computed(() => store.getters["accounts/isUserConnected"]);
 const pendingRewards = computed(
   () => store.getters["rewards/getPendingRewards"]
 );
-const toast = useToast();
 
 const claim = () => {
-  if (!connected.value) {
-    toast.info("Please connect your wallet!");
-  } else if (pendingRewards.value <= 0) {
-    toast.info("Rewards balance is 0!");
-  } else {
+  if (checkConnection(store) && checkBalance(pendingRewards.value)) {
     store.dispatch("rewards/claim");
   }
 };

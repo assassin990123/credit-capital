@@ -1,6 +1,7 @@
 export interface RewardsState {
-  pendingRewards: number | null;
-  userPosition: number | null;
-  userStakedPosition: number | null;
-  userUnlockedAmount: number | null;
+  pendingRewards: number;
+  userStakedPosition: number;
+  userUnlockedAmount: number;
+  totalStaked: number;
+  caplPerSecond: number;
 }

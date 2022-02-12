@@ -9,7 +9,7 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
   : "1";
 
-  const state: AccountState = {
+const state: AccountState = {
   activeAccount: null,
   chainId: null,
   web3Provider: null,
