@@ -51,13 +51,14 @@
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>amount</span></div>
-                <div class="panel-explanation"> <input
+                <div class="panel-explanation">
+                  <input
                     type="text"
                     @input="liquidity()"
                     v-model="liquidityToken"
                     class="input-custom"
-
-                  /></div>
+                  />
+                </div>
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span></div>
@@ -298,19 +299,19 @@ function liquidity() {
   text-align: right;
 }
 .input-custom {
-    display: inline-block;
-    padding: 0px;
-    margin-top: 10px;
-    border-radius: 20px;
-    background: transparent;
-    border: 1px solid #ff8900;
-    text-align: center;
-    font-weight: bold;
-    color: #2f2c23;
-    font-size: 22px;
-    max-width: 150px;
-    margin: 0 auto 35px auto;}
-
+  display: inline-block;
+  padding: 0px;
+  margin-top: 10px;
+  border-radius: 20px;
+  background: transparent;
+  border: 1px solid #ff8900;
+  text-align: center;
+  font-weight: bold;
+  color: #2f2c23;
+  font-size: 22px;
+  max-width: 150px;
+  margin: 0 auto 35px auto;
+}
 
 @media only screen and (max-width: 575px) {
   .panel-container {
