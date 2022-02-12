@@ -824,45 +824,43 @@ textarea:focus {
                 04 -- Header
 
 ==============================================*/
-
-/* start of Navigation */
-
-
-.nav-btn{
-  display: flex;
+.nav-btn-custom{
+  display: flex; 
   flex-direction: row;
-  
 }
 
-.nav-item.nav-item-custom{
+.nav-btn-custom .nav-item{
+  padding-left: 20px;
+}
+
+.nav-item .connectButton{
+  color: #fff;
+  background-color: #FF9D0F;
+  font-family: Nunito, sans-serif;
+  width: auto;
+  height: auto;
+  border-radius: 25px;
+  padding: 0 10px;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.nav-item span{
+  border: 1px solid #FF9D0F;
+  border-radius: 25px;
+  padding: 5px 10px;
+  font-weight: 700;
+  color: #000;
+
+}
+
+.nav-btn-custom .nav-item{
 align-self: center;
-padding-right: 5px;
-
 }
 
-.btn-custom-nav{
-color: #fff;
-background:#FF8800;
-font-weight: bold;
-font-family: Nunito, sans-serif;
-font-size: 17px;
-height: auto;
-width: auto;
-padding: 0 20px;
-
+.collapse.navbar-collapse.mean-menu .navbar-nav{
+  margin: 0 0 0 50px;
 }
-
-.capl{
-border: 1px solid #FF8800;
-padding: 5px 20px;
-border-radius: 25px;
-color: #000;
-font-weight: 800;
-
-}
-
-/* End of navigation */
-
 
 .acavo-responsive-nav {
   display: none;
@@ -2045,7 +2043,6 @@ font-weight: 800;
 .others-option-for-responsive .dot-menu .inner {
   display: -webkit-box;
   display: -ms-flexbox;
-  /* display: flex; */
   display: none;
   -webkit-box-align: center;
   -ms-flex-align: center;
@@ -2272,12 +2269,12 @@ font-weight: 800;
 }
 
 /*-- Header Responsive --*/
+
 @media only screen and (max-width: 575px) {
   .others-option-for-responsive .dot-menu .inner {
-    display: flex;
+  display: flex;
   }
 }
-
 
 @media only screen and (max-width: 1199px) {
   .navbar-area {
@@ -7527,13 +7524,21 @@ font-weight: 800;
   background-repeat: no-repeat;
 }
 
-
 @media only screen and (max-width: 575px) {
-  .stack-button-area{
-    flex-direction: column;
-    
+  .panel-content.stake-panel-content{
+   padding: 50px 0;
+   height: auto;
+   border-radius: 25px;
   }
 }
+
+
+@media only screen and (max-width: 575px) {
+  .stack-bottom-area-inner{
+   padding: 50px 0;
+  }
+}
+
 
 @media only screen and (max-width: 575px) {
   .stack-bottom-area{
@@ -7542,19 +7547,20 @@ font-weight: 800;
   }
 }
 
-@media only screen and (max-width: 575px) {
-  .stack-bottom-area-inner{
-    padding: 10px 0;
+@media only screen and (max-width: 575px){
+  .stack-button-area{
+    flex-direction: column;
   }
 }
 
 @media only screen and (max-width: 575px) {
-  .stack-btn{
-    padding: 0 20px;
-    margin: 20px 0;
-    border: 1px solid #FFCA03;
+  .stack-button-area .stack-btn{
+   padding: 0 20px;
+   margin: 10px 0;
+   border: 1px solid #ffca03;
   }
 }
+
 
 /*============================================
 
@@ -7603,6 +7609,27 @@ font-weight: 800;
 .reward-main-sec .rewards-section {
   margin: 50px auto 50px auto;
 }
+
+@media only screen and (max-width: 575px) {
+  .rewards-content .rewards-section{
+   flex-direction: column;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .rewards-section > button{
+   margin-bottom: 30px;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .rewards-content .rewards-display{
+   margin: 0;
+   padding: 70px 0;
+   font-size: 30px;
+  }
+}
+
 
 /*============================================
 
@@ -7658,6 +7685,32 @@ font-weight: 800;
   background: #ff8900;
   border: 2px solid #ff8900;
   color: #fff;
+}
+
+.panel-explanation > input{
+  padding-left: 10px;
+  border-radius: 25px;
+  width: 80%;
+  border: 1px solid #ffca03;
+}
+
+@media only screen and (max-width: 575px) {
+  .panel-container.inner-container {
+    flex-direction: column;
+  }
+}
+
+
+@media only screen and (max-width: 575px) {
+  .panel-content.swap-panel-content {
+    padding: 20px 30px;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .panel.stake-panel{
+   margin-top: 30px;
+  }
 }
 
 /*============================================
