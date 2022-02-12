@@ -823,7 +823,7 @@ textarea:focus {
 
                 04 -- Header
 
-==============================================
+==============================================*/
 .nav-btn-custom{
   display: flex; 
   flex-direction: row;
@@ -7536,16 +7536,22 @@ align-self: center;
 @media only screen and (max-width: 575px) {
   .stack-bottom-area-inner{
    padding: 50px 0;
+  }
+}
 
 
 @media only screen and (max-width: 575px) {
   .stack-bottom-area{
     width: auto;
     margin: 50px 10%;
+  }
+}
+
+@media only screen and (max-width: 575px){
+  .stack-button-area{
     flex-direction: column;
   }
 }
-    
 
 @media only screen and (max-width: 575px) {
   .stack-button-area .stack-btn{
