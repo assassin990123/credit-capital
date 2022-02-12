@@ -35,6 +35,6 @@ The app will then be available at ``http://localhost:8080/``
     ```
 
 - then, deploy the smart contracts with
-    ``yarn deploy``
+    ``yarn deploy-testnet``
 
 - last, copy the contract addresses from the ``.config.js`` file located in the ``sol`` package into ``packages/app/src/constants``
