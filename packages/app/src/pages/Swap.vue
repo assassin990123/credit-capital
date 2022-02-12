@@ -55,7 +55,7 @@
                   <input
                     type="text"
                     @input="liquidity()"
-                    v-model="liquidityToken"
+                    v-model="liquidityAmount"
                     class="input-custom"
                   />
                 </div>
@@ -114,7 +114,7 @@ let usdcLiquidity: Ref<number> = ref(0);
 let caplLiquidity: Ref<number> = ref(0);
 
 // liquidity stuff
-let liquidityToken: Ref<string> = ref("THIS DOESNT MAKE SENSE");
+let liquidityAmount: Ref<number> = ref(0);
 let addLiquidityButtonString: Ref<string> = ref("Add Liquidity");
 let approvalFlag: Ref<string | null> = ref(null);
 
