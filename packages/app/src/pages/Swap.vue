@@ -225,12 +225,14 @@ async function exchangeCAPLToUSDC() {
 }
 function liquidity() {
   if (store.getters["accounts/isUserConnected"]) {
+    /*
     const exchangedBalance = calculateCAPLUSDPrice(
       liquidityToken.value,
       "USDC",
       store.getters["balancer/getPoolTokens"]
     );
     liquidityTokenResult.value = exchangedBalance;
+    */
   }
 }
 </script>
