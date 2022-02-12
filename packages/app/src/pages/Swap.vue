@@ -113,6 +113,8 @@ let swapButtonString = ref("Swap");
 let usdcLiquidity: Ref<number> = ref(0);
 let caplLiquidity: Ref<number> = ref(0);
 
+// liquidity stuff
+let liquidityToken: Ref<string> = ref("THIS DOESNT MAKE SENSE");
 let addLiquidityButtonString: Ref<string> = ref("Add Liquidity");
 let approvalFlag: Ref<string | null> = ref(null);
 
@@ -197,6 +199,10 @@ async function swap() {
 
 function addLiquidity() {
   store.dispatch("balancer/addLiquidity");
+}
+
+function resetInput2() {
+  // todo: implement...
 }
 
 // allows for a user to switch between swapping USDC and CAPL
