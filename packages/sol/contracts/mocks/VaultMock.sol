@@ -65,6 +65,14 @@ contract VaultMock is AccessControl, Pausable {
         return Pools[_token];
     }
 
+    function addPoolPosition(address _token, uint256 _amount) external onlyRole(REWARDS){
+        Pools[_token].totalPooled += _amount;
+    }
+
+    function removePoolPosition(address _token, uint256 _amount) external onlyRole(REWARDS){
+        Pools[_token].totalPooled -= _amount;
+    }
+
     function withdraw(
         address _token,
         address _user,

@@ -117,6 +117,7 @@ contract Vault is AccessControl, Pausable {
         });
 
         UserPositions[_user][_token].stakes.push(stake);
+        // update pool total amoun
     }
 
     function setStake(
@@ -129,6 +130,13 @@ contract Vault is AccessControl, Pausable {
         stake.amount += _amount;
     }
 
+    function addPoolPosition(address _token, uint256 _amount) external onlyRole(REWARDS){
+        Pools[_token].totalPooled += _amount;
+    }
+
+    function removePoolPosition(address _token, uint256 _amount) external onlyRole(REWARDS){
+        Pools[_token].totalPooled -= _amount;
+    }
     /*
         Read functions
     */
@@ -244,6 +252,7 @@ contract Vault is AccessControl, Pausable {
     }
 
     function getTokenSupply(address _token) external view returns (uint256) {
+        require(Pools[_token].totalPooled <= IERC20(_token).balanceOf(address(this)));
         return IERC20(_token).balanceOf(address(this));
     }
 
