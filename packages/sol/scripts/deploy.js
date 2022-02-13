@@ -12,7 +12,7 @@ async function main() {
   await saveContractABI("vault", "Vault");
 
   const Rewards = await hre.ethers.getContractFactory("Rewards");
-  const rewards = await Rewards.deploy(vault.address, process.env.CAPL_ADDRESS);
+  const rewards = await Rewards.deploy(vault.address, process.env.CAPL_ADDRESS_KOVAN);
   await rewards.deployed();
   console.log("rewards deployed to:", rewards.address);
   await saveContractABI("rewards", "Rewards");
