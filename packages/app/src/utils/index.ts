@@ -137,3 +137,24 @@ export const caplUSDConversion = (amount: number, store: any): number => {
     store.getters["balancer/getPoolTokens"]
   );
 };
+
+export const stringToNumber = (str:any) => {
+    if (typeof str != 'string') {
+      return str;
+    }
+    const multiplier = str.substring(str.length - 1).toLowerCase();
+    console.log(multiplier);
+    console.log(parseFloat(str));
+    switch (multiplier){
+      case "k":
+        return parseFloat(str) * 1000;
+      case "m":
+        return parseFloat(str) * 1000000;
+      case "b":
+        return parseFloat(str) * 1000000000;
+      case "t":
+        return parseFloat(str) * 1000000000000;
+      default:
+        return str;
+    }
+}

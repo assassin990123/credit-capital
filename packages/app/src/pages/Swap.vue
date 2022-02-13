@@ -99,6 +99,7 @@ import {
   checkAllAllowances,
   checkAllowance,
   format,
+  stringToNumber,
 } from "@/utils";
 import { checkConnection, checkBalance } from "@/utils/notifications";
 
@@ -207,6 +208,7 @@ function resetInput2() {
 
 // allows for a user to switch between swapping USDC and CAPL
 const switchTokens = () => {
+  swapAmount.value = stringToNumber(swapTokenResult.value);
   if (swapTokenSymbol.value == "CAPL") {
     swapTokenSymbol.value = "USDC";
     swapToTokenSymbol.value = "CAPL";
@@ -214,12 +216,14 @@ const switchTokens = () => {
     swapTokenSymbol.value = "CAPL";
     swapToTokenSymbol.value = "USDC";
   }
+
+  exchangeCAPLToUSDC();
 };
 
 // conversion rates for swaps
 // TODO: conversion rates for liquidity
 async function exchangeCAPLToUSDC() {
-  if (checkConnection(store) && checkBalance(swapAmount.value)) {
+  if (checkConnection(store)) {
     await store.dispatch("balancer/getPoolTokens");
 
     const exchangedBalance = calculateCAPLUSDPrice(
