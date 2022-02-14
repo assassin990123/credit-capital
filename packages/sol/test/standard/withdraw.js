@@ -11,7 +11,13 @@ const deployContract = async (contract, params) => {
 
 const deployContracts = async (deployer) => {
   const capl = await deployContract("CreditCapitalPlatformToken", [100]);
-  const vault = await deployContract("VaultMock", []);
+  const lp = await deployContract("ERC20Mock", [
+    "LP",
+    "LP",
+    deployer.address,
+    1_000_000,
+  ]);
+  const vault = await deployContract("VaultMock", [lp.address, 10]);
   const rewards = await deployContract("Rewards", [
     vault.address,
     capl.address,
@@ -34,7 +40,7 @@ describe("Rewards Vault", function () {
   it("Deposit and withdraw a new position", async function () {
     const accounts = await hre.ethers.getSigners();
     const { deployer, user } = await setupAccounts(accounts);
-    const { capl, vault, rewards } = await deployContracts();
+    const { capl, vault, rewards } = await deployContracts(deployer);
     await capl.mint(deployer.address, 100); // mint 100 CAPL
     await vault.addPool(capl.address, 10); // 10 CAPL per block
 

@@ -11,31 +11,38 @@ const deployContract = async (contract, params) => {
 
 const deployContracts = async (deployer) => {
   const capl = await deployContract("CreditCapitalPlatformToken", [100]);
-  const vault = await deployContract("Vault", []);
+  const lp = await deployContract("ERC20Mock", [
+    "LP",
+    "LP",
+    deployer.address,
+    1_000_000,
+  ]);
+  const vault = await deployContract("Vault", [
+    lp.address, // Assume that we have only one pool
+    10 // 10 token reward per block
+  ]);
   const rewards = await deployContract("Rewards", [
     vault.address,
     capl.address,
   ]);
-  // access control
-  // give ownership (minting rights) of capl to the vault
-  // capl.transferOwnership(vault.address)
-  // grant minting rights to rewards contract
-  // vault.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('MINTER')), rewards.address)
-
-  return { capl, vault, rewards };
-};
-
-const setupAccounts = (accounts) => {
-  const deployer = accounts[0];
-  const user = accounts[1];
-  return { deployer, user };
+  return { capl, lp, vault, rewards };
 };
 
 describe("Rewards Vault", function () {
-  it("Deploy a new pool", async function () {
-    // will need to test access control in the future
-    const { capl, vault } = await deployContracts();
+  let deployer;
+  let user;
+  let capl;
+  let lp;
+  let vault;
+  let rewards;
 
+  beforeEach(async function () {
+    [ deployer, user ] = await ethers.getSigners();
+    // deploy token contract
+    ({ capl, lp, vault, rewards } = await deployContracts(deployer));
+  });
+  
+  it("Deploy a new pool", async function () {
     // await capl.mint(deployer.address, 100); // mint 100 CAPL
     await vault.addPool(capl.address, 10); // 10 CAPL per block
 
@@ -44,11 +51,8 @@ describe("Rewards Vault", function () {
     expect(Number(pool.totalPooled.toString())).to.equal(0);
     expect(Number(pool.rewardsPerBlock.toString())).to.equal(10);
   });
-  it("Deposit a new position", async function () {
-    const accounts = await hre.ethers.getSigners();
-    const { deployer, user } = await setupAccounts(accounts);
-    const { capl, vault, rewards } = await deployContracts();
 
+  it("Deposit a new position", async function () {
     await capl.mint(deployer.address, 100);
     await vault.addPool(capl.address, 10); // 10 CAPL per block
 
@@ -63,6 +67,7 @@ describe("Rewards Vault", function () {
     capl.approve(rewards.address, 10);
 
     await rewards.deposit(capl.address, 10);
+
     // check all vault variables to be correct
     // withdraw should be impossible
     const userPosition = await vault.getUserPosition(
