@@ -104,15 +104,16 @@ describe("Rewards Vault", function () {
     await network.provider.send("evm_increaseTime", [3600]);
     await network.provider.send("evm_mine"); // this one will have 02:00 PM as its timestamp
 
-
-
-    let pendingRewards = await vault.getPendingRewards(lp.address, user.address)
-    expect(Number(pendingRewards)).to.equal(56)
+    let pendingRewards = await vault.getPendingRewards(
+      lp.address,
+      user.address
+    );
+    expect(Number(pendingRewards)).to.equal(56);
 
     expect(await rewards.connect(user).claim(lp.address, user.address))
       .to.emit(rewards, "Claim")
       .withArgs(lp.address, user.address, 63);
-    
+
     expect(await rewards.connect(user).claim(lp.address, user2.address))
       .to.emit(rewards, "Claim")
       .withArgs(lp.address, user2.address, 19);
@@ -120,12 +121,11 @@ describe("Rewards Vault", function () {
     expect(await capl.balanceOf(user.address)).to.equal(63);
     expect(await capl.balanceOf(user2.address)).to.equal(19);
 
-   // fast forward
-   await network.provider.send("evm_increaseTime", [3600]);
-   await network.provider.send("evm_mine"); // this one will have 02:00 PM as its timestamp
+    // fast forward
+    await network.provider.send("evm_increaseTime", [3600]);
+    await network.provider.send("evm_mine"); // this one will have 02:00 PM as its timestamp
 
-  pendingRewards = await vault.getPendingRewards(lp.address, user.address)
-  console.log("User pending rewards: " + pendingRewards);
-
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log("User pending rewards: " + pendingRewards);
   });
 });
