@@ -15,6 +15,7 @@ import { computed, watchEffect } from "vue";
 const store = useStore();
 // create contract instances with provider
 store.dispatch("contracts/setContracts");
+
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 
 // watch for user connection
@@ -27,6 +28,7 @@ watchEffect(async () => {
 const w3Lopp = () => {
   store.dispatch("tokens/getAllowances");
   store.dispatch("tokens/getTokenBalances");
+  store.dispatch("rewards/getPendingRewards");
 };
 </script>
 

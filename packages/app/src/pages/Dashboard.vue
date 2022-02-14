@@ -41,8 +41,8 @@
               Your Staked Balance
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ stakedBalance?.toFixed(4) }} USDC-CAPL Shares ({{
-                stakedBalance?.toFixed(4)
+              {{ lpBalance?.toFixed(4) }} USDC-CAPL Shares ({{
+                LPBalanceInUSDC?.toFixed(4)
               }}
               USD)
             </div>
@@ -52,14 +52,14 @@
               Daily Revenue
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              0 CAPL (0.0000 USD)
+              {{ dailyEarnings }} CAPL (0.0000 USD)
             </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
             <div class="dashboard-daily-earning-capl-content-title">
               Daily Yield
             </div>
-            <div class="dashboard-daily-earning-capl-content-value">∞%</div>
+            <div class="dashboard-daily-earning-capl-content-value">%</div>
           </div>
         </div>
       </div>
@@ -75,7 +75,7 @@
         </div>
         <div class="revenue-block-main">
           <div>Your Daily Revenue</div>
-          <div class="dashboard-revenue-projection-value">3.3354 CAPL</div>
+          <div class="dashboard-revenue-projection-value">0 CAPL</div>
           <div class="green-txt">(3.4546 USD)</div>
         </div>
       </div>
@@ -248,13 +248,11 @@
 <script setup lang="ts">
 import { useStore } from "@/store";
 import { computed, watchEffect, ref, Ref } from "vue";
-import { caplUSDConversion, shortenAddress } from "@/utils";
+import { caplUSDConversion, getDailyEarnings, shortenAddress } from "@/utils";
 
 const store = useStore();
 
-const dailyEarnings = computed(
-  () => store.getters["dashboard/getDailyEarnings"]
-);
+const dailyEarnings: Ref<number> = ref(0);
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
 
 const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
@@ -262,14 +260,21 @@ const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
 // TODO: LP -> USD conversion
 const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
 
-// TODO: Update
-const stakedBalance = computed(() => store.getters["rewards/getUserPosition"]);
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
+
+// daily earnings
+const userPosition = computed(
+  () => store.getters["rewards/getUserStakedPosition"]
+);
+// actually capl per block for now
+const caplPerSecond = computed(() => store.getters["rewards/getCaplPerSecond"]);
+const totalStaked = computed(() => store.getters["rewards/getTotalStaked"]);
 
 let walletAddress = ref("Connect");
 let userCAPLToUSD = ref(0);
 let caplInUSD: Ref<number> = ref(0);
+let LPBalanceInUSDC: Ref<number> = ref(0);
 
 watchEffect(() => {
   caplInUSD.value = caplUSDConversion(1, store);
@@ -278,6 +283,18 @@ watchEffect(() => {
   isConnected.value
     ? (walletAddress.value = shortenAddress(wallet.value))
     : (walletAddress.value = "Connect");
+
+  if (
+    userPosition.value > 0 &&
+    caplPerSecond.value > 0 &&
+    totalStaked.value > 0
+  ) {
+    dailyEarnings.value = getDailyEarnings(
+      userPosition.value,
+      caplPerSecond.value,
+      totalStaked.value
+    );
+  }
 });
 </script>
 

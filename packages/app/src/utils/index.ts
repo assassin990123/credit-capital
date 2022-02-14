@@ -137,3 +137,14 @@ export const caplUSDConversion = (amount: number, store: any): number => {
     store.getters["balancer/getPoolTokens"]
   );
 };
+
+// CaplPerDay (pool) / totalStaked (pool) * userPosition
+export const getDailyEarnings = (
+  userPosition: number,
+  caplPerDay: number,
+  totalStaked: number
+): number => {
+  // 43200 blocks / day on polygon
+
+  return caplPerDay * 43200 * (userPosition / totalStaked);
+};

@@ -27,6 +27,12 @@ const getters = {
   getUserUnlockedAmount(state: RewardsState) {
     return state.userUnlockedAmount;
   },
+  getCaplPerSecond(state: RewardsState) {
+    return state.caplPerSecond;
+  },
+  getTotalStaked(state: RewardsState) {
+    return state.totalStaked;
+  },
 };
 
 const actions = {
@@ -47,17 +53,17 @@ const actions = {
       dispatch("contracts/setContracts", null, { root: true });
     }
 
-    const rewardsContract = rootState.contracts.rewardsContract;
+    const vaultContract = rootState.contracts.vaultContract;
     // @ts-ignore
     const lpAddress = rootState.contracts.lpContract.address;
     // @ts-ignore
-    const pendingRewards = await rewardsContract?.pendingRewards(
+    const pendingRewards = await vaultContract?.getPendingRewards(
       lpAddress,
       address
     );
 
     // parse balance, set new value in the local state
-    commit("setPendingRewards", ethers.utils.formatUnits(pendingRewards, 18));
+    commit("setPendingRewards", Number(ethers.utils.formatUnits(pendingRewards, 18)));
   },
 
   async claim({
@@ -81,6 +87,7 @@ const actions = {
 
     // claim rewards
     try {
+      console.log(lpAddress, address)
       // @ts-ignore
       await rewardsContract?.claim(lpAddress, address);
     } catch (error) {
@@ -88,7 +95,21 @@ const actions = {
     }
   },
 
-  async getUserStakedPosition({
+  async getRewardsInfo({
+    commit,
+    rootState,
+    dispatch,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+    dispatch: Dispatch;
+  }) {
+    actions.getCaplPerSecond({ commit, rootState });
+    actions.getTotalStaked({ commit, rootState });
+    actions.getUserPosition({ commit, rootState, dispatch });
+  },
+
+  async getUserPosition({
     commit,
     rootState,
     dispatch,
@@ -107,14 +128,15 @@ const actions = {
 
     // get user locked amount
     // @ts-ignore
-    const userStakedPosition = await vaultContract?.getUserStakedPosition(
-      findObjectContract("USDC", tokens, ChainID),
+    const userPosition = await vaultContract?.getUserPosition(
+      findObjectContract("LP", tokens, ChainID),
       address
     );
     // parse balance, set new value in the local state
+    // console.log(userPosition)
     commit(
       "setUserStakedPosition",
-      ethers.utils.formatUnits(userStakedPosition, 18)
+      Number(ethers.utils.formatUnits(userPosition.totalAmount, 18))
     );
   },
 
@@ -209,14 +231,16 @@ const actions = {
     commit: Commit;
     rootState: RootState;
   }) {
-    const rewardsContract = rootState.contracts.rewardsContract;
+    const vaultContract = rootState.contracts.vaultContract;
     // @ts-ignore
     const lpAddress = rootState.contracts.lpContract?.address;
     // @ts-ignore
-    const totalSupply = rewardsContract?.getTokenSupply(lpAddress);
+    let totalSupply = await vaultContract?.getTokenSupply(lpAddress);
+    totalSupply = Number(ethers.utils.formatEther(totalSupply.toString()));
 
-    commit("setTotalStaked", ethers.utils.parseEther(totalSupply.toString()));
+    commit("setTotalStaked", totalSupply);
   },
+
   async getCaplPerSecond({
     commit,
     rootState,
@@ -224,20 +248,20 @@ const actions = {
     commit: Commit;
     rootState: RootState;
   }) {
-    const rewardsContract = rootState.contracts.rewardsContract;
+    const vaultContract = rootState.contracts.vaultContract;
     // @ts-ignore
     const lpAddress = rootState.contracts.lpContract?.address;
     // @ts-ignore
-    const pool = rewardsContract?.getPool(lpAddress);
+    const pool = await vaultContract?.getPool(lpAddress);
     // we now have the pool struct, IPool, need to unpack
-    console.log(pool); // for test
+    // console.log(pool); // for test
 
-    const rewardsPerSecond = Number(pool.rewardsPerBlock.toString());
-
-    commit(
-      "setCaplPerSecond",
-      ethers.utils.parseEther(rewardsPerSecond.toString())
+    const rewardsPerSecond = Number(
+      ethers.utils.parseUnits(pool.rewardsPerBlock.toString(), 0)
     );
+    //console.log(rewardsPerSecond); // for test
+
+    commit("setCaplPerSecond", rewardsPerSecond);
   },
 };
 
@@ -254,7 +278,7 @@ const mutations = {
   setCaplPerSecond(state: RewardsState, _caplPerSecond: number) {
     state.caplPerSecond = _caplPerSecond;
   },
-  setTotalStake(state: RewardsState, _totalStake: number) {
+  setTotalStaked(state: RewardsState, _totalStake: number) {
     state.totalStaked = _totalStake;
   },
 };

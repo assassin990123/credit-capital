@@ -1,5 +1,4 @@
 //SPDX-License-Identifier: MIT
-//Optimization 1500
 pragma solidity 0.8.11;
 pragma experimental ABIEncoderV2;
 
@@ -41,6 +40,8 @@ contract Vault is AccessControl, Pausable {
         uint256 lastRewardBlock; // last time a claim was made
     }
 
+    uint256 CAPL_PRECISION = 1e18;
+
     // pool tracking
     mapping(address => Pool) Pools; // token => pool
 
@@ -49,10 +50,14 @@ contract Vault is AccessControl, Pausable {
     event WithdrawMATIC(address destination, uint256 amount);
 
     // TBD: Assume creation with one pool required (?)
-    constructor() {
+    constructor(address _token, uint256 _rewardsPerBlock) {
         // RBAC
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         grantRole(REWARDS, msg.sender);
+        grantRole(REWARDS, address(this));
+
+        // create first pool
+        addPool(_token, _rewardsPerBlock);
     }
 
     function updatePool(
@@ -130,13 +135,20 @@ contract Vault is AccessControl, Pausable {
         stake.amount += _amount;
     }
 
-    function addPoolPosition(address _token, uint256 _amount) external onlyRole(REWARDS){
+    function addPoolPosition(address _token, uint256 _amount)
+        external
+        onlyRole(REWARDS)
+    {
         Pools[_token].totalPooled += _amount;
     }
 
-    function removePoolPosition(address _token, uint256 _amount) external onlyRole(REWARDS){
+    function removePoolPosition(address _token, uint256 _amount)
+        external
+        onlyRole(REWARDS)
+    {
         Pools[_token].totalPooled -= _amount;
     }
+
     /*
         Read functions
     */
@@ -230,6 +242,30 @@ contract Vault is AccessControl, Pausable {
         return lockedAmount;
     }
 
+    function getPendingRewards(address _token, address _user)
+        external
+        view
+        returns (uint256 pending)
+    {
+        Pool memory pool = Pools[_token];
+        UserPosition memory user = UserPositions[_token][_user];
+
+        uint256 accCaplPerShare = pool.accCaplPerShare;
+        uint256 tokenSupply = IERC20(_token).balanceOf(address(this));
+
+        if (block.number > pool.lastRewardBlock && tokenSupply != 0) {
+            uint256 blocks = block.number - pool.lastRewardBlock;
+            uint256 caplReward = blocks * pool.rewardsPerBlock;
+            accCaplPerShare =
+                accCaplPerShare +
+                (caplReward * CAPL_PRECISION) /
+                tokenSupply;
+        }
+        pending =
+            ((user.totalAmount * accCaplPerShare) / CAPL_PRECISION) -
+            user.rewardDebt;
+    }
+
     function getLastStake(address _token, address _user)
         external
         view
@@ -252,7 +288,9 @@ contract Vault is AccessControl, Pausable {
     }
 
     function getTokenSupply(address _token) external view returns (uint256) {
-        require(Pools[_token].totalPooled <= IERC20(_token).balanceOf(address(this)));
+        require(
+            Pools[_token].totalPooled <= IERC20(_token).balanceOf(address(this))
+        );
         return IERC20(_token).balanceOf(address(this));
     }
 
@@ -261,7 +299,7 @@ contract Vault is AccessControl, Pausable {
     */
 
     function addPool(address _token, uint256 _rewardsPerBlock)
-        external
+        public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         require(!checkIfPoolExists(_token), "This pool already exists.");

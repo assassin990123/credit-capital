@@ -9,11 +9,10 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   : "1";
 
 const toast = useToast();
-let toastID:any;
+let toastID: any;
 export const checkConnection = (store: any) => {
   if (!store.getters["accounts/isUserConnected"]) {
     dismissNotification();
-    console.log(toastID);
     toastID = toast.info(Connection);
     return false;
   }
@@ -41,8 +40,7 @@ export const showConnectResult = (store: any) => {
   return false;
 };
 
-function dismissNotification () {
-  console.log(toastID)
+function dismissNotification() {
   if (toastID || toastID === 0) {
     toast.dismiss(toastID);
   }
