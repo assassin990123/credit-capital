@@ -4,7 +4,9 @@ import { NETWORK, VAULT_CONFIG } from '../constants';
 
 import { getPoolIdByNetwork } from './utils';
 
-let config: any = {};
+let config: any = {
+  PORT: 8000,
+};
 
 const parsed = dotenv.config()?.parsed;
 

@@ -17,6 +17,7 @@
     "esnext",
     "execa",
     "exponentiate",
+    "fastify",
     "globby",
     "libauth",
     "mkdir",

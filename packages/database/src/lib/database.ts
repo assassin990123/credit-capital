@@ -10,5 +10,12 @@ export const insertRow = async (row) =>
     count: 'exact',
     ignoreDuplicates: true,
   });
+export const getLastRow = async () =>
+  await supabase
+    .from('prices')
+    .select('prices')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
 export default supabase;
