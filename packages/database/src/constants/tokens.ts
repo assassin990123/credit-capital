@@ -1,4 +1,4 @@
-import Token from '../types/token';
+import Token from '../models/token';
 
 import { NETWORK } from './network';
 
