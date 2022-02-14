@@ -17,6 +17,8 @@
                     type="text"
                     @input="exchangeCAPLToUSDC()"
                     v-model="swapToken"
+                    class="input-custom"
+
                   />
                 </div>
               </div>
@@ -25,7 +27,7 @@
                 <div class="panel-explanation">CAPL</div>
               </div>
             </div>
-            <button class="btn-switch">&#8635;</button>
+            <button @click="resetInput()" class="btn-switch">&#8635;</button>
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>receive</span></div>
@@ -36,7 +38,7 @@
                 <div class="panel-explanation">USDC</div>
               </div>
             </div>
-            <button type="button" @click="swap()" class="btn-custom">
+            <button type="button" @click="swap()"  class="btn-custom">
               Enter
             </button>
           </div>
@@ -51,14 +53,20 @@
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>amount</span></div>
-                <div class="panel-explanation">000</div>
+                <div class="panel-explanation"> <input
+                    type="text"
+                    @input="liquidity()"
+                    v-model="liquidityToken"
+                    class="input-custom"
+
+                  /></div>
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span></div>
                 <div class="panel-explanation">CAPL</div>
               </div>
             </div>
-            <button class="btn-switch">&#8635;</button>
+            <button class="btn-switch" @click="resetInput2()">&#8635;</button>
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>amount</span></div>
@@ -89,9 +97,20 @@ import { calculateCAPLUSDPrice, format } from "@/utils";
 import { useToast } from "vue-toastification";
 
 const store = useStore();
-const toast = useToast();
-let swapToken = ref(0);
-let swapTokenResult = ref(0);
+let swapToken = ref("");
+let swapTokenResult = ref("");
+let liquidityToken = ref("");
+let liquidityTokenResult = ref("");
+
+function resetInput() {
+  this.swapToken = "";
+ 
+      //this.email = "";
+
+}
+function resetInput2(){
+   this.liquidityToken = "";
+}
 
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 function swap() {
@@ -120,6 +139,16 @@ async function exchangeCAPLToUSDC() {
     swapTokenResult.value = format(exchangedBalance);
   } else if (!isConnected.value) {
     toast.info("Please connect your wallet!");
+  }
+}
+function liquidity() {
+  if (store.getters["accounts/isUserConnected"]) {
+    const exchangedBalance = calculateCAPLUSDPrice(
+      liquidityToken.value,
+      "USDC",
+      store.getters["balancer/getPoolTokens"]
+    );
+    liquidityTokenResult.value = exchangedBalance;
   }
 }
 </script>
@@ -187,16 +216,18 @@ async function exchangeCAPLToUSDC() {
 .text-right {
   text-align: right;
 }
+.input-custom {
+    display: inline-block;
+    padding: 0px;
+    margin-top: 10px;
+    border-radius: 20px;
+    background: transparent;
+    border: 1px solid #ff8900;
+    text-align: center;
+    font-weight: bold;
+    color: #2f2c23;
+    font-size: 22px;
+    max-width: 150px;
+    margin: 0 auto 35px auto;}
 
-@media only screen and (max-width: 575px) {
-  .panel-container {
-    flex-direction: column;
-  }
-}
-
-@media only screen and (max-width: 575px) {
-  .panel-content.swap-panel-content {
-    padding: 25px 30px 25px 30px;
-  }
-}
 </style>
