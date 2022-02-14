@@ -37,6 +37,9 @@ const getters = {
   getUSDCBalance(state: TokenState) {
     return state.usdc.balance;
   },
+  getLPBalance(state: TokenState) {
+    return state.lp.balance;
+  },
 };
 
 const mutations = {
@@ -123,7 +126,7 @@ const actions = {
     const rewardsAddress = rootState.contracts.rewardsContract.address;
 
     if (!caplContract || !usdcContract)
-      dispatch("contracts/setContracts", { commit, rootState });
+      dispatch("contracts/setContracts", { commit, rootState }, { root: true });
 
     const user = rootState.accounts.activeAccount;
     // @ts-ignore
@@ -158,8 +161,6 @@ const actions = {
         ethers.utils.formatUnits(lpRewardsAllowance.toString(), 18)
       );
 
-      console.log(lpRewardsAllowance);
-
       // console.log(`CAPL allowance: ${caplAllowance}, USDC allowance: ${usdcAllowance}`)
       commit("setCAPLBalancerVaultAllowance", caplBalancerVaultAllowance);
       commit("setUSDCBalancerVaultAllowance", usdcBalancerVaultAllowance);
@@ -184,8 +185,8 @@ const actions = {
     const lpContract = rootState.contracts.lpContract;
 
     // get contract from contract state (local state)
-    if (!caplContract || !usdcContract) {
-      dispatch("contracts/setContracts", { commit, rootState });
+    if (!caplContract || !usdcContract || lpContract) {
+      dispatch("contracts/setContracts", { commit, rootState }, { root: true });
     }
     // @ts-ignore
     const caplBalance = await caplContract?.balanceOf(address);

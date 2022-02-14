@@ -116,6 +116,7 @@ export default {
       showMoons,
       connectWeb3: async () => {
         await store.dispatch("accounts/connectWeb3");
+        await store.dispatch("rewards/getRewardsInfo");
         showConnectResult(store);
       },
     };

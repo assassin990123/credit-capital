@@ -1,5 +1,4 @@
-//SPDX-License-Identifier: UNLICENSED
-// Optimization: 1500
+//SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 pragma experimental ABIEncoderV2;
 
@@ -14,6 +13,10 @@ interface ICAPL {
 
 interface IVault {
     function addPool(address _token, uint256 _rewardsPerBlock) external;
+
+    function addPoolPosition(address _token, uint256 _amount) external;
+
+    function removePoolPosition(address _token, uint256 _amount) external;
 
     function checkIfPoolExists(address _token) external view returns (bool);
 
@@ -195,6 +198,7 @@ contract Rewards is Pausable, AccessControl {
         }
 
         IERC20(_token).safeTransferFrom(msg.sender, vaultAddress, _amount);
+        vault.addPoolPosition(_token, _amount);
         emit Deposit(_token, msg.sender, _amount);
     }
 
@@ -261,6 +265,7 @@ contract Rewards is Pausable, AccessControl {
 
         uint256 accumulatedCapl = (user.totalAmount * pool.accCaplPerShare) /
             CAPL_PRECISION;
+
         uint256 pendingCapl = accumulatedCapl - user.rewardDebt;
 
         // _user.rewardDebt = accumulatedCapl
@@ -288,6 +293,7 @@ contract Rewards is Pausable, AccessControl {
 
         vault.withdraw(_token, _user, amount, newRewardDebt);
 
+        vault.removePoolPosition(_token, amount);
         emit Withdraw(_token, _user, amount);
     }
 

@@ -81,5 +81,10 @@ describe("Rewards Vault", function () {
       deployer.address
     );
     expect(Number(unlockedAmount.value.toString())).to.equal(0);
+    // check pool instance for correct values
+    const pool = await vault.getPool(capl.address);
+
+    expect(Number(pool.totalPooled.toString())).to.equal(10);
+    expect(Number(pool.rewardsPerBlock.toString())).to.equal(10);
   });
 });

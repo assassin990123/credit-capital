@@ -31,7 +31,7 @@ import { computed, watchEffect, ref } from "vue";
 import { useStore } from "@/store";
 // @ts-ignore
 import { calculateCAPLUSDPrice, format } from "@/utils";
-import { checkConnection, checkBalance } from "@/utils/notifications";
+import { checkConnection } from "@/utils/notifications";
 
 const store = useStore();
 const pendingRewardsCAPL = ref(0);
@@ -43,7 +43,7 @@ const pendingRewards = computed(
 );
 
 const claim = () => {
-  if (checkConnection(store) && checkBalance(pendingRewards.value)) {
+  if (checkConnection(store)) {
     store.dispatch("rewards/claim");
   }
 };

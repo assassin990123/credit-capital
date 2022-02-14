@@ -43,15 +43,22 @@ contract VaultMock is AccessControl, Pausable {
     // pool tracking
     mapping(address => Pool) Pools; // token => pool
 
+    uint256 CAPL_PRECISION = 1e18;
+
     event Deposit(address user, address token, uint256 amount);
     event Withdraw(address user, address token, uint256 amount);
     event WithdrawMATIC(address destination, uint256 amount);
 
     // TBD: Assume creation with one pool required (?)
-    constructor() {
+    // TBD: Assume creation with one pool required (?)
+    constructor(address _token, uint256 _rewardsPerBlock) {
         // RBAC
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(REWARDS, msg.sender);
+        grantRole(REWARDS, msg.sender);
+        grantRole(REWARDS, address(this));
+
+        // create first pool
+        addPool(_token, _rewardsPerBlock);
     }
 
     function updatePool(
@@ -63,6 +70,20 @@ contract VaultMock is AccessControl, Pausable {
         Pools[_token].accCaplPerShare = _accCaplPerShare;
 
         return Pools[_token];
+    }
+
+    function addPoolPosition(address _token, uint256 _amount)
+        public
+        onlyRole(REWARDS)
+    {
+        Pools[_token].totalPooled += _amount;
+    }
+
+    function removePoolPosition(address _token, uint256 _amount)
+        external
+        onlyRole(REWARDS)
+    {
+        Pools[_token].totalPooled -= _amount;
     }
 
     function withdraw(
@@ -138,6 +159,30 @@ contract VaultMock is AccessControl, Pausable {
 
     function checkIfPoolExists(address _token) public view returns (bool) {
         return Pools[_token].rewardsPerBlock > 0;
+    }
+
+    function getPendingRewards(address _token, address _user)
+        external
+        view
+        returns (uint256 pending)
+    {
+        Pool memory pool = Pools[_token];
+        UserPosition memory user = UserPositions[_user][_token];
+
+        uint256 accCaplPerShare = pool.accCaplPerShare;
+        uint256 tokenSupply = IERC20(_token).balanceOf(address(this));
+
+        if (block.number > pool.lastRewardBlock && tokenSupply != 0) {
+            uint256 blocks = block.number - pool.lastRewardBlock;
+            uint256 caplReward = blocks * pool.rewardsPerBlock;
+            accCaplPerShare =
+                accCaplPerShare +
+                (caplReward * CAPL_PRECISION) /
+                tokenSupply;
+        }
+        pending =
+            ((user.totalAmount * accCaplPerShare) / CAPL_PRECISION) -
+            user.rewardDebt;
     }
 
     /*  This function will check if a new stake needs to be created based on lockingThreshold.
@@ -233,7 +278,7 @@ contract VaultMock is AccessControl, Pausable {
     */
 
     function addPool(address _token, uint256 _rewardsPerBlock)
-        external
+        public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         require(!checkIfPoolExists(_token), "This pool already exists.");

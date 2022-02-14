@@ -73,6 +73,6 @@ describe("Rewards Vault", function () {
     );
     expect(Number(unlockedAmount.toString())).to.equal(10);
 
-    //
+    // TODO: withdraw test
   });
 });

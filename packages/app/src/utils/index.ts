@@ -143,8 +143,6 @@ export const stringToNumber = (str:any) => {
       return str;
     }
     const multiplier = str.substring(str.length - 1).toLowerCase();
-    console.log(multiplier);
-    console.log(parseFloat(str));
     switch (multiplier){
       case "k":
         return parseFloat(str) * 1000;
@@ -158,3 +156,13 @@ export const stringToNumber = (str:any) => {
         return str;
     }
 }
+// CaplPerDay (pool) / totalStaked (pool) * userPosition
+export const getDailyEarnings = (
+  userPosition: number,
+  caplPerDay: number,
+  totalStaked: number
+): number => {
+  // 43200 blocks / day on polygon
+
+  return caplPerDay * 43200 * (userPosition / totalStaked);
+};

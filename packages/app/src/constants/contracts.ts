@@ -3,14 +3,14 @@ export const contracts = [
     symbol: "rewardsVault",
     contracts: {
       137: "",
-      42: "0x8D79e9f4467E58b202Cc08A2147D70638CBd8E46",
+      42: "0x8Dc87A9E50D685d0b26814B49e46CAb362e20250",
     },
   },
   {
     symbol: "rewards",
     contracts: {
       137: "",
-      42: "0xf6E0b210c29e7F853daB3e12aa70472a9b06ad3e",
+      42: "0x7160299ffb0b0dbCF09C03542eBC51642E7ba83B",
     },
   },
   {
