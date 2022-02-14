@@ -248,7 +248,7 @@ contract Vault is AccessControl, Pausable {
         returns (uint256 pending)
     {
         Pool memory pool = Pools[_token];
-        UserPosition memory user = UserPositions[_token][_user];
+        UserPosition memory user = UserPositions[_user][_token];
 
         uint256 accCaplPerShare = pool.accCaplPerShare;
         uint256 tokenSupply = IERC20(_token).balanceOf(address(this));

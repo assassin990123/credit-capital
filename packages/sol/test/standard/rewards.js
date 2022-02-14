@@ -17,7 +17,7 @@ const deployContracts = async (deployer) => {
     deployer.address,
     1_000_000,
   ]);
-  const vault = await deployContract("VaultMock", [lp.address, 10]);
+  const vault = await deployContract("Vault", [lp.address, 10]);
   const rewards = await deployContract("Rewards", [
     vault.address,
     capl.address,
