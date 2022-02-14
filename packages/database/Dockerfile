@@ -9,7 +9,6 @@ FROM mhart/alpine-node:14
 WORKDIR /app
 
 COPY --from=build-stage /app/build/ /app
-COPY --from=build-stage /app/package.json /app
-RUN yarn --production
+COPY --from=build-stage /app/node_modules /app/node_modules
 
-CMD ["yarn", "start:prod"]
+CMD ["node", "."]

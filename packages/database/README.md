@@ -39,9 +39,9 @@ docker build . -t credit-capital/database
 Then creating a container based on the built image
 
 ```
-docker run -d --restart unless-stopped -p 8000:8000 --rm --name cc-database -e INFURA=***** -e SUPABASE_SERVICE_KEY=******** credit-capital/database
+docker run -d --restart unless-stopped -p 8000:8000 --name cc-database -e INFURA=***** -e SUPABASE_SERVICE_KEY=******** credit-capital/database
 --- or ---
-docker run -d --restart unless-stopped --env-file .env --rm --name cc-database credit-capital/database
+docker run -d --restart unless-stopped --env-file .env --name cc-database credit-capital/database
 ```
 
 ## Docker Compose

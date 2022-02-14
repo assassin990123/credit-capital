@@ -12,6 +12,20 @@ if (parsed && typeof parsed !== 'undefined') {
   config = { ...config, ...parsed };
 }
 
+// load local env
+const allowed = [
+  'INFURA',
+  'SUPABASE_SERVICE_URL',
+  'SUPABASE_SERVICE_KEY',
+  'BALANCERVAULT_NETWORK',
+  'BALANCERVAULT_POOL',
+];
+Object.keys(process.env).forEach((env) => {
+  if (allowed.includes(env)) {
+    config[env] = process.env[env];
+  }
+});
+
 // load computed values
 const CHAIN_ID = NETWORK[
   config.BALANCERVAULT_NETWORK?.toUpperCase()

@@ -2,8 +2,6 @@
   "name": "price-data",
   "version": "1.0.1",
   "description": "pulls latest token pair info from balancer vault and saves into a db",
-  "main": "build/index.js",
-  "typings": "build/index.d.ts",
   "private": true,
   "keywords": [],
   "scripts": {
@@ -69,10 +67,7 @@
       "rewritePaths": {
         "src/": "build/main/"
       }
-    },
-    "files": [
-      "!build/module/**"
-    ]
+    }
   },
   "config": {
     "commitizen": {
