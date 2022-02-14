@@ -9,31 +9,34 @@ const server: FastifyInstance = Fastify({});
 
 const opts: RouteShorthandOptions = {
   schema: {
-    // response: {
-    //   200: {
-    //     type: 'object',
-    //     properties: {
-    //       pong: {
-    //         type: 'string',
-    //       },
-    //       status: { type: 'string' },
-    //       uptime: { type: 'number' },
-    //     },
-    //   },
-    // },
+    response: {
+      200: {
+        type: 'object',
+        properties: {
+          pong: {
+            type: 'string',
+          },
+          status: { type: 'string' },
+          uptime: { type: 'number' },
+          prices: { type: 'array' },
+        },
+      },
+    },
   },
 };
 
-server.get('/ping', opts, async () => ({ pong: 'it worked!' }));
+server.get('/', opts, async () => ({ status: 'ok' }));
 server.get('/health', opts, async () => ({
   status: 'ok',
   uptime: process.uptime(),
 }));
+
 server.get('/price', opts, async () => {
   const result = await getLastRow();
   if (result && result.error === null) {
-    return result.data?.prices;
+    return result.data;
   }
+  return { prices: [] };
 });
 
 export const startServer = async (onServerStarted: CallableFunction) => {

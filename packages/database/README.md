@@ -72,3 +72,29 @@ You can also deploy this as a stack to a swarm, change the service name `cc-data
 ```bash
 docker stack deploy --compose-file docker-compose.yml cc-database
 ```
+
+# API
+
+After running the app, it will spawn a http server in port 8000 (default)
+
+## Endpoints
+
+- `/` - root
+- `/health` - to be used for readiness/health check
+- `/price` - returns an array of latest prices based on the last recorded price data in the database
+
+  ```json
+  // example response
+  {
+    "prices": [
+      {
+        "type": "USDC/CAPL",
+        "value": 1.4392799999999857
+      },
+      {
+        "type": "CAPL/USDC",
+        "value": 0.6947918403646337
+      }
+    ]
+  }
+  ```
