@@ -859,6 +859,16 @@ textarea:focus {
 align-self: center;
 }
 
+.la-bars{
+  color: #fff;
+  font-size: 40px;
+  font-weight: 700;
+}
+
+.mobile-menu-icon{
+  margin-left: 50px;
+}
+
 .collapse.navbar-collapse.mean-menu .navbar-nav{
   margin: 0 0 0 50px;
 }
@@ -3389,7 +3399,7 @@ align-self: center;
 }
 
 .hero-3-bg .hero-btn:hover {
-  background-color: #272a3a;
+  background-color: #ff8900;
   -webkit-box-shadow: 0px 17px 43px 1px rgba(36, 30, 52, 0.4);
   box-shadow: 0px 17px 43px 1px rgba(36, 30, 52, 0.4);
   color: #ffffff;

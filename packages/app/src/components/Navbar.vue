@@ -9,9 +9,8 @@
               <img src="/images/logo-white.png" alt="logo" />
             </router-link>
           </div>
-            <button>  <a href="javascript:void(0);">
-                  Toggle
-                  </a></button>
+              <a class="mobile-menu-icon" href="javascript:void(0);">
+                  <i class="las la-bars"></i></a>
         </div>
       </div>
     </div>
@@ -176,4 +175,5 @@ export default {
 /** MEDIA QUERIES */
 @media screen and (min-width: 1000px) {
 }
+
 </style>
