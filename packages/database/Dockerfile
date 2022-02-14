@@ -12,4 +12,4 @@ COPY --from=build-stage /app/build/ /app
 COPY --from=build-stage /app/package.json /app
 RUN yarn --production
 
-CMD ['yarn', 'start:prod']
+CMD ["yarn", "start:prod"]
