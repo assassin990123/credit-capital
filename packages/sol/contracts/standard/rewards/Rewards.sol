@@ -199,6 +199,7 @@ contract Rewards is Pausable, AccessControl {
 
         IERC20(_token).safeTransferFrom(msg.sender, vaultAddress, _amount);
         vault.addPoolPosition(_token, _amount);
+
         emit Deposit(_token, msg.sender, _amount);
     }
 
@@ -286,14 +287,18 @@ contract Rewards is Pausable, AccessControl {
         );
 
         uint256 amount = vault.getUnlockedAmount(_token, _user);
-
-        uint256 newRewardDebt = user.rewardDebt -
-            (amount * pool.accCaplPerShare) /
-            CAPL_PRECISION;
+        uint256 newRewardDebt;
+        
+        // check if the user withdraw token right after the first deposit
+        if (user.rewardDebt > 0) {
+            newRewardDebt = user.rewardDebt -
+                (amount * pool.accCaplPerShare) /
+                CAPL_PRECISION;
+        }
 
         vault.withdraw(_token, _user, amount, newRewardDebt);
-
         vault.removePoolPosition(_token, amount);
+
         emit Withdraw(_token, _user, amount);
     }
 

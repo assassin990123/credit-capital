@@ -11,41 +11,32 @@ const deployContract = async (contract, params) => {
 
 const deployContracts = async (deployer) => {
   const capl = await deployContract("CreditCapitalPlatformToken", [100]);
-  const lp = await deployContract("ERC20Mock", [
-    "LP",
-    "LP",
-    deployer.address,
-    1_000_000,
-  ]);
   const vault = await deployContract("Vault", [
-    lp.address, // Assume that we have only one pool
+    capl.address, // Assume that we have only one pool
     10 // 10 token reward per block
   ]);
   const rewards = await deployContract("Rewards", [
     vault.address,
     capl.address,
   ]);
-  return { capl, lp, vault, rewards };
+  return { capl, vault, rewards };
 };
 
 describe("Rewards Vault", function () {
   let deployer;
   let user;
   let capl;
-  let lp;
   let vault;
   let rewards;
 
   beforeEach(async function () {
     [ deployer, user ] = await ethers.getSigners();
     // deploy token contract
-    ({ capl, lp, vault, rewards } = await deployContracts(deployer));
+    ({ capl, vault, rewards } = await deployContracts(deployer));
   });
   
   it("Deploy a new pool", async function () {
     // await capl.mint(deployer.address, 100); // mint 100 CAPL
-    await vault.addPool(capl.address, 10); // 10 CAPL per block
-
     const pool = await vault.getPool(capl.address);
 
     expect(Number(pool.totalPooled.toString())).to.equal(0);
@@ -54,7 +45,6 @@ describe("Rewards Vault", function () {
 
   it("Deposit a new position", async function () {
     await capl.mint(deployer.address, 100);
-    await vault.addPool(capl.address, 10); // 10 CAPL per block
 
     // grant rewards the REWARDS role in the vault
     vault.grantRole(

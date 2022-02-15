@@ -43,8 +43,6 @@ describe("Rewards Vault", function () {
     const { deployer, user, user2 } = await setupAccounts(accounts);
     const { capl, vault, rewards, lp } = await deployContracts(deployer);
 
-    //await vault.addPool(lp.address, 10); // 10 CAPL per block
-
     // grant rewards the REWARDS role in the vault
     vault.grantRole(
       ethers.utils.keccak256(ethers.utils.toUtf8Bytes("REWARDS")),
