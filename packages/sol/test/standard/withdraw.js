@@ -64,7 +64,7 @@ describe("Rewards Vault", function () {
     let pool = await vault.getPool(capl.address);
 
     expect(Number(pool.totalPooled.toString())).to.equal(10);
-    expect(Number(pool.rewardsPerBlock.toString())).to.equal(10);
+    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10);
 
     // fast forward
     await network.provider.send("evm_increaseTime", [3600]);
@@ -98,6 +98,6 @@ describe("Rewards Vault", function () {
     // check pool state
     pool = await vault.getPool(capl.address);
     expect(Number(pool.totalPooled.toString())).to.equal(0);
-    expect(Number(pool.rewardsPerBlock.toString())).to.equal(10);
+    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10);
   });
 });
