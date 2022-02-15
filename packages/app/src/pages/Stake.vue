@@ -56,7 +56,7 @@ const unstakeAmount = computed(
 
 // this function checks the allowance a user has alloted our rewards contract via the LP token
 watchEffect(async () => {
-  (await checkAllowance(
+  (!store.getters['accounts/isUserConnected'] || await checkAllowance(
     store,
     "LP", // static for now
     stakeAmount.value,
