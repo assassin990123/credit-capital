@@ -253,8 +253,8 @@ contract Vault is AccessControl, Pausable {
         uint256 tokenSupply = IERC20(_token).balanceOf(address(this));
 
         if (block.timestamp > pool.lastRewardTime && tokenSupply != 0) {
-            uint256 blocks = block.timestamp - pool.lastRewardTime;
-            uint256 caplReward = blocks * pool.rewardsPerSecond;
+            uint256 passedTime = block.timestamp - pool.lastRewardTime;
+            uint256 caplReward = passedTime * pool.rewardsPerSecond;
             accCaplPerShare =
                 accCaplPerShare +
                 (caplReward * CAPL_PRECISION) /

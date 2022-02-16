@@ -212,8 +212,8 @@ contract Rewards is Pausable, AccessControl {
         uint256 accCaplPerShare;
         if (block.timestamp > cpool.lastRewardTime) {
             if (totalSupply > 0) {
-                uint256 blocks = block.timestamp - cpool.lastRewardTime;
-                uint256 caplReward = blocks * cpool.rewardsPerSecond;
+                uint256 passedTime = block.timestamp - cpool.lastRewardTime;
+                uint256 caplReward = passedTime * cpool.rewardsPerSecond;
                 accCaplPerShare =
                     cpool.accCaplPerShare +
                     (caplReward * CAPL_PRECISION) /
@@ -245,8 +245,8 @@ contract Rewards is Pausable, AccessControl {
         uint256 tokenSupply = vault.getTokenSupply(_token);
 
         if (block.timestamp > pool.lastRewardTime && tokenSupply != 0) {
-            uint256 blocks = block.timestamp - pool.lastRewardTime;
-            uint256 caplReward = blocks * pool.rewardsPerSecond;
+            uint256 passedTime = block.timestamp - pool.lastRewardTime;
+            uint256 caplReward = passedTime * pool.rewardsPerSecond;
             accCaplPerShare =
                 accCaplPerShare +
                 (caplReward * CAPL_PRECISION) /
