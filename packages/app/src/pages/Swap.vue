@@ -338,7 +338,7 @@ function changeLiquidityAmount() {
   margin: 0 auto 35px auto;
 }
 
-@media only screen and (max-width: 575px) {
+/* @media only screen and (max-width: 575px) {
   .panel-container {
     flex-direction: column;
   }
@@ -348,5 +348,5 @@ function changeLiquidityAmount() {
   .panel-content.swap-panel-content {
     padding: 25px 30px 25px 30px;
   }
-}
+} */
 </style>
