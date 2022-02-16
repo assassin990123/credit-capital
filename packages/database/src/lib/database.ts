@@ -23,7 +23,7 @@ export const getLastRow = async () =>
     .maybeSingle();
 
 export const getRows = (filters) => {
-  console.log('getRows', filters);
+  console.log('getRows filter', filters);
   return supabase
     .from('prices')
     .select('*')
@@ -33,7 +33,10 @@ export const getRows = (filters) => {
 };
 
 export const getRow = async (filters) => {
-  return await getRows(filters).limit(1).maybeSingle();
+  return await getRows(filters)
+    .limit(1)
+    .maybeSingle()
+    .then((res) => res.data);
 };
 
 export default supabase;

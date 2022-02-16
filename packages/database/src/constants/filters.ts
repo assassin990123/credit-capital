@@ -1,4 +1,5 @@
 import moment from 'moment';
+
 import { formatUTC } from '../lib/utils';
 import { DATE_SCALE, DATE_SCALE_NUM } from '../models/date-scale';
 

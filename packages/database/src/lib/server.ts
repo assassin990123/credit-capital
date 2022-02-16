@@ -1,41 +1,36 @@
-// import { Server, IncomingMessage, ServerResponse } from 'http';
+import Fastify, { FastifyInstance } from 'fastify';
 
-import Fastify, { FastifyInstance, RouteShorthandOptions } from 'fastify';
+import { priceSchema, staticSchema } from '../models/schemas';
 
 import config from './config';
-import { getLastRow } from './database';
+import { getLastRow, getRow, getRows } from './database';
+import { hasQuery, parseQueryToFilter } from './utils';
 
 const server: FastifyInstance = Fastify({});
 
-const opts: RouteShorthandOptions = {
-  schema: {
-    response: {
-      200: {
-        type: 'object',
-        properties: {
-          pong: {
-            type: 'string',
-          },
-          status: { type: 'string' },
-          uptime: { type: 'number' },
-          prices: { type: 'array' },
-        },
-      },
-    },
-  },
-};
-
-server.get('/', opts, async () => ({ status: 'ok' }));
-server.get('/health', opts, async () => ({
+server.get('/', staticSchema, async () => ({ status: 'ok' }));
+server.get('/health', staticSchema, async () => ({
   status: 'ok',
   uptime: process.uptime(),
 }));
 
-server.get('/price', opts, async () => {
-  const result = await getLastRow();
-  if (result && result.error === null) {
-    return result.data;
+server.get('/price', priceSchema, async (request) => {
+  if (hasQuery(request)) {
+    console.log(request.query);
+    const query: { multi?: number; start_date?: string; end_date?: string } =
+      request.query;
+    const filters = parseQueryToFilter(query);
+
+    if (query.multi) return await getRows(filters).then((res) => res.data);
+
+    return await getRow(filters);
+  } else {
+    const result = await getLastRow();
+    if (result && result.error === null) {
+      return result.data;
+    }
   }
+
   return { prices: [] };
 });
 

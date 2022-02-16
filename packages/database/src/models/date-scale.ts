@@ -7,5 +7,5 @@ export enum DATE_SCALE {
 export enum DATE_SCALE_NUM {
   MONTH = 30,
   WEEK = 7,
-  DAY = 1,
+  DAY = 0,
 }
