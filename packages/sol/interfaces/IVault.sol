@@ -3,7 +3,7 @@ interface IVault {
 
     function REWARDS() external view returns (bytes32);
 
-    function addPool(address _token, uint256 _rewardsPerBlock) external;
+    function addPool(address _token, uint256 _rewardsPerSecond) external;
 
     function addStake(
         address _token,
@@ -70,7 +70,7 @@ interface IVault {
     function setPool(
         address _token,
         uint256 _accCaplPerShare,
-        uint256 _lastRewardBlock
+        uint256 _lastRewardTime
     ) external returns (tuple);
 
     function setStake(
@@ -98,7 +98,7 @@ interface IVault {
     function updatePool(
         address _token,
         uint256 _accCaplPerShare,
-        uint256 _lastRewardBlock
+        uint256 _lastRewardTime
     ) external returns (tuple);
 
     function withdraw(
