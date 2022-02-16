@@ -874,10 +874,10 @@ align-self: center;
   margin: 0 0 0 50px;
 }
 
-@media only screen and (max-width: 575px){
-  .navbar-area > .acavo-nav {
+@media only screen and (max-width: 962px){
+  /* .navbar-area > .acavo-nav {
     display: block;
-  }
+  } */
   .logo-mobile{
     display: none;
   }
@@ -7572,7 +7572,7 @@ align-self: center;
   background-repeat: no-repeat;
 }
 
-@media only screen and (max-width: 414px) {
+@media only screen and (max-width: 601px) {
   .panel-content.stake-panel-content{
    padding: 50px 0;
    height: auto;
@@ -7646,7 +7646,7 @@ align-self: center;
   margin: 50px auto 50px auto;
 }
 
-@media only screen and (max-width: 414px) {
+@media only screen and (max-width: 601px) {
   .rewards-container .rewards-content{
     width: 80%;
   }
@@ -7728,7 +7728,7 @@ align-self: center;
   border: 1px solid #ffca03;
 }
 
-@media only screen and (max-width: 414px) {
+@media only screen and (max-width: 601px) {
   .panel-container.inner-container {
     flex-direction: column;
   }
@@ -7809,7 +7809,7 @@ align-self: center;
   margin: auto;
 }
 
-@media only screen and (max-width: 414px) {
+@media only screen and (max-width: 601px) {
   .line {
     width: 40%;
   }
@@ -7883,7 +7883,7 @@ button.tab-inner-content-item {
 }
 
 
-@media only screen and (max-width: 414px) {
+@media only screen and (max-width: 601px) {
   div.treasury-row,
   div.treasury-row.inner-container,
   div.treasury-column-1,
@@ -7926,14 +7926,57 @@ button.tab-inner-content-item {
                 31 -- Dashboard
 ==============================================*/
 
+@media only screen and (max-width: 962px){
+  div.dashboard-container.dashboard-cus-main{
+    padding: 100px 30px;
+  }
+  div.dashboard-cus-main .dashboard-revenue-projection-content-row{
+    flex-wrap: wrap;
+  }
+  div.dashboard-cus-main .dashboard-revenue-projection-vault{
+    width: 40%;
+    margin-right: 0;
+  }
+  div.dashboard-cus-main .dashboard-revenue-projection-content-column{
+      margin: 0 25px 20px 25px;
+  }
+  div.dashboard-cus-main .dashboard-daily-earning{
+      padding: 40px 0;
+  }
+  div.dashboard-cus-main .dashboard-portfolio-capl-row div, 
+  div.dashboard-cus-main .dashboard-platform-assets-panel div,
+  div.dashboard-cus-main .dashboard-platform-assets div{
+    font-size: 16px;
+  }
+  div.dashboard-cus-main .dashboard-portfolio-capl-panel-row{
+    flex-wrap: wrap;
+  }
+  div.dashboard-platform-header{
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  div.dashboard-cus-main .buy-btn{
+    margin: 20px;
+  }
+  div.dashboard-cus-main .dashboard-platform-token{
+    flex-direction: column;
+  }
+  div.dashboard-platform-token-column{
+    width: auto;
+  } 
+}
 
-@media only screen and (max-width: 414px) {
+
+@media only screen and (max-width: 601px) {
   div.dashboard-container.dashboard-cus-main {
     padding: 0;
   }
   .dashboard-container.dashboard-cus-main 
   .dashboard-daily-earning {
     flex-direction: column;
+    margin: 0 30px;
+    padding: 0;
+    width: auto;
   }
   div.dashboard-daily-earning .dashboard-daily-earning-panel {
     width: auto;
@@ -7998,14 +8041,13 @@ button.tab-inner-content-item {
     flex-direction: row;
     justify-content: space-between;
   }
-  div.dashboard-cus-main .dashboard-portfolio-capl-row div{
-    font-size: 16px;
-  }
+  div.dashboard-cus-main .dashboard-portfolio-capl-row div,
+  div.dashboard-cus-main .dashboard-platform-assets-panel div,
   div.dashboard-cus-main .dashboard-platform-assets div{
     font-size: 16px;
   }
-  div.dashboard-cus-main .dashboard-platform-assets-panel div{
-    font-size: 16px;
+  .dashboard-cus-main .reward-btn{
+    min-width: 100px;
   }
 }
 
