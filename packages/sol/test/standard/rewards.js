@@ -92,11 +92,6 @@ describe("Rewards Vault", function () {
     // Access Control
     // set rewards as MINTER_ROLE role in capl
     await capl.grantRole(capl.MINTER_ROLE(), rewards.address.toLowerCase());
-    // set user as MINTER_ROLE role in rewards.
-    await rewards.grantRole(
-      await rewards.MINTER_ROLE(),
-      user.address.toLowerCase()
-    );
 
     // fast forward
     await network.provider.send("evm_increaseTime", [3600]);
