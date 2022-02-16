@@ -110,7 +110,7 @@ describe("Rewards Vault", function () {
 
     expect(await rewards.connect(user).claim(lp.address, user.address))
       .to.emit(rewards, "Claim")
-      .withArgs(lp.address, user.address, 48043);
+      .withArgs(lp.address, user.address, 48050);
 
     expect(await rewards.connect(user).claim(lp.address, user2.address))
       .to.emit(rewards, "Claim")
