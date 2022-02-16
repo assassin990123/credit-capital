@@ -101,7 +101,7 @@ describe("Rewards Vault", function () {
       lp.address,
       user.address
     );
-    expect(Number(pendingRewards)).to.equal(48043);
+    expect(Number(pendingRewards)).to.equal(48036);
 
     expect(await rewards.connect(user).claim(lp.address, user.address))
       .to.emit(rewards, "Claim")
@@ -111,8 +111,8 @@ describe("Rewards Vault", function () {
       .to.emit(rewards, "Claim")
       .withArgs(lp.address, user2.address, 24013);
 
-    expect(await capl.balanceOf(user.address)).to.equal(48050);
-    expect(await capl.balanceOf(user2.address)).to.equal(24013);
+    expect(await capl.balanceOf(user.address)).to.equal(48043);
+    expect(await capl.balanceOf(user2.address)).to.equal(24009);
 
     // fast forward
     await network.provider.send("evm_increaseTime", [3600]);

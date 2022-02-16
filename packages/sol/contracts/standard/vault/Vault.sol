@@ -58,7 +58,7 @@ contract Vault is AccessControl, Pausable {
         grantRole(REWARDS, address(this));
 
         // create first pool
-        addPool(_token, _rewardsPerSecond);
+        addPool(_token, _rewardsPerSecond * 1e18);
     }
 
     function updatePool(
@@ -257,7 +257,7 @@ contract Vault is AccessControl, Pausable {
             uint256 caplReward = passedTime * pool.rewardsPerSecond;
             accCaplPerShare =
                 accCaplPerShare +
-                (caplReward * CAPL_PRECISION) /
+                caplReward /
                 tokenSupply;
         }
         pending =

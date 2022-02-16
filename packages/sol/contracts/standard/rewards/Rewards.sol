@@ -216,7 +216,7 @@ contract Rewards is Pausable, AccessControl {
                 uint256 caplReward = passedTime * cpool.rewardsPerSecond;
                 accCaplPerShare =
                     cpool.accCaplPerShare +
-                    (caplReward * CAPL_PRECISION) /
+                    caplReward /
                     totalSupply;
             }
             uint256 lastRewardTime = block.timestamp;
@@ -249,7 +249,7 @@ contract Rewards is Pausable, AccessControl {
             uint256 caplReward = passedTime * pool.rewardsPerSecond;
             accCaplPerShare =
                 accCaplPerShare +
-                (caplReward * CAPL_PRECISION) /
+                caplReward /
                 tokenSupply;
         }
         pending =
