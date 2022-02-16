@@ -92,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, watchEffect } from "vue";
+import { ref, Ref, watchEffect, computed } from "vue";
 import { useStore } from "@/store";
 import {
   calculateCAPLUSDPrice,
@@ -121,7 +121,10 @@ let approvalFlag: Ref<string | null> = ref(null);
 
 // this loops checks the store values for the token allowances and dynamically changes button text based on that info
 watchEffect(async () => {
-  (!store.getters['accounts/isUserConnected'] || await checkAllowance(
+  const isUserConnected = computed(
+                          () => store.getters["accounts/isUserConnected"]
+                        );
+  (! isUserConnected.value || await checkAllowance(
     store,
     swapTokenSymbol.value,
     Number(swapAmount.value),
