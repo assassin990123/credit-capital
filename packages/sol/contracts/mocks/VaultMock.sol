@@ -16,7 +16,7 @@ contract VaultMock is AccessControl, Pausable {
 
     struct Stake {
         uint256 amount; // quantity staked
-        uint256 startBlock; // stake creation timestamp
+        uint256 startTime; // stake creation timestamp
         uint256 timeLockEnd; // The point at which the (4 yr, 4 mo, 4 day) timelock ends for a stake, and thus the funds can be withdrawn.
         bool active; // true = stake in vault, false = user withdrawn stake
     }
@@ -35,9 +35,9 @@ contract VaultMock is AccessControl, Pausable {
 
     struct Pool {
         uint256 totalPooled; // total token pooled in the contract
-        uint256 rewardsPerBlock; // rate at which CAPL is minted for this pool
+        uint256 rewardsPerSecond; // rate at which CAPL is minted for this pool
         uint256 accCaplPerShare; // weighted CAPL share in pool
-        uint256 lastRewardBlock; // last time a claim was made
+        uint256 lastRewardTime; // last time a claim was made
     }
 
     // pool tracking
@@ -51,22 +51,22 @@ contract VaultMock is AccessControl, Pausable {
 
     // TBD: Assume creation with one pool required (?)
     // TBD: Assume creation with one pool required (?)
-    constructor(address _token, uint256 _rewardsPerBlock) {
+    constructor(address _token, uint256 _rewardsPerSecond) {
         // RBAC
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         grantRole(REWARDS, msg.sender);
         grantRole(REWARDS, address(this));
 
         // create first pool
-        addPool(_token, _rewardsPerBlock);
+        addPool(_token, _rewardsPerSecond);
     }
 
     function updatePool(
         address _token,
         uint256 _accCaplPerShare,
-        uint256 _lastRewardBlock
+        uint256 _lastRewardTime
     ) external returns (Pool memory) {
-        Pools[_token].lastRewardBlock = _lastRewardBlock;
+        Pools[_token].lastRewardTime = _lastRewardTime;
         Pools[_token].accCaplPerShare = _accCaplPerShare;
 
         return Pools[_token];
@@ -83,7 +83,9 @@ contract VaultMock is AccessControl, Pausable {
         external
         onlyRole(REWARDS)
     {
-        Pools[_token].totalPooled -= _amount;
+        Pool storage pool = Pools[_token];
+        require(pool.totalPooled >= _amount, "Pooled amount is not enough");
+        pool.totalPooled -= _amount;
     }
 
     function withdraw(
@@ -95,16 +97,15 @@ contract VaultMock is AccessControl, Pausable {
         require(_amount > 0, "Amount 0");
 
         UserPosition storage userPosition = UserPositions[_user][_token];
+
         require(
-            userPosition.totalAmount > _amount,
+            userPosition.totalAmount >= _amount,
             "Withdrawn amount exceed the user balance"
         );
 
+        // update userPosition
         userPosition.totalAmount -= _amount;
         userPosition.rewardDebt = _newRewardDebt;
-
-        Pool storage pool = Pools[_token];
-        pool.totalPooled -= _amount;
 
         // reset the stakes to the default value related to the unlocked amount
         Stake[] storage stakes = UserPositions[_user][_token].stakes;
@@ -117,8 +118,7 @@ contract VaultMock is AccessControl, Pausable {
             delete stakes[i];
         }
 
-        IERC20(_token).safeTransferFrom(address(this), _user, _amount);
-
+        IERC20(_token).safeTransfer(_user, _amount);
         emit Withdraw(_user, _token, _amount);
     }
 
@@ -130,7 +130,7 @@ contract VaultMock is AccessControl, Pausable {
         // create user & stake data
         Stake memory stake = Stake({
             amount: _amount, // first stake
-            startBlock: block.timestamp,
+            startTime: block.timestamp,
             timeLockEnd: block.timestamp + timelock,
             active: true
         });
@@ -158,7 +158,7 @@ contract VaultMock is AccessControl, Pausable {
     }
 
     function checkIfPoolExists(address _token) public view returns (bool) {
-        return Pools[_token].rewardsPerBlock > 0;
+        return Pools[_token].rewardsPerSecond > 0;
     }
 
     function getPendingRewards(address _token, address _user)
@@ -172,9 +172,9 @@ contract VaultMock is AccessControl, Pausable {
         uint256 accCaplPerShare = pool.accCaplPerShare;
         uint256 tokenSupply = IERC20(_token).balanceOf(address(this));
 
-        if (block.number > pool.lastRewardBlock && tokenSupply != 0) {
-            uint256 blocks = block.number - pool.lastRewardBlock;
-            uint256 caplReward = blocks * pool.rewardsPerBlock;
+        if (block.timestamp > pool.lastRewardTime && tokenSupply != 0) {
+            uint256 blocks = block.timestamp - pool.lastRewardTime;
+            uint256 caplReward = blocks * pool.rewardsPerSecond;
             accCaplPerShare =
                 accCaplPerShare +
                 (caplReward * CAPL_PRECISION) /
@@ -277,7 +277,7 @@ contract VaultMock is AccessControl, Pausable {
         Admin functions
     */
 
-    function addPool(address _token, uint256 _rewardsPerBlock)
+    function addPool(address _token, uint256 _rewardsPerSecond)
         public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
@@ -285,9 +285,9 @@ contract VaultMock is AccessControl, Pausable {
 
         Pool memory pool = Pool({
             totalPooled: 0,
-            rewardsPerBlock: _rewardsPerBlock,
+            rewardsPerSecond: _rewardsPerSecond,
             accCaplPerShare: 0,
-            lastRewardBlock: block.number
+            lastRewardTime: block.timestamp
         });
 
         Pools[_token] = pool;
@@ -296,12 +296,12 @@ contract VaultMock is AccessControl, Pausable {
     function setPool(
         address _token,
         uint256 _accCaplPerShare,
-        uint256 _lastRewardBlock
+        uint256 _lastRewardTime
     ) external onlyRole(REWARDS) returns (Pool memory) {
         require(checkIfPoolExists(_token), "Pool does not exist");
 
         Pools[_token].accCaplPerShare = _accCaplPerShare;
-        Pools[_token].lastRewardBlock = _lastRewardBlock;
+        Pools[_token].lastRewardTime = _lastRewardTime;
 
         return Pools[_token];
     }
@@ -315,7 +315,7 @@ contract VaultMock is AccessControl, Pausable {
         // add new stake
         Stake memory userStake = Stake({
             amount: _amount, // first stake
-            startBlock: block.timestamp,
+            startTime: block.timestamp,
             timeLockEnd: block.timestamp + timelock,
             active: true
         });
@@ -359,7 +359,7 @@ contract VaultMock is AccessControl, Pausable {
         require(_amount > 0 && pool.totalPooled >= _amount);
 
         // withdraw the token to user wallet
-        IERC20(_token).safeTransferFrom(address(this), _destination, _amount);
+        IERC20(_token).safeTransfer(_destination, _amount);
 
         // update the pooled amount
         pool.totalPooled -= _amount;
