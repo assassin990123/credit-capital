@@ -24,7 +24,7 @@ export const tokens = [
     symbol: "USDC",
     contracts: {
       137: "",
-      42: "0x7079f3762805cff9c979a5bdc6f5648bcfee76c8",
+      42: "0xc2569dd7d0fd715b054fbf16e75b001e5c0c1115",
     },
   },
   {

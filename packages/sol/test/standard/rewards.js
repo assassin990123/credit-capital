@@ -10,17 +10,17 @@ const deployContract = async (contract, params) => {
 };
 
 const deployContracts = async (deployer) => {
-  const capl = await deployContract("CreditCapitalPlatformToken", [100]);
-  const vault = await deployContract("VaultMock", [null]);
-  const rewards = await deployContract("Rewards", [
-    vault.address,
-    capl.address,
-  ]);
+  const capl = await deployContract("CreditCapitalPlatformToken", [1_000_000]);
   const lp = await deployContract("ERC20Mock", [
     "LP",
     "LP",
     deployer.address,
     1_000_000,
+  ]);
+  const vault = await deployContract("Vault", [lp.address, 10]);
+  const rewards = await deployContract("Rewards", [
+    vault.address,
+    capl.address,
   ]);
   // access control
   // give ownership (minting rights) of capl to the vault
@@ -42,8 +42,6 @@ describe("Rewards Vault", function () {
     const accounts = await hre.ethers.getSigners();
     const { deployer, user, user2 } = await setupAccounts(accounts);
     const { capl, vault, rewards, lp } = await deployContracts(deployer);
-
-    await vault.addPool(lp.address, 10); // 10 CAPL per block
 
     // grant rewards the REWARDS role in the vault
     vault.grantRole(
@@ -94,24 +92,33 @@ describe("Rewards Vault", function () {
     // Access Control
     // set rewards as MINTER_ROLE role in capl
     await capl.grantRole(capl.MINTER_ROLE(), rewards.address.toLowerCase());
-    // set user as MINTER_ROLE role in rewards.
-    await rewards.grantRole(
-      await rewards.MINTER_ROLE(),
-      user.address.toLowerCase()
-    );
 
-    // await rewards.pendingRewards(lp.address, user.address).then((rewards) => {
-    //   console.log("User pending rewards: " + rewards);
-    // });
+    // fast forward
+    await network.provider.send("evm_increaseTime", [3600]);
+    await network.provider.send("evm_mine"); // this one will have 02:00 PM as its timestamp
+
+    let pendingRewards = await vault.getPendingRewards(
+      lp.address,
+      user.address
+    );
+    expect(Number(pendingRewards)).to.equal(48036);
 
     expect(await rewards.connect(user).claim(lp.address, user.address))
       .to.emit(rewards, "Claim")
-      .withArgs(lp.address, user.address, 56);
+      .withArgs(lp.address, user.address, 48050);
+
     expect(await rewards.connect(user).claim(lp.address, user2.address))
       .to.emit(rewards, "Claim")
-      .withArgs(lp.address, user2.address, 16);
+      .withArgs(lp.address, user2.address, 24013);
 
-    expect(await capl.balanceOf(user.address)).to.equal(56);
-    expect(await capl.balanceOf(user2.address)).to.equal(16);
+    expect(await capl.balanceOf(user.address)).to.equal(48043);
+    expect(await capl.balanceOf(user2.address)).to.equal(24009);
+
+    // fast forward
+    await network.provider.send("evm_increaseTime", [3600]);
+    await network.provider.send("evm_mine"); // this one will have 02:00 PM as its timestamp
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log("User pending rewards: " + pendingRewards);
   });
 });

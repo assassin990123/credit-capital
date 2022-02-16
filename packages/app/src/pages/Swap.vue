@@ -16,7 +16,7 @@
                   <input
                     type="text"
                     @input="exchangeCAPLToUSDC()"
-                    v-model="swapToken"
+                    v-model="swapAmount"
                     class="input-custom"
                   />
                 </div>
@@ -54,26 +54,26 @@
                 <div class="panel-explanation">
                   <input
                     type="text"
-                    @input="liquidity()"
-                    v-model="liquidityToken"
+                    @input="changeLiquidityAmount()"
+                    v-model="liquidityAmount"
                     class="input-custom"
                   />
                 </div>
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span></div>
-                <div class="panel-explanation">CAPL</div>
+                <div class="panel-explanation">{{ liquidityTokenSymbol }}</div>
               </div>
             </div>
             <button class="btn-switch" @click="resetInput2()">&#8635;</button>
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>amount</span></div>
-                <div class="panel-explanation">000</div>
+                <div class="panel-explanation">{{ exchangedLiquidityAmount }}</div>
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span> 000</div>
-                <div class="panel-explanation">USDC</div>
+                <div class="panel-explanation">{{ liquidityToTokenSymbol }}</div>
               </div>
             </div>
             <button
@@ -92,13 +92,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, watchEffect } from "vue";
+import { ref, Ref, watchEffect, computed } from "vue";
 import { useStore } from "@/store";
 import {
   calculateCAPLUSDPrice,
   checkAllAllowances,
   checkAllowance,
   format,
+  stringToNumber,
 } from "@/utils";
 import { checkConnection, checkBalance } from "@/utils/notifications";
 
@@ -112,13 +113,21 @@ let swapButtonString = ref("Swap");
 
 let usdcLiquidity: Ref<number> = ref(0);
 let caplLiquidity: Ref<number> = ref(0);
+let liquidityTokenSymbol: Ref<string> = ref("CAPL");
+let liquidityToTokenSymbol: Ref<string> = ref("USDC");
 
+// liquidity stuff
+let liquidityAmount: Ref<number> = ref(0);
+let exchangedLiquidityAmount: Ref<number> = ref(0);
 let addLiquidityButtonString: Ref<string> = ref("Add Liquidity");
 let approvalFlag: Ref<string | null> = ref(null);
 
 // this loops checks the store values for the token allowances and dynamically changes button text based on that info
+  const isUserConnected = computed(
+    () => store.getters["accounts/isUserConnected"]
+  );
 watchEffect(async () => {
-  (await checkAllowance(
+  (! isUserConnected.value || await checkAllowance(
     store,
     swapTokenSymbol.value,
     Number(swapAmount.value),
@@ -199,8 +208,23 @@ function addLiquidity() {
   store.dispatch("balancer/addLiquidity");
 }
 
+function resetInput2() {
+  // todo: implement...
+  liquidityAmount.value = stringToNumber(exchangedLiquidityAmount.value);
+  if (liquidityTokenSymbol.value == "CAPL") {
+    liquidityTokenSymbol.value = "USDC";
+    liquidityToTokenSymbol.value = "CAPL";
+  } else {
+    liquidityTokenSymbol.value = "CAPL";
+    liquidityToTokenSymbol.value = "USDC";
+  }
+
+  changeLiquidityAmount();
+}
+
 // allows for a user to switch between swapping USDC and CAPL
 const switchTokens = () => {
+  swapAmount.value = stringToNumber(swapTokenResult.value);
   if (swapTokenSymbol.value == "CAPL") {
     swapTokenSymbol.value = "USDC";
     swapToTokenSymbol.value = "CAPL";
@@ -208,12 +232,14 @@ const switchTokens = () => {
     swapTokenSymbol.value = "CAPL";
     swapToTokenSymbol.value = "USDC";
   }
+
+  exchangeCAPLToUSDC();
 };
 
 // conversion rates for swaps
 // TODO: conversion rates for liquidity
 async function exchangeCAPLToUSDC() {
-  if (checkConnection(store) && checkBalance(swapAmount.value)) {
+  if (checkConnection(store)) {
     await store.dispatch("balancer/getPoolTokens");
 
     const exchangedBalance = calculateCAPLUSDPrice(
@@ -224,16 +250,15 @@ async function exchangeCAPLToUSDC() {
     swapTokenResult.value = format(exchangedBalance);
   }
 }
-function liquidity() {
-  if (store.getters["accounts/isUserConnected"]) {
-    /*
+function changeLiquidityAmount() {
+  if (checkConnection(store)) {
+
     const exchangedBalance = calculateCAPLUSDPrice(
-      liquidityToken.value,
-      "USDC",
+      liquidityAmount.value,
+      liquidityTokenSymbol.value,
       store.getters["balancer/getPoolTokens"]
     );
-    liquidityTokenResult.value = exchangedBalance;
-    */
+    exchangedLiquidityAmount.value = exchangedBalance;
   }
 }
 </script>

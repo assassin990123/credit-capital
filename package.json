@@ -6,6 +6,7 @@
     "bootstrap": "yarn && lerna bootstrap",
     "start": "lerna exec --scope cc-dapp -- yarn start",
     "compile": "lerna exec --scope cc-sol -- yarn compile",
+    "deploy-testnet": "lerna exec --scope cc-sol -- yarn deploy-testnet",
     "test": "lerna exec --scope cc-sol -- yarn test",
     "lint": "lerna run lint"
   },

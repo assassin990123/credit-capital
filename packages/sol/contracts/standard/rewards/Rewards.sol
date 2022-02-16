@@ -1,5 +1,4 @@
-//SPDX-License-Identifier: UNLICENSED
-// Optimization: 1500
+//SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 pragma experimental ABIEncoderV2;
 
@@ -8,17 +7,23 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import "../../../interfaces/ICAPL.sol";
+interface ICAPL {
+    function mint(address _destination, uint256 _amount) external;
+}
 
 interface IVault {
-    function addPool(address _token, uint256 _rewardsPerBlock) external;
+    function addPool(address _token, uint256 _rewardsPerSecond) external;
+
+    function addPoolPosition(address _token, uint256 _amount) external;
+
+    function removePoolPosition(address _token, uint256 _amount) external;
 
     function checkIfPoolExists(address _token) external view returns (bool);
 
     function updatePool(
         address _token,
         uint256 _accCaplPerShare,
-        uint256 _lastRewardBlock
+        uint256 _lastRewardTime
     ) external returns (IPool.Pool memory);
 
     function getPool(address _token) external returns (IPool.Pool memory);
@@ -93,9 +98,9 @@ interface IVault {
 interface IPool {
     struct Pool {
         uint256 totalPooled; // total token pooled in the contract
-        uint256 rewardsPerBlock; // rate at which CAPL is minted for this pool
+        uint256 rewardsPerSecond; // rate at which CAPL is minted for this pool
         uint256 accCaplPerShare; // weighted CAPL share in pool
-        uint256 lastRewardBlock; // last time a claim was made
+        uint256 lastRewardTime; // last time a claim was made
     }
 }
 
@@ -113,7 +118,7 @@ interface IUserPositions {
 interface IStake {
     struct Stake {
         uint256 amount; // quantity staked
-        uint256 startBlock; // stake creation timestamp
+        uint256 startTime; // stake creation timestamp
         uint256 timeLockEnd; // The point at which the (4 yr, 4 mo, 4 day) timelock ends for a stake, and thus the funds can be withdrawn.
         bool active; // true = stake in vault, false = user withdrawn stake
     }
@@ -143,7 +148,7 @@ contract Rewards is Pausable, AccessControl {
         address indexed _user,
         uint256 _amount
     );
-    event AddPool(address _token, uint256 _rewardsPerBlock);
+    event AddPool(address _token, uint256 _rewardsPerSecond);
     event WithdrawMATIC(address destination, uint256 amount);
 
     mapping(address => mapping(address => bool)) autoCompoudLocks;
@@ -179,7 +184,7 @@ contract Rewards is Pausable, AccessControl {
                 msg.sender
             );
 
-            if (checkTimelockThreshold(lastStake.startBlock)) {
+            if (checkTimelockThreshold(lastStake.startTime)) {
                 // add a new stake for the user
                 // this function adds a new stake, and a new stake key in the user position instance
                 vault.addStake(_token, msg.sender, _amount);
@@ -193,6 +198,8 @@ contract Rewards is Pausable, AccessControl {
         }
 
         IERC20(_token).safeTransferFrom(msg.sender, vaultAddress, _amount);
+        vault.addPoolPosition(_token, _amount);
+
         emit Deposit(_token, msg.sender, _amount);
     }
 
@@ -203,23 +210,23 @@ contract Rewards is Pausable, AccessControl {
         IPool.Pool memory cpool = vault.getPool(_token);
         uint256 totalSupply = vault.getTokenSupply(_token);
         uint256 accCaplPerShare;
-        if (block.number > cpool.lastRewardBlock) {
+        if (block.timestamp > cpool.lastRewardTime) {
             if (totalSupply > 0) {
-                uint256 blocks = block.number - cpool.lastRewardBlock;
-                uint256 caplReward = blocks * cpool.rewardsPerBlock;
+                uint256 passedTime = block.timestamp - cpool.lastRewardTime;
+                uint256 caplReward = passedTime * cpool.rewardsPerSecond;
                 accCaplPerShare =
                     cpool.accCaplPerShare +
-                    (caplReward * CAPL_PRECISION) /
+                    caplReward /
                     totalSupply;
             }
-            uint256 lastRewardBlock = block.number;
+            uint256 lastRewardTime = block.timestamp;
             IPool.Pool memory npool = vault.updatePool(
                 _token,
                 accCaplPerShare,
-                lastRewardBlock
+                lastRewardTime
             );
 
-            emit PoolUpdated(_token, lastRewardBlock);
+            emit PoolUpdated(_token, lastRewardTime);
             return npool;
         }
     }
@@ -237,12 +244,12 @@ contract Rewards is Pausable, AccessControl {
         uint256 accCaplPerShare = pool.accCaplPerShare;
         uint256 tokenSupply = vault.getTokenSupply(_token);
 
-        if (block.number > pool.lastRewardBlock && tokenSupply != 0) {
-            uint256 blocks = block.number - pool.lastRewardBlock;
-            uint256 caplReward = blocks * pool.rewardsPerBlock;
+        if (block.timestamp > pool.lastRewardTime && tokenSupply != 0) {
+            uint256 passedTime = block.timestamp - pool.lastRewardTime;
+            uint256 caplReward = passedTime * pool.rewardsPerSecond;
             accCaplPerShare =
                 accCaplPerShare +
-                (caplReward * CAPL_PRECISION) /
+                caplReward /
                 tokenSupply;
         }
         pending =
@@ -259,6 +266,7 @@ contract Rewards is Pausable, AccessControl {
 
         uint256 accumulatedCapl = (user.totalAmount * pool.accCaplPerShare) /
             CAPL_PRECISION;
+
         uint256 pendingCapl = accumulatedCapl - user.rewardDebt;
 
         // _user.rewardDebt = accumulatedCapl
@@ -279,23 +287,28 @@ contract Rewards is Pausable, AccessControl {
         );
 
         uint256 amount = vault.getUnlockedAmount(_token, _user);
-
-        uint256 newRewardDebt = user.rewardDebt -
-            (amount * pool.accCaplPerShare) /
-            CAPL_PRECISION;
+        uint256 newRewardDebt;
+        
+        // check if the user withdraw token right after the first deposit
+        if (user.rewardDebt > 0) {
+            newRewardDebt = user.rewardDebt -
+                (amount * pool.accCaplPerShare) /
+                CAPL_PRECISION;
+        }
 
         vault.withdraw(_token, _user, amount, newRewardDebt);
+        vault.removePoolPosition(_token, amount);
 
         emit Withdraw(_token, _user, amount);
     }
 
     // TODO: Implement
-    function checkTimelockThreshold(uint256 _startBlock)
+    function checkTimelockThreshold(uint256 _startTime)
         internal
         view
         returns (bool)
     {
-        return _startBlock + timelockThreshold < block.number;
+        return _startTime + timelockThreshold < block.timestamp;
     }
 
     // fallback functions
@@ -314,10 +327,10 @@ contract Rewards is Pausable, AccessControl {
         emit WithdrawMATIC(msg.sender, balance);
     }
 
-    function addPool(address _token, uint256 _rewardsPerBlock)
+    function addPool(address _token, uint256 _rewardsPerSecond)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        vault.addPool(_token, _rewardsPerBlock);
+        vault.addPool(_token, _rewardsPerSecond);
     }
 }

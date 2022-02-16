@@ -3,14 +3,28 @@ export const contracts = [
     symbol: "rewardsVault",
     contracts: {
       137: "",
-      42: "0x7C21f484ca4889EA263D3f71130445420cE29Ef5",
+      42: "0x8Dc87A9E50D685d0b26814B49e46CAb362e20250",
     },
   },
   {
     symbol: "rewards",
     contracts: {
       137: "",
-      42: "0xf6E0b210c29e7F853daB3e12aa70472a9b06ad3e",
+      42: "0x7160299ffb0b0dbCF09C03542eBC51642E7ba83B",
+    },
+  },
+  {
+    symbol: "treasuryStorage",
+    contracts: {
+      137: "",
+      42: "0x60804D5660867aa2DDcAd5640Ff6EabC2B8F7064",
+    },
+  },
+  {
+    symbol: "revenueController",
+    contracts: {
+      137: "",
+      42: "0x0a1f1Cd25A4248c9A220deBB63D2Ae974023d149",
     },
   },
   {

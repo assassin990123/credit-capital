@@ -1,5 +1,4 @@
 //SPDX-License-Identifier: MIT
-//Optimization 1500
 pragma solidity 0.8.11;
 pragma experimental ABIEncoderV2;
 
@@ -7,6 +6,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "hardhat/console.sol";
 
 contract Vault is AccessControl, Pausable {
     using SafeERC20 for IERC20;
@@ -17,7 +17,7 @@ contract Vault is AccessControl, Pausable {
 
     struct Stake {
         uint256 amount; // quantity staked
-        uint256 startBlock; // stake creation timestamp
+        uint256 startTime; // stake creation timestamp
         uint256 timeLockEnd; // The point at which the (4 yr, 4 mo, 4 day) timelock ends for a stake, and thus the funds can be withdrawn.
         bool active; // true = stake in vault, false = user withdrawn stake
     }
@@ -36,10 +36,12 @@ contract Vault is AccessControl, Pausable {
 
     struct Pool {
         uint256 totalPooled; // total token pooled in the contract
-        uint256 rewardsPerBlock; // rate at which CAPL is minted for this pool
+        uint256 rewardsPerSecond; // rate at which CAPL is minted for this pool
         uint256 accCaplPerShare; // weighted CAPL share in pool
-        uint256 lastRewardBlock; // last time a claim was made
+        uint256 lastRewardTime; // last time a claim was made
     }
+
+    uint256 CAPL_PRECISION = 1e18;
 
     // pool tracking
     mapping(address => Pool) Pools; // token => pool
@@ -49,18 +51,22 @@ contract Vault is AccessControl, Pausable {
     event WithdrawMATIC(address destination, uint256 amount);
 
     // TBD: Assume creation with one pool required (?)
-    constructor() {
+    constructor(address _token, uint256 _rewardsPerSecond) {
         // RBAC
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(REWARDS, msg.sender);
+        grantRole(REWARDS, msg.sender);
+        grantRole(REWARDS, address(this));
+
+        // create first pool
+        addPool(_token, _rewardsPerSecond * 1e18);
     }
 
     function updatePool(
         address _token,
         uint256 _accCaplPerShare,
-        uint256 _lastRewardBlock
+        uint256 _lastRewardTime
     ) external returns (Pool memory) {
-        Pools[_token].lastRewardBlock = _lastRewardBlock;
+        Pools[_token].lastRewardTime = _lastRewardTime;
         Pools[_token].accCaplPerShare = _accCaplPerShare;
 
         return Pools[_token];
@@ -76,7 +82,7 @@ contract Vault is AccessControl, Pausable {
 
         UserPosition storage userPosition = UserPositions[_user][_token];
         require(
-            userPosition.totalAmount > _amount,
+            userPosition.totalAmount >= _amount,
             "Withdrawn amount exceed the user balance"
         );
 
@@ -97,9 +103,7 @@ contract Vault is AccessControl, Pausable {
             delete stakes[i];
         }
 
-        IERC20(_token).approve(address(this), _amount);
-        IERC20(_token).safeTransferFrom(address(this), _user, _amount);
-
+        IERC20(_token).safeTransfer(_user, _amount);
         emit Withdraw(_user, _token, _amount);
     }
 
@@ -111,12 +115,13 @@ contract Vault is AccessControl, Pausable {
         // create user & stake data
         Stake memory stake = Stake({
             amount: _amount, // first stake
-            startBlock: block.timestamp,
+            startTime: block.timestamp,
             timeLockEnd: block.timestamp + timelock,
             active: true
         });
 
         UserPositions[_user][_token].stakes.push(stake);
+        // update pool total amoun
     }
 
     function setStake(
@@ -129,6 +134,20 @@ contract Vault is AccessControl, Pausable {
         stake.amount += _amount;
     }
 
+    function addPoolPosition(address _token, uint256 _amount)
+        external
+        onlyRole(REWARDS)
+    {
+        Pools[_token].totalPooled += _amount;
+    }
+
+    function removePoolPosition(address _token, uint256 _amount)
+        external
+        onlyRole(REWARDS)
+    {
+        Pools[_token].totalPooled -= _amount;
+    }
+
     /*
         Read functions
     */
@@ -139,7 +158,7 @@ contract Vault is AccessControl, Pausable {
     }
 
     function checkIfPoolExists(address _token) public view returns (bool) {
-        return Pools[_token].rewardsPerBlock > 0;
+        return Pools[_token].rewardsPerSecond > 0;
     }
 
     /*  This function will check if a new stake needs to be created based on lockingThreshold.
@@ -222,6 +241,30 @@ contract Vault is AccessControl, Pausable {
         return lockedAmount;
     }
 
+    function getPendingRewards(address _token, address _user)
+        external
+        view
+        returns (uint256 pending)
+    {
+        Pool memory pool = Pools[_token];
+        UserPosition memory user = UserPositions[_user][_token];
+
+        uint256 accCaplPerShare = pool.accCaplPerShare;
+        uint256 tokenSupply = IERC20(_token).balanceOf(address(this));
+
+        if (block.timestamp > pool.lastRewardTime && tokenSupply != 0) {
+            uint256 passedTime = block.timestamp - pool.lastRewardTime;
+            uint256 caplReward = passedTime * pool.rewardsPerSecond;
+            accCaplPerShare =
+                accCaplPerShare +
+                caplReward /
+                tokenSupply;
+        }
+        pending =
+            ((user.totalAmount * accCaplPerShare) / CAPL_PRECISION) -
+            user.rewardDebt;
+    }
+
     function getLastStake(address _token, address _user)
         external
         view
@@ -244,6 +287,9 @@ contract Vault is AccessControl, Pausable {
     }
 
     function getTokenSupply(address _token) external view returns (uint256) {
+        require(
+            Pools[_token].totalPooled <= IERC20(_token).balanceOf(address(this))
+        );
         return IERC20(_token).balanceOf(address(this));
     }
 
@@ -251,17 +297,17 @@ contract Vault is AccessControl, Pausable {
         Admin functions
     */
 
-    function addPool(address _token, uint256 _rewardsPerBlock)
-        external
+    function addPool(address _token, uint256 _rewardsPerSecond)
+        public
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         require(!checkIfPoolExists(_token), "This pool already exists.");
 
         Pool memory pool = Pool({
             totalPooled: 0,
-            rewardsPerBlock: _rewardsPerBlock,
+            rewardsPerSecond: _rewardsPerSecond,
             accCaplPerShare: 0,
-            lastRewardBlock: block.number
+            lastRewardTime: block.timestamp
         });
 
         Pools[_token] = pool;
@@ -270,12 +316,12 @@ contract Vault is AccessControl, Pausable {
     function setPool(
         address _token,
         uint256 _accCaplPerShare,
-        uint256 _lastRewardBlock
+        uint256 _lastRewardTime
     ) external onlyRole(REWARDS) returns (Pool memory) {
         require(checkIfPoolExists(_token), "Pool does not exist");
 
         Pools[_token].accCaplPerShare = _accCaplPerShare;
-        Pools[_token].lastRewardBlock = _lastRewardBlock;
+        Pools[_token].lastRewardTime = _lastRewardTime;
 
         return Pools[_token];
     }
@@ -289,7 +335,7 @@ contract Vault is AccessControl, Pausable {
         // add new stake
         Stake memory userStake = Stake({
             amount: _amount, // first stake
-            startBlock: block.timestamp,
+            startTime: block.timestamp,
             timeLockEnd: block.timestamp + timelock,
             active: true
         });
@@ -333,8 +379,7 @@ contract Vault is AccessControl, Pausable {
         require(_amount > 0 && pool.totalPooled >= _amount);
 
         // withdraw the token to user wallet
-        IERC20(_token).approve(address(this), _amount);
-        IERC20(_token).safeTransferFrom(address(this), _destination, _amount);
+        IERC20(_token).safeTransfer(_destination, _amount);
 
         // update the pooled amount
         pool.totalPooled -= _amount;

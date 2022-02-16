@@ -11,46 +11,40 @@ const deployContract = async (contract, params) => {
 
 const deployContracts = async (deployer) => {
   const capl = await deployContract("CreditCapitalPlatformToken", [100]);
-  const vault = await deployContract("Vault", []);
+  const vault = await deployContract("Vault", [
+    capl.address, // Assume that we have only one pool
+    10 // 10 token reward per block
+  ]);
   const rewards = await deployContract("Rewards", [
     vault.address,
     capl.address,
   ]);
-  // access control
-  // give ownership (minting rights) of capl to the vault
-  // capl.transferOwnership(vault.address)
-  // grant minting rights to rewards contract
-  // vault.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('MINTER')), rewards.address)
-
   return { capl, vault, rewards };
 };
 
-const setupAccounts = (accounts) => {
-  const deployer = accounts[0];
-  const user = accounts[1];
-  return { deployer, user };
-};
-
 describe("Rewards Vault", function () {
+  let deployer;
+  let user;
+  let capl;
+  let vault;
+  let rewards;
+
+  beforeEach(async function () {
+    [ deployer, user ] = await ethers.getSigners();
+    // deploy token contract
+    ({ capl, vault, rewards } = await deployContracts(deployer));
+  });
+  
   it("Deploy a new pool", async function () {
-    // will need to test access control in the future
-    const { capl, vault } = await deployContracts();
-
     // await capl.mint(deployer.address, 100); // mint 100 CAPL
-    await vault.addPool(capl.address, 10); // 10 CAPL per block
-
     const pool = await vault.getPool(capl.address);
 
     expect(Number(pool.totalPooled.toString())).to.equal(0);
-    expect(Number(pool.rewardsPerBlock.toString())).to.equal(10);
+    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10 ** 19);
   });
-  it("Deposit a new position", async function () {
-    const accounts = await hre.ethers.getSigners();
-    const { deployer, user } = await setupAccounts(accounts);
-    const { capl, vault, rewards } = await deployContracts();
 
+  it("Deposit a new position", async function () {
     await capl.mint(deployer.address, 100);
-    await vault.addPool(capl.address, 10); // 10 CAPL per block
 
     // grant rewards the REWARDS role in the vault
     vault.grantRole(
@@ -63,6 +57,7 @@ describe("Rewards Vault", function () {
     capl.approve(rewards.address, 10);
 
     await rewards.deposit(capl.address, 10);
+
     // check all vault variables to be correct
     // withdraw should be impossible
     const userPosition = await vault.getUserPosition(
@@ -81,5 +76,10 @@ describe("Rewards Vault", function () {
       deployer.address
     );
     expect(Number(unlockedAmount.value.toString())).to.equal(0);
+    // check pool instance for correct values
+    const pool = await vault.getPool(capl.address);
+
+    expect(Number(pool.totalPooled.toString())).to.equal(10);
+    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10 ** 19);
   });
 });
