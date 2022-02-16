@@ -177,7 +177,7 @@ contract VaultMock is AccessControl, Pausable {
             uint256 caplReward = blocks * pool.rewardsPerSecond;
             accCaplPerShare =
                 accCaplPerShare +
-                (caplReward * CAPL_PRECISION) /
+                caplReward /
                 tokenSupply;
         }
         pending =

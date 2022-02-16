@@ -40,7 +40,7 @@ describe("Rewards Vault", function () {
     const pool = await vault.getPool(capl.address);
 
     expect(Number(pool.totalPooled.toString())).to.equal(0);
-    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10 ** 19);
+    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10);
   });
 
   it("Deposit a new position", async function () {
@@ -80,6 +80,6 @@ describe("Rewards Vault", function () {
     const pool = await vault.getPool(capl.address);
 
     expect(Number(pool.totalPooled.toString())).to.equal(10);
-    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10 ** 19);
+    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10);
   });
 });
