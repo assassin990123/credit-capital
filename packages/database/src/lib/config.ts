@@ -1,43 +1,56 @@
 import dotenv from 'dotenv';
 
 import { NETWORK, VAULT_CONFIG } from '../constants';
+import { ConfigOptions } from '../models/config';
 
 import { getPoolIdByNetwork } from './utils';
 
-let config: any = {
+const defaultConfig: ConfigOptions = {
   PORT: 8000,
 };
 
-const parsed = dotenv.config()?.parsed;
+export const initConfig = (defaults = defaultConfig): ConfigOptions => {
+  let _config: ConfigOptions = { ...defaults };
+  const parsed = dotenv.config()?.parsed;
 
-if (parsed && typeof parsed !== 'undefined') {
-  config = { ...config, ...parsed };
-}
-
-// load local env
-const allowed = [
-  'INFURA',
-  'SUPABASE_SERVICE_URL',
-  'SUPABASE_SERVICE_KEY',
-  'BALANCERVAULT_NETWORK',
-  'BALANCERVAULT_POOL',
-];
-Object.keys(process.env).forEach((env) => {
-  if (allowed.includes(env)) {
-    config[env] = process.env[env];
+  if (parsed && typeof parsed !== 'undefined') {
+    _config = { ..._config, ...parsed };
   }
-});
 
-// load computed values
-const CHAIN_ID = NETWORK[
-  config.BALANCERVAULT_NETWORK?.toUpperCase()
-] as unknown;
-const VAULT_ADDRESS = VAULT_CONFIG[CHAIN_ID as number].vault;
-const VAULT_POOLID = getPoolIdByNetwork(
-  config.BALANCERVAULT_POOL,
-  CHAIN_ID as number
-);
+  // load local env
+  const allowed = [
+    'INFURA',
+    'SUPABASE_SERVICE_URL',
+    'SUPABASE_SERVICE_KEY',
+    'BALANCERVAULT_NETWORK',
+    'BALANCERVAULT_POOL',
+  ];
+  Object.keys(process.env).forEach((env) => {
+    if (allowed.includes(env)) {
+      _config[env] = process.env[env];
+    }
+  });
 
-config = { ...config, CHAIN_ID, VAULT_ADDRESS, VAULT_POOLID };
+  // load computed values
+  const CHAIN_ID = NETWORK[
+    _config.BALANCERVAULT_NETWORK?.toUpperCase()
+  ] as unknown;
+  const VAULT_ADDRESS = VAULT_CONFIG[CHAIN_ID as number].vault;
+  const VAULT_POOLID = getPoolIdByNetwork(
+    _config.BALANCERVAULT_POOL,
+    CHAIN_ID as number
+  );
 
-export default config as any;
+  _config = {
+    ..._config,
+    CHAIN_ID: CHAIN_ID as number,
+    VAULT_ADDRESS,
+    VAULT_POOLID,
+  };
+
+  return _config;
+};
+
+const config = initConfig();
+
+export default config;

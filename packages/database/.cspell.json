@@ -21,6 +21,7 @@
     "globby",
     "libauth",
     "mkdir",
+    "POOLID",
     "prettierignore",
     "sandboxed",
     "supabase",

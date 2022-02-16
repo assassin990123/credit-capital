@@ -11,5 +11,5 @@ const contract = new ethers.Contract(
   provider
 );
 
-export const getPoolTokens = async () =>
-  await contract.getPoolTokens(config.VAULT_POOLID);
+export const getPoolTokens = async (poolId: string = config.VAULT_POOLID) =>
+  await contract.getPoolTokens(poolId);
