@@ -120,10 +120,10 @@ let addLiquidityButtonString: Ref<string> = ref("Add Liquidity");
 let approvalFlag: Ref<string | null> = ref(null);
 
 // this loops checks the store values for the token allowances and dynamically changes button text based on that info
-watchEffect(async () => {
   const isUserConnected = computed(
-                          () => store.getters["accounts/isUserConnected"]
-                        );
+    () => store.getters["accounts/isUserConnected"]
+  );
+watchEffect(async () => {
   (! isUserConnected.value || await checkAllowance(
     store,
     swapTokenSymbol.value,

@@ -54,9 +54,13 @@ const unstakeAmount = computed(
   () => store.getters["rewards/getUserUnlockedAmount"]
 );
 
+const isUserConnected = computed(
+  () => store.getters["accounts/isUserConnected"]
+);
+
 // this function checks the allowance a user has alloted our rewards contract via the LP token
 watchEffect(async () => {
-  (!store.getters['accounts/isUserConnected'] || await checkAllowance(
+  (!isUserConnected.value || await checkAllowance(
     store,
     "LP", // static for now
     stakeAmount.value,
