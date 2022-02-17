@@ -255,10 +255,7 @@ contract Vault is AccessControl, Pausable {
         if (block.timestamp > pool.lastRewardTime && tokenSupply != 0) {
             uint256 passedTime = block.timestamp - pool.lastRewardTime;
             uint256 caplReward = passedTime * pool.rewardsPerSecond;
-            accCaplPerShare =
-                accCaplPerShare +
-                caplReward /
-                tokenSupply;
+            accCaplPerShare = accCaplPerShare + caplReward / tokenSupply;
         }
         pending =
             ((user.totalAmount * accCaplPerShare) / CAPL_PRECISION) -

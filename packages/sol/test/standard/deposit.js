@@ -13,7 +13,7 @@ const deployContracts = async (deployer) => {
   const capl = await deployContract("CreditCapitalPlatformToken", [100]);
   const vault = await deployContract("Vault", [
     capl.address, // Assume that we have only one pool
-    BigInt(5000 / (24 * 60 * 60) * (10 ** 18)) // token reward per second
+    BigInt((5000 / (24 * 60 * 60)) * 10 ** 18), // token reward per second
   ]);
   const rewards = await deployContract("Rewards", [
     vault.address,
@@ -30,17 +30,19 @@ describe("Rewards Vault", function () {
   let rewards;
 
   beforeEach(async function () {
-    [ deployer, user ] = await ethers.getSigners();
+    [deployer, user] = await ethers.getSigners();
     // deploy token contract
     ({ capl, vault, rewards } = await deployContracts(deployer));
   });
-  
+
   it("Deploy a new pool", async function () {
     // await capl.mint(deployer.address, 100); // mint 100 CAPL
     const pool = await vault.getPool(capl.address);
 
     expect(Number(pool.totalPooled.toString())).to.equal(0);
-    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10);
+    expect(Number(pool.rewardsPerSecond.toString())).to.equal(
+      57870370370370370
+    );
   });
 
   it("Deposit a new position", async function () {
@@ -80,6 +82,8 @@ describe("Rewards Vault", function () {
     const pool = await vault.getPool(capl.address);
 
     expect(Number(pool.totalPooled.toString())).to.equal(10);
-    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10);
+    expect(Number(pool.rewardsPerSecond.toString())).to.equal(
+      57870370370370370
+    );
   });
 });

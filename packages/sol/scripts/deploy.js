@@ -6,7 +6,7 @@ async function main() {
    * Standard contracts - Rewards, Vault
    */
   const Vault = await hre.ethers.getContractFactory("Vault");
-  const vault = await Vault.deploy(process.env.LP_ADDRESS_KOVAN, 10);
+  const vault = await Vault.deploy(process.env.LP_ADDRESS_KOVAN, BigInt(5000 / (24 * 60 * 60) * (10 ** 18)));
   await vault.deployed();
   console.log("vault deployed to:", vault.address);
   await saveContractABI("vault", "Vault");

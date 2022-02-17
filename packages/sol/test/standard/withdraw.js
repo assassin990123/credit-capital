@@ -11,7 +11,10 @@ const deployContract = async (contract, params) => {
 
 const deployContracts = async (deployer) => {
   const capl = await deployContract("CreditCapitalPlatformToken", [100]);
-  const vault = await deployContract("VaultMock", [capl.address, BigInt(5000 / (24 * 60 * 60) * (10 ** 18))]);
+  const vault = await deployContract("VaultMock", [
+    capl.address,
+    BigInt((5000 / (24 * 60 * 60)) * 10 ** 18),
+  ]);
   const rewards = await deployContract("Rewards", [
     vault.address,
     capl.address,
@@ -64,7 +67,9 @@ describe("Rewards Vault", function () {
     let pool = await vault.getPool(capl.address);
 
     expect(Number(pool.totalPooled.toString())).to.equal(10);
-    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10);
+    expect(Number(pool.rewardsPerSecond.toString())).to.equal(
+      57870370370370370
+    );
 
     // fast forward
     await network.provider.send("evm_increaseTime", [3600]);
@@ -83,10 +88,7 @@ describe("Rewards Vault", function () {
     await rewards.withdraw(capl.address, deployer.address);
 
     // check userposition states
-    userPosition = await vault.getUserPosition(
-      capl.address,
-      deployer.address
-    );
+    userPosition = await vault.getUserPosition(capl.address, deployer.address);
 
     expect(Number(userPosition.totalAmount.toString())).to.equal(0);
     expect(Number(userPosition.rewardDebt.toString())).to.equal(0);
@@ -98,6 +100,8 @@ describe("Rewards Vault", function () {
     // check pool state
     pool = await vault.getPool(capl.address);
     expect(Number(pool.totalPooled.toString())).to.equal(0);
-    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10);
+    expect(Number(pool.rewardsPerSecond.toString())).to.equal(
+      57870370370370370
+    );
   });
 });
