@@ -54,8 +54,7 @@
                 <div class="panel-explanation">
                   <input
                     type="text"
-                    @input="changeLiquidityAmount()"
-                    v-model="liquidityAmount"
+                    v-model="caplLiquidity"
                     class="input-custom"
                   />
                 </div>
@@ -69,7 +68,13 @@
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>amount</span></div>
-                <div class="panel-explanation">{{ exchangedLiquidityAmount }}</div>
+                <div class="panel-explanation">
+                  <input
+                    type="text"
+                    v-model="usdcLiquidity"
+                    class="input-custom"
+                  />
+                </div>
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span> 000</div>
@@ -117,8 +122,6 @@ let liquidityTokenSymbol: Ref<string> = ref("CAPL");
 let liquidityToTokenSymbol: Ref<string> = ref("USDC");
 
 // liquidity stuff
-let liquidityAmount: Ref<number> = ref(0);
-let exchangedLiquidityAmount: Ref<number> = ref(0);
 let addLiquidityButtonString: Ref<string> = ref("Add Liquidity");
 let approvalFlag: Ref<string | null> = ref(null);
 
@@ -209,8 +212,11 @@ function addLiquidity() {
 }
 
 function resetInput2() {
-  // todo: implement...
-  liquidityAmount.value = stringToNumber(exchangedLiquidityAmount.value);
+  const oldCAPLLiquidity = caplLiquidity.value;
+
+  caplLiquidity.value = usdcLiquidity.value;
+  usdcLiquidity.value = oldCAPLLiquidity;
+
   if (liquidityTokenSymbol.value == "CAPL") {
     liquidityTokenSymbol.value = "USDC";
     liquidityToTokenSymbol.value = "CAPL";
@@ -219,7 +225,6 @@ function resetInput2() {
     liquidityToTokenSymbol.value = "USDC";
   }
 
-  changeLiquidityAmount();
 }
 
 // allows for a user to switch between swapping USDC and CAPL
@@ -250,17 +255,7 @@ async function exchangeCAPLToUSDC() {
     swapTokenResult.value = format(exchangedBalance);
   }
 }
-function changeLiquidityAmount() {
-  if (checkConnection(store)) {
 
-    const exchangedBalance = calculateCAPLUSDPrice(
-      liquidityAmount.value,
-      liquidityTokenSymbol.value,
-      store.getters["balancer/getPoolTokens"]
-    );
-    exchangedLiquidityAmount.value = exchangedBalance;
-  }
-}
 </script>
 
 <style>
