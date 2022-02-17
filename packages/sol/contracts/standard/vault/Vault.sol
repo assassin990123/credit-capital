@@ -58,7 +58,7 @@ contract Vault is AccessControl, Pausable {
         grantRole(REWARDS, address(this));
 
         // create first pool
-        addPool(_token, _rewardsPerSecond * 1e18);
+        addPool(_token, _rewardsPerSecond);
     }
 
     function updatePool(
