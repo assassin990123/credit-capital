@@ -13,7 +13,7 @@ const deployContracts = async (deployer) => {
   const capl = await deployContract("CreditCapitalPlatformToken", [100]);
   const vault = await deployContract("Vault", [
     capl.address, // Assume that we have only one pool
-    10 // 10 token reward per block
+    BigInt(5000 / (24 * 60 * 60) * (10 ** 18)) // token reward per second
   ]);
   const rewards = await deployContract("Rewards", [
     vault.address,
@@ -40,7 +40,7 @@ describe("Rewards Vault", function () {
     const pool = await vault.getPool(capl.address);
 
     expect(Number(pool.totalPooled.toString())).to.equal(0);
-    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10 ** 19);
+    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10);
   });
 
   it("Deposit a new position", async function () {
@@ -80,6 +80,6 @@ describe("Rewards Vault", function () {
     const pool = await vault.getPool(capl.address);
 
     expect(Number(pool.totalPooled.toString())).to.equal(10);
-    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10 ** 19);
+    expect(Number(pool.rewardsPerSecond.toString())).to.equal(10);
   });
 });

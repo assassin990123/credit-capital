@@ -11,7 +11,7 @@ const deployContract = async (contract, params) => {
 
 const deployContracts = async (deployer) => {
   const capl = await deployContract("CreditCapitalPlatformToken", [100]);
-  const vault = await deployContract("VaultMock", [capl.address, 10]);
+  const vault = await deployContract("VaultMock", [capl.address, BigInt(5000 / (24 * 60 * 60) * (10 ** 18))]);
   const rewards = await deployContract("Rewards", [
     vault.address,
     capl.address,

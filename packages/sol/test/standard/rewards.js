@@ -17,7 +17,7 @@ const deployContracts = async (deployer) => {
     deployer.address,
     1_000_000,
   ]);
-  const vault = await deployContract("Vault", [lp.address, 10]);
+  const vault = await deployContract("Vault", [lp.address, BigInt(5000 / (24 * 60 * 60) * (10 ** 18))]);
   const rewards = await deployContract("Rewards", [
     vault.address,
     capl.address,
@@ -81,7 +81,7 @@ describe("Rewards Vault", function () {
       user2.address
     );
     expect(Number(userPosition2.totalAmount.toString())).to.equal(250_000);
-    expect(Number(userPosition2.rewardDebt.toString())).to.equal(15); // math makes sense, 3 blocks have passed @ 10 CAPL / block.
+    expect(Number(userPosition2.rewardDebt.toString())).to.equal(0); // math makes sense, 3 blocks have passed @ 10 CAPL / block.
     expect(userPosition2.stakes.length).to.equal(1);
     expect(Number(userPosition2.stakes[0].amount.toString())).to.equal(250_000);
 
@@ -99,20 +99,20 @@ describe("Rewards Vault", function () {
 
     let pendingRewards = await vault.getPendingRewards(
       lp.address,
-      user.address
+      user2.address
     );
-    expect(Number(pendingRewards)).to.equal(48036);
+    expect(Number(pendingRewards)).to.equal(138);
 
     expect(await rewards.connect(user).claim(lp.address, user.address))
       .to.emit(rewards, "Claim")
-      .withArgs(lp.address, user.address, 48050);
+      .withArgs(lp.address, user.address, 278);
 
     expect(await rewards.connect(user).claim(lp.address, user2.address))
       .to.emit(rewards, "Claim")
-      .withArgs(lp.address, user2.address, 24013);
+      .withArgs(lp.address, user2.address, 139);
 
-    expect(await capl.balanceOf(user.address)).to.equal(48043);
-    expect(await capl.balanceOf(user2.address)).to.equal(24009);
+    expect(await capl.balanceOf(user.address)).to.equal(278);
+    expect(await capl.balanceOf(user2.address)).to.equal(139);
 
     // fast forward
     await network.provider.send("evm_increaseTime", [3600]);
