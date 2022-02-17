@@ -7572,6 +7572,29 @@ align-self: center;
   background-repeat: no-repeat;
 }
 
+@media only screen and (max-width: 962px){
+  .panel.stake-panel{
+    margin: 50px 0;
+    width: 400px;
+  }
+  div.stake-panel-content{
+    height: auto;
+  }
+  div.panel-content.stake-panel-content{
+      padding: 70px 30px;
+  }
+  input.input-custom{
+    max-width: 90%;
+  }
+  div.stack-bottom-area{
+    width: auto;
+    margin: 0 20px 50px 20px;
+  }
+  div.panel{
+    flex: none;
+  }
+}
+
 @media only screen and (max-width: 601px) {
   .panel-content.stake-panel-content{
    padding: 50px 0;
@@ -7581,10 +7604,7 @@ align-self: center;
   .btn-custom{
     min-width: 200px;
   }
-  .stack-bottom-area-inner{
-    padding: 50px 0;
-   }
-   .stack-bottom-area{
+  .stack-bottom-area{
     width: 80%;
     margin: 30px auto 50px auto;
   }
@@ -7644,6 +7664,15 @@ align-self: center;
 
 .reward-main-sec .rewards-section {
   margin: 50px auto 50px auto;
+}
+
+@media only screen and (max-width: 992px){
+  .reward-main-sec .rewards-display{
+     font-size: 60px;
+  }
+  div.rewards-content{
+    width: auto;
+  }
 }
 
 @media only screen and (max-width: 601px) {
@@ -7728,6 +7757,22 @@ align-self: center;
   border: 1px solid #ffca03;
 }
 
+@media only screen and (max-width: 962px){
+  .panel-content.swap-panel-content{
+    padding: 50px;
+  }
+}
+
+@media only screen and (max-width: 750px){
+  .inner-container.panel-container{
+    flex-direction: column;
+    margin: 50px auto;
+  }
+  .panel-display.swap-panel-display{
+    width: 100%;
+  }
+}
+
 @media only screen and (max-width: 601px) {
   .panel-container.inner-container {
     flex-direction: column;
@@ -7737,7 +7782,7 @@ align-self: center;
   }
 
   .panel.stake-panel{
-    margin-top: 30px;
+    margin: 50px;
    }
 
    .panel-explanation > input{
@@ -7882,6 +7927,17 @@ button.tab-inner-content-item {
   padding: 0 15px;
 }
 
+@media only screen and (max-width: 962px){
+  .treasury-row.inner-container{
+    flex-direction: column;
+  }
+  div.treasury-column-1, div.treasury-column-2{
+    width: auto;
+  }
+  div.treasury-row{
+    flex-direction: column;
+  }
+}
 
 @media only screen and (max-width: 601px) {
   div.treasury-row,
@@ -7947,6 +8003,7 @@ button.tab-inner-content-item {
   div.dashboard-cus-main .dashboard-platform-assets-panel div,
   div.dashboard-cus-main .dashboard-platform-assets div{
     font-size: 16px;
+    flex-wrap: wrap;
   }
   div.dashboard-cus-main .dashboard-portfolio-capl-panel-row{
     flex-wrap: wrap;
@@ -7964,6 +8021,12 @@ button.tab-inner-content-item {
   div.dashboard-platform-token-column{
     width: auto;
   } 
+  div.dashboard-cus-main .dashboard-portfolio-capl-row{
+    flex-wrap: wrap;
+  }
+  div.dashboard-cus-main .reward-btn{
+    min-width: 200px;
+  }
 }
 
 
