@@ -18,6 +18,7 @@
                     @input="exchangeCAPLToUSDC()"
                     v-model="swapAmount"
                     class="input-custom"
+                    placeholder="0.00"
                   />
                 </div>
               </div>
@@ -56,6 +57,7 @@
                     type="text"
                     v-model="caplLiquidity"
                     class="input-custom"
+                    placeholder="0.00"
                   />
                 </div>
               </div>
@@ -73,6 +75,7 @@
                     type="text"
                     v-model="usdcLiquidity"
                     class="input-custom"
+                    placeholder="0.00"
                   />
                 </div>
               </div>
@@ -109,15 +112,15 @@ import {
 import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store: any = useStore();
-let swapAmount = ref(0);
+let swapAmount = ref(null);
 let swapTokenSymbol: Ref<string> = ref("CAPL");
 let swapToTokenSymbol: Ref<string> = ref("USDC");
 
-let swapTokenResult = ref(0);
+let swapTokenResult = ref(null);
 let swapButtonString = ref("Swap");
 
-let usdcLiquidity: Ref<number> = ref(0);
-let caplLiquidity: Ref<number> = ref(0);
+let usdcLiquidity: Ref<number> = ref(null);
+let caplLiquidity: Ref<number> = ref(null);
 let liquidityTokenSymbol: Ref<string> = ref("CAPL");
 let liquidityToTokenSymbol: Ref<string> = ref("USDC");
 
