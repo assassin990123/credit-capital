@@ -1,5 +1,6 @@
-import { NETWORK } from '.';
 import { BAL_WETH_POOL, CAPL_USDC_POOL, WETH_USDC_POOL } from './strings';
+
+import { NETWORK } from './network';
 
 export const POOLS = [
   {

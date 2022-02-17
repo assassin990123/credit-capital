@@ -14,29 +14,4 @@ export const insertRow = async (row) =>
     ignoreDuplicates: true,
   });
 
-export const getLastRow = async () =>
-  await supabase
-    .from('prices')
-    .select('prices')
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-export const getRows = (filters) => {
-  console.log('getRows filter', filters);
-  return supabase
-    .from('prices')
-    .select('*')
-    .gte('created_at', filters.start_date)
-    .lte('created_at', filters.end_date)
-    .order('created_at', { ascending: false }); //desc
-};
-
-export const getRow = async (filters) => {
-  return await getRows(filters)
-    .limit(1)
-    .maybeSingle()
-    .then((res) => res.data);
-};
-
 export default supabase;
