@@ -1,7 +1,5 @@
 import fs from 'fs';
 
-import moment from 'moment';
-
 import { POOLS, TOKENS } from '../constants';
 
 export const readFile = (filepath: string): string =>
@@ -14,8 +12,6 @@ export const getPoolIdByNetwork = (poolName: string, chainId: number) => {
 
 export const getTokenByContract = (contract: string, chainId) =>
   TOKENS.find((token) => token.contracts[chainId] === contract);
-
-export const formatUTC = (date: moment.Moment) => date.utc().toISOString();
 
 export const isDefined = (obj: unknown) => typeof obj !== 'undefined';
 export const isNull = (obj: unknown) => isDefined(obj) && obj === null;

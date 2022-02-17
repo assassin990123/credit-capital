@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  scraper:
+    build: .
+    env_file: .env
+    
