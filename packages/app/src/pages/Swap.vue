@@ -100,6 +100,7 @@
 </template>
 
 <script setup lang="ts">
+import DappFooter from "@/components/DappFooter.vue";
 import { ref, Ref, watchEffect, computed } from "vue";
 import { useStore } from "@/store";
 import {
@@ -119,8 +120,8 @@ let swapToTokenSymbol: Ref<string> = ref("USDC");
 let swapTokenResult = ref(null);
 let swapButtonString = ref("Swap");
 
-let usdcLiquidity: Ref<number> = ref(null);
-let caplLiquidity: Ref<number> = ref(null);
+let usdcLiquidity: Ref<number|null> = ref(null);
+let caplLiquidity: Ref<number|null> = ref(null);
 let liquidityTokenSymbol: Ref<string> = ref("CAPL");
 let liquidityToTokenSymbol: Ref<string> = ref("USDC");
 
