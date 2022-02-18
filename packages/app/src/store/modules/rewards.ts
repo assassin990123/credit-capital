@@ -62,8 +62,6 @@ const actions = {
       address
     );
 
-    console.log(Number(ethers.utils.formatUnits(pendingRewards, 0)));
-
     // parse balance, set new value in the local state
     commit(
       "setPendingRewards",
@@ -92,7 +90,6 @@ const actions = {
 
     // claim rewards
     try {
-      console.log(lpAddress, address);
       // @ts-ignore
       await rewardsContract?.claim(lpAddress, address);
     } catch (error) {
@@ -262,9 +259,9 @@ const actions = {
     // console.log(pool); // for test
 
     const rewardsPerSecond = Number(
-      ethers.utils.parseUnits(pool.rewardsPerBlock.toString(), 0)
+      ethers.utils.parseUnits(pool.rewardsPerSecond.toString(), 0)
     );
-    //console.log(rewardsPerSecond); // for test
+    // console.log(rewardsPerSecond); // for test
 
     commit("setCaplPerSecond", rewardsPerSecond);
   },

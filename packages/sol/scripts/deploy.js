@@ -32,6 +32,11 @@ async function main() {
   await saveContractABI("revenuecontroller", "RevenueController");
    */  
 
+  /**
+   * Grant roles
+   */
+  await grantRoles(rewards, vault);
+  
   // save deployed address in config file
   let config = `
   export const vaultcontractaddress = "${vault.address}"
@@ -61,6 +66,18 @@ async function saveContractABI(contract, contractArtifact) {
     abiDir + "/" + contract + ".ts",
     contractABI
   );
+}
+
+async function grantRoles(rewards, vault) {
+  const REWARDS = await vault.REWARDS();
+  const MINTER_ROLE = await rewards.MINTER_ROLE();
+
+  // get capl contract
+  const CAPL = await hre.ethers.getContractFactory('CreditCapitalPlatformToken');
+  const capl = await CAPL.attach(process.env.CAPL_ADDRESS_KOVAN);
+
+  await vault.grantRole(REWARDS, rewards.address);
+  await capl.grantRole(MINTER_ROLE, rewards.address);
 }
 
 main()

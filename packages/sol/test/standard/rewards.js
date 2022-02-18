@@ -10,7 +10,9 @@ const deployContract = async (contract, params) => {
 };
 
 const deployContracts = async (deployer) => {
-  const capl = await deployContract("CreditCapitalPlatformToken", [1_000_000]);
+  const capl = await deployContract("CreditCapitalPlatformToken", [
+    BigInt(100_000_000 * 10 ** 18),
+  ]);
   const lp = await deployContract("ERC20Mock", [
     "LP",
     "LP",
@@ -114,8 +116,13 @@ describe("Rewards Vault", function () {
       .to.emit(rewards, "Claim")
       .withArgs(lp.address, user2.address, 0);
 
-    expect(await capl.balanceOf(user.address)).to.equal(0);
-    expect(await capl.balanceOf(user2.address)).to.equal(0);
+    console.log(await capl.balanceOf(user.address));
+    expect(
+      Number(ethers.utils.formatEther(await capl.balanceOf(user.address)))
+    ).to.equal(278);
+    expect(
+      Number(ethers.utils.formatEther(await capl.balanceOf(user2.address)))
+    ).to.equal(139);
 
     // fast forward
     await network.provider.send("evm_increaseTime", [3600]);

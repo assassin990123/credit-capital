@@ -9,8 +9,9 @@
               <img src="/images/logo-white.png" alt="logo" />
             </router-link>
           </div>
-              <a class="mobile-menu-icon" href="javascript:void(0);">
-                  <i class="las la-bars"></i></a>
+          <a class="mobile-menu-icon" href="javascript:void(0);">
+            <i class="las la-bars"></i
+          ></a>
         </div>
       </div>
     </div>
@@ -18,9 +19,9 @@
       <div class="container">
         <nav class="navbar navbar-expand-md navbar-light">
           <div class="logo-mobile">
-          <router-link to="/">
-            <img src="/images/logo-white.png" alt="logo" />
-          </router-link>
+            <router-link to="/">
+              <img src="/images/logo-white.png" alt="logo" />
+            </router-link>
           </div>
           <div class="navbar-collapse mean-menu">
             <ul class="navbar-nav">
@@ -176,5 +177,4 @@ export default {
 /** MEDIA QUERIES */
 @media screen and (min-width: 1000px) {
 }
-
 </style>

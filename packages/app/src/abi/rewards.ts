@@ -19,7 +19,7 @@ export const rewardsABI = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "_rewardsPerBlock",
+        name: "_rewardsPerSecond",
         type: "uint256",
       },
     ],
@@ -242,7 +242,7 @@ export const rewardsABI = [
   {
     inputs: [
       { internalType: "address", name: "_token", type: "address" },
-      { internalType: "uint256", name: "_rewardsPerBlock", type: "uint256" },
+      { internalType: "uint256", name: "_rewardsPerSecond", type: "uint256" },
     ],
     name: "addPool",
     outputs: [],
@@ -347,9 +347,13 @@ export const rewardsABI = [
       {
         components: [
           { internalType: "uint256", name: "totalPooled", type: "uint256" },
-          { internalType: "uint256", name: "rewardsPerBlock", type: "uint256" },
+          {
+            internalType: "uint256",
+            name: "rewardsPerSecond",
+            type: "uint256",
+          },
           { internalType: "uint256", name: "accCaplPerShare", type: "uint256" },
-          { internalType: "uint256", name: "lastRewardBlock", type: "uint256" },
+          { internalType: "uint256", name: "lastRewardTime", type: "uint256" },
         ],
         internalType: "struct IPool.Pool",
         name: "pool",

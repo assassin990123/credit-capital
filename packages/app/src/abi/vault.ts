@@ -2,7 +2,7 @@ export const vaultABI = [
   {
     inputs: [
       { internalType: "address", name: "_token", type: "address" },
-      { internalType: "uint256", name: "_rewardsPerBlock", type: "uint256" },
+      { internalType: "uint256", name: "_rewardsPerSecond", type: "uint256" },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
@@ -179,7 +179,7 @@ export const vaultABI = [
   {
     inputs: [
       { internalType: "address", name: "_token", type: "address" },
-      { internalType: "uint256", name: "_rewardsPerBlock", type: "uint256" },
+      { internalType: "uint256", name: "_rewardsPerSecond", type: "uint256" },
     ],
     name: "addPool",
     outputs: [],
@@ -246,7 +246,7 @@ export const vaultABI = [
       {
         components: [
           { internalType: "uint256", name: "amount", type: "uint256" },
-          { internalType: "uint256", name: "startBlock", type: "uint256" },
+          { internalType: "uint256", name: "startTime", type: "uint256" },
           { internalType: "uint256", name: "timeLockEnd", type: "uint256" },
           { internalType: "bool", name: "active", type: "bool" },
         ],
@@ -285,9 +285,13 @@ export const vaultABI = [
       {
         components: [
           { internalType: "uint256", name: "totalPooled", type: "uint256" },
-          { internalType: "uint256", name: "rewardsPerBlock", type: "uint256" },
+          {
+            internalType: "uint256",
+            name: "rewardsPerSecond",
+            type: "uint256",
+          },
           { internalType: "uint256", name: "accCaplPerShare", type: "uint256" },
-          { internalType: "uint256", name: "lastRewardBlock", type: "uint256" },
+          { internalType: "uint256", name: "lastRewardTime", type: "uint256" },
         ],
         internalType: "struct Vault.Pool",
         name: "",
@@ -342,7 +346,7 @@ export const vaultABI = [
           {
             components: [
               { internalType: "uint256", name: "amount", type: "uint256" },
-              { internalType: "uint256", name: "startBlock", type: "uint256" },
+              { internalType: "uint256", name: "startTime", type: "uint256" },
               { internalType: "uint256", name: "timeLockEnd", type: "uint256" },
               { internalType: "bool", name: "active", type: "bool" },
             ],
@@ -430,16 +434,20 @@ export const vaultABI = [
     inputs: [
       { internalType: "address", name: "_token", type: "address" },
       { internalType: "uint256", name: "_accCaplPerShare", type: "uint256" },
-      { internalType: "uint256", name: "_lastRewardBlock", type: "uint256" },
+      { internalType: "uint256", name: "_lastRewardTime", type: "uint256" },
     ],
     name: "setPool",
     outputs: [
       {
         components: [
           { internalType: "uint256", name: "totalPooled", type: "uint256" },
-          { internalType: "uint256", name: "rewardsPerBlock", type: "uint256" },
+          {
+            internalType: "uint256",
+            name: "rewardsPerSecond",
+            type: "uint256",
+          },
           { internalType: "uint256", name: "accCaplPerShare", type: "uint256" },
-          { internalType: "uint256", name: "lastRewardBlock", type: "uint256" },
+          { internalType: "uint256", name: "lastRewardTime", type: "uint256" },
         ],
         internalType: "struct Vault.Pool",
         name: "",
@@ -495,16 +503,20 @@ export const vaultABI = [
     inputs: [
       { internalType: "address", name: "_token", type: "address" },
       { internalType: "uint256", name: "_accCaplPerShare", type: "uint256" },
-      { internalType: "uint256", name: "_lastRewardBlock", type: "uint256" },
+      { internalType: "uint256", name: "_lastRewardTime", type: "uint256" },
     ],
     name: "updatePool",
     outputs: [
       {
         components: [
           { internalType: "uint256", name: "totalPooled", type: "uint256" },
-          { internalType: "uint256", name: "rewardsPerBlock", type: "uint256" },
+          {
+            internalType: "uint256",
+            name: "rewardsPerSecond",
+            type: "uint256",
+          },
           { internalType: "uint256", name: "accCaplPerShare", type: "uint256" },
-          { internalType: "uint256", name: "lastRewardBlock", type: "uint256" },
+          { internalType: "uint256", name: "lastRewardTime", type: "uint256" },
         ],
         internalType: "struct Vault.Pool",
         name: "",
