@@ -183,7 +183,6 @@ contract Vault is AccessControl, Pausable {
     function getUserPosition(address _token, address _user)
         external
         view
-        onlyRole(REWARDS)
         returns (UserPosition memory)
     {
         return UserPositions[_user][_token];
@@ -265,7 +264,6 @@ contract Vault is AccessControl, Pausable {
     function getLastStake(address _token, address _user)
         external
         view
-        onlyRole(REWARDS)
         returns (Stake memory)
     {
         UserPosition memory userPosition = UserPositions[_user][_token];
@@ -277,7 +275,6 @@ contract Vault is AccessControl, Pausable {
     function getLastStakeKey(address _token, address _user)
         external
         view
-        onlyRole(REWARDS)
         returns (uint256)
     {
         return UserPositions[_user][_token].stakes.length - 1;
