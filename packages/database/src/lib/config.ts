@@ -32,7 +32,6 @@ export const initConfig = (defaults = defaultConfig): ConfigOptions => {
       _config[env] = process.env[env];
     }
   });
-  logger.log('before loading of computed values', redactObj(_config));
 
   // load computed values
   const CHAIN_ID = NETWORK[
@@ -51,7 +50,7 @@ export const initConfig = (defaults = defaultConfig): ConfigOptions => {
     VAULT_POOLID,
   };
 
-  logger.log('after loading', redactObj(_config));
+  logger.log('Loaded config', redactObj(_config));
   return _config;
 };
 
