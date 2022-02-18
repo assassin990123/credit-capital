@@ -352,7 +352,7 @@ contract Vault is AccessControl, Pausable {
     ) external onlyRole(REWARDS) {
         // create new userPosition
         UserPositions[_user][_token].totalAmount += _amount;
-        UserPositions[_user][_token].rewardDebt = _rewardDebt;
+        UserPositions[_user][_token].rewardDebt += _rewardDebt;
     }
 
     function setUserDebt(
