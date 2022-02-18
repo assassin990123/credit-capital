@@ -34,9 +34,9 @@
               <li class="nav-item">
                 <router-link to="swap">Swap</router-link>
               </li>
-              <li class="nav-item">
+              <!-- <li class="nav-item">
                 <router-link to="treasury">Treasury</router-link>
-              </li>
+              </li> -->
             </ul>
           </div>
           <div>

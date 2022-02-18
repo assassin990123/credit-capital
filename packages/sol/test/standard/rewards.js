@@ -17,7 +17,10 @@ const deployContracts = async (deployer) => {
     deployer.address,
     1_000_000,
   ]);
-  const vault = await deployContract("Vault", [lp.address, 10]);
+  const vault = await deployContract("Vault", [
+    lp.address,
+    BigInt((5000 / (24 * 60 * 60)) * 10 ** 18),
+  ]);
   const rewards = await deployContract("Rewards", [
     vault.address,
     capl.address,

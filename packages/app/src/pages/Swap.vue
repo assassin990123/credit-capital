@@ -18,6 +18,7 @@
                     @input="exchangeCAPLToUSDC()"
                     v-model="swapAmount"
                     class="input-custom"
+                    placeholder="0.00"
                   />
                 </div>
               </div>
@@ -56,6 +57,7 @@
                     type="text"
                     v-model="caplLiquidity"
                     class="input-custom"
+                    placeholder="0.00"
                   />
                 </div>
               </div>
@@ -72,6 +74,7 @@
                     type="text"
                     v-model="usdcLiquidity"
                     class="input-custom"
+                    placeholder="0.00"
                   />
                 </div>
               </div>
@@ -96,6 +99,7 @@
 </template>
 
 <script setup lang="ts">
+import DappFooter from "@/components/DappFooter.vue";
 import { ref, Ref, watchEffect, computed } from "vue";
 import { useStore } from "@/store";
 import {
@@ -108,11 +112,11 @@ import {
 import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store: any = useStore();
-let swapAmount = ref(0);
+let swapAmount = ref(null);
 let swapTokenSymbol: Ref<string> = ref("CAPL");
 let swapToTokenSymbol: Ref<string> = ref("USDC");
 
-let swapTokenResult = ref(0);
+let swapTokenResult = ref(null);
 let swapButtonString = ref("Swap");
 
 let usdcLiquidity: Ref<number> = ref(0);

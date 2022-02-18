@@ -8337,3 +8337,12 @@ button.tab-inner-content-item {
 }
 
 /*# sourceMappingURL=style.css.map */
+
+.myBalance {
+  white-space:nowrap;
+  text-align:center;
+}
+.myBalance a {
+  text-decoration: underline!important;
+  cursor: pointer;
+}
