@@ -259,9 +259,9 @@ const actions = {
     // console.log(pool); // for test
 
     const rewardsPerSecond = Number(
-      ethers.utils.parseUnits(pool.rewardsPerBlock.toString(), 0)
+      ethers.utils.parseUnits(pool.rewardsPerSecond.toString(), 0)
     );
-    //console.log(rewardsPerSecond); // for test
+    // console.log(rewardsPerSecond); // for test
 
     commit("setCaplPerSecond", rewardsPerSecond);
   },
