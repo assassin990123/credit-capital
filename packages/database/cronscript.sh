@@ -5,7 +5,5 @@ killall -SIGKILL node
 
 printenv > /app/.env
 
-cat /app/.env
-
 /usr/bin/node /app/index.js
 
