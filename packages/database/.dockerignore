@@ -3,3 +3,4 @@ build/
 .vscode/
 .env
 tsconfig.tsbuildinfo
+yarn.lock

@@ -1,0 +1,15 @@
+FROM mhart/alpine-node:14
+WORKDIR /app
+
+COPY ./build /app
+COPY crontab.txt /crontab.txt
+COPY cronscript.sh /app/cronscript.sh
+COPY package.json /app
+RUN apk add --no-cache tini \
+    && /usr/bin/crontab /crontab.txt \
+    && chmod a+x /cronscript.sh \
+    && declare -p | grep -Ev 'BASHOPTS|BASH_VERSINFO|EUID|PPID|SHELLOPTS|UID' > /container.env \
+    && yarn install --production=true --no-bin-links --ignore-optional
+
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD [ "/usr/sbin/crond", "-f", "-l", "8" ]

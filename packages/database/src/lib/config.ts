@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import { NETWORK, VAULT_CONFIG } from '../constants';
 import { ConfigOptions } from '../models/config';
 
+import logger from './logger';
+import { redactObj } from './redact';
 import { getPoolIdByNetwork } from './utils';
 
 const defaultConfig: ConfigOptions = {
@@ -30,7 +32,7 @@ export const initConfig = (defaults = defaultConfig): ConfigOptions => {
       _config[env] = process.env[env];
     }
   });
-  console.log('before loading of computed values', _config);
+  logger.log('before loading of computed values', redactObj(_config));
 
   // load computed values
   const CHAIN_ID = NETWORK[
@@ -49,7 +51,7 @@ export const initConfig = (defaults = defaultConfig): ConfigOptions => {
     VAULT_POOLID,
   };
 
-  console.log('after loading', _config);
+  logger.log('after loading', redactObj(_config));
   return _config;
 };
 
