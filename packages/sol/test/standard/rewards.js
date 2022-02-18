@@ -131,4 +131,83 @@ describe("Rewards Vault", function () {
     pendingRewards = await vault.getPendingRewards(lp.address, user.address);
     console.log("User pending rewards: " + pendingRewards);
   });
+
+  it("Rewards simple test", async () => {
+    const accounts = await hre.ethers.getSigners();
+    const { deployer, user } = await setupAccounts(accounts);
+    const { capl, vault, rewards, lp } = await deployContracts(deployer);
+
+    // grant rewards the REWARDS role in the vault
+    await vault.grantRole(
+      ethers.utils.keccak256(ethers.utils.toUtf8Bytes("REWARDS")),
+      rewards.address
+    );
+    
+    // set rewards as MINTER_ROLE role in capl
+    await capl.grantRole(
+      capl.MINTER_ROLE(),
+      rewards.address.toLowerCase()
+    );
+    expect(Number(await lp.balanceOf(deployer.address))).to.equal(1_000_000);
+
+    // deposit capl from user, this should really be a different ERC20
+    // transfer capl to user
+    lp.transfer(user.address, 10);
+    console.log('user balance before first deposit: ', await lp.balanceOf(user.address));
+
+    // user 1 deposit = 1 LP
+    lp.connect(user).approve(rewards.address, 1);
+    await rewards.connect(user).deposit(lp.address, 1);
+    let userPosition = await vault.getUserPosition(lp.address, user.address);
+    let pool = await vault.getPool(lp.address);
+
+    console.log('user balance after first deposit: ', await lp.balanceOf(user.address));
+    console.log('userposition after first deposit: ', userPosition.totalAmount);
+    console.log('rewardDebt after first deposit: ', userPosition.rewardDebt);
+
+    // fast forward 1 min
+    await network.provider.send("evm_increaseTime", [60]);
+    await network.provider.send("evm_mine");
+
+    let pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 60 seconds after the first deposit: ', pendingRewards);
+
+    await rewards.connect(user).claim(lp.address, user.address);
+    userPosition = await vault.getUserPosition(lp.address, user.address);
+    pool = await vault.getPool(lp.address);
+    console.log('user balance after first claim: ', await lp.balanceOf(deployer.address));
+    console.log('rewardDebt after first claim: ', userPosition.rewardDebt);
+    console.log('accCaplPerShare after first claim', pool.accCaplPerShare);
+
+    // fast forward 10 mins
+    await network.provider.send("evm_increaseTime", [600]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 600 seconds after the first claim: ', pendingRewards);
+
+    await rewards.connect(user).claim(lp.address, user.address);
+    userPosition = await vault.getUserPosition(lp.address, user.address);
+    pool = await vault.getPool(lp.address);
+
+    console.log('user balance after second claim: ', await lp.balanceOf(deployer.address));
+    console.log('rewardDebt after second claim: ', userPosition.rewardDebt);
+    console.log('accCaplPerShare after second claim', pool.accCaplPerShare);
+
+    // fast forward an hour
+    await network.provider.send("evm_increaseTime", [3600]);
+    await network.provider.send("evm_mine");
+    
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 3600 seconds after the second claim: ', pendingRewards);
+
+    await rewards.connect(user).claim(lp.address, user.address);
+    userPosition = await vault.getUserPosition(lp.address, user.address);
+    pool = await vault.getPool(lp.address);
+
+    console.log('user balance after third claim: ', await lp.balanceOf(deployer.address));
+    console.log('rewardDebt after third claim: ', userPosition.rewardDebt);
+    console.log('accCaplPerShare after third claim', pool.accCaplPerShare);
+
+  });
 });
