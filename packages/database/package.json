@@ -8,7 +8,7 @@
     "start": "run-s build start:prod",
     "start:dev": "nodemon",
     "start:prod": "node .",
-    "start:docker": "docker run -it scraper",
+    "start:docker": "docker run -it --env-file .env scraper",
     "build": "run-p build:*",
     "build:main": "tsc -p tsconfig.json",
     "build:docker": "docker build . -t scraper",

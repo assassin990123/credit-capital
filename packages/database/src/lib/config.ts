@@ -8,7 +8,8 @@ import { redactObj } from './redact';
 import { getPoolIdByNetwork } from './utils';
 
 const defaultConfig: ConfigOptions = {
-  PORT: 8000,
+  BALANCERVAULT_NETWORK: 'kovan',
+  BALANCERVAULT_POOL: 'CAPL/USDC',
 };
 
 export const initConfig = (defaults = defaultConfig): ConfigOptions => {
