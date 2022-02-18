@@ -49,20 +49,14 @@ docker run -d --restart unless-stopped --env-file .env --name cc-database credit
 You can also use this in docker-compose
 
 ```yaml
-version: 3
+version: '3'
 services:
   database:
     build: .
     # or from image
     image: credit-capital/database
-    port: 8000
     restart: 'unless-stopped'
-    environment:
-      SUPABASE_SERVICE_KEY: '*********'
-      SUPABASE_SERVICE_URL: '*********'
-      INFURA: '**************'
-      BALANCERVAULT_NETWORK: 'kovan'
-      BALANCERVAULT_POOL: 'CAPL/USDC'
+    env_file: .env
 ```
 
 ## Deployment to a swarm
@@ -73,28 +67,20 @@ You can also deploy this as a stack to a swarm, change the service name `cc-data
 docker stack deploy --compose-file docker-compose.yml cc-database
 ```
 
-# API
+# Docker or Dockerfile.local?
 
-After running the app, it will spawn a http server in port 8000 (default)
+You can use `Dockerfile.local` when you want to build the app outside docker, you can do this by running this command:
 
-## Endpoints
+```
+yarn build:local
+```
 
-- `/` - root
-- `/health` - to be used for readiness/health check
-- `/price` - returns an array of latest prices based on the last recorded price data in the database
+This would build the app and build and run the docker
 
-  ```json
-  // example response
-  {
-    "prices": [
-      {
-        "type": "USDC/CAPL",
-        "value": 1.4392799999999857
-      },
-      {
-        "type": "CAPL/USDC",
-        "value": 0.6947918403646337
-      }
-    ]
-  }
-  ```
+# Important Files
+
+- `crontab.txt` contains the crontab definition, change this if you want to adjust the cron timer
+- `cronscript.sh` contains the commands to run the node script, the app must run with this approach instead of directly running the node app via cron due to environment variables not being passed on by cron
+- `docker-compose.yml` contains service definition for this, if you wan to deploy via docker-compose
+- `Dockerfile` docker image definition file, contains a 2 stages that builds the app first, then creating a new image with the built app
+- `Dockerfile.local` docker image definition file that assume that you build the app locally instead of using docker build stage

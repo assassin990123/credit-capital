@@ -3,6 +3,8 @@ version: '3'
 services:
   scraper:
     build: .
+    # or from image
+    image: credit-capital/database
+    restart: 'unless-stopped'
     env_file: .env
-    restart: unless-stopped
     

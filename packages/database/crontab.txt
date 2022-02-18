@@ -1,2 +1,1 @@
-SHELL=/bin/bash
-* * * * * /cronscript.sh
+* * * * * /bin/ash -f /cronscript.sh

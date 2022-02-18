@@ -1,8 +1,11 @@
-#!/bin/bash
+#!/bin/ash
 
 # make sure that no zombie node process
 killall -SIGKILL node
 
-declare -p | grep -Ev 'BASHOPTS|BASH_VERSINFO|EUID|PPID|SHELLOPTS|UID' > /app/.env 
+printenv > /app/.env
 
-/usr/bin/node /app
+cat /app/.env
+
+/usr/bin/node /app/index.js
+

@@ -10,12 +10,14 @@ WORKDIR /app
 
 COPY --from=build-stage /app/build/ /app
 COPY --from=build-stage /app/node_modules /app/node_modules
-COPY crontab.txt /crontab.txt
-COPY cronscript.sh /app/cronscript.sh
-RUN apk add --no-cache tini \
-    && /usr/bin/crontab /crontab.txt \
-    && chmod a+x /cronscript.sh \
-    && declare -p | grep -Ev 'BASHOPTS|BASH_VERSINFO|EUID|PPID|SHELLOPTS|UID' > /container.env
+COPY --from=build-stage crontab.txt /etc/cron.d/app-cron
+COPY --from=build-stage cronscript.sh /cronscript.sh
+
+RUN RUN apk add --no-cache --virtual .gyp python make g++ tini ca-certificates \
+    && chmod 0644 /etc/cron.d/app-cron \
+    && chmod a+x /cronscript.sh  \
+    && /usr/bin/crontab /etc/cron.d/app-cron \
+    && yarn install --frozen-lockfile --production=true
 
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD [ "/usr/sbin/crond", "-f", "-l", "8" ]
+CMD ["cron", "-f"]

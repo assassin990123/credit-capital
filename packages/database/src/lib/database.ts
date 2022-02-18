@@ -6,8 +6,7 @@ import logger from './logger';
 const supabase = (() => {
   try {
     return createClient(
-      // config.SUPABASE_SERVICE_URL,
-      null,
+      config.SUPABASE_SERVICE_URL,
       config.SUPABASE_SERVICE_KEY
     );
   } catch (ex) {
