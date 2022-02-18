@@ -81,7 +81,9 @@
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span> 000</div>
-                <div class="panel-explanation">{{ liquidityToTokenSymbol }}</div>
+                <div class="panel-explanation">
+                  {{ liquidityToTokenSymbol }}
+                </div>
               </div>
             </div>
             <button
@@ -120,8 +122,8 @@ let swapToTokenSymbol: Ref<string> = ref("USDC");
 let swapTokenResult = ref(null);
 let swapButtonString = ref("Swap");
 
-let usdcLiquidity: Ref<number|null> = ref(null);
-let caplLiquidity: Ref<number|null> = ref(null);
+let usdcLiquidity: Ref<number | null> = ref(null);
+let caplLiquidity: Ref<number | null> = ref(null);
 let liquidityTokenSymbol: Ref<string> = ref("CAPL");
 let liquidityToTokenSymbol: Ref<string> = ref("USDC");
 
@@ -130,11 +132,12 @@ let addLiquidityButtonString: Ref<string> = ref("Add Liquidity");
 let approvalFlag: Ref<string | null> = ref(null);
 
 // this loops checks the store values for the token allowances and dynamically changes button text based on that info
-  const isUserConnected = computed(
-    () => store.getters["accounts/isUserConnected"]
-  );
+const isUserConnected = computed(
+  () => store.getters["accounts/isUserConnected"]
+);
 watchEffect(async () => {
-  (! isUserConnected.value || await checkAllowance(
+  !isUserConnected.value ||
+  (await checkAllowance(
     store,
     swapTokenSymbol.value,
     Number(swapAmount.value),
@@ -228,7 +231,6 @@ function resetInput2() {
     liquidityTokenSymbol.value = "CAPL";
     liquidityToTokenSymbol.value = "USDC";
   }
-
 }
 
 // allows for a user to switch between swapping USDC and CAPL
@@ -259,7 +261,6 @@ async function exchangeCAPLToUSDC() {
     swapTokenResult.value = format(exchangedBalance);
   }
 }
-
 </script>
 
 <style>

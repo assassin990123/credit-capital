@@ -62,8 +62,6 @@ const actions = {
       address
     );
 
-    console.log(Number(ethers.utils.formatUnits(pendingRewards, 0)));
-
     // parse balance, set new value in the local state
     commit(
       "setPendingRewards",
@@ -92,7 +90,6 @@ const actions = {
 
     // claim rewards
     try {
-      console.log(lpAddress, address);
       // @ts-ignore
       await rewardsContract?.claim(lpAddress, address);
     } catch (error) {

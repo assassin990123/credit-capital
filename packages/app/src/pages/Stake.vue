@@ -12,7 +12,7 @@
               v-model="stakeAmount"
             />
             <div class="myBalance">
-            Balance: <a @click="insertBalance">{{ lpBalance.toFixed(6)}}</a>
+              Balance: <a @click="insertBalance">{{ lpBalance.toFixed(6) }}</a>
             </div>
             <button type="submit" class="btn-custom" @click="handleStake">
               {{ stakeButtonText }}
@@ -65,7 +65,8 @@ const isUserConnected = computed(
 
 // this function checks the allowance a user has alloted our rewards contract via the LP token
 watchEffect(async () => {
-  (!isUserConnected.value || await checkAllowance(
+  !isUserConnected.value ||
+  (await checkAllowance(
     store,
     "LP", // static for now
     stakeAmount.value,

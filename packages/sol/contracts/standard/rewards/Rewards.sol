@@ -261,7 +261,8 @@ contract Rewards is Pausable, AccessControl {
             _user
         );
 
-        uint256 accumulatedCapl = (user.totalAmount * pool.accCaplPerShare) / CAPL_PRECISION;
+        uint256 accumulatedCapl = (user.totalAmount * pool.accCaplPerShare) /
+            CAPL_PRECISION;
 
         uint256 pendingCapl = accumulatedCapl - user.rewardDebt;
 
