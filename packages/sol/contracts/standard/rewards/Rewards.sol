@@ -215,7 +215,7 @@ contract Rewards is Pausable, AccessControl {
                 uint256 passedTime = block.timestamp - cpool.lastRewardTime;
                 uint256 caplReward = passedTime * cpool.rewardsPerSecond;
                 accCaplPerShare =
-                    accCaplPerShare +
+                    cpool.accCaplPerShare +
                     (caplReward * CAPL_PRECISION) /
                     tokenSupply;
             }
@@ -254,7 +254,7 @@ contract Rewards is Pausable, AccessControl {
             user.rewardDebt;
     }
 
-    function claim(address _token, address _user) external {
+    function claim(address _token, address _user) external returns (uint256) {
         IPool.Pool memory pool = updatePool(_token);
         IUserPositions.UserPosition memory user = vault.getUserPosition(
             _token,

@@ -129,6 +129,7 @@ describe("Rewards Vault", function () {
     // alice should have roughly 208 still
     pendingRewards = await vault.getPendingRewards(lp.address, alice.address);
     expect(_formatEther(pendingRewards).toFixed(0)).to.equal('208')
+
     // fast forward an hour, and they should both have accrued the same amount...
     // around 208 total, so 104 each.
     await network.provider.send("evm_increaseTime", [3600]);
@@ -139,11 +140,16 @@ describe("Rewards Vault", function () {
 
     pendingRewards = await vault.getPendingRewards(lp.address, alice.address);
     expect(_formatEther(pendingRewards).toFixed(0)).to.equal('313')
+
+    await rewards.connect(alice).claim(lp.address, alice.address)
+    expect(_formatEther(await capl.balanceOf(alice.address)).toFixed(0)).to.equal('313')
+
+
+    /*
     // bob now decides to claim
     await rewards.connect(bob).claim(lp.address, bob.address)
     // bobs CAPL balance should now be 104
-    let balance = await capl.balanceOf(bob.address)
-    console.log(_formatEther(balance))
+    */
 
 
     /*
@@ -183,7 +189,7 @@ describe("Rewards Vault", function () {
     console.log("User pending rewards: " + pendingRewards);
     */
   });
-
+  /*
   it("Rewards simple test", async () => {
     const accounts = await hre.ethers.getSigners();
     const { deployer, alice } = await setupAccounts(accounts);
@@ -388,6 +394,7 @@ describe("Rewards Vault", function () {
     console.log('user balance after third claim: ', await lp.balanceOf(deployer.address));
     console.log('rewardDebt after third claim: ', userPosition.rewardDebt);
     console.log('accCaplPerShare after third claim', pool.accCaplPerShare);
-    */
   });
+  */
+
 });
