@@ -277,6 +277,7 @@ This file is use to implement the responsive design.
   
     .panel.stake-panel{
       margin: 50px;
+      width: auto;
      }
   
      .panel-explanation > input{

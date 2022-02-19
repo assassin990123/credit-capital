@@ -9,31 +9,36 @@
               <div class="panel-explanation">functionality explanation</div>
               <div class="ellipses">&hellip;</div>
             </div>
-            <div class="panel-display swap-panel-display">
-              <div>
+            <div class="panel-display1">
+              <div class="swap-description">
                 <div class="panel-explanation"><span>send</span></div>
-                <div class="panel-explanation">
+                <div class="panel-explanation">{{ swapTokenSymbol }}</div>
+              </div>
+              <div class="swap-input-body">
+                
+                <div class="swap-input-inner">
                   <input
                     type="text"
                     @input="exchangeCAPLToUSDC()"
                     v-model="swapAmount"
-                    class="input-custom"
+                    class="swap-input"
+                    placeholder="0.0"
                   />
                 </div>
               </div>
-              <div class="text-right">
-                <div class="panel-explanation">{{ swapTokenSymbol }}</div>
-              </div>
             </div>
             <button class="btn-switch" @click="switchTokens">&#8635;</button>
-            <div class="panel-display swap-panel-display">
-              <div>
+            <div class="panel-display1">
+              <div class="swap-description">
                 <div class="panel-explanation"><span>receive</span></div>
-                <div class="panel-explanation">{{ swapTokenResult }}</div>
-              </div>
-              <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span> 000</div>
-                <div class="panel-explanation">{{ swapToTokenSymbol }}</div>
+                
+              </div>
+              <div class="swap-input-body">
+                <div class="swap-input-below">
+                <div class="swap-token-symbol">{{ swapToTokenSymbol }}</div>
+                <div class="panel-explanation">{{ swapTokenResult }}</div>
+                </div>
               </div>
             </div>
             <button type="button" @click="handleSwap()" class="btn-custom">

@@ -33,11 +33,11 @@ const w3Lopp = () => {
 </script>
 
 <style>
-@import url("../public/css/responsive.css");
 @import url("../public/css/vendors.css");
 @import url("../public/css/plugins.css");
 @import url("../public/css/icons.css");
 @import url("../public/css/style.css");
+@import url("../public/css/responsive.css");
 home,
 body {
   padding: 0;
