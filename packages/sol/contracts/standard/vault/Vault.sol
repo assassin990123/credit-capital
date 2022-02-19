@@ -259,7 +259,8 @@ contract Vault is AccessControl, Pausable {
                 (caplReward * CAPL_PRECISION) /
                 tokenSupply;
         }
-        pending = (((user.totalAmount * accCaplPerShare) / CAPL_PRECISION)) -
+        pending =
+            (((user.totalAmount * accCaplPerShare) / CAPL_PRECISION)) -
             user.rewardDebt;
     }
 
