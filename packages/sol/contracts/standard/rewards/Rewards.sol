@@ -261,8 +261,7 @@ contract Rewards is Pausable, AccessControl {
             _user
         );
 
-        uint256 accumulatedCapl = (user.totalAmount * pool.accCaplPerShare) /
-            CAPL_PRECISION;
+        uint256 accumulatedCapl = (user.totalAmount * pool.accCaplPerShare);
 
         uint256 pendingCapl = accumulatedCapl - user.rewardDebt;
 
@@ -270,7 +269,7 @@ contract Rewards is Pausable, AccessControl {
         vault.setUserDebt(_token, _user, accumulatedCapl);
 
         if (pendingCapl > 0) {
-            capl.mint(_user, pendingCapl * CAPL_PRECISION);
+            capl.mint(_user, pendingCapl);
         }
 
         emit Claim(_token, _user, pendingCapl);

@@ -17,7 +17,7 @@ const deployContracts = async (deployer) => {
     "LP",
     "LP",
     deployer.address,
-    1_000_000,
+    BigInt(1_000_000 * 10 ** 18),
   ]);
   const vault = await deployContract("Vault", [
     lp.address,
@@ -43,6 +43,7 @@ const setupAccounts = (accounts) => {
 };
 
 describe("Rewards Vault", function () {
+  /*
   it("Rewards end to end", async function () {
     const accounts = await hre.ethers.getSigners();
     const { deployer, user, user2 } = await setupAccounts(accounts);
@@ -131,7 +132,7 @@ describe("Rewards Vault", function () {
     pendingRewards = await vault.getPendingRewards(lp.address, user.address);
     console.log("User pending rewards: " + pendingRewards);
   });
-
+  */
   it("Rewards simple test", async () => {
     const accounts = await hre.ethers.getSigners();
     const { deployer, user } = await setupAccounts(accounts);
@@ -142,18 +143,18 @@ describe("Rewards Vault", function () {
       ethers.utils.keccak256(ethers.utils.toUtf8Bytes("REWARDS")),
       rewards.address
     );
-    
+
     // set rewards as MINTER_ROLE role in capl
-    await capl.grantRole(
-      capl.MINTER_ROLE(),
-      rewards.address.toLowerCase()
-    );
-    expect(Number(await lp.balanceOf(deployer.address))).to.equal(1_000_000);
+    await capl.grantRole(capl.MINTER_ROLE(), rewards.address.toLowerCase());
+    expect(Number(ethers.utils.formatEther(await lp.balanceOf(deployer.address)))).to.equal(1_000_000);
 
     // deposit capl from user, this should really be a different ERC20
     // transfer capl to user
-    lp.transfer(user.address, 10);
-    console.log('user balance before first deposit: ', await lp.balanceOf(user.address));
+    lp.transfer(user.address, BigInt(10 * 10 ** 18));
+    console.log(
+      "user balance before first deposit: ",
+      await lp.balanceOf(user.address)
+    );
 
     // user 1 deposit = 1 LP
     lp.connect(user).approve(rewards.address, 1);
@@ -161,24 +162,113 @@ describe("Rewards Vault", function () {
     let userPosition = await vault.getUserPosition(lp.address, user.address);
     let pool = await vault.getPool(lp.address);
 
-    console.log('user balance after first deposit: ', await lp.balanceOf(user.address));
-    console.log('userposition after first deposit: ', userPosition.totalAmount);
-    console.log('rewardDebt after first deposit: ', userPosition.rewardDebt);
+    //console.log('user balance after first deposit: ', await lp.balanceOf(user.address));
+    //console.log('userposition after first deposit: ', userPosition.totalAmount);
+    //console.log('rewardDebt after first deposit: ', userPosition.rewardDebt);
 
     // fast forward 1 min
     await network.provider.send("evm_increaseTime", [60]);
     await network.provider.send("evm_mine");
 
-    let pendingRewards = await vault.getPendingRewards(lp.address, user.address);
-    console.log('pendingRewards 60 seconds after the first deposit: ', pendingRewards);
+    let pendingRewards = await vault.getPendingRewards(
+      lp.address,
+      user.address
+    );
+    console.log(
+      "pendingRewards 60 seconds after the first deposit: ",
+      ethers.utils.formatEther(pendingRewards)
+    );
+    console.log("");
 
-    await rewards.connect(user).claim(lp.address, user.address);
-    userPosition = await vault.getUserPosition(lp.address, user.address);
-    pool = await vault.getPool(lp.address);
-    console.log('user balance after first claim: ', await lp.balanceOf(deployer.address));
-    console.log('rewardDebt after first claim: ', userPosition.rewardDebt);
-    console.log('accCaplPerShare after first claim', pool.accCaplPerShare);
+    //userPosition = await vault.getUserPosition(lp.address, user.address);
+    //pool = await vault.getPool(lp.address);
 
+    // fast forward 1 min
+    await network.provider.send("evm_increaseTime", [60]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 120 seconds after the first deposit: ', ethers.utils.formatEther(pendingRewards));
+
+    await network.provider.send("evm_increaseTime", [60]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 180 seconds after the first deposit: ', ethers.utils.formatEther(pendingRewards));
+
+    await network.provider.send("evm_increaseTime", [60]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 240 seconds after the first deposit: ', ethers.utils.formatEther(pendingRewards));
+
+    await network.provider.send("evm_increaseTime", [120]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 360 seconds after the first deposit: ', ethers.utils.formatEther(pendingRewards));
+
+    await network.provider.send("evm_increaseTime", [240]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 600 seconds after the first deposit: ', ethers.utils.formatEther(pendingRewards));
+
+    await network.provider.send("evm_increaseTime", [300]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 900 seconds after the first deposit: ', ethers.utils.formatEther(pendingRewards));
+
+    await network.provider.send("evm_increaseTime", [300]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 1200 seconds after the first deposit: ', ethers.utils.formatEther(pendingRewards));
+
+
+    await network.provider.send("evm_increaseTime", [600]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 1800 seconds after the first deposit: ', ethers.utils.formatEther(pendingRewards));
+
+    await network.provider.send("evm_increaseTime", [2400]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 3600 seconds after the first deposit: ', ethers.utils.formatEther(pendingRewards));
+
+    await network.provider.send("evm_increaseTime", [3600]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 7200 seconds after the first deposit: ', ethers.utils.formatEther(pendingRewards));
+
+    await network.provider.send("evm_increaseTime", [7200]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 43200 seconds after the first deposit: ', ethers.utils.formatEther(pendingRewards));
+
+    await network.provider.send("evm_increaseTime", [28800]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 43200 seconds after the first deposit: ', ethers.utils.formatEther(pendingRewards));
+
+    await network.provider.send("evm_increaseTime", [43200]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, user.address);
+    console.log('pendingRewards 86400 seconds after the first deposit: ', ethers.utils.formatEther(pendingRewards));
+
+
+    //console.log('user balance after first claim: ', ethers.utils.formatEther(await capl.balanceOf(user.address)));
+    //console.log('rewardDebt after first claim: ', ethers.utils.formatEther(userPosition.rewardDebt));
+    //console.log('accCaplPerShare after first claim', ethers.utils.formatEther(pool.accCaplPerShare));
+
+    /*
     // fast forward 10 mins
     await network.provider.send("evm_increaseTime", [600]);
     await network.provider.send("evm_mine");
@@ -208,6 +298,6 @@ describe("Rewards Vault", function () {
     console.log('user balance after third claim: ', await lp.balanceOf(deployer.address));
     console.log('rewardDebt after third claim: ', userPosition.rewardDebt);
     console.log('accCaplPerShare after third claim', pool.accCaplPerShare);
-
+    */
   });
 });
