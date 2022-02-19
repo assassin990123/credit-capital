@@ -1,0 +1,351 @@
+/*
+This file is use to implement the responsive design.
+*/
+
+/*=========================================
+                 INDEX             
+===========================================
+//             01 -- Dashboard
+//             02 -- Stake
+//             03 -- Reward
+//             04 -- Swap
+//             05 -- Treasury
+
+==============================================*/
+
+/*============================================
+
+                 01 -- Dashboard
+
+==============================================*/
+
+
+@media only screen and (max-width: 962px){
+    div.dashboard-container.dashboard-cus-main{
+      padding: 100px 30px;
+    }
+    div.dashboard-cus-main .dashboard-revenue-projection-content-row{
+      flex-wrap: wrap;
+    }
+    div.dashboard-cus-main .dashboard-revenue-projection-vault{
+      width: 40%;
+      margin-right: 0;
+    }
+    div.dashboard-cus-main .dashboard-revenue-projection-content-column{
+        margin: 0 25px 20px 25px;
+    }
+    div.dashboard-cus-main .dashboard-daily-earning{
+        padding: 40px 0;
+    }
+    div.dashboard-cus-main .dashboard-portfolio-capl-row div, 
+    div.dashboard-cus-main .dashboard-platform-assets-panel div,
+    div.dashboard-cus-main .dashboard-platform-assets div{
+      font-size: 16px;
+      flex-wrap: wrap;
+    }
+    div.dashboard-cus-main .dashboard-portfolio-capl-panel-row{
+      flex-wrap: wrap;
+    }
+    div.dashboard-platform-header{
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    div.dashboard-cus-main .buy-btn{
+      margin: 20px;
+    }
+    div.dashboard-cus-main .dashboard-platform-token{
+      flex-direction: column;
+    }
+    div.dashboard-platform-token-column{
+      width: auto;
+    } 
+    div.dashboard-cus-main .dashboard-portfolio-capl-row{
+      flex-wrap: wrap;
+    }
+    div.dashboard-cus-main .reward-btn{
+      min-width: 200px;
+    }
+  }
+  
+  
+  @media only screen and (max-width: 601px) {
+    div.dashboard-container.dashboard-cus-main {
+      padding: 0;
+    }
+    .dashboard-container.dashboard-cus-main 
+    .dashboard-daily-earning {
+      flex-direction: column;
+      margin: 0 30px;
+      padding: 0;
+      width: auto;
+    }
+    div.dashboard-daily-earning .dashboard-daily-earning-panel {
+      width: auto;
+      margin: 90px 0 35px 0;
+    }
+    div.dashboard-cus-main .dashboard-revenue-projection {
+      flex-direction: column;
+      margin: 50px 30px;
+    }
+    div.dashboard-cus-main .dashboard-revenue-projection-vault {
+      width: auto;
+      margin: 0 0 50px 0;
+    }
+    div.dashboard-cus-main .dashboard-revenue-projection-content-row {
+      flex-direction: column;
+      margin: 0;
+    }
+    div.dashboard-cus-main .dashboard-revenue-projection-content-column {
+      margin: 0 0 30px 0;
+    }
+    div.dashboard-cus-main .dashboard-portfolio {
+      flex-direction: column;
+      padding: 0 30px;
+    }
+  
+    div.dashboard-cus-main .dashboard-portfolio-capl-panel-row{
+      flex-wrap: wrap;
+    }
+    div.dashboard-cus-main .dashboard-portfolio-section {
+      width: auto;
+      margin: 0 0 50px 0;
+    }
+    div.dashboard-cus-main .dashboard-portfolio-section-address {
+      flex-direction: column;
+      text-align: center;
+    }
+    div.dashboard-cus-main .dashboard-portfolio-section-title {
+      text-align: center;
+    }
+    div.dashboard-cus-main .dashboard-platform {
+      flex-direction: column;
+      margin: 0 30px;
+    }
+    div.dashboard-cus-main .dashboard-platform-section {
+      width: auto;
+      margin-bottom: 50px;
+    }
+    div.dashboard-platform-header {
+      flex-direction: column;
+      text-align: center;
+    }
+    div.dashboard-cus-main .buy-btn {
+      margin: 30px 0;
+    }
+    div.dashboard-cus-main .dashboard-platform-token {
+      flex-direction: column;
+    }
+    div.dashboard-platform-token-column {
+      width: auto;
+      padding: 0;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+    div.dashboard-cus-main .dashboard-portfolio-capl-row div,
+    div.dashboard-cus-main .dashboard-platform-assets-panel div,
+    div.dashboard-cus-main .dashboard-platform-assets div{
+      font-size: 16px;
+    }
+    .dashboard-cus-main .reward-btn{
+      min-width: 100px;
+    }
+  }
+
+
+  
+/*============================================
+
+                02 -- Stake Page
+
+==============================================*/
+
+
+@media only screen and (max-width: 962px){
+    .panel.stake-panel{
+      margin: 50px 0;
+      width: 400px;
+    }
+    div.stake-panel-content{
+      height: auto;
+    }
+    div.panel-content.stake-panel-content{
+        padding: 70px 30px;
+    }
+    input.input-custom{
+      max-width: 90%;
+    }
+    div.stack-bottom-area{
+      width: auto;
+      margin: 0 20px 50px 20px;
+    }
+    div.panel{
+      flex: none;
+    }
+  }
+  
+  @media only screen and (max-width: 601px) {
+    .panel-content.stake-panel-content{
+     padding: 50px 0;
+     height: auto;
+     border-radius: 25px;
+    }
+    .btn-custom{
+      min-width: 200px;
+    }
+    .stack-bottom-area{
+      width: 80%;
+      margin: 30px auto 50px auto;
+    }
+    .stack-button-area{
+      flex-direction: column;
+    }
+    .stack-button-area .stack-btn{
+      padding: 0 20px;
+      margin: 10px 0;
+      border: 1px solid #ffca03;
+     }
+  }
+
+
+/*============================================
+
+                28 -- Reward Page
+
+==============================================*/
+
+
+@media only screen and (max-width: 992px){
+    .reward-main-sec .rewards-display{
+       font-size: 60px;
+    }
+    div.rewards-content{
+      width: auto;
+    }
+  }
+  
+  @media only screen and (max-width: 601px) {
+    .rewards-container .rewards-content{
+      width: 80%;
+    }
+    .rewards-content .rewards-section{
+     flex-direction: column;
+     margin: 50px auto 0 auto;
+    }
+    .rewards-section > button{
+      margin-bottom: 30px;
+     }
+     .rewards-content .rewards-display{
+      margin: 0;
+      padding: 70px 0;
+      font-size: 30px;
+     }
+  }
+
+  
+
+/*============================================
+
+                29 -- Swap
+
+==============================================*/
+
+
+@media only screen and (max-width: 962px){
+    .panel-content.swap-panel-content{
+      padding: 50px;
+    }
+  }
+  
+  @media only screen and (max-width: 750px){
+    .inner-container.panel-container{
+      flex-direction: column;
+      margin: 50px auto;
+    }
+    .panel-display.swap-panel-display{
+      width: 100%;
+    }
+  }
+  
+  @media only screen and (max-width: 601px) {
+    .panel-container.inner-container {
+      flex-direction: column;
+    }
+    .panel-content.swap-panel-content {
+      padding: 20px 30px;
+    }
+  
+    .panel.stake-panel{
+      margin: 50px;
+     }
+  
+     .panel-explanation > input{
+       width: 100%;
+     }
+  }
+
+
+  /*============================================
+
+                30 -- Treasury
+
+==============================================*/
+
+
+@media only screen and (max-width: 962px){
+    .treasury-row.inner-container{
+      flex-direction: column;
+    }
+    div.treasury-column-1, div.treasury-column-2{
+      width: auto;
+    }
+    div.treasury-row{
+      flex-direction: column;
+    }
+  }
+  
+  @media only screen and (max-width: 601px) {
+    div.treasury-row,
+    div.treasury-row.inner-container,
+    div.treasury-column-1,
+    div.treasury-column-2,
+    div.treasury-value-container,
+    div.treasury-projections-row,
+    div.treasury-projections-column,
+    div.treasury-projections-column.projection-custom {
+      width: auto;
+      flex-direction: column;
+    }
+    div.treasury-column-1{
+      margin-top: 50px;
+    }
+    .treasury-value-container.treasury-outstanding{
+      width: auto;
+    }
+    .treasury-projections-row.treasury-projections-custom {
+      margin: 0;
+    }
+    .treasury-projections-column.projection-custom {
+      margin: 20px;
+    }
+    select.tab-inner-content-item,
+    button.tab-inner-content-item {
+      margin: 20px !important;
+      padding: 0 13px;
+    }
+    div.tab-inner-content {
+      width: auto;
+      flex-direction: column;
+    }
+    .tab-content.treasury-outstanding{
+      padding: 30px;
+    }
+  }
+
+  
+@media only screen and (max-width: 601px) {
+    .line {
+      width: 40%;
+    }
+  }
+  
