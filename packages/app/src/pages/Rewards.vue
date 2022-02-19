@@ -6,8 +6,8 @@
           <h1 class="panel-title">PENDING REWARDS</h1>
           <div class="rewards-content">
             <div class="rewards-display">
-              {{ pendingRewardsCAPL + " CAPL" }} ({{
-                pendingRewardsUSDC + " USD"
+              {{ pendingRewardsCAPL.toFixed(3) + " CAPL" }} ({{
+                pendingRewardsUSDC.toFixed(2) + " USD"
               }})
             </div>
             <div class="rewards-section">

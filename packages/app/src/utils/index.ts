@@ -85,6 +85,7 @@ export const checkAllowance = (
   amount: number,
   flag: string
 ): boolean => {
+  console.log(flag, symbol, amount);
   let allowance;
 
   if (flag == "balancer") {
@@ -94,7 +95,7 @@ export const checkAllowance = (
   } else if (flag == "stake") {
     allowance = state.getters["tokens/getLPAllowance"];
   }
-
+  console.log(allowance, allowance >= amount);
   return allowance >= amount;
 };
 

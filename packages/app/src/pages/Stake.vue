@@ -52,7 +52,7 @@ import { useStore } from "@/store";
 import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store = useStore();
-const stakeAmount = ref();
+const stakeAmount: Ref<number> = ref(0);
 const stakeButtonText: Ref<string> = ref("Stake");
 const unstakeAmount = computed(
   () => store.getters["rewards/getUserUnlockedAmount"]

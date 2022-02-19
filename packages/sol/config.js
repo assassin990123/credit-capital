@@ -1,4 +1,4 @@
 
-  export const vaultcontractaddress = "0x1C7A87Fc975804c1A1E08c18EB7e8A2FA7dE7125"
-  export const rewardscontractaddress = "0xcfe64C670F60860cEd43784b96E613ad0052DB9b"
+  export const vaultcontractaddress = "0xb94381B8EC4900977dCD83Fa63d6C2839585F546"
+  export const rewardscontractaddress = "0x0efbfD29f19dF53fc9E1923B7f1b64637834e2D5"
   
