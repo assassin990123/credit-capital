@@ -72,12 +72,12 @@ const actions = {
     tokenData[token_USDC] = {
       symbol: "USDC",
       decimals: "6",
-      limit: 0,
+      limit: symbol === 'CAPL' ? 0 : amount,
     };
     tokenData[token_CAPL] = {
       symbol: "CAPL",
       decimals: "18",
-      limit: amount, //
+      limit: symbol === 'CAPL' ? amount : 0, //
     };
 
     const fundSettings: any = {
