@@ -163,54 +163,6 @@ contract Rewards is Pausable, AccessControl {
         _setupRole(MINTER_ROLE, msg.sender);
     }
 
-    function depositTest(address _token, uint256 _amount)
-        external
-        returns (bool)
-    {
-        require(vault.checkIfPoolExists(_token), "Pool does not exist");
-        require(_amount > 0, "Deposit mount should not be 0");
-
-        // update pool to current block
-        IPool.Pool memory pool = updatePool(_token);
-
-        uint256 rewardDebt = (_amount * pool.accCaplPerShare) / CAPL_PRECISION;
-
-        if (!vault.checkIfUserPositionExists(_token, msg.sender)) {
-            // new user position & new stake
-            // no timelock
-            vault.addUserPosition(_token, msg.sender, _amount, rewardDebt);
-            return true;
-        } else {
-            vault.setUserPosition(_token, msg.sender, _amount, rewardDebt);
-
-            return false;
-            /*
-            // check timelock
-            IStake.Stake memory lastStake = vault.getLastStake(
-                _token,
-                msg.sender
-            );
-
-            if (checkTimelockThreshold(lastStake.startTime)) {
-                // add a new stake for the user
-                // this function adds a new stake, and a new stake key in the user position instance
-                vault.addStake(_token, msg.sender, _amount);
-            } else {
-                uint256 lastStakeKey = vault.getLastStakeKey(
-                    _token,
-                    msg.sender
-                );
-                vault.setStake(_token, msg.sender, _amount, lastStakeKey);
-            }
-            */
-        }
-
-        IERC20(_token).safeTransferFrom(msg.sender, vaultAddress, _amount);
-        vault.addPoolPosition(_token, _amount);
-
-        emit Deposit(_token, msg.sender, _amount);
-    }
-
     function deposit(address _token, uint256 _amount) external {
         require(vault.checkIfPoolExists(_token), "Pool does not exist");
         require(_amount > 0, "Deposit mount should not be 0");

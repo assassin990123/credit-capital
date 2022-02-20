@@ -341,7 +341,6 @@ contract Vault is AccessControl, Pausable {
 
         userPosition.totalAmount = _amount;
         userPosition.rewardDebt = _rewardDebt;
-        userPosition.userLastWithdrawnStakeIndex = 0;
         userPosition.staticLock = false;
         userPosition.autocompounding = true;
         userPosition.stakes.push(userStake);
@@ -382,12 +381,12 @@ contract Vault is AccessControl, Pausable {
         pool.totalPooled -= _amount;
     }
 
-    function withdrawMATIC() public payable onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(address(this).balance > 0, "no matic to withdraw");
+    function withdrawNativeBalance() public payable onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(address(this).balance > 0, "no balance to withdraw");
         uint256 balance = address(this).balance;
 
         payable(msg.sender).transfer(balance);
 
-        emit WithdrawMATIC(msg.sender, balance);
+        emit WithdrawNativeBalance(msg.sender, balance);
     }
 }
