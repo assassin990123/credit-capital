@@ -121,6 +121,10 @@ let swapButtonString = ref("Swap");
 
 let usdcLiquidity: Ref<number> = ref(0);
 let caplLiquidity: Ref<number> = ref(0);
+
+let approvalFlag:Ref<string | null> = ref('')
+let addLiquidityButtonString:Ref<string> = ref('')
+
 const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );

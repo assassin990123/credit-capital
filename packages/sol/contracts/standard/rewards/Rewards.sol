@@ -163,7 +163,10 @@ contract Rewards is Pausable, AccessControl {
         _setupRole(MINTER_ROLE, msg.sender);
     }
 
-    function depositTest(address _token, uint256 _amount) external returns (bool) {
+    function depositTest(address _token, uint256 _amount)
+        external
+        returns (bool)
+    {
         require(vault.checkIfPoolExists(_token), "Pool does not exist");
         require(_amount > 0, "Deposit mount should not be 0");
 
