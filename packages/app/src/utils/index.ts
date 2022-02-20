@@ -1,6 +1,6 @@
 export const format = (n: any) => {
   if (n < 1e3) {
-    return n;
+    return Number(n).toFixed(3);
   }
   if (n >= 1e3 && n < 1e6) {
     return +(n / 1e3).toFixed(1) + " K";
@@ -95,7 +95,6 @@ export const checkAllowance = (
   } else if (flag == "stake") {
     allowance = state.getters["tokens/getLPAllowance"];
   }
-  console.log(allowance, allowance >= amount);
   return allowance >= amount;
 };
 
