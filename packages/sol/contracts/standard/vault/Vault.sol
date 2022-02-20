@@ -177,7 +177,7 @@ contract Vault is AccessControl, Pausable {
         view
         returns (bool)
     {
-        return UserPositions[_user][_token].rewardDebt > 0;
+        return UserPositions[_user][_token].totalAmount > 0;
     }
 
     function getUserPosition(address _token, address _user)
@@ -355,7 +355,7 @@ contract Vault is AccessControl, Pausable {
     ) external onlyRole(REWARDS) {
         // create new userPosition
         UserPositions[_user][_token].totalAmount += _amount;
-        UserPositions[_user][_token].rewardDebt = _rewardDebt;
+        UserPositions[_user][_token].rewardDebt += _rewardDebt;
     }
 
     function setUserDebt(
