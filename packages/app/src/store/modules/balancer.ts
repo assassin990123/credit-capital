@@ -11,17 +11,13 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
 
 const state: BalancerState = {
   poolTokens: {},
-  batchSwap: {},
   addLiquidity: {},
+  batchSwap: {}
 };
 
 const getters = {
   getPoolTokens() {
     return state.poolTokens;
-  },
-
-  getBatchSwap() {
-    return state.batchSwap;
   },
 };
 
@@ -76,19 +72,13 @@ const actions = {
     tokenData[token_USDC] = {
       symbol: "USDC",
       decimals: "6",
-      limit: 100,
+      limit: 0,
     };
     tokenData[token_CAPL] = {
       symbol: "CAPL",
       decimals: "18",
-      limit: 0,
+      limit: 1,
     };
-    const tokenAddresses = Object.keys(tokenData);
-    tokenAddresses.sort();
-    const tokenIndices: any = {};
-    for (let i = 0; i < tokenAddresses.length; i++) {
-      tokenIndices[tokenAddresses[i]] = i;
-    }
 
     const fundSettings: any = {
       sender: rootState.accounts.activeAccount,
@@ -97,8 +87,8 @@ const actions = {
       toInternalBalance: false,
     };
 
-    const TOKEN_IN = symbol === 'CAPL' ? token_USDC : token_CAPL;
-    const TOKEN_OUT = symbol === 'CAPL' ? token_CAPL : token_USDC;
+    const TOKEN_IN = symbol === 'CAPL' ? token_CAPL : token_USDC;
+    const TOKEN_OUT = symbol === 'CAPL' ? token_USDC : token_CAPL;
 
     const swapKind = 0;
     const swap_struct = {
@@ -106,9 +96,7 @@ const actions = {
       kind: swapKind,
       assetIn: TOKEN_IN,
       assetOut: TOKEN_OUT,
-      amount: ethers.BigNumber.from(
-        (amount * Math.pow(10, tokenData[TOKEN_OUT]["decimals"]))
-      ),
+      amount: ethers.utils.parseUnits(amount.toString(), tokenData[TOKEN_IN]['decimals']).toString(),
       userData: "0x",
     };
     const fundStruct = {
@@ -117,8 +105,7 @@ const actions = {
       recipient: ethers.utils.getAddress(fundSettings["recipient"]),
       toInternalBalance: fundSettings["toInternalBalance"],
     };
-    console.log(fundSettings, fundStruct)
-    const deadline = ethers.BigNumber.from("600000");
+    const deadline = ethers.BigNumber.from("999999999999999999");
     const token_limit = ethers.BigNumber.from((tokenData[TOKEN_OUT]["limit"]) * Math.pow(10, tokenData[TOKEN_OUT]["decimals"])).toString();
 
     if (rootState.contracts.balancerVaultContract === null) {
@@ -128,18 +115,12 @@ const actions = {
     const balancerVaultContract = rootState.contracts.balancerVaultContract;
 
     // @ts-ignore
-    try {
-      // @ts-ignore
-      const singleSwap = await balancerVaultContract?.swap(
-        swap_struct,
-        fundStruct,
-        token_limit,
-        deadline.toString(),
-      );
-      commit("setSingleSwap", singleSwap);
-    } catch (e) {
-      console.log(e)
-    }
+    const singleSwap = await balancerVaultContract?.swap(
+      swap_struct,
+      fundStruct,
+      token_limit,
+      deadline.toString(),
+    );
   },
 
   async addLiquidity({
@@ -202,10 +183,6 @@ const actions = {
 const mutations = {
   setPoolTokens(state: BalancerState, _poolTokens: object) {
     state.poolTokens = _poolTokens;
-  },
-
-  setBatchSwap(state: BalancerState, _batchSwap: object) {
-    state.batchSwap = _batchSwap;
   },
 };
 
