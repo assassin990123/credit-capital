@@ -2,7 +2,10 @@ const { expect } = require("chai");
 const { toUtf8Bytes } = require("ethers/lib/utils");
 const { ethers } = require("hardhat");
 
+const ONE_TOKEN_DEFAULT = BigInt(1 * 10 ** 18)
 const TEN_TOKENS_DEFAULT = BigInt(10 * 10 ** 18);
+const TWENTY_TOKENS_DEFAULT = BigInt(20 * 10 ** 18);
+
 
 const deployContract = async (contract, params) => {
   let c = await ethers.getContractFactory(contract);
@@ -165,6 +168,47 @@ describe("Rewards Vault", function () {
       _formatEther(await capl.balanceOf(alice.address)).toFixed(0)
     ).to.equal("313");
   });
+  it("Rewards: Alice deposits twice", async function () {
+    const accounts = await hre.ethers.getSigners();
+    const { deployer, alice } = await setupAccounts(accounts);
+    const { capl, vault, rewards, lp } = await deployContracts(deployer);
+    // role setup
+    await setupRoles(vault, capl, rewards);
+    // test setup
+    // alice gets 10 LP
+    lp.transfer(alice.address, TWENTY_TOKENS_DEFAULT);
+    // verify transfers
+    expect(_formatEther(await lp.balanceOf(alice.address))).to.equal(20);
+    // approvals
+    lp.connect(alice).approve(rewards.address, TWENTY_TOKENS_DEFAULT);
+
+    // Alice deposits 10 LP tokens
+    await rewards.connect(alice).deposit(lp.address, TEN_TOKENS_DEFAULT);
+    // check Alice userPosition, Pool info
+    let userPosition = await vault.getUserPosition(lp.address, alice.address);
+    userChecks(userPosition, 10, "0", 1);
+
+    // fast forward
+    await network.provider.send("evm_increaseTime", [3600]);
+    await network.provider.send("evm_mine");
+    // get alices rewards after 1 hour
+    let pendingRewards = await vault.getPendingRewards(
+      lp.address,
+      alice.address
+    );
+    // verify, should be around 208 for one user
+    expect(_formatEther(pendingRewards).toFixed(0)).to.equal("208");
+
+    await rewards.connect(alice).deposit(lp.address, ONE_TOKEN_DEFAULT);
+
+    pendingRewards = await vault.getPendingRewards(
+      lp.address,
+      alice.address
+    );
+
+    console.log(pendingRewards) // this is zero, should still be 208
+
+  })
   it("Rewards: Alice & Bob deposit different amounts", async function () {
     // TODO
   });
