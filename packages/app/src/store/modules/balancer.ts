@@ -77,7 +77,7 @@ const actions = {
     tokenData[token_CAPL] = {
       symbol: "CAPL",
       decimals: "18",
-      limit: 1, //
+      limit: amount, //
     };
 
     const fundSettings: any = {
