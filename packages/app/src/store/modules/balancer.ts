@@ -63,15 +63,10 @@ const actions = {
     });
   },
 
-  async batchSwap({
-    commit,
-    rootState,
-    dispatch,
-  }: {
-    commit: Commit;
-    rootState: RootState;
-    dispatch: Dispatch;
-  }) {
+  async singleSwap(
+    { commit, rootState, dispatch }: { commit: Commit; rootState: RootState; dispatch: Dispatch; },
+    { amount, symbol }: { amount: number, symbol: string }
+  ) {
     const pool_CAPL_USDC = findObjectId("CAPL/USDC", pools as Pool[], ChainID);
 
     const token_CAPL = findObjectContract("CAPL", tokens, ChainID);
@@ -102,48 +97,29 @@ const actions = {
       toInternalBalance: false,
     };
 
-    const tokenLimits = [];
-    const checksumTokens = [];
-    for (const token of tokenAddresses) {
-      tokenLimits.push(
-        ethers.BigNumber.from(
-          (
-            tokenData[token]["limit"] *
-            Math.pow(10, tokenData[token]["decimals"])
-          ).toString()
-        )
-      );
-      checksumTokens.push(ethers.utils.getAddress(token));
-    }
+    const TOKEN_IN = symbol === 'CAPL' ? token_USDC : token_CAPL;
+    const TOKEN_OUT = symbol === 'CAPL' ? token_CAPL : token_USDC;
 
     const swapKind = 0;
-    const swapSteps = [
-      {
-        poolId: pool_CAPL_USDC,
-        assetInIndex: tokenIndices[token_CAPL],
-        assetOutIndex: tokenIndices[token_USDC],
-        amount: ethers.BigNumber.from(
-          (100 * Math.pow(10, tokenData[token_USDC]["decimals"])).toString()
-        ),
-        userData: "0x",
-      },
-      {
-        poolId: pool_CAPL_USDC,
-        assetInIndex: tokenIndices[token_CAPL],
-        assetOutIndex: tokenIndices[token_USDC],
-        amount: ethers.BigNumber.from(
-          (0 * Math.pow(10, tokenData[token_CAPL]["decimals"])).toString()
-        ),
-        userData: "0x",
-      },
-    ];
+    const swap_struct = {
+      poolId: pool_CAPL_USDC,
+      kind: swapKind,
+      assetIn: TOKEN_IN,
+      assetOut: TOKEN_OUT,
+      amount: ethers.BigNumber.from(
+        (amount * Math.pow(10, tokenData[TOKEN_OUT]["decimals"]))
+      ),
+      userData: "0x",
+    };
     const fundStruct = {
       sender: ethers.utils.getAddress(fundSettings["sender"]),
       fromInternalBalance: fundSettings["fromInternalBalance"],
       recipient: ethers.utils.getAddress(fundSettings["recipient"]),
       toInternalBalance: fundSettings["toInternalBalance"],
     };
-    const deadline = ethers.BigNumber.from("999999999999999999");
+    console.log(fundSettings, fundStruct)
+    const deadline = ethers.BigNumber.from("600000");
+    const token_limit = ethers.BigNumber.from((tokenData[TOKEN_OUT]["limit"]) * Math.pow(10, tokenData[TOKEN_OUT]["decimals"])).toString();
 
     if (rootState.contracts.balancerVaultContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -152,16 +128,18 @@ const actions = {
     const balancerVaultContract = rootState.contracts.balancerVaultContract;
 
     // @ts-ignore
-    const batchSwap = await balancerVaultContract?.batchSwap(
-      swapKind,
-      swapSteps,
-      checksumTokens,
-      fundStruct,
-      tokenLimits,
-      deadline
-    );
-
-    commit("setBatchSwap", batchSwap);
+    try {
+      // @ts-ignore
+      const singleSwap = await balancerVaultContract?.swap(
+        swap_struct,
+        fundStruct,
+        token_limit,
+        deadline.toString(),
+      );
+      commit("setSingleSwap", singleSwap);
+    } catch (e) {
+      console.log(e)
+    }
   },
 
   async addLiquidity({
