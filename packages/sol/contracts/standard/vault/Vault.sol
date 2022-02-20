@@ -254,10 +254,13 @@ contract Vault is AccessControl, Pausable {
         if (block.timestamp > pool.lastRewardTime && tokenSupply != 0) {
             uint256 passedTime = block.timestamp - pool.lastRewardTime;
             uint256 caplReward = passedTime * pool.rewardsPerSecond;
-            accCaplPerShare = accCaplPerShare + caplReward / tokenSupply;
+            accCaplPerShare =
+                accCaplPerShare +
+                (caplReward * CAPL_PRECISION) /
+                tokenSupply;
         }
         pending =
-            ((user.totalAmount * accCaplPerShare) / CAPL_PRECISION) -
+            (((user.totalAmount * accCaplPerShare) / CAPL_PRECISION)) -
             user.rewardDebt;
     }
 
@@ -352,7 +355,7 @@ contract Vault is AccessControl, Pausable {
     ) external onlyRole(REWARDS) {
         // create new userPosition
         UserPositions[_user][_token].totalAmount += _amount;
-        UserPositions[_user][_token].rewardDebt += _rewardDebt;
+        UserPositions[_user][_token].rewardDebt = _rewardDebt;
     }
 
     function setUserDebt(

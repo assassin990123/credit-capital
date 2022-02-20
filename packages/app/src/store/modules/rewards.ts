@@ -57,15 +57,15 @@ const actions = {
     // @ts-ignore
     const lpAddress = rootState.contracts.lpContract.address;
     // @ts-ignore
+
     const pendingRewards = await vaultContract?.getPendingRewards(
       lpAddress,
       address
     );
-
     // parse balance, set new value in the local state
     commit(
       "setPendingRewards",
-      Number(ethers.utils.formatUnits(pendingRewards, 0))
+      Number(ethers.utils.formatUnits(pendingRewards, 18))
     );
   },
 

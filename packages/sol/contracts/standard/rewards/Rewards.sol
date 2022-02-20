@@ -208,16 +208,16 @@ contract Rewards is Pausable, AccessControl {
         returns (IPool.Pool memory pool)
     {
         IPool.Pool memory cpool = vault.getPool(_token);
-        uint256 totalSupply = vault.getTokenSupply(_token);
+        uint256 tokenSupply = vault.getTokenSupply(_token);
         uint256 accCaplPerShare;
         if (block.timestamp > cpool.lastRewardTime) {
-            if (totalSupply > 0) {
+            if (tokenSupply > 0) {
                 uint256 passedTime = block.timestamp - cpool.lastRewardTime;
                 uint256 caplReward = passedTime * cpool.rewardsPerSecond;
                 accCaplPerShare =
                     cpool.accCaplPerShare +
-                    caplReward /
-                    totalSupply;
+                    (caplReward * CAPL_PRECISION) /
+                    tokenSupply;
             }
             uint256 lastRewardTime = block.timestamp;
             IPool.Pool memory npool = vault.updatePool(
@@ -254,7 +254,7 @@ contract Rewards is Pausable, AccessControl {
             user.rewardDebt;
     }
 
-    function claim(address _token, address _user) external {
+    function claim(address _token, address _user) external returns (uint256) {
         IPool.Pool memory pool = updatePool(_token);
         IUserPositions.UserPosition memory user = vault.getUserPosition(
             _token,
@@ -270,7 +270,7 @@ contract Rewards is Pausable, AccessControl {
         vault.setUserDebt(_token, _user, accumulatedCapl);
 
         if (pendingCapl > 0) {
-            capl.mint(_user, pendingCapl * CAPL_PRECISION);
+            capl.mint(_user, pendingCapl);
         }
 
         emit Claim(_token, _user, pendingCapl);
