@@ -63,10 +63,9 @@
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span></div>
-                <div class="panel-explanation">{{ liquidityTokenSymbol }}</div>
+                <div class="panel-explanation">CAPL</div>
               </div>
             </div>
-            <button class="btn-switch" @click="resetInput2()">&#8635;</button>
             <div class="panel-display swap-panel-display">
               <div>
                 <div class="panel-explanation"><span>amount</span></div>
@@ -81,9 +80,7 @@
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>balance:</span> 000</div>
-                <div class="panel-explanation">
-                  {{ liquidityToTokenSymbol }}
-                </div>
+                <div class="panel-explanation">USDC</div>
               </div>
             </div>
             <button
@@ -122,16 +119,8 @@ let swapToTokenSymbol: Ref<string> = ref("USDC");
 let swapTokenResult = ref(null);
 let swapButtonString = ref("Swap");
 
-let usdcLiquidity: Ref<number | null> = ref(null);
-let caplLiquidity: Ref<number | null> = ref(null);
-let liquidityTokenSymbol: Ref<string> = ref("CAPL");
-let liquidityToTokenSymbol: Ref<string> = ref("USDC");
-
-// liquidity stuff
-let addLiquidityButtonString: Ref<string> = ref("Add Liquidity");
-let approvalFlag: Ref<string | null> = ref(null);
-
-// this loops checks the store values for the token allowances and dynamically changes button text based on that info
+let usdcLiquidity: Ref<number> = ref(0);
+let caplLiquidity: Ref<number> = ref(0);
 const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
@@ -216,21 +205,6 @@ async function swap() {
 
 function addLiquidity() {
   store.dispatch("balancer/addLiquidity");
-}
-
-function resetInput2() {
-  const oldCAPLLiquidity = caplLiquidity.value;
-
-  caplLiquidity.value = usdcLiquidity.value;
-  usdcLiquidity.value = oldCAPLLiquidity;
-
-  if (liquidityTokenSymbol.value == "CAPL") {
-    liquidityTokenSymbol.value = "USDC";
-    liquidityToTokenSymbol.value = "CAPL";
-  } else {
-    liquidityTokenSymbol.value = "CAPL";
-    liquidityToTokenSymbol.value = "USDC";
-  }
 }
 
 // allows for a user to switch between swapping USDC and CAPL
