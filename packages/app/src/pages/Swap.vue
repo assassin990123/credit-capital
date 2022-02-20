@@ -204,7 +204,10 @@ const approveAll = async () => {
 };
 
 async function swap() {
-  await store.dispatch("balancer/batchSwap");
+  await store.dispatch("balancer/singleSwap", {
+    amount: swapAmount.value,
+    symbol: swapTokenSymbol.value,
+  });
 }
 
 function addLiquidity() {
