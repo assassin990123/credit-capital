@@ -112,11 +112,11 @@ import {
 import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store: any = useStore();
-let swapAmount = ref(null);
+let swapAmount:Ref<number> = ref(0);
 let swapTokenSymbol: Ref<string> = ref("CAPL");
 let swapToTokenSymbol: Ref<string> = ref("USDC");
 
-let swapTokenResult = ref(null);
+let swapTokenResult:Ref<string> = ref('');
 let swapButtonString = ref("Swap");
 
 let usdcLiquidity: Ref<number> = ref(0);
@@ -204,7 +204,6 @@ const approveAll = async () => {
 };
 
 async function swap() {
-  // await store.dispatch("balancer/batchSwap");
   await store.dispatch("balancer/singleSwap", {
     amount: swapAmount.value,
     symbol: swapTokenSymbol.value,
@@ -240,7 +239,7 @@ async function exchangeCAPLToUSDC() {
       swapTokenSymbol.value,
       store.getters["balancer/getPoolTokens"]
     );
-    swapTokenResult.value = format(exchangedBalance);
+    swapTokenResult.value = format(exchangedBalance)!;
   }
 }
 </script>

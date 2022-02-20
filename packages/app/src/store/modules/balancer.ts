@@ -90,6 +90,8 @@ const actions = {
     const TOKEN_IN = symbol === 'CAPL' ? token_CAPL : token_USDC;
     const TOKEN_OUT = symbol === 'CAPL' ? token_USDC : token_CAPL;
 
+    console.log(amount)
+
     const swapKind = 0;
     const swap_struct = {
       poolId: pool_CAPL_USDC,
