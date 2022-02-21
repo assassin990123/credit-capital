@@ -48,7 +48,7 @@ contract Vault is AccessControl, Pausable {
 
     event Deposit(address user, address token, uint256 amount);
     event Withdraw(address user, address token, uint256 amount);
-    event WithdrawMATIC(address destination, uint256 amount);
+    event WithdrawNativeBalance(address destination, uint256 amount);
 
     // TBD: Assume creation with one pool required (?)
     constructor(address _token, uint256 _rewardsPerSecond) {
