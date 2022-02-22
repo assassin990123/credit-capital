@@ -342,7 +342,136 @@ describe("Rewards Vault", function () {
     ).to.equal("278");
   });
   it("Rewards: Alice & Bob deposit different amounts, Alice deposits twice", async function () {
-    // TODO
+    const accounts = await hre.ethers.getSigners();
+    const { deployer, alice, bob } = await setupAccounts(accounts);
+    const { capl, vault, rewards, lp } = await deployContracts(deployer);
+    // role setup
+    await setupRoles(vault, capl, rewards);
+    // check deployer account capl balance & approve rewards spending
+    expect(
+      Number(ethers.utils.formatEther(await lp.balanceOf(deployer.address)))
+    ).to.equal(1_000_000);
+    // test setup
+    // alice gets 10 LP
+    // bob gets 10 LP
+    // both deposit
+    lp.transfer(alice.address, TWENTY_TOKENS_DEFAULT);
+    lp.transfer(bob.address, TWENTY_TOKENS_DEFAULT);
+    // verify transfers
+    expect(_formatEther(await lp.balanceOf(alice.address))).to.equal(20);
+    expect(_formatEther(await lp.balanceOf(bob.address))).to.equal(20);
+    // approvals
+    lp.connect(alice).approve(rewards.address, TWENTY_TOKENS_DEFAULT);
+    lp.connect(bob).approve(rewards.address, TWENTY_TOKENS_DEFAULT);
+    // Alice deposits 10 LP tokens
+    await rewards.connect(alice).deposit(lp.address, TEN_TOKENS_DEFAULT);
+    // check Alice userPosition, Pool info
+    let userPosition = await vault.getUserPosition(lp.address, alice.address);
+    userChecks(userPosition, 10, "0", 1);
+
+    let pool = await vault.getPool(lp.address);
+    poolChecks(pool, 10, "0.06", "0.0");
+    // fast forward
+    await network.provider.send("evm_increaseTime", [3600]);
+    await network.provider.send("evm_mine");
+    // get alices rewards after 1 hour
+    let pendingRewards = await vault.getPendingRewards(
+      lp.address,
+      alice.address
+    );
+    // verify, should be around 208 for one user
+    expect(_formatEther(pendingRewards).toFixed(0)).to.equal("208");
+
+    // alice deposit twice
+    await rewards.connect(alice).deposit(lp.address, TEN_TOKENS_DEFAULT);
+
+    const userPositon = await vault.getUserPosition(lp.address, alice.address);
+    userChecks(userPositon, 20, "208", 1);
+
+    pool = await vault.getPool(lp.address);
+    poolChecks(pool, 20, "0.06", "20.8");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, alice.address);
+    expect(_formatEther(pendingRewards).toFixed(0)).to.equal("208");
+
+    // fast forward and check again
+    // fast forward
+    await network.provider.send("evm_increaseTime", [3600]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, alice.address);
+    expect(_formatEther(pendingRewards).toFixed(0)).to.equal("417");
+    // claim and check pendingRewards
+    await rewards.connect(alice).claim(lp.address, alice.address);
+    expect(
+      _formatEther(await capl.balanceOf(alice.address)).toFixed(0)
+    ).to.equal("417");
+
+    pool = await vault.getPool(lp.address);
+    poolChecks(pool, 20, "0.06", "31.3");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, alice.address);
+    expect(_formatEther(pendingRewards).toFixed(0)).to.equal("0");
+
+    // fast forward and check again
+    // fast forward
+    await network.provider.send("evm_increaseTime", [3600]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, alice.address);
+    expect(_formatEther(pendingRewards).toFixed(0)).to.equal("208");
+
+    // Bob deposits 20 LP tokens
+    await rewards.connect(bob).deposit(lp.address, TWENTY_TOKENS_DEFAULT);
+    pool = await vault.getPool(lp.address);
+    poolChecks(pool, 40, "0.06", "41.7");
+    
+    // check Bpb userPosition, Pool info
+    userPosition = await vault.getUserPosition(lp.address, bob.address);
+    userChecks(userPosition, 20, "834", 1);
+
+    // check both alice & bob rewards
+    pendingRewards = await vault.getPendingRewards(lp.address, bob.address);
+    // immediately after bob should have zero
+    expect(_formatEther(pendingRewards)).to.equal(0);
+
+    // check Alice userPosition, Pool info
+    userPosition = await vault.getUserPosition(lp.address, alice.address);
+    userChecks(userPosition, 20, "625", 1);
+    
+    // alice should have roughly 208 still
+    pendingRewards = await vault.getPendingRewards(lp.address, alice.address);
+    expect(_formatEther(pendingRewards).toFixed(0)).to.equal("208");
+
+    // fast forward an hour, and they should both have accrued the same amount...
+    // around 208 total, so 104 each.
+    await network.provider.send("evm_increaseTime", [3600]);
+    await network.provider.send("evm_mine");
+
+    // bob has pending reward now around 139
+    pendingRewards = await vault.getPendingRewards(lp.address, bob.address);
+    expect(_formatEther(pendingRewards).toFixed(0)).to.equal("104");
+
+    await rewards.connect(bob).claim(lp.address, bob.address);
+    expect(_formatEther(await capl.balanceOf(bob.address)).toFixed(0)).to.equal(
+      "104"
+    );
+
+    // check bob's userposition
+    userPosition = await vault.getUserPosition(lp.address, bob.address);
+    userChecks(userPosition, 20, "938", 1);
+    // updated pool state
+    pool = await vault.getPool(lp.address);
+    poolChecks(pool, 40, "0.06", "46.9");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, alice.address);
+    expect(_formatEther(pendingRewards).toFixed(0)).to.equal("313");
+
+    // alice claim 313 total balance ~313 + ~417 = ~729
+    await rewards.connect(alice).claim(lp.address, alice.address);
+    expect(
+      _formatEther(await capl.balanceOf(alice.address)).toFixed(0)
+    ).to.equal("729");
   });
   it("Rewards: Alice & Bob deposit different amounts and claim at different times", async function () {
     // TODO
