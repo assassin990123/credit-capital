@@ -19,6 +19,15 @@ This file is use to implement the responsive design.
 
 ==============================================*/
 
+@media only screen and (max-width: 1280px){
+  div.dashboard-cus-main .dashboard-revenue-projection-content-column{
+    padding: 25px 40px;
+  }
+  div.dashboard-platform-header{
+    flex-wrap: wrap;
+  }
+}
+
 
 @media only screen and (max-width: 962px){
     div.dashboard-container.dashboard-cus-main{
