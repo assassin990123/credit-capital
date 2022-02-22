@@ -9,18 +9,19 @@
               <img src="/images/logo-white.png" alt="logo" />
             </router-link>
           </div>
-              <a class="mobile-menu-icon" href="javascript:void(0);">
-                  <i class="las la-bars"></i></a>
+          <a class="mobile-menu-icon" href="javascript:void(0);">
+            <i class="las la-bars"></i
+          ></a>
         </div>
       </div>
     </div>
-    <div class="acavo-nav">
+    <div class="acavo-nav" v-show="isShow">
       <div class="container">
         <nav class="navbar navbar-expand-md navbar-light">
           <div class="logo-mobile">
-          <router-link to="/">
-            <img src="/images/logo-white.png" alt="logo" />
-          </router-link>
+            <router-link to="/">
+              <img src="/images/logo-white.png" alt="logo" />
+            </router-link>
           </div>
           <div class="navbar-collapse mean-menu">
             <ul class="navbar-nav">
@@ -34,9 +35,9 @@
               <li class="nav-item">
                 <router-link to="swap">Swap</router-link>
               </li>
-              <li class="nav-item">
+              <!-- <li class="nav-item">
                 <router-link to="treasury">Treasury</router-link>
-              </li>
+              </li> -->
             </ul>
           </div>
           <div>
@@ -61,7 +62,7 @@
     <div class="others-option-for-responsive">
       <div class="container">
         <div class="dot-menu">
-          <div class="inner">
+          <div class="inner" @click="isShow = !isShow">
             <div class="circle circle-one"></div>
             <div class="circle circle-two"></div>
             <div class="circle circle-three"></div>
@@ -124,6 +125,11 @@ export default {
       },
     };
   },
+  data: function () {
+    return {
+      isShow: false,
+    };
+  },
 };
 </script>
 
@@ -176,5 +182,4 @@ export default {
 /** MEDIA QUERIES */
 @media screen and (min-width: 1000px) {
 }
-
 </style>

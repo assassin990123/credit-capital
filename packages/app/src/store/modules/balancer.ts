@@ -11,17 +11,13 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
 
 const state: BalancerState = {
   poolTokens: {},
-  batchSwap: {},
   addLiquidity: {},
+  batchSwap: {}
 };
 
 const getters = {
   getPoolTokens() {
     return state.poolTokens;
-  },
-
-  getBatchSwap() {
-    return state.batchSwap;
   },
 };
 
@@ -63,15 +59,10 @@ const actions = {
     });
   },
 
-  async batchSwap({
-    commit,
-    rootState,
-    dispatch,
-  }: {
-    commit: Commit;
-    rootState: RootState;
-    dispatch: Dispatch;
-  }) {
+  async singleSwap(
+    { commit, rootState, dispatch }: { commit: Commit; rootState: RootState; dispatch: Dispatch; },
+    { amount, symbol }: { amount: number, symbol: string }
+  ) {
     const pool_CAPL_USDC = findObjectId("CAPL/USDC", pools as Pool[], ChainID);
 
     const token_CAPL = findObjectContract("CAPL", tokens, ChainID);
@@ -81,19 +72,13 @@ const actions = {
     tokenData[token_USDC] = {
       symbol: "USDC",
       decimals: "6",
-      limit: 100,
+      limit: symbol === 'CAPL' ? 0 : amount,
     };
     tokenData[token_CAPL] = {
       symbol: "CAPL",
       decimals: "18",
-      limit: 0,
+      limit: symbol === 'CAPL' ? amount : 0, //
     };
-    const tokenAddresses = Object.keys(tokenData);
-    tokenAddresses.sort();
-    const tokenIndices: any = {};
-    for (let i = 0; i < tokenAddresses.length; i++) {
-      tokenIndices[tokenAddresses[i]] = i;
-    }
 
     const fundSettings: any = {
       sender: rootState.accounts.activeAccount,
@@ -102,41 +87,18 @@ const actions = {
       toInternalBalance: false,
     };
 
-    const tokenLimits = [];
-    const checksumTokens = [];
-    for (const token of tokenAddresses) {
-      tokenLimits.push(
-        ethers.BigNumber.from(
-          (
-            tokenData[token]["limit"] *
-            Math.pow(10, tokenData[token]["decimals"])
-          ).toString()
-        )
-      );
-      checksumTokens.push(ethers.utils.getAddress(token));
-    }
+    const TOKEN_IN = symbol === 'CAPL' ? token_CAPL : token_USDC;
+    const TOKEN_OUT = symbol === 'CAPL' ? token_USDC : token_CAPL;
 
     const swapKind = 0;
-    const swapSteps = [
-      {
-        poolId: pool_CAPL_USDC,
-        assetInIndex: tokenIndices[token_CAPL],
-        assetOutIndex: tokenIndices[token_USDC],
-        amount: ethers.BigNumber.from(
-          (100 * Math.pow(10, tokenData[token_USDC]["decimals"])).toString()
-        ),
-        userData: "0x",
-      },
-      {
-        poolId: pool_CAPL_USDC,
-        assetInIndex: tokenIndices[token_CAPL],
-        assetOutIndex: tokenIndices[token_USDC],
-        amount: ethers.BigNumber.from(
-          (0 * Math.pow(10, tokenData[token_CAPL]["decimals"])).toString()
-        ),
-        userData: "0x",
-      },
-    ];
+    const swap_struct = {
+      poolId: pool_CAPL_USDC,
+      kind: swapKind,
+      assetIn: TOKEN_IN,
+      assetOut: TOKEN_OUT,
+      amount: ethers.utils.parseUnits(amount.toString(), tokenData[TOKEN_IN]['decimals']).toString(),
+      userData: "0x",
+    };
     const fundStruct = {
       sender: ethers.utils.getAddress(fundSettings["sender"]),
       fromInternalBalance: fundSettings["fromInternalBalance"],
@@ -144,6 +106,7 @@ const actions = {
       toInternalBalance: fundSettings["toInternalBalance"],
     };
     const deadline = ethers.BigNumber.from("999999999999999999");
+    const token_limit = ethers.BigNumber.from((tokenData[TOKEN_OUT]["limit"]) * Math.pow(10, tokenData[TOKEN_OUT]["decimals"])).toString();
 
     if (rootState.contracts.balancerVaultContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -152,16 +115,12 @@ const actions = {
     const balancerVaultContract = rootState.contracts.balancerVaultContract;
 
     // @ts-ignore
-    const batchSwap = await balancerVaultContract?.batchSwap(
-      swapKind,
-      swapSteps,
-      checksumTokens,
+    const singleSwap = await balancerVaultContract?.swap(
+      swap_struct,
       fundStruct,
-      tokenLimits,
-      deadline
+      token_limit,
+      deadline.toString(),
     );
-
-    commit("setBatchSwap", batchSwap);
   },
 
   async addLiquidity({
@@ -224,10 +183,6 @@ const actions = {
 const mutations = {
   setPoolTokens(state: BalancerState, _poolTokens: object) {
     state.poolTokens = _poolTokens;
-  },
-
-  setBatchSwap(state: BalancerState, _batchSwap: object) {
-    state.batchSwap = _batchSwap;
   },
 };
 

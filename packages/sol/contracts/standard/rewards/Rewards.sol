@@ -208,16 +208,16 @@ contract Rewards is Pausable, AccessControl {
         returns (IPool.Pool memory pool)
     {
         IPool.Pool memory cpool = vault.getPool(_token);
-        uint256 totalSupply = vault.getTokenSupply(_token);
+        uint256 tokenSupply = vault.getTokenSupply(_token);
         uint256 accCaplPerShare;
         if (block.timestamp > cpool.lastRewardTime) {
-            if (totalSupply > 0) {
+            if (tokenSupply > 0) {
                 uint256 passedTime = block.timestamp - cpool.lastRewardTime;
                 uint256 caplReward = passedTime * cpool.rewardsPerSecond;
                 accCaplPerShare =
                     cpool.accCaplPerShare +
-                    caplReward /
-                    totalSupply;
+                    (caplReward * CAPL_PRECISION) /
+                    tokenSupply;
             }
             uint256 lastRewardTime = block.timestamp;
             IPool.Pool memory npool = vault.updatePool(
@@ -247,17 +247,14 @@ contract Rewards is Pausable, AccessControl {
         if (block.timestamp > pool.lastRewardTime && tokenSupply != 0) {
             uint256 passedTime = block.timestamp - pool.lastRewardTime;
             uint256 caplReward = passedTime * pool.rewardsPerSecond;
-            accCaplPerShare =
-                accCaplPerShare +
-                caplReward /
-                tokenSupply;
+            accCaplPerShare = accCaplPerShare + caplReward / tokenSupply;
         }
         pending =
             ((user.totalAmount * accCaplPerShare) / CAPL_PRECISION) -
             user.rewardDebt;
     }
 
-    function claim(address _token, address _user) external {
+    function claim(address _token, address _user) external returns (uint256) {
         IPool.Pool memory pool = updatePool(_token);
         IUserPositions.UserPosition memory user = vault.getUserPosition(
             _token,
@@ -288,10 +285,11 @@ contract Rewards is Pausable, AccessControl {
 
         uint256 amount = vault.getUnlockedAmount(_token, _user);
         uint256 newRewardDebt;
-        
+
         // check if the user withdraw token right after the first deposit
         if (user.rewardDebt > 0) {
-            newRewardDebt = user.rewardDebt -
+            newRewardDebt =
+                user.rewardDebt -
                 (amount * pool.accCaplPerShare) /
                 CAPL_PRECISION;
         }

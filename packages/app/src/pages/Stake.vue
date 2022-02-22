@@ -11,22 +11,26 @@
               class="input-custom"
               v-model="stakeAmount"
             />
+            <div class="myBalance">
+              Balance: <a @click="insertBalance">{{ lpBalance.toFixed(6) }}</a>
+            </div>
             <button type="submit" class="btn-custom" @click="handleStake">
               {{ stakeButtonText }}
             </button>
           </div>
         </div>
         <div class="panel stake-panel">
-          <h1 class="panel-title">Unstake</h1>
+          <h1 class="panel-title">Withdraw</h1>
           <div class="panel-content stake-panel-content">
+            Available LP Tokens<br />
             <input
               type="number"
-              placeholder="0.00"
+              disabled
               class="input-custom"
               v-model="unstakeAmount"
             />
             <button type="submit" class="btn-custom" @click="unstake">
-              ENTER
+              Withdraw
             </button>
           </div>
         </div>
@@ -48,11 +52,12 @@ import { useStore } from "@/store";
 import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store = useStore();
-const stakeAmount = ref(0);
+const stakeAmount: Ref<number> = ref(0);
 const stakeButtonText: Ref<string> = ref("Stake");
 const unstakeAmount = computed(
   () => store.getters["rewards/getUserUnlockedAmount"]
 );
+const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
 
 const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
@@ -60,7 +65,8 @@ const isUserConnected = computed(
 
 // this function checks the allowance a user has alloted our rewards contract via the LP token
 watchEffect(async () => {
-  (!isUserConnected.value || await checkAllowance(
+  !isUserConnected.value ||
+  (await checkAllowance(
     store,
     "LP", // static for now
     stakeAmount.value,
@@ -80,6 +86,10 @@ const approve = async () => {
   await store.dispatch("tokens/approveRewards", {
     amount: stakeAmount.value,
   });
+};
+
+const insertBalance = () => {
+  stakeAmount.value = lpBalance.value;
 };
 
 const stake = () => {

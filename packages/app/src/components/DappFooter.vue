@@ -3,9 +3,12 @@
     <div class="stack-bottom-area">
       <div class="stack-bottom-area-inner">
         <div class="stack-button-area">
-          <a href="javascript:void(0)" class="stack-btn">Total Locked Value</a>
-          <a href="javascript:void(0)" class="stack-btn">Price of Capl</a>
-          <a href="javascript:void(0)" class="stack-btn">User Position</a>
+          <a href="javascript:void(0)" class="stack-btn"
+            >123.456 USD<br />Total Value Locked</a
+          >
+          <a href="javascript:void(0)" class="stack-btn"
+            >987.65 USD<br />Daily Revenue</a
+          >
         </div>
       </div>
     </div>

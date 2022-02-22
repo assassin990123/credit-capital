@@ -1,6 +1,6 @@
 export const format = (n: any) => {
   if (n < 1e3) {
-    return n;
+    return Number(n).toFixed(3);
   }
   if (n >= 1e3 && n < 1e6) {
     return +(n / 1e3).toFixed(1) + " K";
@@ -85,6 +85,7 @@ export const checkAllowance = (
   amount: number,
   flag: string
 ): boolean => {
+  console.log(flag, symbol, amount);
   let allowance;
 
   if (flag == "balancer") {
@@ -94,7 +95,6 @@ export const checkAllowance = (
   } else if (flag == "stake") {
     allowance = state.getters["tokens/getLPAllowance"];
   }
-
   return allowance >= amount;
 };
 
@@ -138,24 +138,24 @@ export const caplUSDConversion = (amount: number, store: any): number => {
   );
 };
 
-export const stringToNumber = (str:any) => {
-    if (typeof str != 'string') {
+export const stringToNumber = (str: any) => {
+  if (typeof str != "string") {
+    return str;
+  }
+  const multiplier = str.substring(str.length - 1).toLowerCase();
+  switch (multiplier) {
+    case "k":
+      return parseFloat(str) * 1000;
+    case "m":
+      return parseFloat(str) * 1000000;
+    case "b":
+      return parseFloat(str) * 1000000000;
+    case "t":
+      return parseFloat(str) * 1000000000000;
+    default:
       return str;
-    }
-    const multiplier = str.substring(str.length - 1).toLowerCase();
-    switch (multiplier){
-      case "k":
-        return parseFloat(str) * 1000;
-      case "m":
-        return parseFloat(str) * 1000000;
-      case "b":
-        return parseFloat(str) * 1000000000;
-      case "t":
-        return parseFloat(str) * 1000000000000;
-      default:
-        return str;
-    }
-}
+  }
+};
 // CaplPerDay (pool) / totalStaked (pool) * userPosition
 export const getDailyEarnings = (
   userPosition: number,

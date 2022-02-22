@@ -6,7 +6,7 @@ async function main() {
    * Standard contracts - Rewards, Vault
    */
   const Vault = await hre.ethers.getContractFactory("Vault");
-  const vault = await Vault.deploy(process.env.LP_ADDRESS_KOVAN, 10);
+  const vault = await Vault.deploy(process.env.LP_ADDRESS_KOVAN, BigInt(5000 / (24 * 60 * 60) * (10 ** 18)));
   await vault.deployed();
   console.log("vault deployed to:", vault.address);
   await saveContractABI("vault", "Vault");
@@ -32,6 +32,11 @@ async function main() {
   await saveContractABI("revenuecontroller", "RevenueController");
    */  
 
+  /**
+   * Grant roles
+   */
+  await grantRoles(rewards, vault);
+  
   // save deployed address in config file
   let config = `
   export const vaultcontractaddress = "${vault.address}"
@@ -61,6 +66,18 @@ async function saveContractABI(contract, contractArtifact) {
     abiDir + "/" + contract + ".ts",
     contractABI
   );
+}
+
+async function grantRoles(rewards, vault) {
+  const REWARDS = await vault.REWARDS();
+  const MINTER_ROLE = await rewards.MINTER_ROLE();
+
+  // get capl contract
+  const CAPL = await hre.ethers.getContractFactory('CreditCapitalPlatformToken');
+  const capl = await CAPL.attach(process.env.CAPL_ADDRESS_KOVAN);
+
+  await vault.grantRole(REWARDS, rewards.address);
+  await capl.grantRole(MINTER_ROLE, rewards.address);
 }
 
 main()

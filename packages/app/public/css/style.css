@@ -8188,3 +8188,79 @@ button.tab-inner-content-item {
 }
 
 /*# sourceMappingURL=style.css.map */
+
+.myBalance {
+  white-space:nowrap;
+  text-align:center;
+}
+.myBalance a {
+  text-decoration: underline!important;
+  cursor: pointer;
+}
+
+/* Mobile menu style start here */
+@media screen and (min-width:1200px){
+  .acavo-nav{
+    display: block !important;
+  }
+}
+@media screen and (max-width:1199px){
+  .others-option-for-responsive .dot-menu .inner{
+    display: block;
+    transform: rotate(90deg);
+  }
+  .mobile-menu-icon{
+    display: none;
+  }
+  .acavo-nav{
+    background: #000;
+    margin-top: 10px;
+    padding: 30px 0;
+    display: block;
+  }
+  .acavo-nav .navbar-expand-md{
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .acavo-nav .navbar .navbar-nav{
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+  .acavo-nav .nav-btn-custom .nav-item {
+    align-self: center;
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+.others-option-for-responsive {
+  display: block;
+  position: absolute;
+  top: 62px;
+  right: 0;
+  z-index: 999;
+}
+.acavo-nav .logo-mobile{
+  display: none;
+}
+.acavo-nav .navbar-collapse.mean-menu ul.navbar-nav li.nav-item a {
+  color: #fff;
+  margin: 10px 0;
+}
+.acavo-nav .nav-item span {
+  color: #fff;
+  margin-left: 0;
+  display: inline-block;
+  padding: 10px 30px;
+}
+.acavo-nav .navbar .navbar-nav .nav-item {
+  margin: 10px 0;
+}
+.acavo-nav .nav-btn-custom .nav-item {
+  padding-left: 0;
+}
+.acavo-nav .nav-item .connectButton{
+  padding:10px 30px;
+  margin:20px 0 0 0;
+}
+}

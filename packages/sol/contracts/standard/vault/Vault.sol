@@ -48,7 +48,7 @@ contract Vault is AccessControl, Pausable {
 
     event Deposit(address user, address token, uint256 amount);
     event Withdraw(address user, address token, uint256 amount);
-    event WithdrawMATIC(address destination, uint256 amount);
+    event WithdrawNativeBalance(address destination, uint256 amount);
 
     // TBD: Assume creation with one pool required (?)
     constructor(address _token, uint256 _rewardsPerSecond) {
@@ -58,7 +58,7 @@ contract Vault is AccessControl, Pausable {
         grantRole(REWARDS, address(this));
 
         // create first pool
-        addPool(_token, _rewardsPerSecond * 1e18);
+        addPool(_token, _rewardsPerSecond);
     }
 
     function updatePool(
@@ -177,13 +177,12 @@ contract Vault is AccessControl, Pausable {
         view
         returns (bool)
     {
-        return UserPositions[_user][_token].rewardDebt > 0;
+        return UserPositions[_user][_token].totalAmount > 0;
     }
 
     function getUserPosition(address _token, address _user)
         external
         view
-        onlyRole(REWARDS)
         returns (UserPosition memory)
     {
         return UserPositions[_user][_token];
@@ -257,18 +256,17 @@ contract Vault is AccessControl, Pausable {
             uint256 caplReward = passedTime * pool.rewardsPerSecond;
             accCaplPerShare =
                 accCaplPerShare +
-                caplReward /
+                (caplReward * CAPL_PRECISION) /
                 tokenSupply;
         }
         pending =
-            ((user.totalAmount * accCaplPerShare) / CAPL_PRECISION) -
+            (((user.totalAmount * accCaplPerShare) / CAPL_PRECISION)) -
             user.rewardDebt;
     }
 
     function getLastStake(address _token, address _user)
         external
         view
-        onlyRole(REWARDS)
         returns (Stake memory)
     {
         UserPosition memory userPosition = UserPositions[_user][_token];
@@ -280,7 +278,6 @@ contract Vault is AccessControl, Pausable {
     function getLastStakeKey(address _token, address _user)
         external
         view
-        onlyRole(REWARDS)
         returns (uint256)
     {
         return UserPositions[_user][_token].stakes.length - 1;
@@ -344,7 +341,6 @@ contract Vault is AccessControl, Pausable {
 
         userPosition.totalAmount = _amount;
         userPosition.rewardDebt = _rewardDebt;
-        userPosition.userLastWithdrawnStakeIndex = 0;
         userPosition.staticLock = false;
         userPosition.autocompounding = true;
         userPosition.stakes.push(userStake);
@@ -358,7 +354,7 @@ contract Vault is AccessControl, Pausable {
     ) external onlyRole(REWARDS) {
         // create new userPosition
         UserPositions[_user][_token].totalAmount += _amount;
-        UserPositions[_user][_token].rewardDebt = _rewardDebt;
+        UserPositions[_user][_token].rewardDebt += _rewardDebt;
     }
 
     function setUserDebt(
@@ -385,12 +381,12 @@ contract Vault is AccessControl, Pausable {
         pool.totalPooled -= _amount;
     }
 
-    function withdrawMATIC() public payable onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(address(this).balance > 0, "no matic to withdraw");
+    function withdrawNativeBalance() public payable onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(address(this).balance > 0, "no balance to withdraw");
         uint256 balance = address(this).balance;
 
         payable(msg.sender).transfer(balance);
 
-        emit WithdrawMATIC(msg.sender, balance);
+        emit WithdrawNativeBalance(msg.sender, balance);
     }
 }
