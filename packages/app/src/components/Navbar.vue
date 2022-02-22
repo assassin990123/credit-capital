@@ -35,6 +35,9 @@
               <li class="nav-item">
                 <router-link to="swap">Swap</router-link>
               </li>
+              <li class="nav-item">
+                <router-link to="liquidity">Liquidity</router-link>
+              </li>
               <!-- <li class="nav-item">
                 <router-link to="treasury">Treasury</router-link>
               </li> -->
@@ -181,5 +184,21 @@ export default {
 
 /** MEDIA QUERIES */
 @media screen and (min-width: 1000px) {
+}
+@media screen and (max-width: 962px) {
+  .liquidity-box-main {
+    width: 98% !important;
+    margin: 0 auto;
+  }
+  .stack-button-area {
+    flex-wrap: wrap;
+  }
+  .stack-btn {
+    flex: 0 0 100% !important;
+  }
+  .panel.stake-panel {
+    margin: 0 !important;
+    width: 100% !important;
+  }
 }
 </style>
