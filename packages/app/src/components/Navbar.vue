@@ -15,7 +15,7 @@
         </div>
       </div>
     </div>
-    <div class="acavo-nav">
+    <div class="acavo-nav" v-show="isShow">
       <div class="container">
         <nav class="navbar navbar-expand-md navbar-light">
           <div class="logo-mobile">
@@ -62,7 +62,7 @@
     <div class="others-option-for-responsive">
       <div class="container">
         <div class="dot-menu">
-          <div class="inner">
+          <div class="inner" @click="isShow = !isShow">
             <div class="circle circle-one"></div>
             <div class="circle circle-two"></div>
             <div class="circle circle-three"></div>
@@ -123,6 +123,11 @@ export default {
         await store.dispatch("rewards/getRewardsInfo");
         showConnectResult(store);
       },
+    };
+  },
+  data: function () {
+    return {
+      isShow: false,
     };
   },
 };
