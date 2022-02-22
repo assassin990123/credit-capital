@@ -209,10 +209,12 @@ contract Vault is AccessControl, Pausable {
             i++
         ) {
             if (stakes[i].timeLockEnd > block.timestamp) {
-                lastUnlockedIndex = i;
                 break;
             }
             unlockedAmount += stakes[i].amount;
+
+            // update last unclocked amount
+            lastUnlockedIndex = i;
         }
 
         userPosition.userLastWithdrawnStakeIndex = lastUnlockedIndex;

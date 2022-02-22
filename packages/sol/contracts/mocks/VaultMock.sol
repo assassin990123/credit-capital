@@ -175,7 +175,7 @@ contract VaultMock is AccessControl, Pausable {
         if (block.timestamp > pool.lastRewardTime && tokenSupply != 0) {
             uint256 blocks = block.timestamp - pool.lastRewardTime;
             uint256 caplReward = blocks * pool.rewardsPerSecond;
-            accCaplPerShare = accCaplPerShare + caplReward / tokenSupply;
+            accCaplPerShare += (caplReward * CAPL_PRECISION) / tokenSupply;
         }
         pending =
             ((user.totalAmount * accCaplPerShare) / CAPL_PRECISION) -
@@ -218,13 +218,6 @@ contract VaultMock is AccessControl, Pausable {
         UserPosition storage userPosition = UserPositions[_user][_token];
         Stake[] memory stakes = UserPositions[_user][_token].stakes;
 
-        if (stakes.length != 0) {
-            return 10;
-        }
-        if (stakes.length == 0) {
-            return 100;
-        }
-
         uint256 unlockedAmount = 0;
         uint256 lastUnlockedIndex;
 
@@ -234,15 +227,15 @@ contract VaultMock is AccessControl, Pausable {
             i++
         ) {
             if (stakes[i].timeLockEnd > block.timestamp) {
-                lastUnlockedIndex = i;
                 break;
             }
             unlockedAmount += stakes[i].amount;
+            lastUnlockedIndex = i;
         }
 
         userPosition.userLastWithdrawnStakeIndex = lastUnlockedIndex;
 
-        return stakes.length;
+        return unlockedAmount;
     }
 
     function getLastStake(address _token, address _user)

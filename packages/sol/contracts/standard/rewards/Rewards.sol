@@ -254,7 +254,7 @@ contract Rewards is Pausable, AccessControl {
             user.rewardDebt;
     }
 
-    function claim(address _token, address _user) external returns (uint256) {
+    function claim(address _token, address _user) external {
         IPool.Pool memory pool = updatePool(_token);
         IUserPositions.UserPosition memory user = vault.getUserPosition(
             _token,
@@ -287,12 +287,12 @@ contract Rewards is Pausable, AccessControl {
         uint256 newRewardDebt;
 
         // check if the user withdraw token right after the first deposit
-        if (user.rewardDebt > 0) {
+        // if (user.rewardDebt > 0) {
             newRewardDebt =
-                user.rewardDebt -
+                // user.rewardDebt -
                 (amount * pool.accCaplPerShare) /
                 CAPL_PRECISION;
-        }
+        // }
 
         vault.withdraw(_token, _user, amount, newRewardDebt);
         vault.removePoolPosition(_token, amount);
