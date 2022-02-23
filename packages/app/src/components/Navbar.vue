@@ -89,23 +89,26 @@
   <!-- End Navbar Area -->
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+
 import { computed } from "vue";
 import { useStore } from "@/store";
-import { ref, watchEffect, Ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { showConnectResult } from "@/utils/notifications";
 import { shortenAddress, caplUSDConversion, format } from "@/utils";
 
-const store = useStore();
+export default {
+  setup() {
+    const store = useStore();
 
     let CAPLPrice = ref("0.00");
     let buttonString = ref("Connect Wallet");
 
-const isConnected = computed(
-  () => store.getters["accounts/isUserConnected"]
-);
-const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
-let caplInUSD: Ref<number> = ref(0);
+    const isConnected = computed(
+      () => store.getters["accounts/isUserConnected"]
+    );
+
+    const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
     watchEffect(() => {
       isConnected.value
