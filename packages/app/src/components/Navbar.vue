@@ -45,7 +45,7 @@
           </div>
           <div>
             <ul class="nav-btn-custom">
-              <li class="nav-item"><span>Capl: &dollar;0.000</span></li>
+              <li class="nav-item"><span>Capl: &dollar;{{ caplInUSD }}</span></li>
               <li class="nav-item">
                 <router-link to="dashboard"
                   ><button class="connectButton">Dashboard</button>
@@ -89,29 +89,29 @@
   <!-- End Navbar Area -->
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { computed } from "vue";
 import { useStore } from "@/store";
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect, Ref } from "vue";
 import { showConnectResult } from "@/utils/notifications";
-import { shortenAddress } from "@/utils";
+import { shortenAddress, caplUSDConversion } from "@/utils";
 
-export default {
-  setup() {
-    const store = useStore();
+const store = useStore();
 
-    let buttonString = ref("Connect Wallet");
+let buttonString = ref("Connect Wallet");
 
-    const isConnected = computed(
-      () => store.getters["accounts/isUserConnected"]
-    );
-    const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
+const isConnected = computed(
+  () => store.getters["accounts/isUserConnected"]
+);
+const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
+let caplInUSD: Ref<number> = ref(0);
 
-    watchEffect(() => {
-      isConnected.value
-        ? (buttonString.value = shortenAddress(wallet.value))
-        : (buttonString.value = "Connect Wallet");
-    });
+watchEffect(() => {
+  caplInUSD.value = caplUSDConversion(1, store);
+  isConnected.value
+    ? (buttonString.value = shortenAddress(wallet.value))
+    : (buttonString.value = "Connect Wallet");
+});
 
     function showMoons() {
       store.commit("showMoons", true);
