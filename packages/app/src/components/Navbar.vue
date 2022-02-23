@@ -94,7 +94,7 @@ import { computed } from "vue";
 import { useStore } from "@/store";
 import { ref, watchEffect } from "vue";
 import { showConnectResult } from "@/utils/notifications";
-import { shortenAddress, calculateCAPLUSDPrice, format } from "@/utils";
+import { shortenAddress, caplUSDConversion, format } from "@/utils";
 
 export default {
   setup() {
@@ -113,10 +113,9 @@ export default {
         ? (buttonString.value = shortenAddress(wallet.value))
         : (buttonString.value = "Connect Wallet");
         
-        const price = format(calculateCAPLUSDPrice(
+        const price = format(caplUSDConversion(
                       1,
-                      "USDC",
-                      store.getters["balancer/getPoolTokens"]
+                      store
                     ));
         if (price) {
           CAPLPrice.value = price;
@@ -138,10 +137,9 @@ export default {
         await store.dispatch("rewards/getRewardsInfo");
         await store.dispatch("balancer/getPoolTokens");
         
-        const price = format(calculateCAPLUSDPrice(
+        const price = format(caplUSDConversion(
                       1,
-                      "USDC",
-                      store.getters["balancer/getPoolTokens"]
+                      store
                     ));
         if (price) {
           CAPLPrice.value = price;
