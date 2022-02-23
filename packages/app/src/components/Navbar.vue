@@ -45,7 +45,7 @@
           </div>
           <div>
             <ul class="nav-btn-custom">
-              <li class="nav-item"><span>Capl: &dollar;0.000</span></li>
+              <li class="nav-item"><span>Capl: &dollar; {{ CAPLPrice }} </span></li>
               <li class="nav-item">
                 <router-link to="dashboard"
                   ><button class="connectButton">Dashboard</button>
@@ -94,12 +94,13 @@ import { computed } from "vue";
 import { useStore } from "@/store";
 import { ref, watchEffect } from "vue";
 import { showConnectResult } from "@/utils/notifications";
-import { shortenAddress } from "@/utils";
+import { shortenAddress, calculateCAPLUSDPrice, format } from "@/utils";
 
 export default {
   setup() {
     const store = useStore();
 
+    let CAPLPrice = ref("0.00");
     let buttonString = ref("Connect Wallet");
 
     const isConnected = computed(
@@ -111,6 +112,16 @@ export default {
       isConnected.value
         ? (buttonString.value = shortenAddress(wallet.value))
         : (buttonString.value = "Connect Wallet");
+        
+        const price = format(calculateCAPLUSDPrice(
+                      1,
+                      "USDC",
+                      store.getters["balancer/getPoolTokens"]
+                    ));
+        if (price) {
+          CAPLPrice.value = price;
+        }
+
     });
 
     function showMoons() {
@@ -120,10 +131,22 @@ export default {
     return {
       isConnected,
       buttonString,
+      CAPLPrice,
       showMoons,
       connectWeb3: async () => {
         await store.dispatch("accounts/connectWeb3");
         await store.dispatch("rewards/getRewardsInfo");
+        await store.dispatch("balancer/getPoolTokens");
+        
+        const price = format(calculateCAPLUSDPrice(
+                      1,
+                      "USDC",
+                      store.getters["balancer/getPoolTokens"]
+                    ));
+        if (price) {
+          CAPLPrice.value = price;
+        }
+        
         showConnectResult(store);
       },
     };
