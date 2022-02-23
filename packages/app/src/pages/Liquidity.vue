@@ -62,7 +62,7 @@
 import DappFooter from "@/components/DappFooter.vue";
 import { ref, Ref, watchEffect, computed } from "vue";
 import { useStore } from "@/store";
-import { checkAllAllowances, checkAllowance } from "@/utils";
+import { checkAllAllowances } from "@/utils";
 import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store: any = useStore();
@@ -76,18 +76,17 @@ const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
 watchEffect(async () => {
-  !isUserConnected.value || (await checkAllowance(store, "balancer"));
-
-  const { approvalRequired, flag } = await checkAllAllowances(store, [
-    usdcLiquidity.value,
-    caplLiquidity.value,
-  ]);
+  const { approvalRequired, flag } =
+    !isUserConnected.value ||
+    (await checkAllAllowances(store, [
+      usdcLiquidity.value,
+      caplLiquidity.value,
+    ]));
   approvalFlag.value = flag;
 
   approvalRequired
-    ? addLiquidityButtonString.value = "Add Liquidity"
-    : addLiquidityButtonString.value = "Approve";
-
+    ? (addLiquidityButtonString.value = "Approve")
+    : (addLiquidityButtonString.value = "Add Liquidity");
 });
 
 // handles swapping button logic, dependant on current string
@@ -131,7 +130,10 @@ const approveAll = async () => {
 };
 
 function addLiquidity() {
-  store.dispatch("balancer/addLiquidity");
+  store.dispatch("balancer/addLiquidity", {
+    caplAmount: caplLiquidity.value,
+    usdcAmount: usdcLiquidity.value,
+  });
 }
 
 // allows for a user to switch between swapping USDC and CAPL

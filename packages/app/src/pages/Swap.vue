@@ -56,7 +56,6 @@ import { ref, Ref, watchEffect, computed } from "vue";
 import { useStore } from "@/store";
 import {
   calculateCAPLUSDPrice,
-  checkAllAllowances,
   checkAllowance,
   format,
   stringToNumber,
@@ -71,34 +70,20 @@ let swapToTokenSymbol: Ref<string> = ref("USDC");
 let swapTokenResult: Ref<string> = ref("");
 let swapButtonString = ref("Swap");
 
-let usdcLiquidity: Ref<number> = ref(0);
-let caplLiquidity: Ref<number> = ref(0);
-
-let approvalFlag: Ref<string | null> = ref("");
-let addLiquidityButtonString: Ref<string> = ref("");
-
 const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
 watchEffect(async () => {
   !isUserConnected.value ||
-  (await checkAllowance(
-    store,
-    swapTokenSymbol.value,
-    Number(swapAmount.value),
-    "balancer"
-  ))
-    ? (swapButtonString.value = "Swap")
-    : (swapButtonString.value = "Approve");
-
-  const { approvalRequired, flag } = await checkAllAllowances(store, [
-    usdcLiquidity.value,
-    caplLiquidity.value,
-  ]);
-  approvalFlag.value = flag;
-  approvalRequired
-    ? addLiquidityButtonString.value == "Add Liquidity"
-    : addLiquidityButtonString.value == "Approve";
+    (swapAmount.value !== 0 &&
+      ((await checkAllowance(
+        store,
+        swapTokenSymbol.value,
+        Number(swapAmount.value),
+        "balancer"
+      ))
+        ? (swapButtonString.value = "Swap")
+        : (swapButtonString.value = "Approve")));
 });
 
 // handles swapping button logic, dependant on current string
