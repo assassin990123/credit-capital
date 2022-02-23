@@ -83,6 +83,7 @@ watchEffect(async () => {
       caplLiquidity.value,
     ]));
   approvalFlag.value = flag;
+
   approvalRequired
     ? (addLiquidityButtonString.value = "Approve")
     : (addLiquidityButtonString.value = "Add Liquidity");
