@@ -4,7 +4,7 @@
     <div class="acavo-responsive-nav">
       <div class="container">
         <div class="acavo-responsive-menu">
-          <div class="logo">
+          <div class="logo"  @click="isShow = !isShow">
             <router-link to="/">
               <img src="/images/logo-white.png" alt="logo" />
             </router-link>
@@ -18,25 +18,25 @@
     <div class="acavo-nav" v-show="isShow">
       <div class="container">
         <nav class="navbar navbar-expand-md navbar-light">
-          <div class="logo-mobile">
+          <div class="logo-mobile"  @click="isShow = !isShow">
             <router-link to="/">
               <img src="/images/logo-white.png" alt="logo" />
             </router-link>
           </div>
           <div class="navbar-collapse mean-menu">
             <ul class="navbar-nav">
-              <li class="nav-item"><router-link to="/">Home</router-link></li>
-              <li class="nav-item">
+              <li class="nav-item" @click="isShow = !isShow"><router-link  to="/">Home</router-link></li>
+              <li class="nav-item" @click="isShow = !isShow">
                 <router-link to="stake">Stake</router-link>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" @click="isShow = !isShow">
                 <router-link to="reward">Rewards</router-link>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" @click="isShow = !isShow">
                 <router-link to="swap">Swap</router-link>
               </li>
-              <li class="nav-item">
-                <router-link to="liquidity">Liquidity</router-link>
+              <li class="nav-item" @click="isShow = !isShow">
+                <router-link  to="liquidity">Liquidity</router-link>
               </li>
               <!-- <li class="nav-item">
                 <router-link to="treasury">Treasury</router-link>
@@ -45,13 +45,13 @@
           </div>
           <div>
             <ul class="nav-btn-custom">
-              <li class="nav-item"><span>Capl: &dollar; {{ CAPLPrice }} </span></li>
-              <li class="nav-item">
+              <li class="nav-item" @click="isShow = !isShow"><span>Capl: &dollar;;{{ CAPLPrice }}</span></li>
+              <li class="nav-item" @click="isShow = !isShow">
                 <router-link to="dashboard"
                   ><button class="connectButton">Dashboard</button>
                 </router-link>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" @click="isShow = !isShow">
                 <button class="connectButton" @click="connectWeb3">
                   {{ buttonString }}
                 </button>
@@ -89,24 +89,23 @@
   <!-- End Navbar Area -->
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { computed } from "vue";
 import { useStore } from "@/store";
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect, Ref } from "vue";
 import { showConnectResult } from "@/utils/notifications";
 import { shortenAddress, caplUSDConversion, format } from "@/utils";
 
-export default {
-  setup() {
-    const store = useStore();
+const store = useStore();
 
     let CAPLPrice = ref("0.00");
     let buttonString = ref("Connect Wallet");
 
-    const isConnected = computed(
-      () => store.getters["accounts/isUserConnected"]
-    );
-    const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
+const isConnected = computed(
+  () => store.getters["accounts/isUserConnected"]
+);
+const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
+let caplInUSD: Ref<number> = ref(0);
 
     watchEffect(() => {
       isConnected.value
@@ -216,10 +215,6 @@ export default {
   }
   .stack-btn {
     flex: 0 0 100% !important;
-  }
-  .panel.stake-panel {
-    margin: 0 !important;
-    width: 100% !important;
   }
 }
 </style>
