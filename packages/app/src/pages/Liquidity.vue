@@ -83,9 +83,11 @@ watchEffect(async () => {
     caplLiquidity.value,
   ]);
   approvalFlag.value = flag;
+
   approvalRequired
-    ? addLiquidityButtonString.value == "Add Liquidity"
-    : addLiquidityButtonString.value == "Approve";
+    ? addLiquidityButtonString.value = "Add Liquidity"
+    : addLiquidityButtonString.value = "Approve";
+
 });
 
 // handles swapping button logic, dependant on current string
