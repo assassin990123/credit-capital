@@ -267,7 +267,6 @@ const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 const userPosition = computed(
   () => store.getters["rewards/getUserStakedPosition"]
 );
-// actually capl per block for now
 const caplPerSecond = computed(() => store.getters["rewards/getCaplPerSecond"]);
 const totalStaked = computed(() => store.getters["rewards/getTotalStaked"]);
 
