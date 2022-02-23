@@ -9,6 +9,13 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
   : "1";
 
+enum JoinKind {
+  INIT,
+  EXACT_TOKENS_IN_FOR_BPT_OUT,
+  TOKEN_IN_FOR_EXACT_BPT_OUT,
+  ALL_TOKENS_IN_FOR_EXACT_BPT_OUT
+}
+
 const state: BalancerState = {
   poolTokens: {},
   addLiquidity: {},
@@ -123,15 +130,10 @@ const actions = {
     );
   },
 
-  async addLiquidity({
-    commit,
-    rootState,
-    dispatch,
-  }: {
-    commit: Commit;
-    rootState: RootState;
-    dispatch: Dispatch;
-  }) {
+  async addLiquidity(
+    { commit, rootState, dispatch }: { commit: Commit; rootState: RootState; dispatch: Dispatch; },
+    { caplAmount, usdcAmount }: { caplAmount: number, usdcAmount: number }
+  ) {
     if (rootState.contracts.balancerVaultContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
     }
@@ -148,14 +150,12 @@ const actions = {
     const assets = [
       {
         token: token_CAPL,
-        maxAmountsIn: ethers.BigNumber.from(
-          (100 * Math.pow(10, 18)).toString()
-        ),
+        maxAmountsIn: ethers.utils.parseUnits(caplAmount.toString(), 18),
       },
       {
         token: token_USDC,
         maxAmountsIn: ethers.BigNumber.from(
-          (100 * Math.pow(10, 18)).toString()
+          usdcAmount * Math.pow(10, 6)
         ),
       },
     ];
@@ -168,10 +168,15 @@ const actions = {
       }
       return 0;
     });
+
+    const userType = ['uint256', 'uint256[]'];
+    const userData = [JoinKind.EXACT_TOKENS_IN_FOR_BPT_OUT, assets.map((asset) => asset.maxAmountsIn)];
+    const encodedUserData = ethers.utils.defaultAbiCoder.encode(userType, userData);
+
     const request: any = {
       assets: assets.map((asset) => asset.token),
       maxAmountsIn: assets.map((asset) => asset.maxAmountsIn),
-      userData: "0x",
+      userData: encodedUserData,
       fromInternalBalance: false,
     };
 
