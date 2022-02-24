@@ -55,7 +55,7 @@ watchEffect(async () => {
     pendingRewardsUSDC.value = format(
       calculateCAPLUSDPrice(
         pendingRewards.value,
-        "USDC",
+        "CAPL",
         store.getters["balancer/getPoolTokens"]
       )
     );
@@ -77,7 +77,7 @@ watchEffect(async () => {
 
 .rewards-display {
   border: 1px solid #000000;
-  font-size: 100px;
+  font-size: 70px;
   font-weight: 700;
   padding: 40px 20px;
   text-align: center;
