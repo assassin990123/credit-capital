@@ -45,7 +45,7 @@
           </div>
           <div>
             <ul class="nav-btn-custom">
-              <li class="nav-item" @click="isShow = !isShow"><span>Capl: &dollar;;{{ CAPLPrice }}</span></li>
+              <li class="nav-item" @click="isShow = !isShow"><span>CAPL &dollar;{{ CAPLPrice }}</span></li>
               <li class="nav-item" @click="isShow = !isShow">
                 <router-link to="dashboard"
                   ><button class="connectButton">Dashboard</button>
