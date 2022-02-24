@@ -184,7 +184,7 @@ contract Rewards is Pausable, AccessControl {
                 msg.sender
             );
 
-            if (checkTimelockThreshold(lastStake.startTime)) {
+            if (!checkTimelockThreshold(lastStake.startTime)) {
                 // add a new stake for the user
                 // this function adds a new stake, and a new stake key in the user position instance
                 vault.addStake(_token, msg.sender, _amount);

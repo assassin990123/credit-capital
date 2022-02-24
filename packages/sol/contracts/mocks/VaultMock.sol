@@ -12,7 +12,7 @@ contract VaultMock is AccessControl, Pausable {
 
     bytes32 public constant REWARDS = keccak256("REWARDS");
 
-    uint256 timelock = 1; // 4 years, 4 months, 4 days ...
+    uint256 timelock = 10 minutes; // 4 years, 4 months, 4 days ...
 
     struct Stake {
         uint256 amount; // quantity staked
