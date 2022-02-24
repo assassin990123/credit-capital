@@ -61,9 +61,10 @@ const actions = {
       await actions.ethereumListener({ commit });
     }
 
-    dispatch("contracts/setContracts", null, { root: true });
-    dispatch("balancer/getPoolTokens", null, { root: true });
-    dispatch("tokens/getAllowances", null, { root: true });
+    await dispatch("contracts/setContracts", null, { root: true });
+    await dispatch("balancer/getPoolTokens", null, { root: true });
+    await dispatch("tokens/getAllowances", null, { root: true });
+    await dispatch("dashboard/getTVL", null, { root: true });
   },
 
   async ethereumListener({ commit }: { commit: Function }) {
