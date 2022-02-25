@@ -113,12 +113,12 @@ export const checkAllAllowances = (
 
   // known:
   // amounts[0] -> usdc, amounts[1] -> capl
-  if (usdcBalancerVaultAllowance < amounts[0]) {
+  if (amounts[0] !== 0 && usdcBalancerVaultAllowance < amounts[0]) {
     count++;
     approvalRequired = true;
     flag = "USDC";
   }
-  if (caplBalancerVaultAllowance < amounts[1]) {
+  if (amounts[1] !== 0 && caplBalancerVaultAllowance < amounts[1]) {
     count++;
     approvalRequired = true;
     flag = "CAPL";
