@@ -17,7 +17,10 @@ enum JoinKind {
 }
 
 const state: BalancerState = {
-  poolTokens: {},
+  poolTokens: {
+    tokens: {},
+    balances: []
+  },
   addLiquidity: {},
   batchSwap: {}
 };

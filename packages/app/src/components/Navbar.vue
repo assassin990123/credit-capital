@@ -138,7 +138,6 @@ export default {
         await store.dispatch("accounts/connectWeb3");
         await store.dispatch("rewards/getRewardsInfo");
         await store.dispatch("balancer/getPoolTokens");
-        
         const price = format(caplUSDConversion(
                       1,
                       store
