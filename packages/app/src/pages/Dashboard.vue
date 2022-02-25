@@ -15,7 +15,7 @@
         <div class="title-cus">
           <h2>TVL</h2>
           <div class="dashboard-daily-earning-panel-value">
-            {{ tvl?.toFixed(4) }} USD
+            {{ tvl?.toFixed(2) }} USD
           </div>
         </div>
       </div>
@@ -253,6 +253,7 @@ import { caplUSDConversion, getDailyEarnings, shortenAddress } from "@/utils";
 const store = useStore();
 
 const dailyEarnings: Ref<number> = ref(0);
+
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
 
 const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
@@ -276,6 +277,7 @@ let caplInUSD: Ref<number> = ref(0);
 let LPBalanceInUSDC: Ref<number> = ref(0);
 
 watchEffect(() => {
+  
   caplInUSD.value = caplUSDConversion(1, store);
   userCAPLToUSD.value = caplUSDConversion(caplBalance.value, store);
 
