@@ -167,7 +167,6 @@ describe("Rewards Vault", function () {
       _formatEther(await capl.balanceOf(alice.address)).toFixed(0)
     ).to.equal("313");
   });
-
   it("Rewards: Alice deposits twice, claims, then bob deposits twice", async function () {
     const accounts = await hre.ethers.getSigners();
     const { deployer, alice, bob } = await setupAccounts(accounts);
@@ -205,7 +204,7 @@ describe("Rewards Vault", function () {
 
     const userPositon = await vault.getUserPosition(lp.address, alice.address);
 
-    userChecks(userPositon, 20, "208", 2);
+    userChecks(userPositon, 20, "208", 1);
 
     pendingRewards = await vault.getPendingRewards(lp.address, alice.address);
     expect(_formatEther(pendingRewards).toFixed(0)).to.equal("208");
@@ -386,7 +385,7 @@ describe("Rewards Vault", function () {
     await rewards.connect(alice).deposit(lp.address, TEN_TOKENS_DEFAULT);
 
     const userPositon = await vault.getUserPosition(lp.address, alice.address);
-    userChecks(userPositon, 20, "208", 2);
+    userChecks(userPositon, 20, "208", 1);
 
     pool = await vault.getPool(lp.address);
     poolChecks(pool, 20, "0.06", "20.8");
@@ -437,7 +436,7 @@ describe("Rewards Vault", function () {
 
     // check Alice userPosition, Pool info
     userPosition = await vault.getUserPosition(lp.address, alice.address);
-    userChecks(userPosition, 20, "625", 2);
+    userChecks(userPosition, 20, "625", 1);
     
     // alice should have roughly 208 still
     pendingRewards = await vault.getPendingRewards(lp.address, alice.address);

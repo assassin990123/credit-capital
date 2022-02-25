@@ -184,7 +184,7 @@ contract Rewards is Pausable, AccessControl {
                 msg.sender
             );
 
-            if (!checkTimelockThreshold(lastStake.startTime)) {
+            if (checkTimelockThreshold(lastStake.timeLockEnd)) {
                 // add a new stake for the user
                 // this function adds a new stake, and a new stake key in the user position instance
                 vault.addStake(_token, msg.sender, _amount);
@@ -301,12 +301,12 @@ contract Rewards is Pausable, AccessControl {
     }
 
     // TODO: Implement
-    function checkTimelockThreshold(uint256 _startTime)
+    function checkTimelockThreshold(uint256 _timeLockEnd)
         internal
         view
         returns (bool)
     {
-        return _startTime + timelockThreshold < block.timestamp;
+        return _timeLockEnd < block.timestamp;
     }
 
     // fallback functions

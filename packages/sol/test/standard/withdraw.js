@@ -341,10 +341,10 @@ describe("Rewards Vault", function () {
     // alice gets 10 LP
     // bob gets 10 LP
     // both deposit
-    lp.transfer(alice.address, TWENTY_TOKENS_DEFAULT);
+    lp.transfer(alice.address, TEN_TOKENS_DEFAULT);
     lp.transfer(bob.address, TWENTY_TOKENS_DEFAULT);
     // verify transfers
-    expect(_formatEther(await lp.balanceOf(alice.address))).to.equal(20);
+    expect(_formatEther(await lp.balanceOf(alice.address))).to.equal(10);
     expect(_formatEther(await lp.balanceOf(bob.address))).to.equal(20);
     // approvals
     lp.connect(alice).approve(rewards.address, TWENTY_TOKENS_DEFAULT);
@@ -369,6 +369,7 @@ describe("Rewards Vault", function () {
     unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, alice.address);
     expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(0);
 
+    // Bob diposit
     await rewards.connect(bob).deposit(lp.address, TEN_TOKENS_DEFAULT);
     // check all vault variables to be correct
     userPosition = await vault.getUserPosition(lp.address, bob.address);
@@ -389,24 +390,169 @@ describe("Rewards Vault", function () {
      * Alice should only be able to withdraw the first stake after 10 minutes have passed
      * After 20 minutes, she should be able to withdraw her entire position
      */
+    
+    // Alice withdraw the first stake after 10 minutes have passed
+    unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, alice.address);
+    expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(10);
 
+    // Alice will only able to withdraw first stake
+    await rewards.connect(alice).withdraw(lp.address, alice.address);
+    // check Alice's balance
+    expect(
+      _formatEther(await lp.balanceOf(alice.address)).toFixed(0)
+    ).to.equal("10");
+
+    // verify pool states
+    pool = await vault.getPool(lp.address);
+    poolChecks(pool, 10, "0.06", "2.6");
+
+    // check userposition states
+    userPosition = await vault.getUserPosition(lp.address, alice.address);
+    userChecks(userPosition, 0, "26", 1);
+
+    // fast forward 5 minutes
+    await network.provider.send("evm_increaseTime", [300]);
+    await network.provider.send("evm_mine");
+
+    // Bob claim
+    pendingRewards = await vault.getPendingRewards(lp.address, bob.address);
+    expect(_formatEther(pendingRewards).toFixed(0)).to.equal("26");
+
+    await rewards.connect(bob).claim(lp.address, bob.address);
+    expect(_formatEther(await capl.balanceOf(bob.address)).toFixed(0)).to.equal(
+      "26"
+    );
+
+    // check bob's userposition
+    userPosition = await vault.getUserPosition(lp.address, bob.address);
+    userChecks(userPosition, 10, "44", 1);
+    // updated pool state
+    pool = await vault.getPool(lp.address);
+    poolChecks(pool, 10, "0.06", "4.4");
+
+    // fast forward 5 minutes
+    await network.provider.send("evm_increaseTime", [300]);
+    await network.provider.send("evm_mine");
+
+    // Alice and Bob deposit both again
     // Alice deposit again
     await rewards.connect(alice).deposit(lp.address, TEN_TOKENS_DEFAULT);
     // check all vault variables to be correct
     userPosition = await vault.getUserPosition(lp.address, alice.address);
-    // should be one user position, one pool, and one stake
-    userChecks(userPosition, 20, "26", 2);
+    // should be two stake as 10 minutes passed after the first stake
+    userChecks(userPosition, 10, "61", 2);
 
     // check pool instance for correct values
     pool = await vault.getPool(lp.address);
-    poolChecks(pool, 30, "0.06", "2.6");
+    poolChecks(pool, 20, "0.06", "6.1");
+    
+    // fast forward 5 minutes
+    await network.provider.send("evm_increaseTime", [300]);
+    await network.provider.send("evm_mine");
 
-    // Alice withdraw the first stake after 10 minutes have passed
+    // Alice's unlocked amount should be 0 as 5 minutes have passed after the second stake.
+    unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, alice.address);
+    expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(0);
+
+    // Bob deposit again
+    await rewards.connect(bob).deposit(lp.address, TEN_TOKENS_DEFAULT);
+    // check Alice userPosition, Pool info
+    userPosition = await vault.getUserPosition(lp.address, bob.address);
+    // Bob should have two stakes
+    userChecks(userPosition, 20, "70", 2);
+
+    pool = await vault.getPool(lp.address);
+    poolChecks(pool, 30, "0.06", "7.0");
+
+    // fast forward 5 minutes
+    await network.provider.send("evm_increaseTime", [300]);
+    await network.provider.send("evm_mine");
+    
+    // Alice's pending reward
+    // balance : 10
+    // accCaplPerShare : (7 + (0.057 * 300) / 30) = 7.57
+    // RPS : 0.057
+    // passedTime : 300
+    // tokenSupply : 30
+    // rewardDebt : 61
+    // Calcualtion : ~(10 * 7.57 - 61) = ~14
+    pendingRewards = await vault.getPendingRewards(lp.address, alice.address);
+    expect(_formatEther(pendingRewards).toFixed(0)).to.equal("14");
+
+    // Alice and Bob both claim
+    await rewards.connect(alice).claim(lp.address, alice.address);
+    expect(_formatEther(await capl.balanceOf(alice.address)).toFixed(0)).to.equal(
+      "15"
+    );
+
+    // check alice's userposition
+    userPosition = await vault.getUserPosition(lp.address, alice.address);
+    userChecks(userPosition, 10, "76", 2);
+    // updated pool state
+    pool = await vault.getPool(lp.address);
+    poolChecks(pool, 30, "0.06", "7.6");
+    
+    // fast forward 5 minutes
+    await network.provider.send("evm_increaseTime", [300]);
+    await network.provider.send("evm_mine");
+
+    pendingRewards = await vault.getPendingRewards(lp.address, bob.address);
+    expect(_formatEther(pendingRewards).toFixed(0)).to.equal("93");
+
+    await rewards.connect(bob).claim(lp.address, bob.address);
+    // current capl balance 26
+    // claimed amount 93
+    // so Bob's total capl balance : 119
+    expect(
+      _formatEther(await capl.balanceOf(bob.address)).toFixed(0)
+    ).to.equal("119");
+
+    // check bob's userposition
+    userPosition = await vault.getUserPosition(lp.address, bob.address);
+    userChecks(userPosition, 20, "163", 2);
+    // updated pool state
+    pool = await vault.getPool(lp.address);
+    poolChecks(pool, 30, "0.06", "8.1");
+
+    // fast forward 5 minutes
+    await network.provider.send("evm_increaseTime", [300]);
+    await network.provider.send("evm_mine");
+    
+    // Alice and Bob both withdraw
     unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, alice.address);
     expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(10);
-    // Bob claim
-    // Alice and Bob deposit both again
-    // Alice and Bob both claim
-    // Alice and Bob both withdraw
+    // Alice withdraw
+    await rewards.connect(alice).withdraw(lp.address, alice.address);
+    // check Alice's balance
+    expect(
+      _formatEther(await lp.balanceOf(alice.address)).toFixed(0)
+    ).to.equal("10");
+
+    // verify pool states
+    pool = await vault.getPool(lp.address);
+    poolChecks(pool, 20, "0.06", "8.7");
+    // check userposition states
+    userPosition = await vault.getUserPosition(lp.address, alice.address);
+    userChecks(userPosition, 0, "87", 2);
+
+    // fast forward 5 minutes
+    await network.provider.send("evm_increaseTime", [300]);
+    await network.provider.send("evm_mine");
+
+    unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, bob.address);
+    expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(20);
+    // Bob withdraw
+    await rewards.connect(bob).withdraw(lp.address, bob.address);
+    // check Bob's balance
+    expect(
+      _formatEther(await lp.balanceOf(bob.address)).toFixed(0)
+    ).to.equal("20");
+
+    // verify pool states
+    pool = await vault.getPool(lp.address);
+    poolChecks(pool, 0, "0.06", "9.6");
+    // check userposition, rewardDebt is around 2015
+    userPosition = await vault.getUserPosition(lp.address, bob.address);
+    userChecks(userPosition, 0, "192", 2);
   });
 });
