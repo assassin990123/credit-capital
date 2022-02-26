@@ -2,6 +2,7 @@ import { DashboardState } from "@/models/dashboard";
 import { Commit, Dispatch } from "vuex";
 import { RootState } from "@/models";
 import { calculateCAPLUSDPrice } from "@/utils";
+import { ethers } from "ethers";
 
 const state: DashboardState = {
   dailyEarnings: 0,
@@ -18,7 +19,7 @@ const getters = {
 };
 
 const actions = {
-  async getTVL({
+  async fetchTVL({
     commit,
     rootState,
     dispatch,
@@ -34,8 +35,10 @@ const actions = {
     if (rootState.balancer.poolTokens === null) {
       await dispatch("balancer/getPoolTokens", null, { root: true });
     }
-
     const userStakedPosition = rootState.rewards.userStakedPosition;
+
+    if (userStakedPosition == 0) return;
+
     const poolTokens = rootState.balancer.poolTokens;
     // @ts-ignore
     const usdcBalance = poolTokens.balances[0];
@@ -46,12 +49,20 @@ const actions = {
     }
 
     // @ts-ignore
-    const lpTokenTotalSupply = await rootState.contracts.lpContract.totalSupply();
-    
-    const tvlTokenPrice = (usdcBalance + calculateCAPLUSDPrice(caplBalance, "capl", poolTokens)) / lpTokenTotalSupply;
+    let lpTokenTotalSupply = await rootState.contracts.lpContract.totalSupply();
 
+    lpTokenTotalSupply = ethers.utils.formatEther(
+      lpTokenTotalSupply.toString()
+    );
+
+    const tvlTokenPrice =
+      (Number(usdcBalance) +
+        calculateCAPLUSDPrice(Number(caplBalance), "CAPL", poolTokens)) /
+      Number(lpTokenTotalSupply);
+
+    console.log(userStakedPosition, tvlTokenPrice);
     commit("setTVL", userStakedPosition * tvlTokenPrice);
-  }
+  },
 };
 
 const mutations = {

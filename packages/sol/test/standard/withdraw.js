@@ -96,7 +96,9 @@ describe("Rewards Vault", function () {
     // role setup
     await setupRoles(vault, capl, rewards);
     // check deployer account capl balance & approve rewards spending
-    expect(Number(_formatEther(await lp.balanceOf(deployer.address)))).to.equal(1_000_000);
+    expect(Number(_formatEther(await lp.balanceOf(deployer.address)))).to.equal(
+      1_000_000
+    );
 
     // test setup
     // alice gets 10 LP
@@ -122,7 +124,10 @@ describe("Rewards Vault", function () {
 
     // with mock, in 60 seconds the funds are unlocked for withdrawals
     // simulate call
-    let unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, alice.address);
+    let unlockedAmount = await vault.callStatic.getUnlockedAmount(
+      lp.address,
+      alice.address
+    );
     expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(10);
 
     // TODO: withdraw test
@@ -137,13 +142,16 @@ describe("Rewards Vault", function () {
     userChecks(userPosition, 0, "208", 1);
 
     // simulate call
-    unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, alice.address);
+    unlockedAmount = await vault.callStatic.getUnlockedAmount(
+      lp.address,
+      alice.address
+    );
     expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(0);
-    
+
     // check Alice's balance
-    expect(
-      _formatEther(await lp.balanceOf(alice.address)).toFixed(0)
-    ).to.equal("10");
+    expect(_formatEther(await lp.balanceOf(alice.address)).toFixed(0)).to.equal(
+      "10"
+    );
   });
   it("Alice and Bob both deposit, Alice withdraw and Bob claim, Alice and Bob deposit both again, and both withdraw", async () => {
     const accounts = await hre.ethers.getSigners();
@@ -152,9 +160,9 @@ describe("Rewards Vault", function () {
     // role setup
     await setupRoles(vault, capl, rewards);
     // check deployer account capl balance & approve rewards spending
-    expect(
-      Number(_formatEther(await lp.balanceOf(deployer.address)))
-    ).to.equal(1_000_000);
+    expect(Number(_formatEther(await lp.balanceOf(deployer.address)))).to.equal(
+      1_000_000
+    );
     // test setup
     // alice gets 10 LP
     // bob gets 10 LP
@@ -200,15 +208,18 @@ describe("Rewards Vault", function () {
     // Alice withdraw
     // with mock, in 60 seconds the funds are unlocked for withdrawals
     // simulate call
-    let unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, alice.address);
+    let unlockedAmount = await vault.callStatic.getUnlockedAmount(
+      lp.address,
+      alice.address
+    );
     expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(10);
 
     // TODO: withdraw test
     await rewards.connect(alice).withdraw(lp.address, alice.address);
     // check Alice's balance
-    expect(
-      _formatEther(await lp.balanceOf(alice.address)).toFixed(0)
-    ).to.equal("10");
+    expect(_formatEther(await lp.balanceOf(alice.address)).toFixed(0)).to.equal(
+      "10"
+    );
 
     // verify pool states
     pool = await vault.getPool(lp.address);
@@ -219,7 +230,10 @@ describe("Rewards Vault", function () {
     userChecks(userPosition, 0, "313", 1);
 
     // simulate call
-    unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, alice.address);
+    unlockedAmount = await vault.callStatic.getUnlockedAmount(
+      lp.address,
+      alice.address
+    );
     expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(0);
 
     // fast forward 1h
@@ -232,10 +246,7 @@ describe("Rewards Vault", function () {
     userChecks(userPosition, 10, "208", 1);
 
     // Bob's pendingrewards
-    let pendingRewards = await vault.getPendingRewards(
-      lp.address,
-      bob.address
-    );
+    let pendingRewards = await vault.getPendingRewards(lp.address, bob.address);
     // verify, should be around 104 for Bob
     expect(_formatEther(pendingRewards).toFixed(0)).to.equal("313");
 
@@ -252,7 +263,7 @@ describe("Rewards Vault", function () {
     userPosition = await vault.getUserPosition(lp.address, alice.address);
     // should be one user position, one pool, and one stake
     userChecks(userPosition, 0, "313", 1);
-  
+
     // verify pool states
     pool = await vault.getPool(lp.address);
     poolChecks(pool, 10, "0.06", "52.1");
@@ -291,14 +302,17 @@ describe("Rewards Vault", function () {
     await network.provider.send("evm_mine");
 
     // Alice and Bob both withdraw
-    unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, alice.address);
+    unlockedAmount = await vault.callStatic.getUnlockedAmount(
+      lp.address,
+      alice.address
+    );
     expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(10);
     // Alice withdraw
     await rewards.connect(alice).withdraw(lp.address, alice.address);
     // check Alice's balance
-    expect(
-      _formatEther(await lp.balanceOf(alice.address)).toFixed(0)
-    ).to.equal("10");
+    expect(_formatEther(await lp.balanceOf(alice.address)).toFixed(0)).to.equal(
+      "10"
+    );
 
     // verify pool states
     pool = await vault.getPool(lp.address);
@@ -311,14 +325,17 @@ describe("Rewards Vault", function () {
     await network.provider.send("evm_increaseTime", [3600]);
     await network.provider.send("evm_mine");
 
-    unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, bob.address);
+    unlockedAmount = await vault.callStatic.getUnlockedAmount(
+      lp.address,
+      bob.address
+    );
     expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(20);
     // Bob withdraw
     await rewards.connect(bob).withdraw(lp.address, bob.address);
     // check Bob's balance
-    expect(
-      _formatEther(await lp.balanceOf(bob.address)).toFixed(0)
-    ).to.equal("20");
+    expect(_formatEther(await lp.balanceOf(bob.address)).toFixed(0)).to.equal(
+      "20"
+    );
 
     // verify pool states
     pool = await vault.getPool(lp.address);
@@ -334,9 +351,9 @@ describe("Rewards Vault", function () {
     // role setup
     await setupRoles(vault, capl, rewards);
     // check deployer account capl balance & approve rewards spending
-    expect(
-      Number(_formatEther(await lp.balanceOf(deployer.address)))
-    ).to.equal(1_000_000);
+    expect(Number(_formatEther(await lp.balanceOf(deployer.address)))).to.equal(
+      1_000_000
+    );
     // test setup
     // alice gets 10 LP
     // bob gets 10 LP
@@ -366,7 +383,10 @@ describe("Rewards Vault", function () {
     await network.provider.send("evm_mine");
 
     // Alice try to withdraw but impossible as her position is still locked(10 mins)
-    unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, alice.address);
+    unlockedAmount = await vault.callStatic.getUnlockedAmount(
+      lp.address,
+      alice.address
+    );
     expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(0);
 
     // Bob diposit
@@ -390,17 +410,20 @@ describe("Rewards Vault", function () {
      * Alice should only be able to withdraw the first stake after 10 minutes have passed
      * After 20 minutes, she should be able to withdraw her entire position
      */
-    
+
     // Alice withdraw the first stake after 10 minutes have passed
-    unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, alice.address);
+    unlockedAmount = await vault.callStatic.getUnlockedAmount(
+      lp.address,
+      alice.address
+    );
     expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(10);
 
     // Alice will only able to withdraw first stake
     await rewards.connect(alice).withdraw(lp.address, alice.address);
     // check Alice's balance
-    expect(
-      _formatEther(await lp.balanceOf(alice.address)).toFixed(0)
-    ).to.equal("10");
+    expect(_formatEther(await lp.balanceOf(alice.address)).toFixed(0)).to.equal(
+      "10"
+    );
 
     // verify pool states
     pool = await vault.getPool(lp.address);
@@ -445,13 +468,16 @@ describe("Rewards Vault", function () {
     // check pool instance for correct values
     pool = await vault.getPool(lp.address);
     poolChecks(pool, 20, "0.06", "6.1");
-    
+
     // fast forward 5 minutes
     await network.provider.send("evm_increaseTime", [300]);
     await network.provider.send("evm_mine");
 
     // Alice's unlocked amount should be 0 as 5 minutes have passed after the second stake.
-    unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, alice.address);
+    unlockedAmount = await vault.callStatic.getUnlockedAmount(
+      lp.address,
+      alice.address
+    );
     expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(0);
 
     // Bob deposit again
@@ -467,7 +493,7 @@ describe("Rewards Vault", function () {
     // fast forward 5 minutes
     await network.provider.send("evm_increaseTime", [300]);
     await network.provider.send("evm_mine");
-    
+
     // Alice's pending reward
     // balance : 10
     // accCaplPerShare : (7 + (0.057 * 300) / 30) = 7.57
@@ -481,9 +507,9 @@ describe("Rewards Vault", function () {
 
     // Alice and Bob both claim
     await rewards.connect(alice).claim(lp.address, alice.address);
-    expect(_formatEther(await capl.balanceOf(alice.address)).toFixed(0)).to.equal(
-      "15"
-    );
+    expect(
+      _formatEther(await capl.balanceOf(alice.address)).toFixed(0)
+    ).to.equal("15");
 
     // check alice's userposition
     userPosition = await vault.getUserPosition(lp.address, alice.address);
@@ -491,7 +517,7 @@ describe("Rewards Vault", function () {
     // updated pool state
     pool = await vault.getPool(lp.address);
     poolChecks(pool, 30, "0.06", "7.5");
-    
+
     // fast forward 5 minutes
     await network.provider.send("evm_increaseTime", [300]);
     await network.provider.send("evm_mine");
@@ -503,9 +529,9 @@ describe("Rewards Vault", function () {
     // current capl balance 26
     // claimed amount 93
     // so Bob's total capl balance : 119
-    expect(
-      _formatEther(await capl.balanceOf(bob.address)).toFixed(0)
-    ).to.equal("119");
+    expect(_formatEther(await capl.balanceOf(bob.address)).toFixed(0)).to.equal(
+      "119"
+    );
 
     // check bob's userposition
     userPosition = await vault.getUserPosition(lp.address, bob.address);
@@ -517,16 +543,19 @@ describe("Rewards Vault", function () {
     // fast forward 5 minutes
     await network.provider.send("evm_increaseTime", [300]);
     await network.provider.send("evm_mine");
-    
+
     // Alice and Bob both withdraw
-    unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, alice.address);
+    unlockedAmount = await vault.callStatic.getUnlockedAmount(
+      lp.address,
+      alice.address
+    );
     expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(10);
     // Alice withdraw
     await rewards.connect(alice).withdraw(lp.address, alice.address);
     // check Alice's balance
-    expect(
-      _formatEther(await lp.balanceOf(alice.address)).toFixed(0)
-    ).to.equal("10");
+    expect(_formatEther(await lp.balanceOf(alice.address)).toFixed(0)).to.equal(
+      "10"
+    );
 
     // verify pool states
     pool = await vault.getPool(lp.address);
@@ -539,14 +568,17 @@ describe("Rewards Vault", function () {
     await network.provider.send("evm_increaseTime", [300]);
     await network.provider.send("evm_mine");
 
-    unlockedAmount = await vault.callStatic.getUnlockedAmount(lp.address, bob.address);
+    unlockedAmount = await vault.callStatic.getUnlockedAmount(
+      lp.address,
+      bob.address
+    );
     expect(Number(_formatEther(unlockedAmount.toString()))).to.equal(20);
     // Bob withdraw
     await rewards.connect(bob).withdraw(lp.address, bob.address);
     // check Bob's balance
-    expect(
-      _formatEther(await lp.balanceOf(bob.address)).toFixed(0)
-    ).to.equal("20");
+    expect(_formatEther(await lp.balanceOf(bob.address)).toFixed(0)).to.equal(
+      "20"
+    );
 
     // verify pool states
     pool = await vault.getPool(lp.address);

@@ -424,7 +424,7 @@ describe("Rewards Vault", function () {
     await rewards.connect(bob).deposit(lp.address, TWENTY_TOKENS_DEFAULT);
     pool = await vault.getPool(lp.address);
     poolChecks(pool, 40, "0.06", "41.7");
-    
+
     // check Bpb userPosition, Pool info
     userPosition = await vault.getUserPosition(lp.address, bob.address);
     userChecks(userPosition, 20, "834", 1);
@@ -437,7 +437,7 @@ describe("Rewards Vault", function () {
     // check Alice userPosition, Pool info
     userPosition = await vault.getUserPosition(lp.address, alice.address);
     userChecks(userPosition, 20, "625", 1);
-    
+
     // alice should have roughly 208 still
     pendingRewards = await vault.getPendingRewards(lp.address, alice.address);
     expect(_formatEther(pendingRewards).toFixed(0)).to.equal("208");

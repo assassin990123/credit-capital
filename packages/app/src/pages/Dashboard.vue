@@ -5,7 +5,7 @@
         <div class="title-cus">
           <h2>DAILY EARNINGS</h2>
           <div class="dashboard-daily-earning-panel-value">
-            {{ dailyEarnings }}
+            {{ format(dailyEarnings) }}
           </div>
         </div>
         <div class="title-cus">
@@ -22,7 +22,9 @@
       <div class="dashboard-daily-earning-capl">
         <div class="dashboard-daily-earning-capl-header">
           <h2>CAPL</h2>
-          <h2>{{ caplBalance }} ({{ caplInUSD?.toFixed(4) }} USD)</h2>
+          <h2>
+            {{ caplBalance.toFixed(3) }} ({{ caplInUSD?.toFixed(3) }} USD)
+          </h2>
         </div>
         <div class="dashboard-daily-earning-capl-content">
           <div class="dashboard-daily-earning-capl-content-row">
@@ -248,7 +250,12 @@
 <script setup lang="ts">
 import { useStore } from "@/store";
 import { computed, watchEffect, ref, Ref } from "vue";
-import { caplUSDConversion, getDailyEarnings, shortenAddress } from "@/utils";
+import {
+  caplUSDConversion,
+  getDailyEarnings,
+  shortenAddress,
+  format,
+} from "@/utils";
 
 const store = useStore();
 
@@ -277,7 +284,6 @@ let caplInUSD: Ref<number> = ref(0);
 let LPBalanceInUSDC: Ref<number> = ref(0);
 
 watchEffect(() => {
-  
   caplInUSD.value = caplUSDConversion(1, store);
   userCAPLToUSD.value = caplUSDConversion(caplBalance.value, store);
 

@@ -289,10 +289,10 @@ contract Rewards is Pausable, AccessControl {
 
         // check if the user withdraw token right after the first deposit
         // if (user.rewardDebt > 0) {
-            newRewardDebt =
-                // user.rewardDebt -
-                (amount * pool.accCaplPerShare) /
-                CAPL_PRECISION;
+        newRewardDebt =
+            // user.rewardDebt -
+            (amount * pool.accCaplPerShare) /
+            CAPL_PRECISION;
         // }
 
         vault.withdraw(_token, _user, amount, newRewardDebt);

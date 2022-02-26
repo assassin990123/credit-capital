@@ -106,9 +106,9 @@ const actions = {
     rootState: RootState;
     dispatch: Dispatch;
   }) {
-    actions.getCaplPerSecond({ commit, rootState });
-    actions.getTotalStaked({ commit, rootState });
-    actions.getUserPosition({ commit, rootState, dispatch });
+    await actions.getCaplPerSecond({ commit, rootState });
+    await actions.getTotalStaked({ commit, rootState });
+    await actions.getUserPosition({ commit, rootState, dispatch });
   },
 
   async getUserPosition({
@@ -134,7 +134,7 @@ const actions = {
       findObjectContract("LP", tokens, ChainID),
       address
     );
-    // parse balance, set new value in the local state
+    // parse balance, set new value in the local
     // console.log(userPosition)
     commit(
       "setUserStakedPosition",

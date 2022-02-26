@@ -13,16 +13,16 @@ enum JoinKind {
   INIT,
   EXACT_TOKENS_IN_FOR_BPT_OUT,
   TOKEN_IN_FOR_EXACT_BPT_OUT,
-  ALL_TOKENS_IN_FOR_EXACT_BPT_OUT
+  ALL_TOKENS_IN_FOR_EXACT_BPT_OUT,
 }
 
 const state: BalancerState = {
   poolTokens: {
     tokens: {},
-    balances: []
+    balances: [],
   },
   addLiquidity: {},
-  batchSwap: {}
+  batchSwap: {},
 };
 
 const getters = {
@@ -70,8 +70,12 @@ const actions = {
   },
 
   async singleSwap(
-    { commit, rootState, dispatch }: { commit: Commit; rootState: RootState; dispatch: Dispatch; },
-    { amount, symbol }: { amount: number, symbol: string }
+    {
+      commit,
+      rootState,
+      dispatch,
+    }: { commit: Commit; rootState: RootState; dispatch: Dispatch },
+    { amount, symbol }: { amount: number; symbol: string }
   ) {
     const pool_CAPL_USDC = findObjectId("CAPL/USDC", pools as Pool[], ChainID);
 
@@ -82,12 +86,12 @@ const actions = {
     tokenData[token_USDC] = {
       symbol: "USDC",
       decimals: "6",
-      limit: symbol === 'CAPL' ? 0 : amount,
+      limit: symbol === "CAPL" ? 0 : amount,
     };
     tokenData[token_CAPL] = {
       symbol: "CAPL",
       decimals: "18",
-      limit: symbol === 'CAPL' ? amount : 0, //
+      limit: symbol === "CAPL" ? amount : 0, //
     };
 
     const fundSettings: any = {
@@ -97,8 +101,8 @@ const actions = {
       toInternalBalance: false,
     };
 
-    const TOKEN_IN = symbol === 'CAPL' ? token_CAPL : token_USDC;
-    const TOKEN_OUT = symbol === 'CAPL' ? token_USDC : token_CAPL;
+    const TOKEN_IN = symbol === "CAPL" ? token_CAPL : token_USDC;
+    const TOKEN_OUT = symbol === "CAPL" ? token_USDC : token_CAPL;
 
     const swapKind = 0;
     const swap_struct = {
@@ -106,7 +110,9 @@ const actions = {
       kind: swapKind,
       assetIn: TOKEN_IN,
       assetOut: TOKEN_OUT,
-      amount: ethers.utils.parseUnits(amount.toString(), tokenData[TOKEN_IN]['decimals']).toString(),
+      amount: ethers.utils
+        .parseUnits(amount.toString(), tokenData[TOKEN_IN]["decimals"])
+        .toString(),
       userData: "0x",
     };
     const fundStruct = {
@@ -116,7 +122,10 @@ const actions = {
       toInternalBalance: fundSettings["toInternalBalance"],
     };
     const deadline = ethers.BigNumber.from("999999999999999999");
-    const token_limit = ethers.BigNumber.from((tokenData[TOKEN_OUT]["limit"]) * Math.pow(10, tokenData[TOKEN_OUT]["decimals"])).toString();
+    const token_limit = ethers.BigNumber.from(
+      tokenData[TOKEN_OUT]["limit"] *
+        Math.pow(10, tokenData[TOKEN_OUT]["decimals"])
+    ).toString();
 
     if (rootState.contracts.balancerVaultContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -129,13 +138,17 @@ const actions = {
       swap_struct,
       fundStruct,
       token_limit,
-      deadline.toString(),
+      deadline.toString()
     );
   },
 
   async addLiquidity(
-    { commit, rootState, dispatch }: { commit: Commit; rootState: RootState; dispatch: Dispatch; },
-    { caplAmount, usdcAmount }: { caplAmount: number, usdcAmount: number }
+    {
+      commit,
+      rootState,
+      dispatch,
+    }: { commit: Commit; rootState: RootState; dispatch: Dispatch },
+    { caplAmount, usdcAmount }: { caplAmount: number; usdcAmount: number }
   ) {
     if (rootState.contracts.balancerVaultContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -157,9 +170,7 @@ const actions = {
       },
       {
         token: token_USDC,
-        maxAmountsIn: ethers.BigNumber.from(
-          usdcAmount * Math.pow(10, 6)
-        ),
+        maxAmountsIn: ethers.BigNumber.from(usdcAmount * Math.pow(10, 6)),
       },
     ];
     assets.sort((asset1, asset2) => {
@@ -172,9 +183,15 @@ const actions = {
       return 0;
     });
 
-    const userType = ['uint256', 'uint256[]'];
-    const userData = [JoinKind.EXACT_TOKENS_IN_FOR_BPT_OUT, assets.map((asset) => asset.maxAmountsIn)];
-    const encodedUserData = ethers.utils.defaultAbiCoder.encode(userType, userData);
+    const userType = ["uint256", "uint256[]"];
+    const userData = [
+      JoinKind.EXACT_TOKENS_IN_FOR_BPT_OUT,
+      assets.map((asset) => asset.maxAmountsIn),
+    ];
+    const encodedUserData = ethers.utils.defaultAbiCoder.encode(
+      userType,
+      userData
+    );
 
     const request: any = {
       assets: assets.map((asset) => asset.token),

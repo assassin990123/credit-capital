@@ -382,7 +382,11 @@ contract Vault is AccessControl, Pausable {
         pool.totalPooled -= _amount;
     }
 
-    function withdrawNativeBalance() public payable onlyRole(DEFAULT_ADMIN_ROLE) {
+    function withdrawNativeBalance()
+        public
+        payable
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         require(address(this).balance > 0, "no balance to withdraw");
         uint256 balance = address(this).balance;
 

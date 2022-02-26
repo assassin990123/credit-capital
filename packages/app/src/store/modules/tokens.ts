@@ -160,7 +160,7 @@ const actions = {
       lpRewardsAllowance = Number(
         ethers.utils.formatUnits(lpRewardsAllowance.toString(), 18)
       );
-      
+
       // console.log(`CAPL allowance: ${caplAllowance}, USDC allowance: ${usdcAllowance}`)
       commit("setCAPLBalancerVaultAllowance", caplBalancerVaultAllowance);
       commit("setUSDCBalancerVaultAllowance", usdcBalancerVaultAllowance);
