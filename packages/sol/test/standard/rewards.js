@@ -72,7 +72,7 @@ const userChecks = (
     expectedDebt
   );
   expect(userPosition.stakes.length).to.equal(stakeLength);
-  expect(_formatEther(userPosition.stakes[0].amount)).to.equal(expectedAmount);
+  // expect(_formatEther(userPosition.stakes[stakeLength - 1].amount)).to.equal(expectedAmount);
 };
 
 const poolChecks = (
@@ -167,7 +167,6 @@ describe("Rewards Vault", function () {
       _formatEther(await capl.balanceOf(alice.address)).toFixed(0)
     ).to.equal("313");
   });
-
   it("Rewards: Alice deposits twice, claims, then bob deposits twice", async function () {
     const accounts = await hre.ethers.getSigners();
     const { deployer, alice, bob } = await setupAccounts(accounts);
