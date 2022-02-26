@@ -284,7 +284,7 @@ describe("Rewards Vault", function () {
     poolChecks(pool, 30, "0.06", "83.4");
 
     userPosition = await vault.getUserPosition(lp.address, bob.address);
-    userChecks(userPosition, 20, "834", 2);
+    userChecks(userPosition, 20, "834", 1);
 
     // fast forward 1h
     await network.provider.send("evm_increaseTime", [3600]);
@@ -439,7 +439,7 @@ describe("Rewards Vault", function () {
     await rewards.connect(alice).deposit(lp.address, TEN_TOKENS_DEFAULT);
     // check all vault variables to be correct
     userPosition = await vault.getUserPosition(lp.address, alice.address);
-    // should be two stake as 10 minutes passed after the first stake
+    // should be two stake as she should has another position
     userChecks(userPosition, 10, "61", 2);
 
     // check pool instance for correct values
@@ -458,8 +458,8 @@ describe("Rewards Vault", function () {
     await rewards.connect(bob).deposit(lp.address, TEN_TOKENS_DEFAULT);
     // check Alice userPosition, Pool info
     userPosition = await vault.getUserPosition(lp.address, bob.address);
-    // Bob should have two stakes
-    userChecks(userPosition, 20, "70", 2);
+    // Bob should have one stake under the timelocktThreshold (1 week)
+    userChecks(userPosition, 20, "70", 1);
 
     pool = await vault.getPool(lp.address);
     poolChecks(pool, 30, "0.06", "7.0");
@@ -487,10 +487,10 @@ describe("Rewards Vault", function () {
 
     // check alice's userposition
     userPosition = await vault.getUserPosition(lp.address, alice.address);
-    userChecks(userPosition, 10, "76", 2);
+    userChecks(userPosition, 10, "75", 2);
     // updated pool state
     pool = await vault.getPool(lp.address);
-    poolChecks(pool, 30, "0.06", "7.6");
+    poolChecks(pool, 30, "0.06", "7.5");
     
     // fast forward 5 minutes
     await network.provider.send("evm_increaseTime", [300]);
@@ -509,7 +509,7 @@ describe("Rewards Vault", function () {
 
     // check bob's userposition
     userPosition = await vault.getUserPosition(lp.address, bob.address);
-    userChecks(userPosition, 20, "163", 2);
+    userChecks(userPosition, 20, "163", 1);
     // updated pool state
     pool = await vault.getPool(lp.address);
     poolChecks(pool, 30, "0.06", "8.1");
@@ -553,6 +553,6 @@ describe("Rewards Vault", function () {
     poolChecks(pool, 0, "0.06", "9.6");
     // check userposition, rewardDebt is around 2015
     userPosition = await vault.getUserPosition(lp.address, bob.address);
-    userChecks(userPosition, 0, "192", 2);
+    userChecks(userPosition, 0, "192", 1);
   });
 });
