@@ -86,7 +86,13 @@ const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
 const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
 
 watchEffect(async () => {
-  if (isUserConnected.value) {
+  if (!isUserConnected.value) {
+    return;
+  }
+  if (
+    checkAvailability(caplLiquidity.value, caplBalance) &&
+    checkAvailability(usdcLiquidity.value, usdcBalance)
+  ) {
     if (
       Number(caplLiquidity.value) === 0 &&
       Number(usdcLiquidity.value) === 0
@@ -157,17 +163,7 @@ function addLiquidity() {
 }
 
 function onChange() {
-  if (checkConnection(store)) {
-    if (
-      checkAvailability(caplLiquidity.value, caplBalance.value) &&
-      checkAvailability(usdcLiquidity.value, usdcBalance.value)
-    ) {
-      addLiquidityButtonDisabled.value = false;
-    } else {
-      addLiquidityButtonDisabled.value = true;
-      addLiquidityButtonString.value = 'Add Liqudity';
-    }
-  }
+  checkConnection(store);
 }
 
 // allows for a user to switch between swapping USDC and CAPL
