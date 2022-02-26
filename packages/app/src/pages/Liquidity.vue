@@ -6,7 +6,7 @@
           <h1 class="panel-title">liquidity</h1>
           <div class="panel-content swap-panel-content liquidity-box-main">
             <div class="panel-header">
-              <div class="panel-explanation">functionality explanation</div>
+              <div class="panel-explanation"></div>
               <div class="ellipses">&hellip;</div>
             </div>
             <div class="panel-display swap-panel-display">
