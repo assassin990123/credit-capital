@@ -6,9 +6,8 @@
           <h1 class="panel-title">PENDING REWARDS</h1>
           <div class="rewards-content">
             <div class="rewards-display">
-              {{ pendingRewardsCAPL + " CAPL" }} ({{
-                pendingRewardsUSDC + " USD"
-              }})
+              {{ pendingRewardsCAPL + " CAPL" }}<br />
+              ({{ pendingRewardsUSDC + " USD" }})
             </div>
             <div class="rewards-section">
               <button class="rewards-section-item" @click="claim">CLAIM</button>
