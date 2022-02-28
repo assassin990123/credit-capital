@@ -6,7 +6,7 @@
       <span></span>
     </div>
     <div>
-      <div class="toastnotification-content">No unlocked balance to withdraw!</div>
+      <div class="toastnotification-content">Amount must be greater than zero.</div>
     </div>
   </div>
 </template>
