@@ -22,7 +22,6 @@
         <div class="panel stake-panel">
           <h1 class="panel-title">Withdraw</h1>
           <div class="panel-content stake-panel-content">
-            Available LP Tokens<br />
             <input
               type="number"
               disabled
