@@ -23,7 +23,7 @@
         <div class="dashboard-daily-earning-capl-header">
           <h2>CAPL</h2>
           <h2>
-            {{ caplBalance.toFixed(3) }} ({{ caplInUSD?.toFixed(3) }} USD)
+            {{ caplBalance.toFixed(3) }} ({{ userCAPLToUSD?.toFixed(2) }} USD)
           </h2>
         </div>
         <div class="dashboard-daily-earning-capl-content">
