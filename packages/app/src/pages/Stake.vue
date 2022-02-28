@@ -12,7 +12,7 @@
               v-model="stakeAmount"
             />
             <div class="myBalance">
-              Balance: <a @click="insertBalance">{{ lpBalance.toFixed(6) }}</a>
+              Balance: <a @click="insertBalance">{{ lpBalance.toFixed(4) }}</a> USDC-CAPL
             </div>
             <button type="submit" class="btn-custom" @click="handleStake">
               {{ stakeButtonText }}
@@ -29,6 +29,9 @@
               class="input-custom"
               v-model="unstakeAmount"
             />
+            <div class="myBalance">
+              Unlocked Balance: <a>0.00</a> USDC-CAPL
+            </div>
             <button type="submit" class="btn-custom" @click="unstake">
               Withdraw
             </button>
