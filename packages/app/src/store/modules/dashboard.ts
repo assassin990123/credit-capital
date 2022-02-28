@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 const state: DashboardState = {
   dailyEarnings: 0,
   tvl: 0,
+  revenueProjectionPerDay: 0
 };
 
 const getters = {
@@ -16,6 +17,9 @@ const getters = {
   getTVL(state: DashboardState) {
     return state.tvl;
   },
+  getRevenueProjectionPerDay () {
+    return state.revenueProjectionPerDay;
+  }
 };
 
 const actions = {
@@ -60,15 +64,47 @@ const actions = {
         calculateCAPLUSDPrice(Number(caplBalance), "CAPL", poolTokens)) /
       Number(lpTokenTotalSupply);
 
-    console.log(userStakedPosition, tvlTokenPrice);
     commit("setTVL", userStakedPosition * tvlTokenPrice);
   },
+
+  async fetchRevenueProjectionPerDay({
+    commit,
+    rootState,
+    dispatch,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+    dispatch: Dispatch;
+  }) {
+
+    if (rootState.rewards.caplPerSecond === 0) {
+      await dispatch("rewards/getCaplPerSecond", null, { root: true });
+    }
+    const rewardsPerDay = rootState.rewards.caplPerSecond * 86400;
+
+    if (rootState.rewards.totalStaked === 0) {
+      await dispatch("rewards/getTotalStaked", null, { root: true });
+    }
+    const totalStakedLPTokens = rootState.rewards.totalStaked;
+
+    if (rootState.rewards.userStakedPosition === 0) {
+      await dispatch("rewards/getUserPosition", null, { root: true });
+    }
+    const userStakedLPTokens = rootState.rewards.userStakedPosition;
+
+
+    commit("setRevenueProjectionPerDay", rewardsPerDay / totalStakedLPTokens * userStakedLPTokens);
+  }
 };
 
 const mutations = {
   setTVL(state: DashboardState, _tvl: number) {
     state.tvl = _tvl;
   },
+
+  setRevenueProjectionPerDay(state: DashboardState, _revenueProjectionPerDay: number) {
+    state.revenueProjectionPerDay = _revenueProjectionPerDay;
+  }
 };
 
 export default {
