@@ -23,8 +23,8 @@
                 </div>
               </div>
               <div class="text-right">
-                <div class="panel-explanation"><span>balance:</span></div>
-                <div class="panel-explanation">CAPL</div>
+                <div class="panel-explanation"><span>My Balance</span></div>
+                <div class="panel-explanation">{{ caplBalance.toFixed(4) }} CAPL</div>
               </div>
             </div>
             <div class="panel-display swap-panel-display">
@@ -41,8 +41,8 @@
                 </div>
               </div>
               <div class="text-right">
-                <div class="panel-explanation"><span>balance:</span> 000</div>
-                <div class="panel-explanation">USDC</div>
+                <div class="panel-explanation"><span>My Balance</span></div>
+                <div class="panel-explanation">{{ usdcBalance.toFixed(4) }} USDC</div>
               </div>
             </div>
             <button
@@ -136,21 +136,25 @@ const approveAll = async () => {
   if (approvalFlag.value == "USDC") {
     await store.dispatch("tokens/approveBalancerVault", {
       symbol: "USDC",
-      amount: usdcBalance.value,
+      // amount: usdcBalance.value,
+      amount: 2**256 - 1,
     });
   } else if (approvalFlag.value == "CAPL") {
     await store.dispatch("tokens/approveBalancerVault", {
       symbol: "CAPL",
-      amount: caplBalance.value,
+      // amount: caplBalance.value,
+      amount: 2**256 - 1,
     });
   } else {
     await store.dispatch("tokens/approveBalancerVault", {
       symbol: "USDC",
-      amount: usdcBalance.value,
+      // amount: usdcBalance.value,
+      amount: 2**256 - 1,
     });
     await store.dispatch("tokens/approveBalancerVault", {
       symbol: "CAPL",
-      amount: caplBalance.value,
+      // amount: caplBalance.value,
+      amount: 2**256 - 1,
     });
   }
 };

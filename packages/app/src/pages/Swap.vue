@@ -7,7 +7,7 @@
           <div class="panel-content swap-panel-content liquidity-box-main">
             <div class="panel-header">
               <div class="panel-explanation"></div>
-              <div class="ellipses">&hellip;</div>
+              <!-- <div class="ellipses">&hellip;</div> -->
             </div>
             <div class="panel-display1">
               <div class="swap-description">
@@ -30,7 +30,6 @@
             <div class="panel-display1">
               <div class="swap-description">
                 <div class="panel-explanation"><span>receive</span></div>
-                <div class="panel-explanation"><span>balance:</span> 000</div>
               </div>
               <div class="swap-input-body">
                 <div class="swap-input-below">
@@ -63,9 +62,9 @@ import {
 import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store: any = useStore();
-let swapAmount: Ref<number> = ref(0);
-let swapTokenSymbol: Ref<string> = ref("CAPL");
-let swapToTokenSymbol: Ref<string> = ref("USDC");
+let swapAmount: Ref<number|null> = ref(null);
+let swapTokenSymbol: Ref<string> = ref("USDC");
+let swapToTokenSymbol: Ref<string> = ref("CAPL");
 
 let swapTokenResult: Ref<string> = ref("");
 let swapButtonString = ref("Swap");
