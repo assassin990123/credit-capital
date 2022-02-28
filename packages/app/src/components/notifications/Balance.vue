@@ -2,11 +2,11 @@
   <div>
     <div class="toastnotification-header">
       <font-awesome-icon icon="fa-light fa-triangle-exclamation" />
-      <span class="toast-title">Notification</span>
+      <span class="toast-title">Warning</span>
       <span></span>
     </div>
     <div>
-      <div class="toastnotification-content">Not Enough!</div>
+      <div class="toastnotification-content">No unlocked balance to withdraw!</div>
     </div>
   </div>
 </template>

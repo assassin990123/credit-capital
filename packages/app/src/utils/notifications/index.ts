@@ -20,7 +20,7 @@ export const checkConnection = (store: any) => {
   return true;
 };
 export const checkBalance = (balance: number) => {
-  if (balance < 0) {
+  if (balance == 0) {
     dismissNotification();
     toastID = toast.info(Balance);
     return false;
