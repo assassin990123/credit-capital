@@ -136,21 +136,25 @@ const approveAll = async () => {
   if (approvalFlag.value == "USDC") {
     await store.dispatch("tokens/approveBalancerVault", {
       symbol: "USDC",
-      amount: usdcBalance.value,
+      // amount: usdcBalance.value,
+      amount: 2**256 - 1,
     });
   } else if (approvalFlag.value == "CAPL") {
     await store.dispatch("tokens/approveBalancerVault", {
       symbol: "CAPL",
-      amount: caplBalance.value,
+      // amount: caplBalance.value,
+      amount: 2**256 - 1,
     });
   } else {
     await store.dispatch("tokens/approveBalancerVault", {
       symbol: "USDC",
-      amount: usdcBalance.value,
+      // amount: usdcBalance.value,
+      amount: 2**256 - 1,
     });
     await store.dispatch("tokens/approveBalancerVault", {
       symbol: "CAPL",
-      amount: caplBalance.value,
+      // amount: caplBalance.value,
+      amount: 2**256 - 1,
     });
   }
 };
