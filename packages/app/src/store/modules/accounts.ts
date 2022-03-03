@@ -65,9 +65,6 @@ const actions = {
         // store the cached connection in local storage
         // @ts-ignore
         localStorage.setItem("isConnected", true);
-        localStorage.setItem("activeAcctount", accounts[0]);
-        localStorage.setItem("web3Provider", markRaw(provider));
-        localStorage.setItem("web3Signer", markRaw(signer));
       }
 
       // listen in
