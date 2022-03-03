@@ -126,9 +126,8 @@ export default {
 
     const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
-        
     // check the localstorage for determine the user was connected
-    if (localStorage.getItem('isConnected') && !isConnected.value) {
+    if (localStorage.getItem('isConnected')) {
       // reconnect web3
       connectWeb3();
     }
