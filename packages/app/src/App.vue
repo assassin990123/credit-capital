@@ -12,6 +12,7 @@ import Footer from "@/components/Footer.vue";
 import { useStore } from "@/store";
 import { computed, watchEffect } from "vue";
 
+document.title="CreditCapital: Your Personal, Private Hedge Fund";
 const store = useStore();
 // create contract instances with provider
 store.dispatch("contracts/setContracts");
