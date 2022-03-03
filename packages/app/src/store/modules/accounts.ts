@@ -57,8 +57,19 @@ const actions = {
       commit("setWeb3Provider", markRaw(provider));
       const signer = provider.getSigner(state.activeAccount);
       commit("setWeb3Signer", markRaw(signer));
+
+      // store the cached connection in local storage
+      // @ts-ignore
+      localStorage.setItem("isConnected", true);
+      localStorage.setItem("activeAcctount", accounts[0]);
+      localStorage.setItem("web3Provider", markRaw(provider));
+      localStorage.setItem("web3Signer", markRaw(signer));
+
       // listen in
       await actions.ethereumListener({ commit });
+
+      // set active account & connected state at local storage
+
     }
 
     await dispatch("contracts/setContracts", null, { root: true });
