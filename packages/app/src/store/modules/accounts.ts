@@ -4,6 +4,7 @@ import { markRaw } from "vue";
 import { Commit, Dispatch } from "vuex";
 import { AccountState } from "@/models/accounts";
 import { ethers } from "ethers";
+import { checkWalletConnect } from "@/utils/notifications";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
@@ -48,28 +49,29 @@ const actions = {
     provider = new ethers.providers.Web3Provider(provider);
 
     if (provider) {
-      const accounts = await (window as any).ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      await actions.checkNetwork();
-      commit("setIsConnected", true);
-      commit("setActiveAccount", accounts[0]);
-      commit("setWeb3Provider", markRaw(provider));
-      const signer = provider.getSigner(state.activeAccount);
-      commit("setWeb3Signer", markRaw(signer));
+      if (!await (window as any).ethereum._metamask.isUnlocked()) {
+        checkWalletConnect();
+      } else {
+        const accounts = await (window as any).ethereum.request({
+          method: "eth_requestAccounts",
+        });
+        await actions.checkNetwork();
+        commit("setIsConnected", true);
+        commit("setActiveAccount", accounts[0]);
+        commit("setWeb3Provider", markRaw(provider));
+        const signer = provider.getSigner(state.activeAccount);
+        commit("setWeb3Signer", markRaw(signer));
 
-      // store the cached connection in local storage
-      // @ts-ignore
-      localStorage.setItem("isConnected", true);
-      localStorage.setItem("activeAcctount", accounts[0]);
-      localStorage.setItem("web3Provider", markRaw(provider));
-      localStorage.setItem("web3Signer", markRaw(signer));
+        // store the cached connection in local storage
+        // @ts-ignore
+        localStorage.setItem("isConnected", true);
+        localStorage.setItem("activeAcctount", accounts[0]);
+        localStorage.setItem("web3Provider", markRaw(provider));
+        localStorage.setItem("web3Signer", markRaw(signer));
+      }
 
       // listen in
       await actions.ethereumListener({ commit });
-
-      // set active account & connected state at local storage
-
     }
 
     await dispatch("contracts/setContracts", null, { root: true });
