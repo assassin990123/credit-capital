@@ -4,6 +4,7 @@ import { markRaw } from "vue";
 import { Commit, Dispatch } from "vuex";
 import { AccountState } from "@/models/accounts";
 import { ethers } from "ethers";
+import { checkWalletConnect } from "@/utils/notifications";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
@@ -48,17 +49,21 @@ const actions = {
     provider = new ethers.providers.Web3Provider(provider);
 
     if (provider) {
-      const accounts = await (window as any).ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      await actions.checkNetwork();
-      commit("setIsConnected", true);
-      commit("setActiveAccount", accounts[0]);
-      commit("setWeb3Provider", markRaw(provider));
-      const signer = provider.getSigner(state.activeAccount);
-      commit("setWeb3Signer", markRaw(signer));
-      // listen in
-      await actions.ethereumListener({ commit });
+      if (!await (window as any).ethereum._metamask.isUnlocked()) {
+        checkWalletConnect();
+      } else {
+        const accounts = await (window as any).ethereum.request({
+          method: "eth_requestAccounts",
+        });
+        await actions.checkNetwork();
+        commit("setIsConnected", true);
+        commit("setActiveAccount", accounts[0]);
+        commit("setWeb3Provider", markRaw(provider));
+        const signer = provider.getSigner(state.activeAccount);
+        commit("setWeb3Signer", markRaw(signer));
+        // listen in
+        await actions.ethereumListener({ commit });
+      }
     }
 
     await dispatch("contracts/setContracts", null, { root: true });
