@@ -3,6 +3,7 @@ import { TokenState } from "@/models/tokens";
 import { RootState } from "@/models";
 import { Commit, Dispatch } from "vuex";
 import { ethers } from "ethers";
+import { parseScientific } from "../../utils";
 
 const state: TokenState = {
   capl: {
@@ -68,6 +69,8 @@ const actions = {
     { commit, rootState }: { commit: Commit; rootState: RootState },
     { symbol, amount }: { symbol: string; amount: number }
   ) {
+
+    const strAmount = parseScientific(amount.toString());
     let contract;
     let decimals;
     symbol == "CAPL"
@@ -78,11 +81,19 @@ const actions = {
     const address = rootState.contracts.balancerVaultContract.address;
     // @ts-ignore
     if (contract && amount > 0) {
-      // @ts-ignore
-      await contract?.approve(
-        address,
-        ethers.utils.parseUnits(amount.toString(), decimals)
-      );
+      if ((2**255 - 1) == amount){
+        // @ts-ignore
+        await contract?.approve(
+          address,
+          ethers.BigNumber.from(strAmount)
+        );
+      } else {
+        // @ts-ignore
+        await contract?.approve(
+          address,
+          ethers.utils.parseUnits(strAmount, decimals)
+        );
+      }
     }
   },
   async approveRewards(
