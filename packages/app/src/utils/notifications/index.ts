@@ -3,6 +3,7 @@ import Balance from "../../components/notifications/Balance.vue";
 import Connection from "../../components/notifications/Connection.vue";
 import ConnectionSuccess from "../../components/notifications/ConnectionSuccess.vue";
 import ConnectionFaild from "../../components/notifications/ConnectionFaild.vue";
+import UnLock from "../../components/notifications/UnLock.vue";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
@@ -47,6 +48,12 @@ export const showConnectResult = (store: any) => {
   }
 
   toastID = toast.error(ConnectionFaild);
+  return false;
+};
+
+export const checkWalletConnect = () => {
+  dismissNotification();
+  toastID = toast.info(UnLock);
   return false;
 };
 

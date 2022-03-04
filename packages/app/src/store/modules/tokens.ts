@@ -81,19 +81,11 @@ const actions = {
     const address = rootState.contracts.balancerVaultContract.address;
     // @ts-ignore
     if (contract && amount > 0) {
-      if ((2**255 - 1) == amount){
-        // @ts-ignore
-        await contract?.approve(
-          address,
-          ethers.BigNumber.from(strAmount)
-        );
-      } else {
-        // @ts-ignore
-        await contract?.approve(
-          address,
-          ethers.utils.parseUnits(strAmount, decimals)
-        );
-      }
+      // @ts-ignore
+      await contract?.approve(
+        address,
+        "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+      );
     }
   },
   async approveRewards(
