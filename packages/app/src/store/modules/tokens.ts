@@ -81,7 +81,7 @@ const actions = {
       // @ts-ignore
       await contract?.approve(
         address,
-        ethers.utils.parseUnits(amount.toString(), decimals)
+        "115792089237316195423570985008687907853269984665640564039457584007913129639935"
       );
     }
   },

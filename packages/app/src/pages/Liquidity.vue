@@ -143,18 +143,18 @@ const approveAll = async () => {
     await store.dispatch("tokens/approveBalancerVault", {
       symbol: "CAPL",
       // amount: caplBalance.value,
-      amount: 2**256 - 1,
+      amount: 2**255 - 1,
     });
   } else {
     await store.dispatch("tokens/approveBalancerVault", {
       symbol: "USDC",
       // amount: usdcBalance.value,
-      amount: 2**256 - 1,
+      amount: 2**255 - 1,
     });
     await store.dispatch("tokens/approveBalancerVault", {
       symbol: "CAPL",
       // amount: caplBalance.value,
-      amount: 2**256 - 1,
+      amount: 2**255 - 1,
     });
   }
 };
