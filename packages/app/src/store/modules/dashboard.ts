@@ -32,9 +32,6 @@ const actions = {
     rootState: RootState;
     dispatch: Dispatch;
   }) {
-    console.log('fetch')
-    console.log(rootState.rewards.userStakedPosition);
-
     const userStakedPosition = rootState.rewards.userStakedPosition;
     if (userStakedPosition == 0) {
       commit("setTVL", 0);
