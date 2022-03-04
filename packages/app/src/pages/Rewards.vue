@@ -48,7 +48,7 @@ const claim = () => {
 };
 
 watchEffect(async () => {
-  if (connected.value && pendingRewards.value > 0) {
+  if (connected.value && pendingRewards.value >= 0) {
     await store.dispatch("balancer/getPoolTokens");
     pendingRewardsCAPL.value = format(pendingRewards.value);
     pendingRewardsUSDC.value = format(
