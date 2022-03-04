@@ -67,10 +67,9 @@ const mutations = {
 const actions = {
   async approveBalancerVault(
     { commit, rootState }: { commit: Commit; rootState: RootState },
-    { symbol, amount }: { symbol: string; amount: number }
+    { symbol }: { symbol: string }
   ) {
 
-    const strAmount = parseScientific(amount.toString());
     let contract;
     let decimals;
     symbol == "CAPL"
@@ -80,7 +79,7 @@ const actions = {
     // @ts-ignore
     const address = rootState.contracts.balancerVaultContract.address;
     // @ts-ignore
-    if (contract && amount > 0) {
+    if (contract > 0) {
       // @ts-ignore
       await contract?.approve(
         address,

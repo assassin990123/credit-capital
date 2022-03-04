@@ -100,7 +100,6 @@ const approve = async () => {
   const symbol = swapTokenSymbol.value;
   await store.dispatch("tokens/approveBalancerVault", {
     symbol,
-    amount: swapAmount.value,
   });
 };
 
