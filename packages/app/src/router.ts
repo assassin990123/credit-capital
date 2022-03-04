@@ -8,6 +8,7 @@ import TreasuryPage from "./pages/Treasury.vue";
 import PlatformPage from "./pages/Platform.vue";
 import PortfolioPage from "./pages/Portfolio.vue";
 import LiquidityPage from "./pages/Liquidity.vue";
+import HomePageNew from "./pages/HomePageNew.vue"
 
 const routeInfos = [
   {
@@ -45,6 +46,10 @@ const routeInfos = [
   {
     path: "/portfolio",
     component: PortfolioPage,
+  },
+  {
+    path: "/homepagenew",
+    component: HomePageNew,
   },
 ];
 

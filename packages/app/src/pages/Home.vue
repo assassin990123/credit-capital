@@ -283,6 +283,120 @@
       <!-- /Container -->
     </div>
     <!-- /About Us -->
+    <section class="section-1">
+      <div class="hero wow fadeInDown animated floating">
+        <div class="container">
+          <p>
+            <span>CREDITCAPITAL</span> The DeFi Hedge Fund That You Can Trust
+          </p>
+          <h1>THE FUTURE OF PRIVATE INVESTMENT</h1>
+        </div>
+      </div>
+    </section>
+    <section class="section-2">
+      <div class="container">
+        <div class="sec-2-inner">
+          <div class="text-left"></div>
+          <div class="text-right">
+            <p>
+              Bringing the speed and privacy of cryptocurrency to our valued
+              customers in the private investment world for consistently high
+              yields, secure funds management and privacy.
+            </p>
+            <h1>
+              Re-Constructing traditional models of investment through the power
+              of DeFi.
+            </h1>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section-3">
+      <div class="container">
+        <div class="sec-2-inner">
+          <div class="sec-3-text-left">
+            <h1>WHO WE ARE.</h1>
+            <h2>ABOUT CREDITCAPITAL</h2>
+            <p>
+              CreditCapital is a wealth management platform created to bridge
+              the gap between traditional investment networks and
+              blockchain-powered platforms. Its aim is to make mutual investing
+              and personal lending easier and more profitable for participants.
+            </p>
+
+            <p>
+              Unlike funds that rely on predetermined yield strategies,
+              CreditCapital engages in a variety of investment opportunities and
+              strategies that maximizes returns for member users
+            </p>
+            .
+
+            <p>
+              The network can be thought of as an investment hedge fund but with
+              blockchain and defi features that reduce the friction associated
+              with mutual investing.
+            </p>
+          </div>
+          <div class="sec-3-text-right">
+            <h1>summary</h1>
+            <ul>
+              <li>
+                No trust or intermediary company required for most transactions
+              </li>
+              <li>Always online</li>
+              <li>
+                Participants have the ability to borrow against their existing
+                crypto assets
+              </li>
+              <li>
+                Revenue is programmably calculated and distributed down to the
+                second
+              </li>
+              <li>Fewer legal contracts have to be written.</li>
+              <li>
+                Permissionless - does not require permission from a central
+                authority to carry out actions on the network.
+              </li>
+              <li>Anyone can participate. Curated.</li>
+              <li>
+                Anyone can participate. Curated. • Revenue sharing opportunities
+                with both long term and short term positions.
+              </li>
+              <li>
+                Network and accessibility builds wealth via adoption from future
+                outside investors.
+              </li>
+              <li>
+                Multiple structural mechanisms to rectify value of tokens and
+                balance ledgers.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section-4">
+      <div class="container">
+        <div class="sec-4-inner">
+          <div class="text-label">
+            <h1>OUR GOALS</h1>
+            <p>
+              CreditCapital has reconstructed the traditional models for
+              investing and lending by creating a decentralized finance (DeFi)
+              platform that offers consistently high yields, secure funds
+              management and privacy for investors.
+            </p>
+          </div>
+          <div class="sec-4">
+            <div class="sec-4-col"></div>
+            <div class="sec-4-col"></div>
+            <div class="sec-4-col"></div>
+            <div class="sec-4-col"></div>
+            <div class="sec-4-col"></div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -304,4 +418,75 @@ watchEffect(() => {
 });
 </script>
 
-<style></style>
+<style>
+.section-1 {
+  background: url("/images/hero/hero-1.png") no-repeat center;
+  height: 100vh;
+  display: flex;
+  align-self: center;
+}
+.hero {
+  background: url("/images/hero/sh4-bn.png") no-repeat center left;
+  background-attachment: scroll;
+  padding: 200px;
+  width: 70%;
+}
+
+.section-2 {
+  background: url("/images/hero/sh4-bn.png") no-repeat left;
+  height: 100vh;
+}
+
+.sec-2-inner {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 100vh;
+  align-items: center;
+  gap: 50px;
+}
+
+.text-right {
+  width: 60%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
+}
+
+.section-3 {
+  background: url("/images/hero/sh4-bn.png") no-repeat right;
+  height: 100vh;
+}
+
+.sec-3-text-left {
+  width: 50%;
+}
+
+.section-4 {
+  height: 100vh;
+}
+
+.sec-4-inner {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+}
+
+.text-label {
+  width: 70%;
+}
+
+.sec-4 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sec-4-col {
+  width: 200px;
+  height: 400px;
+  background: blue;
+}
+</style>
