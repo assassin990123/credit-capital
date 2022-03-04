@@ -35,15 +35,7 @@
           <!-- /col -->
           <!-- col -->
           <div
-            class="
-              col-xl-7
-              offset-xl-1
-              col-lg-7
-              wow
-              fadeInDown
-              animated
-              floating
-            "
+            class="col-xl-7 offset-xl-1 col-lg-7 wow fadeInDown animated floating"
             data-wow-delay="0.4s"
           >
             <img
@@ -294,10 +286,12 @@
     <section class="section-1">
       <div class="hero wow fadeInDown animated floating">
         <div class="container">
-          <p>
-            <span>CREDITCAPITAL</span> The DeFi Hedge Fund That You Can Trust
-          </p>
-          <h1>THE FUTURE OF PRIVATE INVESTMENT</h1>
+          <div class="sec-1-inner">
+            <p>
+              <span>CREDITCAPITAL</span> The DeFi Hedge Fund That You Can Trust
+            </p>
+            <h1>THE FUTURE OF <br />PRIVATE INVESTMENT <span>2022</span></h1>
+          </div>
         </div>
       </div>
     </section>
@@ -321,7 +315,7 @@
     </section>
     <section class="section-3">
       <div class="container">
-        <div class="sec-2-inner">
+        <div class="sec-3-inner">
           <div class="sec-3-text-left">
             <h1>WHO WE ARE.</h1>
             <h2>ABOUT CREDITCAPITAL</h2>
@@ -345,40 +339,43 @@
               with mutual investing.
             </p>
           </div>
-          <div class="sec-3-text-right">
-            <h1>summary</h1>
-            <ul>
-              <li>
-                No trust or intermediary company required for most transactions
-              </li>
-              <li>Always online</li>
-              <li>
-                Participants have the ability to borrow against their existing
-                crypto assets
-              </li>
-              <li>
-                Revenue is programmably calculated and distributed down to the
-                second
-              </li>
-              <li>Fewer legal contracts have to be written.</li>
-              <li>
-                Permissionless - does not require permission from a central
-                authority to carry out actions on the network.
-              </li>
-              <li>Anyone can participate. Curated.</li>
-              <li>
-                Anyone can participate. Curated. • Revenue sharing opportunities
-                with both long term and short term positions.
-              </li>
-              <li>
-                Network and accessibility builds wealth via adoption from future
-                outside investors.
-              </li>
-              <li>
-                Multiple structural mechanisms to rectify value of tokens and
-                balance ledgers.
-              </li>
-            </ul>
+          <div class="bg-sec-3">
+            <div class="sec-3-text-right">
+              <h1>summary</h1>
+              <ul>
+                <li>
+                  No trust or intermediary company required for most
+                  transactions
+                </li>
+                <li>Always online</li>
+                <li>
+                  Participants have the ability to borrow against their existing
+                  crypto assets
+                </li>
+                <li>
+                  Revenue is programmably calculated and distributed down to the
+                  second
+                </li>
+                <li>Fewer legal contracts have to be written.</li>
+                <li>
+                  Permissionless - does not require permission from a central
+                  authority to carry out actions on the network.
+                </li>
+                <li>Anyone can participate. Curated.</li>
+                <li>
+                  Revenue sharing opportunities with both long term and short
+                  term positions.
+                </li>
+                <li>
+                  Network and accessibility builds wealth via adoption from
+                  future outside investors.
+                </li>
+                <li>
+                  Multiple structural mechanisms to rectify value of tokens and
+                  balance ledgers.
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -405,6 +402,69 @@
         </div>
       </div>
     </section>
+    <section class="section-5">
+      <div class="sec-5-bg">
+        <div class="container">
+          <div class="sec-5-inner">
+            <div class="sec-5-left">
+              <div class="box-sec-5"></div>
+            </div>
+            <div class="sec-5-right">
+              <h1>The Problem</h1>
+              <p>
+                Currently many fundamental financial and investment systems are
+                being reinvisioned by the advent of Cryptocurrency, Blockchain
+                and more contemporarily, DeFi technologies. While this should be
+                seen as an opportunity, investors must also be aware of the
+                implications of being late to adopt these technologies.
+              </p>
+              <p>
+                As more and more systems are being disrupted by this technology
+                daily, more and more major institutions are integrating,
+                adapting, and adjusting to these lightning fast developments.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section-6">
+      <div class="container">
+        <div class="sec-6-heading">
+          <h1>The Solution</h1>
+        </div>
+
+        <div class="sect-6-center">
+          <div class="box-sec-6"></div>
+          <div class="sec-6-inner">
+            <div class="sec-6-inner-box">
+              <p>
+                By developing its own DeFi (Decentralized Finance) platform
+                CreditCapital is entering the future landscape of the Finance
+                Industry because it recognizes the necessity of these changes.
+              </p>
+              <p>
+                In response, CreditCapital has reconstructed the traditional
+                models for investing and lending by creating a decentralized
+                finance (DeFi) platform that offers consistently high yields,
+                secure funds management and privacy for investors.
+              </p>
+            </div>
+            <div class="sec-6-inner-box">
+              <h1>Benefits</h1>
+              <ul>
+                <li>Speed and Rate of Transactions</li>
+                <li>Reduced Institutional Oversight - Smart Contracts</li>
+                <li>Fractional Investments and Crowd-sourcing</li>
+                <li>Privacy and Anonymity</li>
+                <li>Increased Liquidity Access</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Thankyou section code start here -->
     <div class="thankyou-con-main">
       <div class="container">
@@ -718,73 +778,260 @@ watchEffect(() => {
 <style>
 .section-1 {
   background: url("/images/hero/hero-1.png") no-repeat center;
-  height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -ms-flex-item-align: center;
   align-self: center;
 }
-.hero {
+
+.section-1 .container .sec-1-inner p {
+  margin: 0;
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 400;
+  color: #fff;
+}
+
+.section-1 .container .sec-1-inner p span {
+  font-weight: 700;
+  font-size: 16px;
+  font-style: normal;
+  margin-right: 10px;
+}
+
+.section-1 .container .sec-1-inner h1 {
+  font-size: 50px;
+  color: #fff;
+  margin: 0;
+  position: relative;
+  line-height: 50px;
+}
+
+.section-1 .container .sec-1-inner h1 span {
+  font-size: 13px;
+  position: absolute;
+  right: 0px;
+  bottom: 20px;
+  margin-bottom: 10px;
+}
+
+.section-1 .hero {
   background: url("/images/hero/sh4-bn.png") no-repeat center left;
   background-attachment: scroll;
-  padding: 200px;
-  width: 70%;
+  padding: 300px 140px;
 }
 
 .section-2 {
   background: url("/images/hero/sh4-bn.png") no-repeat left;
-  height: 100vh;
+  padding: 200px 0;
 }
 
-.sec-2-inner {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  height: 100vh;
-  align-items: center;
-  gap: 50px;
+.section-2 .sec-2-inner {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
 }
 
-.text-right {
-  width: 60%;
+.section-2 .sec-2-inner .text-right {
   text-align: left;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
-  gap: 100px;
+  gap: 150px;
+}
+
+.section-2 .sec-2-inner .text-right h1 {
+  color: #ff8900;
+  font-size: 40px;
 }
 
 .section-3 {
+  padding: 200px 0;
   background: url("/images/hero/sh4-bn.png") no-repeat right;
-  height: 100vh;
 }
 
-.sec-3-text-left {
-  width: 50%;
+.section-3 .sec-3-inner {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.sec-3-text-right {
+  padding-left: 300px;
+}
+
+.sec-3-text-right ul li {
+  list-style-type: disc;
+  color: #000;
+  line-height: 25px;
+  padding-bottom: 5px;
 }
 
 .section-4 {
-  height: 100vh;
+  padding: 100px 0;
 }
 
-.sec-4-inner {
+.section-4 .sec-4-inner {
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  gap: 50px;
   width: 100%;
-  height: 100vh;
 }
 
-.text-label {
+.section-4 .sec-4-inner .text-label {
   width: 70%;
 }
 
-.sec-4 {
+.section-4 .sec-4-inner .sec-4 {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
   justify-content: space-between;
 }
 
-.sec-4-col {
+.section-4 .sec-4-inner .sec-4 .sec-4-col {
+  background: orange;
   width: 200px;
-  height: 400px;
-  background: blue;
+  height: 300px;
+}
+
+.section-5 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+}
+
+.section-5 .sec-5-bg {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 200px 0;
+  width: 80%;
+}
+
+.section-5 .sec-5-inner {
+  background: #ff8900;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 70%;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  margin-left: -190px;
+}
+
+.section-5 .sec-5-inner .sec-5-left {
+  margin: 0 auto;
+  width: 40%;
+}
+
+.sec-5-right {
+  color: #fff;
+}
+
+.sec-5-right h1 {
+  color: #fff;
+}
+
+.section-5 .sec-5-inner .sec-5-left .box-sec-5 {
+  width: 50px;
+  height: 50px;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 100%;
+  margin: 0 auto;
+}
+
+.section-6 {
+  padding: 100px 0;
+}
+
+.section-6 .sec-6-heading {
+  padding-left: 200px;
+}
+
+.section-6 .sec-6-heading h1 {
+  border: 2px solid orange;
+  border-radius: 20px;
+  display: inline;
+  width: 100%;
+  padding: 10px 30px;
+}
+
+.section-6 .sect-6-center .box-sec-6 {
+  width: 200px;
+  height: 200px;
+  margin: 50px auto;
+  border-radius: 100%;
+  border: 2px solid orange;
+  background: url("/images/client-logo/logo-quickswap.png") center no-repeat;
+  background-size: contain;
+  padding: 5px;
+}
+
+.section-6 .sect-6-center .sec-6-inner {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+.section-6 .sect-6-center .sec-6-inner .sec-6-inner-box {
+  width: 500px;
+  height: auto;
+  border: 2px solid orange;
+  border-radius: 20px;
+  padding: 10px 30px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.section-6 .sect-6-center .sec-6-inner .sec-6-inner-box h1 {
+  font-size: 30px;
+  margin: 0;
+}
+
+.section-6 .sect-6-center .sec-6-inner .sec-6-inner-box ul {
+  padding: 0 0 0 20px;
+}
+
+.section-6 .sect-6-center .sec-6-inner .sec-6-inner-box ul li {
+  list-style-type: disc;
 }
 
 /* Thank you section css start */
