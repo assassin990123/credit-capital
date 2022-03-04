@@ -691,15 +691,265 @@
             <span>Investor</span>
           </div>
         </div>
+        <div class="user-roles-main-con">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="user-roles-con-main">
+                <h3>About Investing</h3>
+                <p>
+                  Investing is a long term investment strategy on CreditCapital
+                  that yields delayed rewards of the CAPL token. CAPL will
+                  accrue value as the platform grows and is adopted giving
+                  bonders an advantage in the long term while helping the
+                  system.
+                </p>
+                <p>
+                  CreditCapital allows bonding of multiple assets in exchange
+                  for discounted CAPL. Bond sales are considered revenue and a
+                  percentage is shared with CAPL stakers. The longer you bond
+                  the bigger thediscount in rewarded CAPL you recieve.
+                </p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="user-roles-right-main">
+                <p>
+                  Investor also invest into the system with CAPL but are
+                  directly investing into the liquidity of the CreditCapital
+                  platform via a long term bond. The incentive for bonding is
+                  that those who choose to do so get to purchase CAPL at a
+                  standardized discount rate based on the time they purchased
+                  the bond versus the risk assessed value of the token.
+                </p>
+                <p>
+                  By bonding, you gain more CAPL for the value you are locking
+                  up via discount. You are rewarded at the end of the Bond
+                  lockup date.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- User Roles Section code end here -->
+
+    <!-- User Roles Staker code start here -->
+    <div class="user-roles-inner">
+      <div class="container">
+        <div class="user-roles-title">
+          <h2><span>User</span> Roles</h2>
+          <span>Staker</span>
+        </div>
+        <div class="staker-con-main-area">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="staker-con-block-area">
+                <h3>About Staking</h3>
+                <p>
+                  Staking is the passive, long-term strategy of CreditCapital.
+                  Stake your tokens to earn a regular income.
+                </p>
+                <p>
+                  Stakers earn CAPL passively when they stake their LP tokens
+                  from CreditCapital operated Liquidity Pools. When providing
+                  liquidity, users can stake their LP tokens into therewards
+                  vault and receive participation rewards in the form of CAPL.
+                </p>
+                <p>
+                  The amount of rewards a Staker receives is determined by the
+                  percentage of pool value they own.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- User Roles Staker code end here -->
+
+    <!-- User Roles Borrower Section code start here -->
+    <div class="user-roles-sec-main">
+      <div class="container">
+        <div class="user-roles-inner">
+          <div class="user-roles-title">
+            <h2><span>User</span> Roles</h2>
+            <span>Borrower</span>
+          </div>
+        </div>
+        <div class="user-roles-main-con">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="user-roles-con-main">
+                <h3>About Borrowing</h3>
+                <p>
+                  Borrowing is an active investment strategy for users seeking
+                  to leverage their position. Using the borrowed CCUSD allows
+                  users to either de-risk their position, or further invest into
+                  other CreditCapital pools such as the CCUSD liquidity pool.
+                </p>
+                <p>
+                  Borrowers gain the ability to collateralize their tokens to
+                  obtain a loan of CCUSD stable tokens.
+                </p>
+                <p>
+                  They can use this additional personal liquidity to grow their
+                  portfolio via trading or in other real world applications.
+                  This gives borrowers additional liquidity
+                </p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="user-roles-right-main">
+                <p>
+                  to improve their position while maintaining ownership of their
+                  original collateral.
+                </p>
+                <p>
+                  This collateral is locked up until the repayment of the stable
+                  token loan. In the event of loss of portfolio liquidity or
+                  failure to repay the loan and interest payments, the protocol
+                  will liquidate the user’s position before it becomes
+                  insolvent.
+                </p>
+                <p>
+                  More collateral options will be made available in the future
+                  based on partnerships with prominent lending organizations.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- User Roles Borrower Section code end here -->
+
+    <!-- Stable token section code start here -->
+    <div class="stable-token-main-sec">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="stable-token-con-area">
+              <div class="stable-token-con-area-inner">
+                <h2>Stable Tokens</h2>
+                <p>
+                  Introducing CCUSD, the Credit Capital USD-pegged Stable Token.
+                  Any user holding a position on the platform may lock it in
+                  order to borrow against a portion of its value.
+                </p>
+                <p>
+                  This allows users to borrow against their position as a form
+                  of leverage or margin. CCUSD loans are always
+                  over-collateralized, using the Liquidity Pools and external
+                  price oracles to ensure that every CCUSD loan remains solvent.
+                </p>
+                <ul>
+                  <li>
+                    Stablecoins/stable tokens are cryptocurrencies, the price of
+                    which is pegged to another asset such as the US dollar, gold
+                    or other cryptocurrencies.
+                  </li>
+                  <li>
+                    The Capital and Credit stable tokens will be pegged to the
+                    Bitcoin as a collateralized stablecoin and will achieve
+                    stability by being fully collateralized by Bitcoin.
+                  </li>
+                  <li>
+                    Bitcoin is pegged to the US dollar and so you can always
+                    redeem Capital and Credit stable tokens for US$1.00, giving
+                    it a stable price.
+                  </li>
+                  <li>
+                    In turn, you will always be able to redeem 1 Capital and
+                    Credit stable tokens for 1 Credit or Capital token
+                    collateralized by the peg to Bitcoin.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Stable token section code end here -->
+
+    <!-- Treasury section code start here -->
+    <div class="treasury-main-sec">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="treasury-main-con">
+              <div class="treasury-inner-con">
+                <div class="treasury-item-block">
+                  <div class="treasury-icon-area">
+                    <img src="/images/gear.png" />
+                  </div>
+                  <div class="treasury-heading-main">
+                    <h2>Sovereign Treasury</h2>
+                    <p>
+                      The Treasury Fund is a pool which allows users to purchase
+                      shares which are staked-by-default. These shares entitle
+                      the user to a proportionate claim on the value managed by
+                      the Treasury, as well as regular revenue payments as a
+                      result of the profit generated by the fund.
+                    </p>
+                    <p>
+                      Tokens held by the fund may be invested into various
+                      ventures and protocols and are under management by the
+                      CreditCapital DAO.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Treasury section code end here -->
+
+    <!-- Pool section code start here -->
+    <div class="treasury-main-sec">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="treasury-main-con">
+              <div class="treasury-inner-con">
+                <div class="treasury-item-block">
+                  <div class="treasury-icon-area">
+                    <img src="/images/gear.png" />
+                  </div>
+                  <div class="treasury-heading-main">
+                    <h2>Liquidity pool</h2>
+                    <p>
+                      Credit Capital operates multiple Liquidity Pool (LP)
+                      contracts which operate as Automated Market Makers,
+                      allowing users to enter or exit the platform with ease,
+                      and without needing to maintain an order book. Liquidity
+                      Pools charge a very low fee (typically 0.3%) for all
+                      transactions passing through them, resulting in a low
+                      friction method of exchanging value. While primarily used
+                      as a way to exchange different currencies, users are also
+                      able to contribute to the liquidity of any pool, and in
+                      doing so are rewarded with both a portion of the fees
+                      generated by that pool, as well as bonus CAPL rewards.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Pool section code end here -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, watchEffect } from "vue";
 import { useStore } from "@/store";
+// import gearicon from "../../public/images/gear-icon.png";
 
 const store = useStore();
 
@@ -1128,7 +1378,205 @@ watchEffect(() => {
 
 /*user-roles section css start*/
 .user-roles-sec-main {
-  padding: 100px 0px 0px;
+  padding: 80px 0px 80px 0;
+}
+.user-roles-title {
+  margin: 0px;
+  padding: 0px;
+}
+.user-roles-title h2 {
+  font-weight: bold;
+  font-size: 60px;
+  line-height: 70px;
+  color: #727678;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+}
+.user-roles-title h2 span {
+  color: #ffd381;
+  font-size: 60px;
+  line-height: 70px;
+}
+.user-roles-title span {
+  font-weight: bold;
+  font-size: 40px;
+  line-height: 50px;
+  color: #989898;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+}
+.user-roles-main-con {
+  margin: 40px 0 0 0;
+  padding: 0px;
+}
+.user-roles-con-main {
+  margin: 0px;
+  padding: 0px;
+}
+.user-roles-con-main h3 {
+  font-size: 30px;
+  line-height: 40px;
+  font-weight: bold;
+  color: #727678;
+  margin: 0 0 10px 0;
+}
+.user-roles-con-main p {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: normal;
+  color: #75797b;
+  margin: 0 0 15px 0;
+}
+.user-roles-right-main {
+  margin: 0px;
+  padding: 50px 0 0 0;
+}
+.user-roles-right-main p {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: normal;
+  color: #75797b;
+  margin: 0 0 15px 0;
 }
 /*user-roles section css end*/
+
+/* User roles staker section css start */
+.staker-con-main-area {
+  margin: 40px 0 0 0;
+  padding: 0px;
+}
+.staker-con-block-area {
+  margin: 0px;
+  padding: 0px;
+}
+.staker-con-block-area h3 {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: normal;
+  color: #75797b;
+  margin: 0 0 15px 0;
+}
+.staker-con-block-area p {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: normal;
+  color: #75797b;
+  margin: 0 0 15px 0;
+  max-width: 50%;
+}
+/* User roles staker section css end */
+
+/* Stable Token section css start */
+.stable-token-main-sec {
+  margin: 0px;
+  padding: 100px 0;
+  background: #3c3c3c;
+}
+.stable-token-con-area {
+  margin: 0px;
+  padding: 0px;
+  text-align: center;
+}
+.stable-token-con-area-inner {
+  margin: 0 auto;
+  padding: 80px;
+  background: rgba(255, 137, 0, 0.5);
+  width: 70%;
+  text-align: center;
+}
+.stable-token-con-area-inner h2 {
+  font-size: 50px;
+  line-height: 60px;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0 0 20px 0 0;
+}
+.stable-token-con-area-inner p {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 30px;
+  color: #fff;
+  margin: 0 0 20px 0;
+  text-align: left;
+}
+.stable-token-con-area-inner ul {
+  margin: 0px auto;
+  padding: 0px;
+  list-style: none;
+  width: 70%;
+}
+.stable-token-con-area-inner ul li {
+  margin: 0px;
+  padding: 0 0 25px 0;
+  font-size: 18px;
+  line-height: 28px;
+  color: #fff;
+  position: relative;
+  text-align: left;
+  padding-left: 30px;
+}
+.stable-token-con-area-inner ul li:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  height: 12px;
+  width: 12px;
+  border-radius: 100%;
+  background: #fff;
+}
+/* Stable Token section css end */
+
+/* Treasury section css start */
+.treasury-main-sec {
+  margin: 60px 0;
+  padding: 100px 0;
+  background: #eceee8;
+}
+.treasury-main-con {
+  margin: 0px;
+  padding: 0px;
+}
+.treasury-inner-con {
+  margin: 0 auto;
+  padding: 80px 30px;
+  background: rgba(255, 137, 0, 0.5);
+  width: 70%;
+  text-align: center;
+}
+.treasury-item-block {
+  margin: 0px;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.treasury-heading-main {
+  margin: 0 0 0 20px;
+  padding: 0px;
+}
+.treasury-heading-main h2 {
+  font-size: 50px;
+  font-weight: bold;
+  line-height: 60px;
+  color: #fff;
+  text-transform: uppercase;
+  text-align: left;
+  margin: 0px 0 15px 0;
+}
+.treasury-heading-main p {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 30px;
+  color: #fff;
+  margin: 0 0 20px 0;
+  text-align: left;
+}
+.treasury-icon-area {
+  flex: 0 0 10%;
+  max-width: 10%;
+}
+/* Treasury section css end */
 </style>
