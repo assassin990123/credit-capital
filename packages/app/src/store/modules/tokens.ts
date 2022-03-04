@@ -3,7 +3,6 @@ import { TokenState } from "@/models/tokens";
 import { RootState } from "@/models";
 import { Commit, Dispatch } from "vuex";
 import { ethers } from "ethers";
-import { parseScientific } from "../../utils";
 
 const state: TokenState = {
   capl: {
