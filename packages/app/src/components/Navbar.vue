@@ -109,12 +109,14 @@ export default {
 
     const connectWeb3 =  async () => {
       await store.dispatch("accounts/connectWeb3");
-      await store.dispatch("rewards/getRewardsInfo");
-      await store.dispatch("balancer/getPoolTokens");
-      await store.dispatch("dashboard/fetchTVL");
-      const price = format(caplUSDConversion(1, store));
-      if (price) {
-        CAPLPrice.value = price;
+      if (isConnected.value) {
+        await store.dispatch("rewards/getRewardsInfo");
+        await store.dispatch("balancer/getPoolTokens");
+        await store.dispatch("dashboard/fetchTVL");
+        const price = format(caplUSDConversion(1, store));
+        if (price) {
+          CAPLPrice.value = price;
+        }
       }
 
       showConnectResult(store);

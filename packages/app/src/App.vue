@@ -21,13 +21,13 @@ const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 
 // watch for user connection
 watchEffect(async () => {
-  console.log(isConnected.value)
   if (isConnected.value) {
     setInterval(w3Lopp, 2000);
   }
 });
 
 const w3Lopp = () => {
+  console.log('loop')
   store.dispatch("tokens/getAllowances");
   store.dispatch("tokens/getTokenBalances");
   // update user position states
