@@ -298,7 +298,10 @@
     <section class="section-2">
       <div class="container">
         <div class="sec-2-inner">
-          <div class="text-left"></div>
+          <div class="text-left">
+            <div class="image-con-1"></div>
+            <div class="image-con-2"></div>
+          </div>
           <div class="text-right">
             <p>
               Bringing the speed and privacy of cryptocurrency to our valued
@@ -313,11 +316,12 @@
         </div>
       </div>
     </section>
+    <!-- who we are start here -->
     <section class="section-3">
       <div class="container">
         <div class="sec-3-inner">
           <div class="sec-3-text-left">
-            <h1>WHO WE ARE.</h1>
+            <h1><span>WHO</span> WE ARE.</h1>
             <h2>ABOUT CREDITCAPITAL</h2>
             <p>
               CreditCapital is a wealth management platform created to bridge
@@ -380,11 +384,13 @@
         </div>
       </div>
     </section>
+    <!-- Who we are end here -->
+    <!-- Our goal start here -->
     <section class="section-4">
       <div class="container">
         <div class="sec-4-inner">
           <div class="text-label">
-            <h1>OUR GOALS</h1>
+            <h1><span>OUR</span> GOALS</h1>
             <p>
               CreditCapital has reconstructed the traditional models for
               investing and lending by creating a decentralized finance (DeFi)
@@ -393,21 +399,55 @@
             </p>
           </div>
           <div class="sec-4">
-            <div class="sec-4-col"></div>
-            <div class="sec-4-col"></div>
-            <div class="sec-4-col"></div>
-            <div class="sec-4-col"></div>
-            <div class="sec-4-col"></div>
+            <div class="sec-4-col">
+              <div class="col-inner">
+                <p>
+                  To create a DeFi platform that enables any real world asset to
+                  be tokenized and fractionalized.
+                </p>
+              </div>
+            </div>
+            <div class="sec-4-col">
+              <div class="col-inner">
+                <p>
+                  To enable lenders to make loans that are guaranteed to be
+                  repaid.
+                </p>
+              </div>
+            </div>
+            <div class="sec-4-col">
+              <div class="col-inner">
+                <p>To provide secured loans for major capital projects.</p>
+              </div>
+            </div>
+            <div class="sec-4-col">
+              <div class="col-inner">
+                <p>
+                  To provide a highly secure depository and custodian for funds
+                  flowing into the CreditCapital platform
+                </p>
+              </div>
+            </div>
+            <div class="sec-4-col">
+              <div class="col-inner">
+                <p>
+                  To operate as a third party ‘AA’ rated guarantor for funding
+                  projects
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
+    <!-- Our goal end here -->
+    <!-- The problem start here -->
     <section class="section-5">
       <div class="sec-5-bg">
         <div class="container">
           <div class="sec-5-inner">
             <div class="sec-5-left">
-              <div class="box-sec-5"></div>
+              <div class="box-sec-5"><i class="las la-cogs"></i></div>
             </div>
             <div class="sec-5-right">
               <h1>The Problem</h1>
@@ -428,6 +468,8 @@
         </div>
       </div>
     </section>
+    <!-- The problem end here -->
+    <!-- The solution start here -->
     <section class="section-6">
       <div class="container">
         <div class="sec-6-heading">
@@ -465,6 +507,71 @@
       </div>
     </section>
 
+    <section class="section-7">
+      <div class="container">
+        <div class="sec-7-content">
+          <div class="sec-7-main"></div>
+          <div class="sec-7-right">
+            <div class="sec-7-title"><h1>Benefits of Defi investing</h1></div>
+          </div>
+          <div class="sec-7-right-ol">
+            <div class="sec-7-inner-box-num">1</div>
+            <div class="sec-7-inner-box-text">
+              <div class="sec-7-tex-box">
+                <h1>Speed and Rate of Transactions</h1>
+                <p>
+                  DeFi is faster than traditional banking, as Defi can close a
+                  loan within three (3) banking days versus three (3) months
+                </p>
+              </div>
+            </div>
+            <div class="sec-7-inner-box-num">2</div>
+            <div class="sec-7-inner-box-text">
+              <div class="sec-7-tex-box">
+                <h1>Reduced Red Tape</h1>
+                <p>
+                  Smart contracts’ replace and/or reduce required paperwork and
+                  third parties are not necessary to administer the financial
+                  services.
+                </p>
+              </div>
+            </div>
+            <div class="sec-7-inner-box-num">3</div>
+            <div class="sec-7-inner-box-text">
+              <div class="sec-7-tex-box">
+                <h1>fractional Investment models</h1>
+                <p>
+                  Through tokenization of real world assets clients can gain
+                  financial liquidity through group funding for mutual rewards
+                  and incentives.
+                </p>
+              </div>
+            </div>
+            <div class="sec-7-inner-box-num">4</div>
+            <div class="sec-7-inner-box-text">
+              <div class="sec-7-tex-box">
+                <h1>Increased Liquidity Access</h1>
+                <p>
+                  By staking current digital and real-world assets clients can
+                  leverage their own holdings by minting stable coins
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="sec-7-left-bl">
+            <div class="sec-7-left-box">
+              <h1>Working together towards your future</h1>
+              <p>
+                By investing with CreditCapital clients stand to gain short term
+                rewards and long term returns, digitally and with utter privacy.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- The Solution start here -->
     <!-- Thankyou section code start here -->
     <div class="thankyou-con-main">
       <div class="container">
@@ -1072,9 +1179,11 @@ watchEffect(() => {
   padding: 300px 140px;
 }
 
+/* Section 2 Start here */
+
 .section-2 {
-  background: url("/images/hero/sh4-bn.png") no-repeat left;
-  padding: 200px 0;
+  /* background: url("/images/hero/sh4-bn.png") no-repeat left; */
+  padding: 50px 0;
 }
 
 .section-2 .sec-2-inner {
@@ -1082,6 +1191,55 @@ watchEffect(() => {
   display: grid;
   -ms-grid-columns: 1fr 1fr;
   grid-template-columns: 1fr 1fr;
+  gap: 50px;
+}
+.section-2 .sec-2-inner .text-left {
+  transform: rotate(10deg);
+}
+
+.section-2 .sec-2-inner .text-left .image-con-1 {
+  background: rgb(254, 181, 46);
+  background: -moz-linear-gradient(
+    40deg,
+    rgba(254, 181, 46, 1) 64%,
+    rgba(255, 255, 255, 1) 64%
+  );
+  background: -webkit-linear-gradient(
+    40deg,
+    rgba(254, 181, 46, 1) 64%,
+    rgba(255, 255, 255, 1) 64%
+  );
+  background: linear-gradient(
+    40deg,
+    rgba(254, 181, 46, 1) 64%,
+    rgba(255, 255, 255, 1) 64%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#feb52e",endColorstr="#ffffff",GradientType=1);
+  width: 100%;
+  height: 300px;
+}
+
+.section-2 .sec-2-inner .text-left .image-con-2 {
+  background: rgb(254, 181, 46);
+  background: -moz-linear-gradient(
+    140deg,
+    rgba(254, 181, 46, 1) 64%,
+    rgba(255, 255, 255, 1) 64%
+  );
+  background: -webkit-linear-gradient(
+    140deg,
+    rgba(254, 181, 46, 1) 64%,
+    rgba(255, 255, 255, 1) 64%
+  );
+  background: linear-gradient(
+    140deg,
+    rgba(254, 181, 46, 1) 64%,
+    rgba(255, 255, 255, 1) 64%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#feb52e",endColorstr="#ffffff",GradientType=1);
+  /* border-radius: 0 20% 20% 0; */
+  width: 100%;
+  height: 300px;
 }
 
 .section-2 .sec-2-inner .text-right {
@@ -1093,17 +1251,25 @@ watchEffect(() => {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
-  gap: 150px;
+  gap: 100px;
 }
 
 .section-2 .sec-2-inner .text-right h1 {
+  text-transform: uppercase;
   color: #ff8900;
   font-size: 40px;
 }
 
+.section-2 .sec-2-inner .text-right p {
+  font-size: 18px;
+  font-weight: normal;
+  color: #75797b;
+}
+
+/* Who we are starts here */
 .section-3 {
-  padding: 200px 0;
-  background: url("/images/hero/sh4-bn.png") no-repeat right;
+  padding: 50px 0;
+  /* background: url("/images/hero/sh4-bn.png") no-repeat right; */
 }
 
 .section-3 .sec-3-inner {
@@ -1111,19 +1277,113 @@ watchEffect(() => {
   display: grid;
   -ms-grid-columns: 1fr 1fr;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 50px;
+  border-radius: 500px 0 0 500px;
+}
+
+.sec-3-inner .sec-3-text-left {
+  padding-right: 100px;
+  text-align: justify;
+  background: #fff;
+  padding: 30px 0;
+}
+.sec-3-inner .sec-3-text-left h1 {
+  font-size: 80px;
+  line-height: 70px;
+}
+
+.sec-3-inner .sec-3-text-left h1 span {
+  background: rgb(255, 211, 129);
+  background: -moz-linear-gradient(
+    34deg,
+    rgba(255, 211, 129, 1) 8%,
+    rgba(255, 190, 93, 1) 75%
+  );
+  background: -webkit-linear-gradient(
+    34deg,
+    rgba(255, 211, 129, 1) 8%,
+    rgba(255, 190, 93, 1) 75%
+  );
+  background: linear-gradient(
+    34deg,
+    rgba(255, 211, 129, 1) 8%,
+    rgba(255, 190, 93, 1) 75%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffd381",endColorstr="#ffbe5d",GradientType=1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 80px;
+  line-height: 70px;
+}
+
+.sec-3-inner .sec-3-text-left h2 {
+  font-weight: bold;
+  font-size: 30px;
+  line-height: 50px;
+  color: #989898;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+}
+
+.sec-3-inner .sec-3-text-left p {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: normal;
+  color: #75797b;
+  margin: 0 0 15px 0;
+}
+
+.bg-sec-3 {
+  margin: 0;
+  padding: 0;
+  background: rgb(54, 66, 72);
+  background: -moz-linear-gradient(
+    184deg,
+    rgba(54, 66, 72, 0) 0%,
+    rgba(94, 93, 93, 1) 100%
+  );
+  background: -webkit-linear-gradient(
+    184deg,
+    rgba(54, 66, 72, 0) 0%,
+    rgba(94, 93, 93, 1) 100%
+  );
+  background: linear-gradient(
+    184deg,
+    rgba(54, 66, 72, 0) 0%,
+    rgba(94, 93, 93, 1) 100%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#364248",endColorstr="#5e5d5d",GradientType=1);
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .sec-3-text-right {
-  padding-left: 300px;
+  padding: 30px 30px 30px 200px;
+}
+
+.sec-3-text-right h1 {
+  background: #ffd27f;
+  background: -webkit-linear-gradient(to right, #ffd27f 20%, #ff8b04 81%);
+  background: -moz-linear-gradient(to right, #ffd27f 20%, #ff8b04 81%);
+  background: linear-gradient(to right, #ffd27f 20%, #ff8b04 81%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 50px;
+  text-transform: uppercase;
 }
 
 .sec-3-text-right ul li {
   list-style-type: disc;
-  color: #000;
+  color: #fff;
   line-height: 25px;
-  padding-bottom: 5px;
+  padding-bottom: 10px;
+  font-size: 18px;
 }
+
+/* Who we are end here */
+/* Our goal start here */
 
 .section-4 {
   padding: 100px 0;
@@ -1148,21 +1408,83 @@ watchEffect(() => {
   width: 70%;
 }
 
+.section-4 .sec-4-inner .text-label h1 {
+  font-size: 80px;
+}
+.section-4 .sec-4-inner .text-label h1 span {
+  background: rgb(255, 211, 129);
+  background: -moz-linear-gradient(
+    34deg,
+    rgba(255, 211, 129, 1) 8%,
+    rgba(255, 190, 93, 1) 75%
+  );
+  background: -webkit-linear-gradient(
+    34deg,
+    rgba(255, 211, 129, 1) 8%,
+    rgba(255, 190, 93, 1) 75%
+  );
+  background: linear-gradient(
+    34deg,
+    rgba(255, 211, 129, 1) 8%,
+    rgba(255, 190, 93, 1) 75%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffd381",endColorstr="#ffbe5d",GradientType=1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.section-4 .sec-4-inner .text-label p {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: normal;
+  color: #75797b;
+  margin: 0 0 15px 0;
+}
+
 .section-4 .sec-4-inner .sec-4 {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
+  /* display: -webkit-box;
+display: -ms-flexbox;
+display: flex;
+flex-wrap: wrap;
+-webkit-box-pack: justify;
+-ms-flex-pack: justify;
+justify-content: space-between; */
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 30px;
 }
 
 .section-4 .sec-4-inner .sec-4 .sec-4-col {
   background: orange;
-  width: 200px;
-  height: 300px;
+  height: 380px;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+  /* width: 240px;
+height: 380px; */
+  /* position: relative; */
 }
 
+.section-4 .sec-4-inner .sec-4 .sec-4-col .col-inner {
+  display: flex;
+  align-items: center;
+  height: 150px;
+}
+
+.section-4 .sec-4-inner .sec-4 .sec-4-col p {
+  /* position: absolute;
+bottom: 0;
+left: 25px;
+right: 25px; */
+  font-size: 18px;
+  font-weight: normal;
+  color: #fff;
+  text-align: center;
+  align-self: center;
+}
+
+/* Or goal end here */
+/* The Problem start here */
 .section-5 {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1170,20 +1492,38 @@ watchEffect(() => {
   -webkit-box-pack: end;
   -ms-flex-pack: end;
   justify-content: flex-end;
+  padding: 100px 0;
 }
 
 .section-5 .sec-5-bg {
-  background: rgba(0, 0, 0, 0.1);
-  padding: 200px 0;
+  background: rgb(255, 210, 127);
+  background: -moz-linear-gradient(
+    90deg,
+    rgba(255, 210, 127, 0.8855917366946778) 35%,
+    rgba(255, 142, 8, 1) 100%
+  );
+  background: -webkit-linear-gradient(
+    90deg,
+    rgba(255, 210, 127, 0.8855917366946778) 35%,
+    rgba(255, 142, 8, 1) 100%
+  );
+  background: linear-gradient(
+    90deg,
+    rgba(255, 210, 127, 0.8855917366946778) 35%,
+    rgba(255, 142, 8, 1) 100%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffd27f",endColorstr="#ff8e08",GradientType=1);
+  padding: 150px 0;
   width: 80%;
 }
 
 .section-5 .sec-5-inner {
-  background: #ff8900;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  width: 70%;
+  background: rgba(255, 137, 0.5);
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 20% 80%;
+  grid-template-columns: 20% 80%;
+  width: 80%;
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
@@ -1206,16 +1546,29 @@ watchEffect(() => {
 
 .sec-5-right h1 {
   color: #fff;
+  font-size: 80px;
 }
 
-.section-5 .sec-5-inner .sec-5-left .box-sec-5 {
-  width: 50px;
-  height: 50px;
-  background: #fff;
-  border: 2px solid #000;
-  border-radius: 100%;
-  margin: 0 auto;
+.sec-5-right p {
+  font-size: 18px;
 }
+
+i.las.la-cogs {
+  font-size: 100px;
+  color: #fff;
+}
+
+/* .section-5 .sec-5-inner .sec-5-left .box-sec-5 {
+width: 50px;
+height: 50px;
+background: #fff;
+border: 2px solid #000;
+border-radius: 100%;
+margin: 0 auto;
+} */
+
+/* The problem end here */
+/* The solution start here */
 
 .section-6 {
   padding: 100px 0;
@@ -1283,6 +1636,149 @@ watchEffect(() => {
 .section-6 .sect-6-center .sec-6-inner .sec-6-inner-box ul li {
   list-style-type: disc;
 }
+
+/* The solution end here */
+
+/* Benefits of investing start here */
+
+.section-7 {
+  padding: 100px 0;
+}
+
+.sec-7-content {
+  display: -ms-grid;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: minmax(80px, auto);
+}
+
+.sec-7-content .sec-7-main {
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 4;
+  grid-column: 1/5;
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 7;
+  grid-row: 1/8;
+  background-color: #fbab7e;
+  background-image: linear-gradient(62deg, #fbab7e 0%, #f7ce68 100%);
+}
+
+.sec-7-content .sec-7-right {
+  -ms-grid-column: 4;
+  -ms-grid-column-span: 2;
+  grid-column: 4/6;
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 7;
+  grid-row: 1/8;
+  background: #fff;
+}
+
+.sec-7-content .sec-7-right .sec-7-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.sec-7-content .sec-7-right .sec-7-title h1 {
+  padding: 20px;
+  background: #ffd27f;
+  background: linear-gradient(34deg, #ffd27f 3%, #ff8b03 73%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffd27f",endColorstr="#ff8b03",GradientType=1);
+  color: #fff;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.sec-7-content .sec-7-right-ol {
+  padding: 50px 0;
+  -ms-grid-column: 3;
+  -ms-grid-column-span: 3;
+  grid-column: 3/6;
+  -ms-grid-row: 3;
+  -ms-grid-row-span: 4;
+  grid-row: 3/7;
+  background-color: white;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 20% 80%;
+  grid-template-columns: 20% 80%;
+  grid-gap: 20px 0;
+}
+
+.sec-7-content .sec-7-right-ol .sec-7-inner-box-num {
+  padding: 0 25px;
+  background-color: #ff8900;
+  border-radius: 10px;
+  margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  font-size: 70px;
+  color: #fff;
+  font-weight: 700;
+}
+
+.sec-7-content .sec-7-right-ol .sec-7-inner-box-text {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.sec-7-content .sec-7-right-ol .sec-7-inner-box-text .sec-7-tex-box {
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  color: #727679;
+}
+
+.sec-7-content .sec-7-right-ol .sec-7-inner-box-text h1 {
+  font-size: 25px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.sec-7-content .sec-7-right-ol .sec-7-inner-box-text p {
+  font-size: 18px;
+}
+
+.sec-7-content .sec-7-left-bl {
+  -webkit-transform: translateY(28%);
+  transform: translateY(28%);
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 2;
+  grid-column: 1/3;
+  -ms-grid-row: 4;
+  -ms-grid-row-span: 3;
+  grid-row: 4/7;
+  padding: 50px;
+}
+
+.sec-7-content .sec-7-left-bl .sec-7-left-box {
+  padding: 20px 30px;
+  background-color: #ef9c2b;
+}
+
+.sec-7-content .sec-7-left-bl .sec-7-left-box h1 {
+  text-transform: uppercase;
+  font-size: 25px;
+  color: #fff;
+}
+
+.sec-7-content .sec-7-left-bl .sec-7-left-box p {
+  font-size: 18px;
+  color: #fff;
+}
+
+/* Benefits of investing end here */
 
 /* Thank you section css start */
 .thankyou-con-main {
