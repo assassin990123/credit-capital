@@ -17,6 +17,11 @@ const state: AccountState = {
   isConnected: false,
   signer: null,
 };
+interface ProviderRpcError extends Error {
+  message: string;
+  code: number;
+  data?: unknown;
+}
 
 const getters = {
   getActiveAccount(state: AccountState) {
@@ -61,9 +66,10 @@ const actions = {
         commit("setWeb3Provider", markRaw(provider));
         const signer = provider.getSigner(state.activeAccount);
         commit("setWeb3Signer", markRaw(signer));
-        // listen in
-        await actions.ethereumListener({ commit });
       }
+
+      // listen in
+      await actions.ethereumListener({ commit });
     }
 
     await dispatch("contracts/setContracts", null, { root: true });
@@ -83,6 +89,18 @@ const actions = {
       await actions.checkNetwork();
       commit("setChainData", chainId);
       commit("setWeb3Provider", state.web3Provider);
+    });
+
+    (window as any).ethereum.on('disconnect', async (error: ProviderRpcError) => {
+      try {
+        // remove the connection state from localstorage
+        localStorage.removeItem("isConnected");
+
+        // reload page
+        window.location.reload();
+      } catch (e) {
+        console.error("error: ", error.message);
+      }
     });
   },
 

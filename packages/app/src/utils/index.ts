@@ -110,7 +110,7 @@ export const checkAllAllowances = (
   let count = 0;
   let approvalRequired = false;
   let flag: string | null = null;
-
+  console.log(usdcBalancerVaultAllowance, caplBalancerVaultAllowance)
   // known:
   // amounts[0] -> usdc, amounts[1] -> capl
   if (amounts[0] !== 0 && usdcBalancerVaultAllowance < amounts[0]) {

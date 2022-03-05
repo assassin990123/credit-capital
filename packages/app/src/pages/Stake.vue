@@ -29,7 +29,7 @@
               v-model="unstakeAmount"
             />
             <div class="myBalance">
-              Unlocked Balance: <a>0.00</a> USDC-CAPL
+              Unlocked Balance: <a>{{ unstakeAmount.toFixed(4) }}</a> USDC-CAPL
             </div>
             <button type="submit" class="btn-custom" @click="unstake">
               Withdraw
@@ -56,6 +56,7 @@ import { checkConnection, checkBalance } from "@/utils/notifications";
 const store = useStore();
 const stakeAmount: Ref<number> = ref(0);
 const stakeButtonText: Ref<string> = ref("Stake");
+// for we make the user withdraw the total unlockedAmount.
 const unstakeAmount = computed(
   () => store.getters["rewards/getUserUnlockedAmount"]
 );

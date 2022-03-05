@@ -107,11 +107,30 @@ export default {
     let CAPLPrice = ref("0.00");
     let buttonString = ref("Connect Wallet");
 
+    const connectWeb3 =  async () => {
+      await store.dispatch("accounts/connectWeb3");
+      await store.dispatch("rewards/getRewardsInfo");
+      await store.dispatch("balancer/getPoolTokens");
+      await store.dispatch("dashboard/fetchTVL");
+      const price = format(caplUSDConversion(1, store));
+      if (price) {
+        CAPLPrice.value = price;
+      }
+
+      showConnectResult(store);
+    };
+
     const isConnected = computed(
       () => store.getters["accounts/isUserConnected"]
     );
 
     const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
+
+    // check the localstorage for determine the user was connected
+    if (localStorage.getItem('isConnected')) {
+      // reconnect web3
+      connectWeb3();
+    }
 
     watchEffect(() => {
       isConnected.value
@@ -133,18 +152,7 @@ export default {
       buttonString,
       CAPLPrice,
       showMoons,
-      connectWeb3: async () => {
-        await store.dispatch("accounts/connectWeb3");
-        await store.dispatch("rewards/getRewardsInfo");
-        await store.dispatch("balancer/getPoolTokens");
-        await store.dispatch("dashboard/fetchTVL");
-        const price = format(caplUSDConversion(1, store));
-        if (price) {
-          CAPLPrice.value = price;
-        }
-
-        showConnectResult(store);
-      },
+      connectWeb3
     };
   },
   data: function () {
