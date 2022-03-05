@@ -79,6 +79,13 @@ const actions = {
 
   async ethereumListener({ commit }: { commit: Function }) {
     (window as any).ethereum.on("accountsChanged", (accounts: any) => {
+      // If user has locked/logout from MetaMask, this resets the accounts array to empty
+      if (!accounts.length) {
+        // logic to handle what happens once MetaMask is locked
+        commit("setIsConnected", !state.isConnected);
+        localStorage.removeItem("isConnected");
+      }
+
       if (state.isConnected) {
         commit("setActiveAccount", accounts[0]);
         commit("setWeb3Provider", state.web3Provider);
