@@ -48,16 +48,21 @@ const claim = () => {
 };
 
 watchEffect(async () => {
-  if (connected.value && pendingRewards.value >= 0) {
-    await store.dispatch("balancer/getPoolTokens");
-    pendingRewardsCAPL.value = format(pendingRewards.value);
-    pendingRewardsUSDC.value = format(
-      calculateCAPLUSDPrice(
-        pendingRewards.value,
-        "CAPL",
-        store.getters["balancer/getPoolTokens"]
-      )
-    );
+  if (connected.value === true) {
+    if (pendingRewards.value >= 0) {
+      await store.dispatch("balancer/getPoolTokens");
+      pendingRewardsCAPL.value = format(pendingRewards.value);
+      pendingRewardsUSDC.value = format(
+        calculateCAPLUSDPrice(
+          pendingRewards.value,
+          "CAPL",
+          store.getters["balancer/getPoolTokens"]
+        )
+      );
+    }
+  } else {
+    pendingRewardsCAPL.value = format('0');
+    pendingRewardsUSDC.value = format('0');
   }
 });
 </script>

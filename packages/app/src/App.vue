@@ -27,7 +27,6 @@ watchEffect(async () => {
 });
 
 const w3Lopp = () => {
-  console.log('loop')
   store.dispatch("tokens/getAllowances");
   store.dispatch("tokens/getTokenBalances");
   // update user position states

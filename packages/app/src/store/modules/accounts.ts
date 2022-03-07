@@ -82,7 +82,7 @@ const actions = {
       // If user has locked/logout from MetaMask, this resets the accounts array to empty
       if (!accounts.length) {
         // logic to handle what happens once MetaMask is locked
-        commit("setIsConnected", !state.isConnected);
+        commit("setIsConnected", false);
         localStorage.removeItem("isConnected");
       }
 
