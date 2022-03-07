@@ -78,10 +78,23 @@ const actions = {
   },
 
   async ethereumListener({ commit }: { commit: Function }) {
-    (window as any).ethereum.on("accountsChanged", (accounts: any) => {
-      if (state.isConnected) {
-        commit("setActiveAccount", accounts[0]);
-        commit("setWeb3Provider", state.web3Provider);
+
+    (window as any).ethereum.on("accountsChanged", (accounts: Array<string>) => {
+      if (accounts.length > 0) {
+          commit("setActiveAccount", accounts[0]);
+          commit("setWeb3Provider", state.web3Provider);
+      } else {
+        console.log("state.isConnected", state.isConnected)
+        try {
+          console.log("disconnect")
+          // remove the connection state from localstorage
+          localStorage.removeItem("isConnected");
+  
+          // reload page
+          window.location.reload();
+        } catch (e) {
+          console.error(e);
+        }
       }
     });
 
@@ -89,18 +102,6 @@ const actions = {
       await actions.checkNetwork();
       commit("setChainData", chainId);
       commit("setWeb3Provider", state.web3Provider);
-    });
-
-    (window as any).ethereum.on('disconnect', async (error: ProviderRpcError) => {
-      try {
-        // remove the connection state from localstorage
-        localStorage.removeItem("isConnected");
-
-        // reload page
-        window.location.reload();
-      } catch (e) {
-        console.error("error: ", error.message);
-      }
     });
   },
 
