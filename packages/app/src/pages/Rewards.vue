@@ -76,7 +76,7 @@ watchEffect(async () => {
 
 .rewards-display {
   border: 1px solid #000000;
-  font-size: 70px;
+  font-size: 50px;
   font-weight: 700;
   padding: 40px 20px;
   text-align: center;
