@@ -47,10 +47,6 @@ const routeInfos = [
     path: "/portfolio",
     component: PortfolioPage,
   },
-  {
-    path: "/homepagenew",
-    component: HomePageNew,
-  },
 ];
 
 const router = createRouter({

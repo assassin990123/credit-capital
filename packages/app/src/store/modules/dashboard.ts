@@ -32,16 +32,11 @@ const actions = {
     rootState: RootState;
     dispatch: Dispatch;
   }) {
-    if (rootState.rewards.userStakedPosition === null) {
-      await dispatch("rewards/getUserPosition", null, { root: true });
-    }
-
-    if (rootState.balancer.poolTokens === null) {
-      await dispatch("balancer/getPoolTokens", null, { root: true });
-    }
     const userStakedPosition = rootState.rewards.userStakedPosition;
-
-    if (userStakedPosition == 0) return;
+    if (userStakedPosition == 0) {
+      commit("setTVL", 0);
+      return;
+    }
 
     const poolTokens = rootState.balancer.poolTokens;
     // @ts-ignore

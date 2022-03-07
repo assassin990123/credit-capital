@@ -29,7 +29,10 @@ watchEffect(async () => {
 const w3Lopp = () => {
   store.dispatch("tokens/getAllowances");
   store.dispatch("tokens/getTokenBalances");
+  // update user position states
+  store.dispatch('rewards/getRewardsInfo')
   store.dispatch("rewards/getPendingRewards");
+  store.dispatch("dashboard/fetchTVL");
 };
 </script>
 
