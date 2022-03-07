@@ -35,7 +35,15 @@
           <!-- /col -->
           <!-- col -->
           <div
-            class="col-xl-7 offset-xl-1 col-lg-7 wow fadeInDown animated floating"
+            class="
+              col-xl-7
+              offset-xl-1
+              col-lg-7
+              wow
+              fadeInDown
+              animated
+              floating
+            "
             data-wow-delay="0.4s"
           >
             <img
@@ -1110,6 +1118,155 @@
       </div>
     </div>
     <!-- Pool section code end here -->
+    <!-- Platform Function section code start here -->
+    <div class="platform-main-sec">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="platform-left-main-sec">
+              <div class="platform-left-inner-sec">
+                <div class="platform-heading-area">
+                  <div class="platform-heading-row">
+                    <div class="platform-left-heading">
+                      <h2>Platform <span>Functions</span></h2>
+                    </div>
+                    <div class="paltform-right-heading">
+                      <div class="paltform-right-heading-inner">
+                        <h3>Token</h3>
+                        <p>
+                          APL may be paid out in the form of extra rewards,
+                          which is a controlled form of inflation. However 90%
+                          of the income the platform receives directly results
+                          in buy pressure on CAPL through the various Liquidity
+                          Pools.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="platform-bottom-main">
+                  <div class="platform-bottom-inner">
+                    <h3>Protocol</h3>
+                    <p>
+                      The protocol is infused with large amounts of capital
+                      directly, without concern to the effects it may have on
+                      the token price. It then can invest or allocate funds as
+                      it sees fit.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="platform-right-main">
+              <div class="platform-right-inner">
+                <h2>Interactions</h2>
+                <ul>
+                  <li>
+                    <span>1.</span>
+                    <div>
+                      <h3>All Participants</h3>
+                      <p>
+                        Due to significant buy pressure, combined with mandatory
+                        stakes to participate in the platform, this model
+                        results in significant appreciation of CAPL.
+                      </p>
+                    </div>
+                  </li>
+                  <li>
+                    <span>2.</span>
+                    <div>
+                      <h3>Treasury Share Investor</h3>
+                      <p>
+                        The user is able to directly invest into the protocol
+                        and earn a share of its revenue.
+                      </p>
+                    </div>
+                  </li>
+                  <li>
+                    <span>3.</span>
+                    <div>
+                      <h3>CAPL Stakers</h3>
+                      <p>
+                        Users who stake CAPL for rewards earn additional CAPL as
+                        a form of revenue share.
+                      </p>
+                    </div>
+                  </li>
+                  <li>
+                    <span>4.</span>
+                    <div>
+                      <h3>Liquidity Pool Stakers</h3>
+                      <p>
+                        Each Liquidity Pool will gradually appreciate due to
+                        fees on 90% of revenue moving through the pools
+                      </p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Platform Function section code end here -->
+
+    <!-- DEFI Section code start here -->
+    <div class="user-roles-sec-main">
+      <div class="container">
+        <div class="user-roles-inner">
+          <div class="user-roles-title">
+            <h2><span>What</span> Is Defi?</h2>
+            <span>Decentralized Finance (DeFi)</span>
+          </div>
+        </div>
+        <div class="user-roles-main-con">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="user-roles-con-main">
+                <h3>Notable Facts About DeFi</h3>
+                <p>
+                  1. DeFi is an umbrella term for financial services that run on
+                  public blockchains. There are DeFi applications that enable
+                  you to earn interest, borrow, lend, buy insurance, trade
+                  derivatives, trade assets, and more.
+                </p>
+                <p>
+                  2. DeFi is a vertical within the crypto asset ecosystem that
+                  has achieved stellar growth over the last two years generating
+                  a broad and fast growing user base. Just like cryptocurrency,
+                  DeFi is global, peer-to-peer (meaning directly between two
+                  people, not routed through a centralized system),
+                  pseudonymous, and open to all.
+                </p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="user-roles-right-main">
+                <p>
+                  3. Defi is faster than traditional banking. Through automation
+                  built into the technology of DeFi (and it's core technology of
+                  Blockchain) via the use of 'Smart Contracts'. By turning real
+                  world contracts into code, all that is necessary to compete
+                  and execute on a loan for example, is to fulfill pre-written
+                  requirements online. No notaries, smaller legal teams, and
+                  less waiting.
+                </p>
+                <p>
+                  4. Through the use of DeFi technology many traditional models
+                  and methods of investment can be replicated and improved upon
+                  with the foundation of blockchain and access to
+                  cryptocurrency.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- DEFI Section code end here -->
   </div>
 </template>
 
@@ -2322,4 +2479,153 @@ margin: 0 auto;
   max-width: 10%;
 }
 /* Treasury section css end */
+
+/* Platform function css start */
+.platform-main-sec {
+  margin: 0px;
+  padding: 100px 0;
+  position: relative;
+  z-index: 1;
+}
+.platform-main-sec:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 64%;
+  background: #3c3c3c;
+  z-index: -1;
+}
+.platform-left-main-sec {
+  margin: 0px;
+  padding: 0px;
+}
+.platform-left-inner-sec {
+  margin: 0px;
+  padding: 0px;
+}
+.platform-heading-area {
+  margin: 0px;
+  padding: 0px;
+}
+.platform-heading-row {
+  margin: 0px;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+}
+.platform-left-heading {
+  margin: 0px;
+  padding: 0px;
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+.platform-left-heading h2 {
+  font-size: 50px;
+  font-weight: bold;
+  line-height: 60px;
+  color: #ff8900;
+  text-transform: uppercase;
+  margin: 0px;
+}
+.platform-left-heading h2 span {
+  color: #727678;
+}
+.paltform-right-heading {
+  flex: 0 0 50%;
+  max-width: 50%;
+  margin: 0px;
+  padding: 0 0 0 30px;
+}
+.paltform-right-heading-inner {
+  padding: 30px;
+  background: rgba(255, 142, 8, 0.7);
+}
+.paltform-right-heading-inner h3 {
+  font-size: 30px;
+  line-height: 40px;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 0 0 15px 0;
+}
+.paltform-right-heading-inner p {
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+  margin: 0px;
+}
+.platform-bottom-main {
+  margin: 50px 0 0 0;
+  padding: 0px;
+}
+.platform-bottom-inner {
+  margin: 0px;
+  padding: 30px;
+  background: rgba(255, 142, 8, 0.7);
+  width: 85%;
+}
+.platform-bottom-inner h3 {
+  font-size: 30px;
+  line-height: 40px;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 0 0 15px 0;
+}
+.platform-bottom-inner p {
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+  margin: 0px;
+}
+.platform-right-main {
+  margin: 0px;
+  padding: 0px;
+}
+.platform-right-inner {
+  margin: 0px;
+  padding: 30px;
+  background: rgba(255, 142, 8, 0.7);
+}
+.platform-right-inner h2 {
+  font-size: 35px;
+  font-weight: 600;
+  line-height: 45px;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 0 0 30px 0;
+}
+.platform-right-inner ul {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+.platform-right-inner ul li {
+  margin: 0px 0 25px 0;
+  padding: 0px;
+  display: flex;
+}
+.platform-right-inner ul li span {
+  font-size: 28px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 38px;
+  margin: 0 15px 0 0;
+}
+.platform-right-inner ul li h3 {
+  font-size: 22px;
+  line-height: 32px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 0 0 10px 0;
+}
+.platform-right-inner ul li p {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 28px;
+  color: #fff;
+  margin: 0px;
+}
+/* Platform function css end */
 </style>
