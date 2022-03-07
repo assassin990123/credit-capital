@@ -29,7 +29,7 @@
               v-model="unstakeAmount"
             />
             <div class="myBalance">
-              Unlocked Balance: <a>{{ unstakeAmount.toFixed(4) }}</a> USDC-CAPL
+              Unlocked Balance: <a>{{ unstakeAmount }}</a> USDC-CAPL
             </div>
             <button type="submit" class="btn-custom" @click="unstake">
               Withdraw
@@ -47,7 +47,7 @@
 import DappFooter from "@/components/DappFooter.vue";
 import { watchEffect, ref, Ref, computed } from "vue";
 // @ts-ignore
-import { checkAllowance } from "@/utils";
+import { checkAllowance, format } from "@/utils";
 // @ts-ignore
 import { useStore } from "@/store";
 // @ts-ignore
@@ -56,10 +56,8 @@ import { checkConnection, checkBalance } from "@/utils/notifications";
 const store = useStore();
 const stakeAmount: Ref<number> = ref(0);
 const stakeButtonText: Ref<string> = ref("Stake");
+const unstakeAmount = ref(0);
 // for we make the user withdraw the total unlockedAmount.
-const unstakeAmount = computed(
-  () => store.getters["rewards/getUserUnlockedAmount"]
-);
 const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
 
 const isUserConnected = computed(
@@ -68,15 +66,23 @@ const isUserConnected = computed(
 
 // this function checks the allowance a user has alloted our rewards contract via the LP token
 watchEffect(async () => {
-  !isUserConnected.value ||
-  (await checkAllowance(
-    store,
+  if (!isUserConnected.value) {
+    unstakeAmount.value = format('0');
+    if (await checkAllowance(
+      store,
     "LP", // static for now
     stakeAmount.value,
     "stake"
-  ))
-    ? (stakeButtonText.value = "Stake")
-    : (stakeButtonText.value = "Approve");
+    )) {
+      (stakeButtonText.value = "Stake");
+    } else {
+      (stakeButtonText.value = "Approve");
+    }
+  } else {
+    unstakeAmount.value = format(computed(
+      () => store.getters["rewards/getUserUnlockedAmount"]
+    ).value);
+  }
 });
 
 const handleStake = async () => {
