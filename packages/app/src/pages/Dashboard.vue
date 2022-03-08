@@ -54,7 +54,7 @@
               Daily Revenue
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ parseFloat(dailyEarnings.value)?.toFixed(4) }} CAPL (0.0000 USD)
+              {{ dailyEarnings.value?.toFixed(4) }} CAPL ({{ dailyEarningsUSD?.toFixed(4) }} USD)
             </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
@@ -77,8 +77,8 @@
         </div>
         <div class="revenue-block-main">
           <div>Your Daily Revenue</div>
-          <div class="dashboard-revenue-projection-value">0 CAPL</div>
-          <div class="green-txt">(3.4546 USD)</div>
+          <div class="dashboard-revenue-projection-value">{{ parseFloat(dailyEarnings.value)?.toFixed(4) }} CAPL</div>
+          <div class="green-txt">({{ dailyEarningsUSD?.toFixed(4) }} USD)</div>
         </div>
       </div>
       <div class="dashboard-revenue-projection-content">
@@ -86,18 +86,18 @@
         <div class="dashboard-revenue-projection-content-row">
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Weekly Revenue</div>
-            <div class="dashboard-revenue-projection-value">23.3476 CAPL</div>
-            <div class="green-txt">24.1823 USD</div>
+            <div class="dashboard-revenue-projection-value">{{ parseFloat(dailyEarnings.value * 7)?.toFixed(4) }} CAPL</div>
+            <div class="green-txt">{{ (dailyEarningsUSD * 7)?.toFixed(4) }} USD</div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Monthly Revenue</div>
-            <div class="dashboard-revenue-projection-value">23.3476 CAPL</div>
-            <div class="green-txt">24.1823 USD</div>
+            <div class="dashboard-revenue-projection-value">{{ parseFloat(dailyEarnings.value * 30)?.toFixed(4) }} CAPL</div>
+            <div class="green-txt">{{ (dailyEarningsUSD * 30)?.toFixed(4) }} USD</div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Annual Revenue</div>
-            <div class="dashboard-revenue-projection-value">23.3476 CAPL</div>
-            <div class="green-txt">24.1823 USD</div>
+            <div class="dashboard-revenue-projection-value">{{ parseFloat(dailyEarnings.value * 365)?.toFixed(4) }} CAPL</div>
+            <div class="green-txt">{{ (dailyEarningsUSD * 365)?.toFixed(4) }} USD</div>
           </div>
         </div>
       </div>
@@ -259,6 +259,7 @@ import {
 const store = useStore();
 
 const dailyEarnings: Ref<number> = ref(0);
+const dailyEarningsUSD: Ref<number> = ref(0);
 
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
 
@@ -294,6 +295,8 @@ watchEffect(async() => {
 
   // @ts-ignore
   dailyEarnings.value = computed(() => Number(store.getters["dashboard/getRevenueProjectionPerDay"]));
+  dailyEarningsUSD.value = caplUSDConversion(Number(store.getters["dashboard/getRevenueProjectionPerDay"]), store);
+  console.log("dailyEarningsUSD.value", dailyEarningsUSD)
   // if (
   //   userPosition.value > 0 &&
   //   caplPerSecond.value > 0 &&
