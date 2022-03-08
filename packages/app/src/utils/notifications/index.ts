@@ -2,7 +2,7 @@ import { useToast } from "vue-toastification";
 import Balance from "../../components/notifications/Balance.vue";
 import Connection from "../../components/notifications/Connection.vue";
 import ConnectionSuccess from "../../components/notifications/ConnectionSuccess.vue";
-import ConnectionFaild from "../../components/notifications/ConnectionFaild.vue";
+import ConnectionFailed from "../../components/notifications/ConnectionFailed.vue";
 import UnLock from "../../components/notifications/UnLock.vue";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
@@ -47,7 +47,7 @@ export const showConnectResult = (store: any) => {
     return true;
   }
 
-  toastID = toast.error(ConnectionFaild);
+  toastID = toast.error(ConnectionFailed);
   return false;
 };
 
