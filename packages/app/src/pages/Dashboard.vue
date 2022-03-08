@@ -54,7 +54,7 @@
               Daily Revenue
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ dailyEarnings }} CAPL (0.0000 USD)
+              {{ parseFloat(dailyEarnings.value)?.toFixed(4) }} CAPL (0.0000 USD)
             </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
@@ -252,7 +252,6 @@ import { useStore } from "@/store";
 import { computed, watchEffect, ref, Ref } from "vue";
 import {
   caplUSDConversion,
-  getDailyEarnings,
   shortenAddress,
   format,
 } from "@/utils";
@@ -272,18 +271,18 @@ const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
 // daily earnings
-const userPosition = computed(
-  () => store.getters["rewards/getUserStakedPosition"]
-);
-const caplPerSecond = computed(() => store.getters["rewards/getCaplPerSecond"]);
-const totalStaked = computed(() => store.getters["rewards/getTotalStaked"]);
+// const userPosition = computed(
+//   () => store.getters["rewards/getUserStakedPosition"]
+// );
+// const caplPerSecond = computed(() => store.getters["rewards/getCaplPerSecond"]);
+// const totalStaked = computed(() => store.getters["rewards/getTotalStaked"]);
 
 let walletAddress = ref("Connect");
 let userCAPLToUSD = ref(0);
 let caplInUSD: Ref<number> = ref(0);
-let LPBalanceInUSDC: Ref<number> = ref(0);
+// let LPBalanceInUSDC: Ref<number> = ref(0);
 
-watchEffect(() => {
+watchEffect(async() => {
   caplInUSD.value = caplUSDConversion(1, store);
   userCAPLToUSD.value = caplUSDConversion(caplBalance.value, store);
 
@@ -291,17 +290,21 @@ watchEffect(() => {
     ? (walletAddress.value = shortenAddress(wallet.value))
     : (walletAddress.value = "Connect");
 
-  if (
-    userPosition.value > 0 &&
-    caplPerSecond.value > 0 &&
-    totalStaked.value > 0
-  ) {
-    dailyEarnings.value = getDailyEarnings(
-      userPosition.value,
-      caplPerSecond.value,
-      totalStaked.value
-    );
-  }
+  await store.dispatch("dashboard/fetchRevenueProjectionPerDay", null, { root: true });
+
+  // @ts-ignore
+  dailyEarnings.value = computed(() => Number(store.getters["dashboard/getRevenueProjectionPerDay"]));
+  // if (
+  //   userPosition.value > 0 &&
+  //   caplPerSecond.value > 0 &&
+  //   totalStaked.value > 0
+  // ) {
+  //   dailyEarnings.value = getDailyEarnings(
+  //     userPosition.value,
+  //     caplPerSecond.value,
+  //     totalStaked.value
+  //   );
+  // }
 });
 </script>
 

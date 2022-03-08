@@ -2,7 +2,7 @@ import { DashboardState } from "@/models/dashboard";
 import { Commit, Dispatch } from "vuex";
 import { RootState } from "@/models";
 import { calculateCAPLUSDPrice } from "@/utils";
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 
 const state: DashboardState = {
   dailyEarnings: 0,
@@ -86,9 +86,11 @@ const actions = {
       await dispatch("rewards/getUserPosition", null, { root: true });
     }
     const userStakedLPTokens = rootState.rewards.userStakedPosition;
-
-
-    commit("setRevenueProjectionPerDay", rewardsPerDay / totalStakedLPTokens * userStakedLPTokens);
+    console.log(rewardsPerDay, totalStakedLPTokens, userStakedLPTokens)
+    
+    // const revenus = ethers.BigNumber(rewardsPerDay / totalStakedLPTokens * userStakedLPTokens);
+    const revenus = ethers.BigNumber.from((rewardsPerDay / totalStakedLPTokens * userStakedLPTokens).toString());
+    commit("setRevenueProjectionPerDay", ethers.utils.formatEther(revenus));
   }
 };
 

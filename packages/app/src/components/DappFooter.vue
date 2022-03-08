@@ -7,7 +7,7 @@
             >{{ tvl.toFixed(3) }} USD<br />Total Value Locked</a
           >
           <a href="javascript:void(0)" class="stack-btn"
-            >987.65 USD<br />Daily Revenue</a
+            >{{ revenue.toFixed(3) }} USD<br />Daily Revenue</a
           >
         </div>
       </div>
@@ -22,6 +22,7 @@ import { useStore } from "@/store";
 const store = useStore();
 
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
+const revenue = computed(() => store.getters["dashboard/getRevenueProjectionPerDay"]);
 </script>
 
 <style>
