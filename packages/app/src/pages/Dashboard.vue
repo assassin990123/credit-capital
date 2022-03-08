@@ -253,34 +253,26 @@ import { computed, watchEffect, ref, Ref } from "vue";
 import {
   caplUSDConversion,
   shortenAddress,
-  format,
+  format
 } from "@/utils";
 
 const store = useStore();
 
-const dailyEarnings: Ref<number> = ref(0);
-const dailyEarningsUSD: Ref<number> = ref(0);
+const dailyEarnings = computed(() => store.getters["dashboard/getRevenueProjectionPerDay"])
 
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
 
 const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
 const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
-// TODO: LP -> USD conversion
 const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
 
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
-// daily earnings
-// const userPosition = computed(
-//   () => store.getters["rewards/getUserStakedPosition"]
-// );
-// const caplPerSecond = computed(() => store.getters["rewards/getCaplPerSecond"]);
-// const totalStaked = computed(() => store.getters["rewards/getTotalStaked"]);
-
 let walletAddress = ref("Connect");
 let userCAPLToUSD = ref(0);
 let caplInUSD: Ref<number> = ref(0);
+let dailyEarningsUSD: Ref<number> = ref(0);
 // let LPBalanceInUSDC: Ref<number> = ref(0);
 
 watchEffect(async() => {
@@ -291,23 +283,8 @@ watchEffect(async() => {
     ? (walletAddress.value = shortenAddress(wallet.value))
     : (walletAddress.value = "Connect");
 
-  await store.dispatch("dashboard/fetchRevenueProjectionPerDay", null, { root: true });
-
   // @ts-ignore
-  dailyEarnings.value = computed(() => Number(store.getters["dashboard/getRevenueProjectionPerDay"]));
-  dailyEarningsUSD.value = caplUSDConversion(Number(store.getters["dashboard/getRevenueProjectionPerDay"]), store);
-  console.log("dailyEarningsUSD.value", dailyEarningsUSD)
-  // if (
-  //   userPosition.value > 0 &&
-  //   caplPerSecond.value > 0 &&
-  //   totalStaked.value > 0
-  // ) {
-  //   dailyEarnings.value = getDailyEarnings(
-  //     userPosition.value,
-  //     caplPerSecond.value,
-  //     totalStaked.value
-  //   );
-  // }
+  dailyEarningsUSD = caplUSDConversion(dailyEarnings.value, store);
 });
 </script>
 

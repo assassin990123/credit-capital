@@ -1,6 +1,9 @@
 export const format = (n: any) => {
+  if (n < 1) {
+    return n.toFixed(3)
+  }
   if (n < 1e3) {
-    return Number(n).toFixed(3);
+    return (n).toFixed(3);
   }
   if (n >= 1e3 && n < 1e6) {
     return +(n / 1e3).toFixed(1) + " K";

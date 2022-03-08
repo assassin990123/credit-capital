@@ -94,7 +94,7 @@
 </template>
 
 <script lang="ts">
-import { computed } from "vue";
+import { computed, Ref } from "vue";
 import { useStore } from "@/store";
 import { ref, watchEffect } from "vue";
 import { showConnectResult } from "@/utils/notifications";
@@ -104,7 +104,7 @@ export default {
   setup() {
     const store = useStore();
 
-    let CAPLPrice = ref("0.00");
+    let CAPLPrice:Ref<string | number> = ref("0.00");
     let buttonString = ref("Connect Wallet");
 
     const connectWeb3 =  async () => {

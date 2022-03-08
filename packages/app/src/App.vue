@@ -33,6 +33,7 @@ const w3Lopp = () => {
   store.dispatch('rewards/getRewardsInfo')
   store.dispatch("rewards/getPendingRewards");
   store.dispatch("dashboard/fetchTVL");
+  store.dispatch("dashboard/fetchRevenueProjectionPerDay")
 };
 </script>
 
