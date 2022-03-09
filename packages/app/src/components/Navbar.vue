@@ -113,7 +113,7 @@ export default {
         await store.dispatch("rewards/getRewardsInfo");
         await store.dispatch("balancer/getPoolTokens");
         await store.dispatch("dashboard/fetchTVL");
-        const price = format(caplUSDConversion(1, store));
+        const price = format(await caplUSDConversion(1, store));
         if (price) {
           CAPLPrice.value = price;
         }
@@ -134,12 +134,12 @@ export default {
       connectWeb3();
     }
 
-    watchEffect(() => {
+    watchEffect(async()  => {
       isConnected.value
         ? (buttonString.value = shortenAddress(wallet.value))
         : (buttonString.value = "Connect Wallet");
 
-      const price = format(caplUSDConversion(1, store));
+      const price = format(await caplUSDConversion(1, store));
       if (price) {
         CAPLPrice.value = price;
       }

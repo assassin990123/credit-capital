@@ -54,7 +54,7 @@
               Daily Revenue
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ dailyEarnings.value?.toFixed(4) }} CAPL ({{ dailyEarningsUSD?.toFixed(4) }} USD)
+              {{ dailyEarnings?.toFixed(4) }} CAPL ({{ dailyEarningsUSD?.toFixed(4) }} USD)
             </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
@@ -77,8 +77,8 @@
         </div>
         <div class="revenue-block-main">
           <div>Your Daily Revenue</div>
-          <div class="dashboard-revenue-projection-value">{{ parseFloat(dailyEarnings.value)?.toFixed(4) }} CAPL</div>
-          <div class="green-txt">({{ dailyEarningsUSD?.toFixed(4) }} USD)</div>
+          <div class="dashboard-revenue-projection-value">{{ parseFloat(revenueProjectionPerDay)?.toFixed(4) }} CAPL</div>
+          <div class="green-txt">({{ revenueProjectionUSDPerDay?.toFixed(4) }} USD)</div>
         </div>
       </div>
       <div class="dashboard-revenue-projection-content">
@@ -86,18 +86,18 @@
         <div class="dashboard-revenue-projection-content-row">
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Weekly Revenue</div>
-            <div class="dashboard-revenue-projection-value">{{ parseFloat(dailyEarnings.value * 7)?.toFixed(4) }} CAPL</div>
-            <div class="green-txt">{{ (dailyEarningsUSD * 7)?.toFixed(4) }} USD</div>
+            <div class="dashboard-revenue-projection-value">{{ parseFloat(revenueProjectionPerDay * 7)?.toFixed(4) }} CAPL</div>
+            <div class="green-txt">{{ (revenueProjectionUSDPerDay * 7)?.toFixed(4) }} USD</div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Monthly Revenue</div>
-            <div class="dashboard-revenue-projection-value">{{ parseFloat(dailyEarnings.value * 30)?.toFixed(4) }} CAPL</div>
-            <div class="green-txt">{{ (dailyEarningsUSD * 30)?.toFixed(4) }} USD</div>
+            <div class="dashboard-revenue-projection-value">{{ parseFloat(revenueProjectionPerDay * 30)?.toFixed(4) }} CAPL</div>
+            <div class="green-txt">{{ (revenueProjectionUSDPerDay * 30)?.toFixed(4) }} USD</div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Annual Revenue</div>
-            <div class="dashboard-revenue-projection-value">{{ parseFloat(dailyEarnings.value * 365)?.toFixed(4) }} CAPL</div>
-            <div class="green-txt">{{ (dailyEarningsUSD * 365)?.toFixed(4) }} USD</div>
+            <div class="dashboard-revenue-projection-value">{{ parseFloat(revenueProjectionPerDay * 365)?.toFixed(4) }} CAPL</div>
+            <div class="green-txt">{{ (revenueProjectionUSDPerDay * 365)?.toFixed(4) }} USD</div>
           </div>
         </div>
       </div>
@@ -253,12 +253,12 @@ import { computed, watchEffect, ref, Ref } from "vue";
 import {
   caplUSDConversion,
   shortenAddress,
-  format
+  format,
+  getDailyEarnings
 } from "@/utils";
 
 const store = useStore();
 
-const dailyEarnings = computed(() => store.getters["dashboard/getRevenueProjectionPerDay"])
 
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
 
@@ -269,22 +269,53 @@ const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
+
+const userPosition = computed(
+  () => store.getters["rewards/getUserStakedPosition"]
+);
+const caplPerSecond = computed(() => store.getters["rewards/getCaplPerSecond"]);
+const totalStaked = computed(() => store.getters["rewards/getTotalStaked"]);
+
+const revenueProjectionPerDay: Ref<number> = ref(0);
 let walletAddress = ref("Connect");
 let userCAPLToUSD = ref(0);
 let caplInUSD: Ref<number> = ref(0);
+let dailyEarnings: Ref<number> = ref(0);
 let dailyEarningsUSD: Ref<number> = ref(0);
+let revenueProjectionUSDPerDay: Ref<number> = ref(0);
 // let LPBalanceInUSDC: Ref<number> = ref(0);
 
 watchEffect(async() => {
+  revenueProjectionPerDay.value = store.getters["dashboard/getRevenueProjectionPerDay"];
   caplInUSD.value = caplUSDConversion(1, store);
-  userCAPLToUSD.value = caplUSDConversion(caplBalance.value, store);
+
+  // if (caplBalance.value) {
+    userCAPLToUSD.value = await caplUSDConversion(caplBalance.value, store);
+  // }
 
   isConnected.value
     ? (walletAddress.value = shortenAddress(wallet.value))
     : (walletAddress.value = "Connect");
 
-  // @ts-ignore
-  dailyEarningsUSD = caplUSDConversion(dailyEarnings.value, store);
+  console.log("revenueProjectionPerDay.value", revenueProjectionPerDay.value);
+  
+  if (revenueProjectionPerDay.value) {
+    revenueProjectionUSDPerDay.value = await caplUSDConversion(revenueProjectionPerDay.value, store);
+  }
+
+  if (
+    userPosition.value > 0 &&
+    caplPerSecond.value > 0 &&
+    totalStaked.value > 0
+  ) {
+    dailyEarnings.value = getDailyEarnings(
+      userPosition.value,
+      caplPerSecond.value,
+      totalStaked.value
+    );
+
+    dailyEarningsUSD.value = await caplUSDConversion(dailyEarnings.value, store);
+  }
 });
 </script>
 

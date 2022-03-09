@@ -133,11 +133,13 @@ export const checkAllAllowances = (
   // if
 };
 
-export const caplUSDConversion = (amount: number, store: any): number => {
+export const caplUSDConversion = async (amount: number, store: any) => {
+  const poolTokens = await store.getters["balancer/getPoolTokens"];
+  
   return calculateCAPLUSDPrice(
     amount,
     "CAPL",
-    store.getters["balancer/getPoolTokens"]
+    poolTokens
   );
 };
 
