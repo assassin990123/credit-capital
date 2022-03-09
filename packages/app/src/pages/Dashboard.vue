@@ -11,7 +11,7 @@
         </div>
         <div class="title-cus">
           <h2>APR</h2>
-          <div class="dashboard-daily-earning-panel-value">{{format(dailyEarningsUSD / tvl * 36500) }}%</div>
+          <div class="dashboard-daily-earning-panel-value">{{format(caplToUSD(dailyEarnings, store) / tvl * 36500) }}%</div>
         </div>
         <div class="title-cus">
           <h2>TVL</h2>
@@ -24,7 +24,7 @@
         <div class="dashboard-daily-earning-capl-header">
           <h2>CAPL</h2>
           <h2>
-            {{ format(caplBalance) }} ({{ format(userCAPLToUSD) }} USD)
+            {{ format(caplBalance) }} ({{ format(caplToUSD(caplBalance, store)) }} USD)
           </h2>
         </div>
         <div class="dashboard-daily-earning-capl-content">
@@ -34,35 +34,46 @@
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
               {{ format(caplBalance) }} CAPL ({{
-                format(userCAPLToUSD)
+                format(caplToUSD(caplBalance, store))
               }}
               USD)
             </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
             <div class="dashboard-daily-earning-capl-content-title">
-              Your Staked Balance
+              Available Balance
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ lpBalance?.toFixed(4) }} USDC-CAPL Shares ({{
-                LPBalanceInUSDC?.toFixed(4)
+              {{ format(lpBalance) }} USDC-CAPL Shares ({{
+                format(lpToUSD(lpBalance, store)) 
               }}
               USD)
+              <br />
+              <div class="stake-link">
+                <ul class="nav-btn-custom">
+                  <li class="nav-item">
+                    <router-link to="stake"
+                      ><button class="connectButton">Stake</button>
+                    </router-link>
+                  </li>
+                </ul>
+              </div>
             </div>
+            <br />
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
             <div class="dashboard-daily-earning-capl-content-title">
               Daily Revenue
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ format(dailyEarnings)}} CAPL ({{ format(dailyEarningsUSD)}} USD)
+              {{ format(dailyEarnings)}} CAPL ({{ format(caplToUSD(dailyEarnings, store))}} USD)
             </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
             <div class="dashboard-daily-earning-capl-content-title">
               Daily Yield
             </div>
-            <div class="dashboard-daily-earning-capl-content-value">{{format(dailyEarningsUSD / tvl * 100) }}%</div>
+            <div class="dashboard-daily-earning-capl-content-value">{{format(caplToUSD(dailyEarnings, store) / tvl * 100) }}%</div>
           </div>
         </div>
       </div>
@@ -134,21 +145,30 @@
         <div class="dashboard-portfolio-section-title">Wallet Assets</div>
         <div class="dashboard-portfolio-section-panel">
           <div class="dashboard-portfolio-section-panel-row">
-            <div>USDC-CAPL Shares</div>
-            <div>
-              {{ format(lpBalance) }} USDC-CAPL Shares ({{
-                format(lpToUSD(lpBalance, store))
-              }}
-              USD)
-            </div>
-          </div>
-          <div class="dashboard-portfolio-section-panel-row">
             <div>CAPL Tokens</div>
             <div>{{ format(caplBalance) }} CAPL ({{ format(caplToUSD(caplBalance, store)) }} USD)</div>
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC Tokens</div>
             <div>{{ format(usdcBalance) }} USDC</div>
+          </div>
+          <div class="dashboard-portfolio-section-panel-row">
+            <div>USDC-CAPL Shares</div>
+            <div>
+              {{ format(lpBalance) }} USDC-CAPL Shares ({{
+                format(lpToUSD(lpBalance, store))
+              }}
+              USD)
+              <div class="stake-link">
+                <ul class="nav-btn-custom">
+                  <li class="nav-item">
+                    <router-link to="stake"
+                      ><button class="connectButton">Stake</button>
+                    </router-link>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
         <div class="dashboard-portfolio-section-title">Vault Assets</div>
@@ -164,7 +184,9 @@
             </div>
           </div>
         </div>
-        <button type="submit" class="reward-btn" style="display:none;">Claim Rewards</button><!-- todo: make claim button work -->
+        <router-link to="reward" class="reward-link" >
+          <button type="submit" class="reward-btn">Claim Rewards</button>
+        </router-link>
       </div>
       <div class="dashboard-portfolio-section" style="display:none;"><!--todo: Implement historic data-->
         <div class="dashboard-portfolio-capl-row">
@@ -280,7 +302,6 @@ import {
   getDailyEarnings,
   shortenAddress,
   format,
-  calculateCAPLUSDPrice,
 } from "@/utils";
 
 const store = useStore();
@@ -296,7 +317,6 @@ const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
-// daily earnings
 const userPosition = computed(
   () => store.getters["rewards/getUserStakedPosition"]
 );
@@ -308,21 +328,11 @@ const pendingRewards = computed(
 );
 
 let walletAddress = ref("Connect");
-let userCAPLToUSD = ref(0);
-let caplInUSD: Ref<number> = ref(0);
-let userPositionInUSD: Ref<number> = ref(0);
-let LPBalanceInUSDC: Ref<number> = ref(0);
-let dailyEarningsUSD: Ref<number> = ref(0);
-let pendingRewardsUSDC = ref("0");
 
 watchEffect(() => {
-  caplInUSD.value = caplToUSD(1, store);
-  userCAPLToUSD.value = caplToUSD(caplBalance.value, store);
-
   isConnected.value
     ? (walletAddress.value = shortenAddress(wallet.value))
     : (walletAddress.value = "Connect");
-
   if (
     userPosition.value > 0 &&
     caplPerSecond.value > 0 &&
@@ -332,17 +342,6 @@ watchEffect(() => {
       userPosition.value,
       caplPerSecond.value,
       totalStaked.value
-    );
-    dailyEarningsUSD.value = caplToUSD(dailyEarnings.value, store);
-    userPositionInUSD.value = lpToUSD(userPosition.value, store);
-
-    // @ts-ignore
-    pendingRewardsUSDC.value = format(
-      calculateCAPLUSDPrice(
-        pendingRewards.value,
-        "CAPL",
-        store.getters["balancer/getPoolTokens"]
-      )
     );
   }
 });
@@ -537,7 +536,10 @@ watchEffect(() => {
   font-size: 20px;
   font-weight: 700;
 }
-.dashboard-cus-main .reward-btn {
+.dashboard-cus-main .reward-link {
+  text-align: center;
+}
+.dashboard-cus-main .reward-link button {
   display: inline-block;
   padding: 15px;
   border-radius: 50px;
@@ -652,7 +654,7 @@ watchEffect(() => {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  font-size: 14px;
+  font-size: 18px;
   margin-bottom: 5px;
 }
 
@@ -786,7 +788,7 @@ watchEffect(() => {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  font-size: 16px;
+  font-size: 18px;
   color: #2c2c2c;
 }
 
@@ -842,11 +844,21 @@ watchEffect(() => {
 .dashboard-cus-main .dashboard-platform-assets-panel-row-border div {
   font-weight: bold;
   color: #000;
-  font-size: 16px;
+  font-size: 18px;
 }
 .dashboard-cus-main {
   background-color: #fdf6e4;
   background-image: url(/images/hero/banner-4.png);
   background-repeat: no-repeat;
+}
+.dashboard-daily-earning-capl-content-title {
+  font-size: 18px;
+}
+.stake-link {
+  text-align:right;
+  font-size:20px;
+}
+.stake-link ul {
+  display:inline;
 }
 </style>
