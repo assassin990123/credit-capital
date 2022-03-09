@@ -86,18 +86,18 @@
         <div class="dashboard-revenue-projection-content-row">
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Weekly Revenue</div>
-            <div class="dashboard-revenue-projection-value">23.3476 CAPL</div>
-            <div class="green-txt">24.1823 USD</div>
+          <div class="dashboard-revenue-projection-value">{{ parseFloat((dailyEarnings * 7).toString())?.toFixed(4) }} CAPL</div>
+          <div class="green-txt">({{ (dailyEarningsUSD * 7).toFixed(4) }} USD)</div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Monthly Revenue</div>
-            <div class="dashboard-revenue-projection-value">23.3476 CAPL</div>
-            <div class="green-txt">24.1823 USD</div>
+          <div class="dashboard-revenue-projection-value">{{ parseFloat((dailyEarnings * 30).toString())?.toFixed(4) }} CAPL</div>
+          <div class="green-txt">({{ (dailyEarningsUSD * 30).toFixed(4) }} USD)</div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Annual Revenue</div>
-            <div class="dashboard-revenue-projection-value">23.3476 CAPL</div>
-            <div class="green-txt">24.1823 USD</div>
+          <div class="dashboard-revenue-projection-value">{{ parseFloat((dailyEarnings * 356).toString())?.toFixed(4) }} CAPL</div>
+          <div class="green-txt">({{ (dailyEarningsUSD * 356).toFixed(4) }} USD)</div>
           </div>
         </div>
       </div>
@@ -282,6 +282,7 @@ let walletAddress = ref("Connect");
 let userCAPLToUSD = ref(0);
 let caplInUSD: Ref<number> = ref(0);
 let LPBalanceInUSDC: Ref<number> = ref(0);
+let dailyEarningsUSD: Ref<number> = ref(0)
 
 watchEffect(() => {
   caplInUSD.value = caplUSDConversion(1, store);
@@ -301,6 +302,7 @@ watchEffect(() => {
       caplPerSecond.value,
       totalStaked.value
     );
+    dailyEarningsUSD.value = caplUSDConversion(dailyEarnings.value, store);
   }
 });
 </script>
