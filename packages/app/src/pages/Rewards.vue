@@ -6,9 +6,8 @@
           <h1 class="panel-title">PENDING REWARDS</h1>
           <div class="rewards-content">
             <div class="rewards-display">
-              {{ pendingRewardsCAPL + " CAPL" }} ({{
-                pendingRewardsUSDC + " USD"
-              }})
+              {{ pendingRewardsCAPL + " CAPL" }}<br />
+              ({{ pendingRewardsUSDC + " USD" }})
             </div>
             <div class="rewards-section">
               <button class="rewards-section-item" @click="claim">CLAIM</button>
@@ -49,16 +48,21 @@ const claim = () => {
 };
 
 watchEffect(async () => {
-  if (connected.value && pendingRewards.value > 0) {
-    await store.dispatch("balancer/getPoolTokens");
-    pendingRewardsCAPL.value = format(pendingRewards.value);
-    pendingRewardsUSDC.value = format(
-      calculateCAPLUSDPrice(
-        pendingRewards.value,
-        "USDC",
-        store.getters["balancer/getPoolTokens"]
-      )
-    );
+  if (connected.value === true) {
+    if (pendingRewards.value >= 0) {
+      await store.dispatch("balancer/getPoolTokens");
+      pendingRewardsCAPL.value = format(pendingRewards.value);
+      pendingRewardsUSDC.value = format(
+        calculateCAPLUSDPrice(
+          pendingRewards.value,
+          "CAPL",
+          store.getters["balancer/getPoolTokens"]
+        )
+      );
+    }
+  } else {
+    pendingRewardsCAPL.value = format('0');
+    pendingRewardsUSDC.value = format('0');
   }
 });
 </script>
@@ -77,7 +81,7 @@ watchEffect(async () => {
 
 .rewards-display {
   border: 1px solid #000000;
-  font-size: 100px;
+  font-size: 50px;
   font-weight: 700;
   padding: 40px 20px;
   text-align: center;

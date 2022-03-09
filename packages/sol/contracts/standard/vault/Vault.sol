@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "hardhat/console.sol";
 
 contract Vault is AccessControl, Pausable {
     using SafeERC20 for IERC20;
@@ -209,10 +208,12 @@ contract Vault is AccessControl, Pausable {
             i++
         ) {
             if (stakes[i].timeLockEnd > block.timestamp) {
-                lastUnlockedIndex = i;
                 break;
             }
             unlockedAmount += stakes[i].amount;
+
+            // update last unclocked amount
+            lastUnlockedIndex = i;
         }
 
         userPosition.userLastWithdrawnStakeIndex = lastUnlockedIndex;
@@ -381,7 +382,11 @@ contract Vault is AccessControl, Pausable {
         pool.totalPooled -= _amount;
     }
 
-    function withdrawNativeBalance() public payable onlyRole(DEFAULT_ADMIN_ROLE) {
+    function withdrawNativeBalance()
+        public
+        payable
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         require(address(this).balance > 0, "no balance to withdraw");
         uint256 balance = address(this).balance;
 

@@ -4,7 +4,7 @@
     <div class="acavo-responsive-nav">
       <div class="container">
         <div class="acavo-responsive-menu">
-          <div class="logo">
+          <div class="logo" @click="isShow = !isShow">
             <router-link to="/">
               <img src="/images/logo-white.png" alt="logo" />
             </router-link>
@@ -18,22 +18,27 @@
     <div class="acavo-nav" v-show="isShow">
       <div class="container">
         <nav class="navbar navbar-expand-md navbar-light">
-          <div class="logo-mobile">
+          <div class="logo-mobile" @click="isShow = !isShow">
             <router-link to="/">
               <img src="/images/logo-white.png" alt="logo" />
             </router-link>
           </div>
           <div class="navbar-collapse mean-menu">
             <ul class="navbar-nav">
-              <li class="nav-item"><router-link to="/">Home</router-link></li>
-              <li class="nav-item">
+              <li class="nav-item" @click="isShow = !isShow">
+                <router-link to="/">Home</router-link>
+              </li>
+              <li class="nav-item" @click="isShow = !isShow">
                 <router-link to="stake">Stake</router-link>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" @click="isShow = !isShow">
                 <router-link to="reward">Rewards</router-link>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" @click="isShow = !isShow">
                 <router-link to="swap">Swap</router-link>
+              </li>
+              <li class="nav-item" @click="isShow = !isShow">
+                <router-link to="liquidity">Liquidity</router-link>
               </li>
               <!-- <li class="nav-item">
                 <router-link to="treasury">Treasury</router-link>
@@ -42,13 +47,15 @@
           </div>
           <div>
             <ul class="nav-btn-custom">
-              <li class="nav-item"><span>Capl: &dollar;0.000</span></li>
-              <li class="nav-item">
+              <li class="nav-item" @click="isShow = !isShow">
+                <span>CAPL &dollar;{{ CAPLPrice }}</span>
+              </li>
+              <li class="nav-item" @click="isShow = !isShow">
                 <router-link to="dashboard"
                   ><button class="connectButton">Dashboard</button>
                 </router-link>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" @click="isShow = !isShow">
                 <button class="connectButton" @click="connectWeb3">
                   {{ buttonString }}
                 </button>
@@ -91,23 +98,51 @@ import { computed } from "vue";
 import { useStore } from "@/store";
 import { ref, watchEffect } from "vue";
 import { showConnectResult } from "@/utils/notifications";
-import { shortenAddress } from "@/utils";
+import { shortenAddress, caplUSDConversion, format } from "@/utils";
 
 export default {
   setup() {
     const store = useStore();
 
+    let CAPLPrice = ref("0.00");
     let buttonString = ref("Connect Wallet");
+
+    const connectWeb3 =  async () => {
+      await store.dispatch("accounts/connectWeb3");
+      if (isConnected.value) {
+        await store.dispatch("rewards/getRewardsInfo");
+        await store.dispatch("balancer/getPoolTokens");
+        await store.dispatch("dashboard/fetchTVL");
+        const price = format(caplUSDConversion(1, store));
+        if (price) {
+          CAPLPrice.value = price;
+        }
+      }
+
+      showConnectResult(store);
+    };
 
     const isConnected = computed(
       () => store.getters["accounts/isUserConnected"]
     );
+
     const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
+
+    // check the localstorage for determine the user was connected
+    if (localStorage.getItem('isConnected')) {
+      // reconnect web3
+      connectWeb3();
+    }
 
     watchEffect(() => {
       isConnected.value
         ? (buttonString.value = shortenAddress(wallet.value))
         : (buttonString.value = "Connect Wallet");
+
+      const price = format(caplUSDConversion(1, store));
+      if (price) {
+        CAPLPrice.value = price;
+      }
     });
 
     function showMoons() {
@@ -117,12 +152,9 @@ export default {
     return {
       isConnected,
       buttonString,
+      CAPLPrice,
       showMoons,
-      connectWeb3: async () => {
-        await store.dispatch("accounts/connectWeb3");
-        await store.dispatch("rewards/getRewardsInfo");
-        showConnectResult(store);
-      },
+      connectWeb3
     };
   },
   data: function () {
@@ -181,5 +213,17 @@ export default {
 
 /** MEDIA QUERIES */
 @media screen and (min-width: 1000px) {
+}
+@media screen and (max-width: 962px) {
+  .liquidity-box-main {
+    width: 98% !important;
+    margin: 0 auto;
+  }
+  .stack-button-area {
+    flex-wrap: wrap;
+  }
+  .stack-btn {
+    flex: 0 0 100% !important;
+  }
 }
 </style>

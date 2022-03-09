@@ -106,9 +106,9 @@ const actions = {
     rootState: RootState;
     dispatch: Dispatch;
   }) {
-    actions.getCaplPerSecond({ commit, rootState });
-    actions.getTotalStaked({ commit, rootState });
-    actions.getUserPosition({ commit, rootState, dispatch });
+    await actions.getCaplPerSecond({ commit, rootState });
+    await actions.getTotalStaked({ commit, rootState });
+    await actions.getUserPosition({ commit, rootState, dispatch });
   },
 
   async getUserPosition({
@@ -134,7 +134,7 @@ const actions = {
       findObjectContract("LP", tokens, ChainID),
       address
     );
-    // parse balance, set new value in the local state
+    // parse balance, set new value in the local
     // console.log(userPosition)
     commit(
       "setUserStakedPosition",
@@ -151,6 +151,10 @@ const actions = {
     rootState: RootState;
     dispatch: Dispatch;
   }) {
+    if (rootState.accounts.isConnected === false) {
+      return 10;
+    }
+
     // if state.vaultContract is null, call the `setContracts` function
     if (rootState.contracts.vaultContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -172,7 +176,20 @@ const actions = {
       "setUserUnlockedAmount",
       ethers.utils.formatUnits(unlockedAmount, 18)
     );
+
+      // // listen in
+      // await actions.ethereumListener({ commit, rootState });
   },
+
+  // async ethereumListener({ commit, rootState }: { commit: Function, rootState: RootState }) {
+  //   (window as any).ethereum.on("accountsChanged", (accounts: any) => {
+  //     // If user has locked/logout from MetaMask, this resets the accounts array to empty
+  //     if (!accounts.length) {
+  //       // logic to handle what happens once MetaMask is locked
+  //       commit("setUserUnlockedAmount", 10);
+  //     }
+  //   });
+  // },
 
   async stake(
     { rootState, dispatch }: { rootState: RootState; dispatch: Dispatch },

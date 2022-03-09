@@ -7,6 +7,8 @@ import SwapPage from "./pages/Swap.vue";
 import TreasuryPage from "./pages/Treasury.vue";
 import PlatformPage from "./pages/Platform.vue";
 import PortfolioPage from "./pages/Portfolio.vue";
+import LiquidityPage from "./pages/Liquidity.vue";
+import HomePageNew from "./pages/HomePageNew.vue"
 
 const routeInfos = [
   {
@@ -28,6 +30,10 @@ const routeInfos = [
   {
     path: "/swap",
     component: SwapPage,
+  },
+  {
+    path: "/liquidity",
+    component: LiquidityPage,
   },
   {
     path: "/treasury",

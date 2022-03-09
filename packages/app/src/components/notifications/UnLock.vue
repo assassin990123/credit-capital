@@ -2,11 +2,11 @@
   <div>
     <div class="toastnotification-header">
       <font-awesome-icon icon="fa-light fa-triangle-exclamation" />
-      <span class="toast-title">Warning</span>
+      <span class="toast-title">Notification</span>
       <span></span>
     </div>
     <div>
-      <div class="toastnotification-content">Amount must be greater than zero.</div>
+      <div class="toastnotification-content">Please unlock your wallet!</div>
     </div>
   </div>
 </template>

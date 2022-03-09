@@ -134,7 +134,7 @@ contract Rewards is Pausable, AccessControl {
     ICAPL capl;
 
     uint256 CAPL_PRECISION = 1e18;
-    uint256 timelockThreshold = 1 weeks;
+    uint256 stakeThreshold = 1 weeks; // This is the threshold period. It will determine we should create new stake or not
 
     event Claim(address indexed _token, address indexed _user, uint256 _amount);
     event Deposit(
@@ -184,7 +184,8 @@ contract Rewards is Pausable, AccessControl {
                 msg.sender
             );
 
-            if (checkTimelockThreshold(lastStake.startTime)) {
+            // check if the last stake is under the stakeThreshold
+            if (!checkStakeThreshold(lastStake.startTime)) {
                 // add a new stake for the user
                 // this function adds a new stake, and a new stake key in the user position instance
                 vault.addStake(_token, msg.sender, _amount);
@@ -254,7 +255,7 @@ contract Rewards is Pausable, AccessControl {
             user.rewardDebt;
     }
 
-    function claim(address _token, address _user) external returns (uint256) {
+    function claim(address _token, address _user) external {
         IPool.Pool memory pool = updatePool(_token);
         IUserPositions.UserPosition memory user = vault.getUserPosition(
             _token,
@@ -287,12 +288,12 @@ contract Rewards is Pausable, AccessControl {
         uint256 newRewardDebt;
 
         // check if the user withdraw token right after the first deposit
-        if (user.rewardDebt > 0) {
-            newRewardDebt =
-                user.rewardDebt -
-                (amount * pool.accCaplPerShare) /
-                CAPL_PRECISION;
-        }
+        // if (user.rewardDebt > 0) {
+        newRewardDebt =
+            // user.rewardDebt -
+            (amount * pool.accCaplPerShare) /
+            CAPL_PRECISION;
+        // }
 
         vault.withdraw(_token, _user, amount, newRewardDebt);
         vault.removePoolPosition(_token, amount);
@@ -301,12 +302,12 @@ contract Rewards is Pausable, AccessControl {
     }
 
     // TODO: Implement
-    function checkTimelockThreshold(uint256 _startTime)
+    function checkStakeThreshold(uint256 _startTime)
         internal
         view
         returns (bool)
     {
-        return _startTime + timelockThreshold < block.timestamp;
+        return _startTime + stakeThreshold > block.timestamp;
     }
 
     // fallback functions

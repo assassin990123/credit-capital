@@ -5,7 +5,7 @@
         <div class="title-cus">
           <h2>DAILY EARNINGS</h2>
           <div class="dashboard-daily-earning-panel-value">
-            {{ dailyEarnings }}
+            {{ format(dailyEarnings) }}
           </div>
         </div>
         <div class="title-cus">
@@ -15,14 +15,16 @@
         <div class="title-cus">
           <h2>TVL</h2>
           <div class="dashboard-daily-earning-panel-value">
-            {{ tvl?.toFixed(4) }} USD
+            {{ tvl?.toFixed(2) }} USD
           </div>
         </div>
       </div>
       <div class="dashboard-daily-earning-capl">
         <div class="dashboard-daily-earning-capl-header">
           <h2>CAPL</h2>
-          <h2>{{ caplBalance }} ({{ caplInUSD?.toFixed(4) }} USD)</h2>
+          <h2>
+            {{ caplBalance.toFixed(3) }} ({{ userCAPLToUSD?.toFixed(2) }} USD)
+          </h2>
         </div>
         <div class="dashboard-daily-earning-capl-content">
           <div class="dashboard-daily-earning-capl-content-row">
@@ -248,11 +250,17 @@
 <script setup lang="ts">
 import { useStore } from "@/store";
 import { computed, watchEffect, ref, Ref } from "vue";
-import { caplUSDConversion, getDailyEarnings, shortenAddress } from "@/utils";
+import {
+  caplUSDConversion,
+  getDailyEarnings,
+  shortenAddress,
+  format,
+} from "@/utils";
 
 const store = useStore();
 
 const dailyEarnings: Ref<number> = ref(0);
+
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
 
 const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
@@ -267,7 +275,6 @@ const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 const userPosition = computed(
   () => store.getters["rewards/getUserStakedPosition"]
 );
-// actually capl per block for now
 const caplPerSecond = computed(() => store.getters["rewards/getCaplPerSecond"]);
 const totalStaked = computed(() => store.getters["rewards/getTotalStaked"]);
 

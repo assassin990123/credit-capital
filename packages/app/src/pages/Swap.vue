@@ -4,10 +4,10 @@
       <div class="panel-container inner-container">
         <div class="panel stake-panel">
           <h1 class="panel-title">swap</h1>
-          <div class="panel-content swap-panel-content">
+          <div class="panel-content swap-panel-content liquidity-box-main">
             <div class="panel-header">
-              <div class="panel-explanation">functionality explanation</div>
-              <div class="ellipses">&hellip;</div>
+              <div class="panel-explanation"></div>
+              <!-- <div class="ellipses">&hellip;</div> -->
             </div>
             <div class="panel-display1">
               <div class="swap-description">
@@ -15,7 +15,6 @@
                 <div class="panel-explanation">{{ swapTokenSymbol }}</div>
               </div>
               <div class="swap-input-body">
-                
                 <div class="swap-input-inner">
                   <input
                     type="text"
@@ -31,68 +30,16 @@
             <div class="panel-display1">
               <div class="swap-description">
                 <div class="panel-explanation"><span>receive</span></div>
-                <div class="panel-explanation"><span>balance:</span> 000</div>
-                
               </div>
               <div class="swap-input-body">
                 <div class="swap-input-below">
-                <div class="swap-token-symbol">{{ swapToTokenSymbol }}</div>
-                <div class="panel-explanation">{{ swapTokenResult }}</div>
+                  <div class="swap-token-symbol">{{ swapToTokenSymbol }}</div>
+                  <div class="panel-explanation">{{ swapTokenResult }}</div>
                 </div>
               </div>
             </div>
             <button type="button" @click="handleSwap()" class="btn-custom">
               {{ swapButtonString }}
-            </button>
-          </div>
-        </div>
-        <div class="panel stake-panel">
-          <h1 class="panel-title">liquidity</h1>
-          <div class="panel-content swap-panel-content">
-            <div class="panel-header">
-              <div class="panel-explanation">functionality explanation</div>
-              <div class="ellipses">&hellip;</div>
-            </div>
-            <div class="panel-display swap-panel-display">
-              <div>
-                <div class="panel-explanation"><span>amount</span></div>
-                <div class="panel-explanation">
-                  <input
-                    type="text"
-                    v-model="caplLiquidity"
-                    class="input-custom"
-                    placeholder="0.00"
-                  />
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="panel-explanation"><span>balance:</span></div>
-                <div class="panel-explanation">CAPL</div>
-              </div>
-            </div>
-            <div class="panel-display swap-panel-display">
-              <div>
-                <div class="panel-explanation"><span>amount</span></div>
-                <div class="panel-explanation">
-                  <input
-                    type="text"
-                    v-model="usdcLiquidity"
-                    class="input-custom"
-                    placeholder="0.00"
-                  />
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="panel-explanation"><span>balance:</span> 000</div>
-                <div class="panel-explanation">USDC</div>
-              </div>
-            </div>
-            <button
-              type="submit"
-              @click="handleAddLiquidity()"
-              class="btn-custom"
-            >
-              {{ addLiquidityButtonString }}
             </button>
           </div>
         </div>
@@ -108,7 +55,6 @@ import { ref, Ref, watchEffect, computed } from "vue";
 import { useStore } from "@/store";
 import {
   calculateCAPLUSDPrice,
-  checkAllAllowances,
   checkAllowance,
   format,
   stringToNumber,
@@ -116,41 +62,27 @@ import {
 import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store: any = useStore();
-let swapAmount:Ref<number> = ref(0);
-let swapTokenSymbol: Ref<string> = ref("CAPL");
-let swapToTokenSymbol: Ref<string> = ref("USDC");
+let swapAmount: Ref<number|null> = ref(null);
+let swapTokenSymbol: Ref<string> = ref("USDC");
+let swapToTokenSymbol: Ref<string> = ref("CAPL");
 
-let swapTokenResult:Ref<string> = ref('');
+let swapTokenResult: Ref<string> = ref("");
 let swapButtonString = ref("Swap");
-
-let usdcLiquidity: Ref<number> = ref(0);
-let caplLiquidity: Ref<number> = ref(0);
-
-let approvalFlag:Ref<string | null> = ref('')
-let addLiquidityButtonString:Ref<string> = ref('')
 
 const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
 watchEffect(async () => {
   !isUserConnected.value ||
-  (await checkAllowance(
-    store,
-    swapTokenSymbol.value,
-    Number(swapAmount.value),
-    "balancer"
-  ))
-    ? (swapButtonString.value = "Swap")
-    : (swapButtonString.value = "Approve");
-
-  const { approvalRequired, flag } = await checkAllAllowances(store, [
-    usdcLiquidity.value,
-    caplLiquidity.value,
-  ]);
-  approvalFlag.value = flag;
-  approvalRequired
-    ? addLiquidityButtonString.value == "Add Liquidity"
-    : addLiquidityButtonString.value == "Approve";
+    (swapAmount.value !== 0 &&
+      ((await checkAllowance(
+        store,
+        swapTokenSymbol.value,
+        Number(swapAmount.value),
+        "balancer"
+      ))
+        ? (swapButtonString.value = "Swap")
+        : (swapButtonString.value = "Approve")));
 });
 
 // handles swapping button logic, dependant on current string
@@ -162,60 +94,24 @@ const handleSwap = async () => {
 
 // handles adding liquidity button logic, dependant on current string
 // we can assume that if usdcLiquidity > 0 then caplLiquidity > 0
-const handleAddLiquidity = async () => {
-  if (checkConnection(store) && checkBalance(usdcLiquidity.value)) {
-    addLiquidityButtonString.value == "Add Liquidity"
-      ? await addLiquidity()
-      : await approveAll();
-  }
-};
 
 // approves a single token for swapping
 const approve = async () => {
   const symbol = swapTokenSymbol.value;
   await store.dispatch("tokens/approveBalancerVault", {
     symbol,
-    amount: swapAmount.value,
   });
 };
 
 // handles three cases
 // 1. USDC Approvals, 2. CAPL approvals, 3. Both tokens approvals
 // TODO: Refactor these store.dispatch calls into individual functions
-const approveAll = async () => {
-  if (!approvalFlag.value) return;
-
-  if (approvalFlag.value == "USDC") {
-    await store.dispatch("tokens/approveBalancerVault", {
-      symbol: "USDC",
-      amount: usdcLiquidity.value,
-    });
-  } else if (approvalFlag.value == "CAPL") {
-    await store.dispatch("tokens/approveBalancerVault", {
-      symbol: "CAPL",
-      amount: caplLiquidity.value,
-    });
-  } else {
-    await store.dispatch("tokens/approveBalancerVault", {
-      symbol: "USDC",
-      amount: usdcLiquidity.value,
-    });
-    await store.dispatch("tokens/approveBalancerVault", {
-      symbol: "CAPL",
-      amount: caplLiquidity.value,
-    });
-  }
-};
 
 async function swap() {
   await store.dispatch("balancer/singleSwap", {
     amount: swapAmount.value,
     symbol: swapTokenSymbol.value,
   });
-}
-
-function addLiquidity() {
-  store.dispatch("balancer/addLiquidity");
 }
 
 // allows for a user to switch between swapping USDC and CAPL

@@ -12,6 +12,8 @@ import Footer from "@/components/Footer.vue";
 import { useStore } from "@/store";
 import { computed, watchEffect } from "vue";
 
+document.title="CreditCapital: Your Personal, Private Hedge Fund";
+let interval;
 const store = useStore();
 // create contract instances with provider
 store.dispatch("contracts/setContracts");
@@ -21,14 +23,19 @@ const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 // watch for user connection
 watchEffect(async () => {
   if (isConnected.value) {
-    setInterval(w3Lopp, 2000);
+    interval = setInterval(w3Lopp, 2000);
+  } else {
+    clearInterval(interval);
   }
 });
 
 const w3Lopp = () => {
   store.dispatch("tokens/getAllowances");
   store.dispatch("tokens/getTokenBalances");
+  // update user position states
+  store.dispatch('rewards/getRewardsInfo')
   store.dispatch("rewards/getPendingRewards");
+  store.dispatch("dashboard/fetchTVL");
 };
 </script>
 

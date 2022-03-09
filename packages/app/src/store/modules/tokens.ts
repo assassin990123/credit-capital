@@ -66,8 +66,9 @@ const mutations = {
 const actions = {
   async approveBalancerVault(
     { commit, rootState }: { commit: Commit; rootState: RootState },
-    { symbol, amount }: { symbol: string; amount: number }
+    { symbol }: { symbol: string }
   ) {
+
     let contract;
     let decimals;
     symbol == "CAPL"
@@ -77,11 +78,11 @@ const actions = {
     // @ts-ignore
     const address = rootState.contracts.balancerVaultContract.address;
     // @ts-ignore
-    if (contract && amount > 0) {
+    if (contract > 0) {
       // @ts-ignore
       await contract?.approve(
         address,
-        ethers.utils.parseUnits(amount.toString(), decimals)
+        "115792089237316195423570985008687907853269984665640564039457584007913129639935"
       );
     }
   },
@@ -160,7 +161,7 @@ const actions = {
       lpRewardsAllowance = Number(
         ethers.utils.formatUnits(lpRewardsAllowance.toString(), 18)
       );
-      
+
       // console.log(`CAPL allowance: ${caplAllowance}, USDC allowance: ${usdcAllowance}`)
       commit("setCAPLBalancerVaultAllowance", caplBalancerVaultAllowance);
       commit("setUSDCBalancerVaultAllowance", usdcBalancerVaultAllowance);

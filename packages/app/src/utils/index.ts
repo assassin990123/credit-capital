@@ -110,15 +110,15 @@ export const checkAllAllowances = (
   let count = 0;
   let approvalRequired = false;
   let flag: string | null = null;
-
+  console.log(usdcBalancerVaultAllowance, caplBalancerVaultAllowance)
   // known:
   // amounts[0] -> usdc, amounts[1] -> capl
-  if (usdcBalancerVaultAllowance < amounts[0]) {
+  if (amounts[0] !== 0 && usdcBalancerVaultAllowance < amounts[0]) {
     count++;
     approvalRequired = true;
     flag = "USDC";
   }
-  if (caplBalancerVaultAllowance < amounts[1]) {
+  if (amounts[1] !== 0 && caplBalancerVaultAllowance < amounts[1]) {
     count++;
     approvalRequired = true;
     flag = "CAPL";
@@ -159,10 +159,9 @@ export const stringToNumber = (str: any) => {
 // CaplPerDay (pool) / totalStaked (pool) * userPosition
 export const getDailyEarnings = (
   userPosition: number,
-  caplPerDay: number,
+  caplPerSecond: number,
   totalStaked: number
 ): number => {
-  // 43200 blocks / day on polygon
-
-  return caplPerDay * 43200 * (userPosition / totalStaked);
+  // caplPerSecond * seconds per day * ratio of user's position vs total staked. Accounting for token decimals.
+  return caplPerSecond * 86400 * userPosition / totalStaked / 1e18; 
 };

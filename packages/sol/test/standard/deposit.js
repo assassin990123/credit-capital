@@ -40,7 +40,9 @@ describe("Rewards Vault", function () {
     const pool = await vault.getPool(capl.address);
 
     expect(Number(pool.totalPooled.toString())).to.equal(0);
-    expect(Number(ethers.utils.formatEther(pool.rewardsPerSecond.toString()))).to.equal(5000 / (24 * 60 * 60));
+    expect(
+      Number(ethers.utils.formatEther(pool.rewardsPerSecond.toString()))
+    ).to.equal(5000 / (24 * 60 * 60));
   });
 
   it("Deposit a new position", async function () {
@@ -80,6 +82,8 @@ describe("Rewards Vault", function () {
     const pool = await vault.getPool(capl.address);
 
     expect(Number(pool.totalPooled.toString())).to.equal(10);
-    expect(Number(ethers.utils.formatEther(pool.rewardsPerSecond.toString()))).to.equal(5000 / (24 * 60 * 60));
+    expect(
+      Number(ethers.utils.formatEther(pool.rewardsPerSecond.toString()))
+    ).to.equal(5000 / (24 * 60 * 60));
   });
 });

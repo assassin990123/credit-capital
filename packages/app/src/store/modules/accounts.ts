@@ -4,6 +4,7 @@ import { markRaw } from "vue";
 import { Commit, Dispatch } from "vuex";
 import { AccountState } from "@/models/accounts";
 import { ethers } from "ethers";
+import { checkWalletConnect } from "@/utils/notifications";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
@@ -16,6 +17,11 @@ const state: AccountState = {
   isConnected: false,
   signer: null,
 };
+interface ProviderRpcError extends Error {
+  message: string;
+  code: number;
+  data?: unknown;
+}
 
 const getters = {
   getActiveAccount(state: AccountState) {
@@ -48,26 +54,38 @@ const actions = {
     provider = new ethers.providers.Web3Provider(provider);
 
     if (provider) {
-      const accounts = await (window as any).ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      await actions.checkNetwork();
-      commit("setIsConnected", true);
-      commit("setActiveAccount", accounts[0]);
-      commit("setWeb3Provider", markRaw(provider));
-      const signer = provider.getSigner(state.activeAccount);
-      commit("setWeb3Signer", markRaw(signer));
+      if (!await (window as any).ethereum._metamask.isUnlocked()) {
+        checkWalletConnect();
+      } else {
+        const accounts = await (window as any).ethereum.request({
+          method: "eth_requestAccounts",
+        });
+        await actions.checkNetwork();
+        commit("setIsConnected", true);
+        commit("setActiveAccount", accounts[0]);
+        commit("setWeb3Provider", markRaw(provider));
+        const signer = provider.getSigner(state.activeAccount);
+        commit("setWeb3Signer", markRaw(signer));
+      }
+
       // listen in
       await actions.ethereumListener({ commit });
     }
 
-    dispatch("contracts/setContracts", null, { root: true });
-    dispatch("balancer/getPoolTokens", null, { root: true });
-    dispatch("tokens/getAllowances", null, { root: true });
+    await dispatch("contracts/setContracts", null, { root: true });
+    await dispatch("balancer/getPoolTokens", null, { root: true });
+    await dispatch("tokens/getAllowances", null, { root: true });
   },
 
   async ethereumListener({ commit }: { commit: Function }) {
     (window as any).ethereum.on("accountsChanged", (accounts: any) => {
+      // If user has locked/logout from MetaMask, this resets the accounts array to empty
+      if (!accounts.length) {
+        // logic to handle what happens once MetaMask is locked
+        commit("setIsConnected", false);
+        localStorage.removeItem("isConnected");
+      }
+
       if (state.isConnected) {
         commit("setActiveAccount", accounts[0]);
         commit("setWeb3Provider", state.web3Provider);
@@ -78,6 +96,18 @@ const actions = {
       await actions.checkNetwork();
       commit("setChainData", chainId);
       commit("setWeb3Provider", state.web3Provider);
+    });
+
+    (window as any).ethereum.on('disconnect', async (error: ProviderRpcError) => {
+      try {
+        // remove the connection state from localstorage
+        localStorage.removeItem("isConnected");
+
+        // reload page
+        window.location.reload();
+      } catch (e) {
+        console.error("error: ", error.message);
+      }
     });
   },
 

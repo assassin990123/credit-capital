@@ -2,7 +2,8 @@ import { useToast } from "vue-toastification";
 import Balance from "../../components/notifications/Balance.vue";
 import Connection from "../../components/notifications/Connection.vue";
 import ConnectionSuccess from "../../components/notifications/ConnectionSuccess.vue";
-import ConnectionFaild from "../../components/notifications/ConnectionFaild.vue";
+import ConnectionFailed from "../../components/notifications/ConnectionFailed.vue";
+import UnLock from "../../components/notifications/UnLock.vue";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
@@ -20,7 +21,17 @@ export const checkConnection = (store: any) => {
   return true;
 };
 export const checkBalance = (balance: number) => {
-  if (balance <= 0) {
+  if (balance == 0) {
+    dismissNotification();
+    toastID = toast.info(Balance);
+    return false;
+  }
+
+  return true;
+};
+
+export const checkAvailability = (amount: number, balance: number) => {
+  if (amount > balance) {
     dismissNotification();
     toastID = toast.info(Balance);
     return false;
@@ -36,7 +47,13 @@ export const showConnectResult = (store: any) => {
     return true;
   }
 
-  toastID = toast.error(ConnectionFaild);
+  toastID = toast.error(ConnectionFailed);
+  return false;
+};
+
+export const checkWalletConnect = () => {
+  dismissNotification();
+  toastID = toast.info(UnLock);
   return false;
 };
 
