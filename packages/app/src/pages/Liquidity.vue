@@ -24,7 +24,9 @@
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>My Balance</span></div>
-                <div class="panel-explanation">{{ caplBalance.toFixed(4) }} CAPL</div>
+                <div class="panel-explanation">
+                  {{ caplBalance.toFixed(4) }} CAPL
+                </div>
               </div>
             </div>
             <div class="panel-display swap-panel-display">
@@ -42,7 +44,9 @@
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>My Balance</span></div>
-                <div class="panel-explanation">{{ usdcBalance.toFixed(4) }} USDC</div>
+                <div class="panel-explanation">
+                  {{ usdcBalance.toFixed(4) }} USDC
+                </div>
               </div>
             </div>
             <button
@@ -132,7 +136,7 @@ const handleAddLiquidity = async () => {
 // TODO: Refactor these store.dispatch calls into individual functions
 const approveAll = async () => {
   if (!approvalFlag.value) return;
-  
+
   if (approvalFlag.value == "USDC") {
     await store.dispatch("tokens/approveBalancerVault", {
       symbol: "USDC",
@@ -219,7 +223,7 @@ function onChange() {
   justify-content: space-between;
   padding: 10px 15px;
   margin: 20px 0;
-  border: 1px solid #000000;
+  border: 2px solid #000000;
 }
 
 .btn-switch {
@@ -237,7 +241,7 @@ function onChange() {
   margin-top: 10px;
   border-radius: 20px;
   background: transparent;
-  border: 1px solid #ff8900;
+  border: 2px solid #ff8900;
   text-align: center;
   font-weight: bold;
   color: #2f2c23;
