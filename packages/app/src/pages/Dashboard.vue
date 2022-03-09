@@ -54,7 +54,7 @@
               Daily Revenue
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ dailyEarnings }} CAPL (0.0000 USD)
+              {{ format(dailyEarnings)}} CAPL ({{ format(dailyEarningsUSD)}} USD)
             </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
