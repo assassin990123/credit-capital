@@ -78,7 +78,7 @@ const actions = {
     // @ts-ignore
     const address = rootState.contracts.balancerVaultContract.address;
     // @ts-ignore
-    if (contract > 0) {
+    if (contract) {
       // @ts-ignore
       await contract?.approve(
         address,
