@@ -38,7 +38,7 @@
                 </div>
               </div>
             </div>
-            <button type="button" @click="handleSwap()" class="btn-custom">
+            <button type="button" @click="handleSwap()" :class="swapButtonClassName">
               {{ swapButtonString }}
             </button>
           </div>
@@ -68,21 +68,26 @@ let swapToTokenSymbol: Ref<string> = ref("CAPL");
 
 let swapTokenResult: Ref<string> = ref("");
 let swapButtonString = ref("Swap");
+let swapButtonClassName = ref("btn-custom-gray");
 
 const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
 watchEffect(async () => {
-  !isUserConnected.value ||
-    (swapAmount.value !== 0 &&
-      ((await checkAllowance(
-        store,
-        swapTokenSymbol.value,
-        Number(swapAmount.value),
-        "balancer"
-      ))
-        ? (swapButtonString.value = "Swap")
-        : (swapButtonString.value = "Approve")));
+  if (isUserConnected.value)
+  console.log(swapAmount.value);
+    if (swapAmount.value == null || swapAmount.value == 0) {
+      swapButtonClassName.value = "btn-custom-gray"
+    } else {
+        (await checkAllowance(
+          store,
+          swapTokenSymbol.value,
+          Number(swapAmount.value),
+          "balancer"
+        ))
+          ? (swapButtonString.value = "Swap", swapButtonClassName.value = "btn-custom-green")
+          : (swapButtonString.value = "Approve", swapButtonClassName.value = "btn-custom")
+    }
 });
 
 // handles swapping button logic, dependant on current string
