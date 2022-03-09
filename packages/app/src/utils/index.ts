@@ -159,9 +159,9 @@ export const stringToNumber = (str: any) => {
 // CaplPerDay (pool) / totalStaked (pool) * userPosition
 export const getDailyEarnings = (
   userPosition: number,
-  caplPerDay: number,
+  caplPerSecond: number,
   totalStaked: number
 ): number => {
-  // TODO: Get caplPerDay from contract, not hardcoded. Unsure what caplPerDay is, caplPerDay/1e13 seems to get a fairly close value though
-  return 5000 * (userPosition / totalStaked); 
+  // caplPerSecond * seconds per day * ratio of user's position vs total staked. Accounting for token decimals.
+  return caplPerSecond * 86400 * userPosition / totalStaked / 1e18; 
 };
