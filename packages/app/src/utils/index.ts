@@ -1,6 +1,9 @@
 export const format = (n: any) => {
-  if (n < 1e6) {
+  if (n < 1e5) {
     return Number(n).toFixed(2);
+  }
+  if (n >= 1e5 && n < 1e6) {
+    return +(n / 1e3).toFixed(2) + " K";
   }
   if (n >= 1e6 && n < 1e9) {
     return +(n / 1e6).toFixed(2) + " M";
@@ -35,6 +38,24 @@ export const calculateCAPLUSDPrice = (
   }
 
   return 0;
+};
+
+//total pool value = USDC balance + capl balance * capl price
+//LP token price = total pool value / lp token supply
+// user positioninUSD = lp token price + user position
+export const calculateLPUSDPrice = (
+  amount: number,
+  poolTokens: any
+): number => {
+  if (poolTokens == null || poolTokens.balances == undefined) {
+    return 0;
+  }
+  const CAPL = poolTokens.balances[0];
+  const USDC = poolTokens.balances[1];
+  // Pool Value: USDC Balance + CAPL Balance * CAPL Price - see calculateCAPLUSDPrice()
+  const poolValue = parseFloat(USDC) + CAPL * CAPL / USDC; // CAPL Price = CAPL / USDC
+  const lpTotalSupply=225500; // TODO: LP token total supply manually pulled for now. Pull actual value from contract. I don't know how to do this part, halp plz...
+  return amount * poolValue / lpTotalSupply;
 };
 
 export interface Constant {
@@ -132,6 +153,12 @@ export const caplUSDConversion = (amount: number, store: any): number => {
   return calculateCAPLUSDPrice(
     amount,
     "CAPL",
+    store.getters["balancer/getPoolTokens"]
+  );
+};
+export const lpUSDConversion = (amount: number, store: any): number => {
+  return calculateLPUSDPrice(
+    amount,
     store.getters["balancer/getPoolTokens"]
   );
 };

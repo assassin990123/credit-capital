@@ -5,12 +5,13 @@
         <div class="title-cus">
           <h2>DAILY EARNINGS</h2>
           <div class="dashboard-daily-earning-panel-value">
-            {{ format(dailyEarnings) }}
+            {{ format(dailyEarnings) }} CAPL<br />
+            ({{ format(dailyEarningsUSD)}} USD)
           </div>
         </div>
         <div class="title-cus">
           <h2>APR</h2>
-          <div class="dashboard-daily-earning-panel-value">0.0000%</div>
+          <div class="dashboard-daily-earning-panel-value">{{format(dailyEarningsUSD / tvl * 36500) }}%</div>
         </div>
         <div class="title-cus">
           <h2>TVL</h2>
@@ -23,7 +24,7 @@
         <div class="dashboard-daily-earning-capl-header">
           <h2>CAPL</h2>
           <h2>
-            {{ caplBalance.toFixed(3) }} ({{ userCAPLToUSD?.toFixed(2) }} USD)
+            {{ format(caplBalance) }} ({{ format(userCAPLToUSD) }} USD)
           </h2>
         </div>
         <div class="dashboard-daily-earning-capl-content">
@@ -32,8 +33,8 @@
               Your Balance
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ caplBalance?.toFixed(4) }} CAPL ({{
-                userCAPLToUSD?.toFixed(4)
+              {{ format(caplBalance) }} CAPL ({{
+                format(userCAPLToUSD)
               }}
               USD)
             </div>
@@ -61,7 +62,7 @@
             <div class="dashboard-daily-earning-capl-content-title">
               Daily Yield
             </div>
-            <div class="dashboard-daily-earning-capl-content-value">%</div>
+            <div class="dashboard-daily-earning-capl-content-value">{{format(dailyEarningsUSD / tvl * 100) }}%</div>
           </div>
         </div>
       </div>
@@ -89,29 +90,29 @@
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Weekly Revenue</div>
             <div class="dashboard-revenue-projection-value">
-              {{ parseFloat((dailyEarnings * 7).toString())?.toFixed(4) }} CAPL
+              {{ format(dailyEarnings * 7) }} CAPL
             </div>
             <div class="green-txt">
-              ({{ (dailyEarningsUSD * 7).toFixed(4) }} USD)
+              ({{ format(dailyEarningsUSD * 7) }} USD)
             </div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Monthly Revenue</div>
             <div class="dashboard-revenue-projection-value">
-              {{ parseFloat((dailyEarnings * 30).toString())?.toFixed(4) }} CAPL
+              {{ format(dailyEarnings * 30) }} CAPL
             </div>
             <div class="green-txt">
-              ({{ (dailyEarningsUSD * 30).toFixed(4) }} USD)
+              ({{ format(dailyEarningsUSD * 30) }} USD)
             </div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Annual Revenue</div>
             <div class="dashboard-revenue-projection-value">
-              {{ parseFloat((dailyEarnings * 356).toString())?.toFixed(4) }}
+              {{ format(dailyEarnings * 356) }}
               CAPL
             </div>
             <div class="green-txt">
-              ({{ (dailyEarningsUSD * 356).toFixed(4) }} USD)
+              ({{ format(dailyEarningsUSD * 356) }} USD)
             </div>
           </div>
         </div>
@@ -124,7 +125,7 @@
       <div class="dashboard-portfolio-section">
         <div class="dashboard-portfolio-section-address">
           <h2>WALLET ADDRESS</h2>
-          <div class="dashboard-portfolio-section-address-value">
+          <div class="dashboard-portfolio-section-address-value" v-bind:title="wallet">
             {{ walletAddress }}
           </div>
         </div>
@@ -133,27 +134,26 @@
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC-CAPL Shares</div>
             <div>
-              {{ lpBalance?.toFixed(4) }} USDC-CAPL Shares ({{
-                LPBalanceInUSDC?.toFixed(4)
+              {{ format(lpBalance) }} USDC-CAPL Shares ({{
+                format(LPBalanceInUSDC)
               }}
               USD)
             </div>
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>CAPL Tokens</div>
-            {{ caplBalance?.toFixed(4) }} CAPL ({{ userCAPLToUSD?.toFixed(4) }}
-            USD)
+            <div>{{ format(caplBalance) }} CAPL ({{ format(userCAPLToUSD) }} USD)</div>
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC Tokens</div>
-            <div>{{ usdcBalance?.toFixed(4) }} USDC</div>
+            <div>{{ format(usdcBalance) }} USDC</div>
           </div>
         </div>
         <div class="dashboard-portfolio-section-title">Vault Assets</div>
         <div class="dashboard-portfolio-section-panel">
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC-CAPL Shares</div>
-            <div>{{ lpBalance.toFixed(3) }} (0.0000 USD)</div>
+            <div>{{ format(userPosition) }} USDC-CAPL Shares ({{ format(userPositionInUSD) }} USD)</div><!-- todo: shares-USD -->
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>Pending Rewards</div>
@@ -162,9 +162,9 @@
             </div>
           </div>
         </div>
-        <button type="submit" class="reward-btn">Claim Rewards</button>
+        <button type="submit" class="reward-btn" style="display:none;">Claim Rewards</button><!-- todo: make claim button work -->
       </div>
-      <div class="dashboard-portfolio-section">
+      <div class="dashboard-portfolio-section" style="display:none;"><!--todo: Implement historic data-->
         <div class="dashboard-portfolio-capl-row">
           <div>CAPL Price</div>
           <div>1.0357 USD</div>
@@ -196,10 +196,10 @@
         </div>
       </div>
     </div>
-    <div class="protfolio-title-main">
+    <div class="protfolio-title-main" style="display:none;">
       <h2 class="text-center">PLATFORM</h2>
     </div>
-    <div class="dashboard-platform">
+    <div class="dashboard-platform" style="display:none;">
       <div class="dashboard-platform-section">
         <div class="dashboard-platform-header">
           <h2>CAPL</h2>
@@ -274,6 +274,7 @@ import { useStore } from "@/store";
 import { computed, watchEffect, ref, Ref } from "vue";
 import {
   caplUSDConversion,
+  lpUSDConversion,
   getDailyEarnings,
   shortenAddress,
   format,
@@ -288,7 +289,6 @@ const tvl = computed(() => store.getters["dashboard/getTVL"]);
 
 const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
 const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
-// TODO: LP -> USD conversion
 const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
 
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
@@ -308,6 +308,7 @@ const pendingRewards = computed(
 let walletAddress = ref("Connect");
 let userCAPLToUSD = ref(0);
 let caplInUSD: Ref<number> = ref(0);
+let userPositionInUSD: Ref<number> = ref(0);
 let LPBalanceInUSDC: Ref<number> = ref(0);
 let dailyEarningsUSD: Ref<number> = ref(0);
 let pendingRewardsUSDC = ref("0");
@@ -331,6 +332,7 @@ watchEffect(() => {
       totalStaked.value
     );
     dailyEarningsUSD.value = caplUSDConversion(dailyEarnings.value, store);
+    userPositionInUSD.value = lpUSDConversion(userPosition.value, store);
 
     // @ts-ignore
     pendingRewardsUSDC.value = format(
@@ -579,13 +581,13 @@ watchEffect(() => {
 }
 
 .dashboard-cus-main .dashboard-portfolio {
-  display: flex;
+  /* display: flex; todo: uncomment to display other column */
   flex-direction: row;
   justify-content: space-between;
   margin-top: 30px;
 }
 .dashboard-portfolio-section {
-  width: 45%;
+  /* width: 45%; todo: uncomment to display other column */
   display: flex;
   flex-direction: column;
   padding: 20px 15px;
