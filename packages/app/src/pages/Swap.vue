@@ -62,7 +62,7 @@ import {
 import { checkConnection, checkBalance } from "@/utils/notifications";
 
 const store: any = useStore();
-let swapAmount: Ref<number|null> = ref(null);
+let swapAmount: Ref<number> = ref(0);
 let swapTokenSymbol: Ref<string> = ref("USDC");
 let swapToTokenSymbol: Ref<string> = ref("CAPL");
 
@@ -76,7 +76,7 @@ const isUserConnected = computed(
 watchEffect(async () => {
   if (isUserConnected.value)
   console.log(swapAmount.value);
-    if (swapAmount.value == null || swapAmount.value == 0) {
+    if (swapAmount.value == 0) {
       swapButtonClassName.value = "btn-custom-gray"
     } else {
         (await checkAllowance(
