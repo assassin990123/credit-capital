@@ -47,7 +47,7 @@
 import DappFooter from "@/components/DappFooter.vue";
 import { watchEffect, ref, Ref, computed } from "vue";
 // @ts-ignore
-import { checkAllowance, format } from "@/utils";
+import { checkAllowance } from "@/utils";
 // @ts-ignore
 import { useStore } from "@/store";
 // @ts-ignore
@@ -66,8 +66,7 @@ const isUserConnected = computed(
 
 // this function checks the allowance a user has alloted our rewards contract via the LP token
 watchEffect(async () => {
-  if (!isUserConnected.value) {
-    unstakeAmount.value = format('0');
+  if (isUserConnected.value) {
     if (await checkAllowance(
       store,
     "LP", // static for now
@@ -78,10 +77,6 @@ watchEffect(async () => {
     } else {
       (stakeButtonText.value = "Approve");
     }
-  } else {
-    unstakeAmount.value = format(computed(
-      () => store.getters["rewards/getUserUnlockedAmount"]
-    ).value);
   }
 });
 
