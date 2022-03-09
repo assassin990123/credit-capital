@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 const state: DashboardState = {
   dailyEarnings: 0,
   tvl: 0,
+  lpTokenSupply: 0,
   revenueProjectionPerDay: 0
 };
 
@@ -16,6 +17,9 @@ const getters = {
   },
   getTVL(state: DashboardState) {
     return state.tvl;
+  },
+  getLpTokenSupply(state: DashboardState) {
+    return state.lpTokenSupply;
   },
   getRevenueProjectionPerDay () {
     return state.revenueProjectionPerDay;
@@ -53,6 +57,7 @@ const actions = {
     lpTokenTotalSupply = ethers.utils.formatEther(
       lpTokenTotalSupply.toString()
     );
+    commit("setLpTokenSupply", lpTokenTotalSupply);
 
     const tvlTokenPrice =
       (Number(usdcBalance) +
@@ -95,6 +100,10 @@ const actions = {
 const mutations = {
   setTVL(state: DashboardState, _tvl: number) {
     state.tvl = _tvl;
+  },
+
+  setLpTokenSupply(state: DashboardState, _lpTokenSupply: number) {
+    state.lpTokenSupply = _lpTokenSupply;
   },
 
   setRevenueProjectionPerDay(state: DashboardState, _revenueProjectionPerDay: number) {
