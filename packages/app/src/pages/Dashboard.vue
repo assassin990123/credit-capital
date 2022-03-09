@@ -86,18 +86,31 @@
         <div class="dashboard-revenue-projection-content-row">
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Weekly Revenue</div>
-          <div class="dashboard-revenue-projection-value">{{ parseFloat((dailyEarnings * 7).toString())?.toFixed(4) }} CAPL</div>
-          <div class="green-txt">({{ (dailyEarningsUSD * 7).toFixed(4) }} USD)</div>
+            <div class="dashboard-revenue-projection-value">
+              {{ parseFloat((dailyEarnings * 7).toString())?.toFixed(4) }} CAPL
+            </div>
+            <div class="green-txt">
+              ({{ (dailyEarningsUSD * 7).toFixed(4) }} USD)
+            </div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Monthly Revenue</div>
-          <div class="dashboard-revenue-projection-value">{{ parseFloat((dailyEarnings * 30).toString())?.toFixed(4) }} CAPL</div>
-          <div class="green-txt">({{ (dailyEarningsUSD * 30).toFixed(4) }} USD)</div>
+            <div class="dashboard-revenue-projection-value">
+              {{ parseFloat((dailyEarnings * 30).toString())?.toFixed(4) }} CAPL
+            </div>
+            <div class="green-txt">
+              ({{ (dailyEarningsUSD * 30).toFixed(4) }} USD)
+            </div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
             <div>Your Annual Revenue</div>
-          <div class="dashboard-revenue-projection-value">{{ parseFloat((dailyEarnings * 356).toString())?.toFixed(4) }} CAPL</div>
-          <div class="green-txt">({{ (dailyEarningsUSD * 356).toFixed(4) }} USD)</div>
+            <div class="dashboard-revenue-projection-value">
+              {{ parseFloat((dailyEarnings * 356).toString())?.toFixed(4) }}
+              CAPL
+            </div>
+            <div class="green-txt">
+              ({{ (dailyEarningsUSD * 356).toFixed(4) }} USD)
+            </div>
           </div>
         </div>
       </div>
@@ -282,7 +295,7 @@ let walletAddress = ref("Connect");
 let userCAPLToUSD = ref(0);
 let caplInUSD: Ref<number> = ref(0);
 let LPBalanceInUSDC: Ref<number> = ref(0);
-let dailyEarningsUSD: Ref<number> = ref(0)
+let dailyEarningsUSD: Ref<number> = ref(0);
 
 watchEffect(() => {
   caplInUSD.value = caplUSDConversion(1, store);
@@ -337,7 +350,7 @@ watchEffect(() => {
 .dashboard-cus-main .title-cus {
   margin: 0 0 25px 0;
   padding: 0 0 25px 0;
-  border-bottom: 1px solid #e6e6e6;
+  border-bottom: 2px solid #e6e6e6;
 }
 .dashboard-cus-main .title-cus h2 {
   color: #2c2c2c;
@@ -391,7 +404,7 @@ watchEffect(() => {
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
-  border-bottom: 1px solid rgba(255, 137, 0, 0.6);
+  border-bottom: 2px solid rgba(255, 137, 0, 0.6);
   margin-bottom: 20px;
   padding: 15px;
   color: #000000;
@@ -576,7 +589,7 @@ watchEffect(() => {
 }
 .dashboard-cus-main .dashboard-portfolio-section-panel-row {
   padding: 15px;
-  border-bottom: 1px solid rgba(255, 137, 0, 0.6);
+  border-bottom: 2px solid rgba(255, 137, 0, 0.6);
   margin: 0 0 20px 0;
 }
 .dashboard-cus-main .dashboard-portfolio-section-panel-row div {
@@ -602,7 +615,7 @@ watchEffect(() => {
 }
 
 .dashboard-portfolio-section-panel {
-  border: 1px solid #000000;
+  border: 2px solid #000000;
   padding: 10px;
 }
 
@@ -647,7 +660,7 @@ watchEffect(() => {
   flex-direction: row;
   justify-content: space-between;
   padding: 15px;
-  border-bottom: 1px solid rgba(255, 137, 0, 0.6);
+  border-bottom: 2px solid rgba(255, 137, 0, 0.6);
   margin: 0 0 15px 0;
 }
 .dashboard-cus-main .dashboard-portfolio-capl-panel-row div {
@@ -739,7 +752,7 @@ watchEffect(() => {
 }
 .dashboard-cus-main .dashboard-platform-token-market-row {
   padding: 15px;
-  border-bottom: 1px solid rgba(255, 137, 0, 0.6);
+  border-bottom: 2px solid rgba(255, 137, 0, 0.6);
   margin: 0px;
   display: flex;
   flex-direction: row;
@@ -793,7 +806,7 @@ watchEffect(() => {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 137, 0, 0.6);
+  border-bottom: 2px solid rgba(255, 137, 0, 0.6);
   margin: 0 0 15px 0;
   padding: 15px;
 }
