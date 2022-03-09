@@ -72,13 +72,15 @@
         <div>
           <div>Your Stakes USDC-CAPL Shares</div>
           <div class="dashboard-revenue-projection-value">
-            0.0000 LP Shares (0.0000) USD
+            {{ lpBalance?.toFixed(4) }} USDC-CAPL
           </div>
         </div>
         <div class="revenue-block-main">
           <div>Your Daily Revenue</div>
-          <div class="dashboard-revenue-projection-value">0 CAPL</div>
-          <div class="green-txt">(3.4546 USD)</div>
+          <div class="dashboard-revenue-projection-value">
+            {{ format(dailyEarnings) }} CAPL
+          </div>
+          <div class="green-txt">{{ format(dailyEarningsUSD) }} USD</div>
         </div>
       </div>
       <div class="dashboard-revenue-projection-content">
@@ -130,7 +132,12 @@
         <div class="dashboard-portfolio-section-panel">
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC-CAPL Shares</div>
-            <div>0 (0.0000 USD)</div>
+            <div>
+              {{ lpBalance?.toFixed(4) }} USDC-CAPL Shares ({{
+                LPBalanceInUSDC?.toFixed(4)
+              }}
+              USD)
+            </div>
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>CAPL Tokens</div>
@@ -146,11 +153,13 @@
         <div class="dashboard-portfolio-section-panel">
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC-CAPL Shares</div>
-            <div>{{ lpBalance }} (0.0000 USD)</div>
+            <div>{{ lpBalance.toFixed(3) }} (0.0000 USD)</div>
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>Pending Rewards</div>
-            <div>0.0000 CAPL (0.0000 USD)</div>
+            <div>
+              {{ format(pendingRewards) }} CAPL ({{ pendingRewardsUSDC }} USD)
+            </div>
           </div>
         </div>
         <button type="submit" class="reward-btn">Claim Rewards</button>
@@ -268,6 +277,7 @@ import {
   getDailyEarnings,
   shortenAddress,
   format,
+  calculateCAPLUSDPrice,
 } from "@/utils";
 
 const store = useStore();
@@ -291,11 +301,16 @@ const userPosition = computed(
 const caplPerSecond = computed(() => store.getters["rewards/getCaplPerSecond"]);
 const totalStaked = computed(() => store.getters["rewards/getTotalStaked"]);
 
+const pendingRewards = computed(
+  () => store.getters["rewards/getPendingRewards"]
+);
+
 let walletAddress = ref("Connect");
 let userCAPLToUSD = ref(0);
 let caplInUSD: Ref<number> = ref(0);
 let LPBalanceInUSDC: Ref<number> = ref(0);
 let dailyEarningsUSD: Ref<number> = ref(0);
+let pendingRewardsUSDC = ref("0");
 
 watchEffect(() => {
   caplInUSD.value = caplUSDConversion(1, store);
@@ -316,6 +331,15 @@ watchEffect(() => {
       totalStaked.value
     );
     dailyEarningsUSD.value = caplUSDConversion(dailyEarnings.value, store);
+
+    // @ts-ignore
+    pendingRewardsUSDC.value = format(
+      calculateCAPLUSDPrice(
+        pendingRewards.value,
+        "CAPL",
+        store.getters["balancer/getPoolTokens"]
+      )
+    );
   }
 });
 </script>
