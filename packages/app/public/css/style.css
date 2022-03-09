@@ -7558,6 +7558,32 @@ textarea:focus {
   margin: 0 auto;
 }
 
+.btn-custom-green {
+  display: inline-block;
+  padding: 15px;
+  border-radius: 50px;
+  border: none;
+  background: limegreen;
+  background: -moz-linear-gradient(left, limegreen 0%, limegreen 100%);
+  background: --webkit-gradient(
+    left top,
+    right top,
+    color-stop(0%, rgba(255, 154, 2, 1)),
+    color-stop(100%, rgba(255, 197, 6, 1))
+  );
+  background: -webkit-linear-gradient(left, limegreen 0%, limegreen 100%);
+  background: -o-linear-gradient(left, limegreen 0%, limegreen 100%);
+  background: -ms-linear-gradient(left, limegreen 0%, limegreen 100%);
+  background: linear-gradient(to right, limegreen 0%, limegreen 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff9a02', endColorstr='#ffc506', GradientType=1);
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  color: #fff;
+  min-width: 250px;
+  margin: 0 auto;
+}
+
 .stack-bottom-area {
   margin: 30px 0 100px 0;
   padding: 0px;

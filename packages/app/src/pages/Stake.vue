@@ -14,7 +14,7 @@
             <div class="myBalance">
               Balance: <a @click="insertBalance">{{ lpBalance.toFixed(4) }}</a> USDC-CAPL
             </div>
-            <button type="submit" class="btn-custom" @click="handleStake">
+            <button type="submit" :class="stakeButtonClassName" @click="handleStake">
               {{ stakeButtonText }}
             </button>
           </div>
@@ -56,6 +56,7 @@ import { checkConnection, checkBalance } from "@/utils/notifications";
 const store = useStore();
 const stakeAmount: Ref<number> = ref(0);
 const stakeButtonText: Ref<string> = ref("Stake");
+const stakeButtonClassName: Ref<string> = ref("btn-custom-gray");
 const unstakeAmount = ref(0);
 // for we make the user withdraw the total unlockedAmount.
 const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
@@ -67,15 +68,23 @@ const isUserConnected = computed(
 // this function checks the allowance a user has alloted our rewards contract via the LP token
 watchEffect(async () => {
   if (isUserConnected.value) {
-    if (await checkAllowance(
-      store,
-    "LP", // static for now
-    stakeAmount.value,
-    "stake"
-    )) {
-      (stakeButtonText.value = "Stake");
+
+    if (stakeAmount.value == 0) {
+      stakeButtonText.value = "Stake";
+      stakeButtonClassName.value = "btn-custom-gray";
     } else {
-      (stakeButtonText.value = "Approve");
+      if (await checkAllowance(
+        store,
+      "LP", // static for now
+      stakeAmount.value,
+      "stake"
+      )) {
+        (stakeButtonText.value = "Stake");
+        stakeButtonClassName.value = "btn-custom-green";
+      } else {
+        (stakeButtonText.value = "Approve");
+        stakeButtonClassName.value = "btn-custom";
+      }
     }
   }
 });
