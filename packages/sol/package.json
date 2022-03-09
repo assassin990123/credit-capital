@@ -15,7 +15,9 @@
     "lint": "prettier --write \"contracts/**/*.sol\" \"interfaces/*.sol\" \"test/**/*.js\"",
     "compile": "yarn hardhat compile",
     "test": "yarn hardhat test",
-    "deploy-testnet": "npx hardhat run scripts/deploy.js --network kovan"
+    "deploy-testnet-kovan": "npx hardhat run scripts/deploy.js --network kovan",
+    "deploy-testnet-fantom": "npx hardhat run scripts/deploy.js --network fantom-testnet",
+    "deploy-fantom": "npx hardhat run scripts/deploy.js --network fantom"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-waffle": "^2.0.1",
