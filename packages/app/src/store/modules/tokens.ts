@@ -98,7 +98,7 @@ const actions = {
       // @ts-ignore
       await contract?.approve(
         rewardsAddress,
-        ethers.utils.parseUnits(amount.toString(), 18)
+        "115792089237316195423570985008687907853269984665640564039457584007913129639935"
       );
     }
   },

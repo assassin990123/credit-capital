@@ -89,7 +89,8 @@ export const checkAllowance = (
     symbol == "CAPL"
       ? (allowance = state.getters["tokens/getCAPLBalancerVaultAllowance"])
       : (allowance = state.getters["tokens/getUSDCBalancerVaultAllowance"]);
-  } else if (flag == "stake") {
+  } 
+  else if (flag == "stake") {
     allowance = state.getters["tokens/getLPAllowance"];
   }
   return allowance >= amount;
