@@ -34,6 +34,8 @@ The app will then be available at ``http://localhost:8080/``
     INFURA_ID=[Infura Project ID]
     ```
 **In order to deploy the account (private key) used for deployment must have admin access to the CAPL token.**
+**In order to deploy the contracts, CAPL must have already been deployed**
+
 There are three chains currently supported:
 
 **kovan**
