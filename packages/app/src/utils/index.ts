@@ -25,16 +25,16 @@ export const calculateCAPLUSDPrice = (
     return 0;
   }
 
-  const CAPL = poolTokens.balances[0];
-  const USDC = poolTokens.balances[1];
+  const USDC = poolTokens.balances[0];
+  const CAPL = poolTokens.balances[1];
 
-  // convert usdc to capl
-  if (unit == "CAPL") {
-    return (CAPL / USDC) * amount;
-  }
   // convert capl to usdc
-  if (unit == "USDC") {
+  if (unit == "CAPL") {
     return (USDC / CAPL) * amount;
+  }
+  // convert usdc to capl
+  if (unit == "USDC") {
+    return (CAPL / USDC) * amount;
   }
 
   return 0;
@@ -45,17 +45,18 @@ export const calculateCAPLUSDPrice = (
 // user positioninUSD = lp token price + user position
 export const calculateLPUSDPrice = (
   amount: number,
-  poolTokens: any
+  store: any,
 ): number => {
-  if (poolTokens == null || poolTokens.balances == undefined) {
+  const poolTokens = store.getters["balancer/getPoolTokens"];
+  const lpTokenSupply = store.getters["dashboard/getLpTokenSupply"];
+  if (poolTokens == null || poolTokens.balances == undefined || lpTokenSupply == undefined) {
     return 0;
   }
-  const CAPL = poolTokens.balances[0];
-  const USDC = poolTokens.balances[1];
+  const USDC = poolTokens.balances[0];
+  const CAPL = poolTokens.balances[1];
   // Pool Value: USDC Balance + CAPL Balance * CAPL Price - see calculateCAPLUSDPrice()
-  const poolValue = parseFloat(USDC) + CAPL * CAPL / USDC; // CAPL Price = CAPL / USDC
-  const lpTotalSupply=225500; // TODO: LP token total supply manually pulled for now. Pull actual value from contract. I don't know how to do this part, halp plz...
-  return amount * poolValue / lpTotalSupply;
+  const poolValue = Number(USDC) + (Number(CAPL) * Number(USDC) / Number(CAPL));
+  return amount * poolValue / lpTokenSupply;
 };
 
 export interface Constant {
@@ -149,17 +150,17 @@ export const checkAllAllowances = (
   // if
 };
 
-export const caplUSDConversion = (amount: number, store: any): number => {
+export const caplToUSD = (amount: number, store: any): number => {
   return calculateCAPLUSDPrice(
     amount,
     "CAPL",
     store.getters["balancer/getPoolTokens"]
   );
 };
-export const lpUSDConversion = (amount: number, store: any): number => {
+export const lpToUSD = (amount: number, store: any): number => {
   return calculateLPUSDPrice(
     amount,
-    store.getters["balancer/getPoolTokens"]
+    store,
   );
 };
 

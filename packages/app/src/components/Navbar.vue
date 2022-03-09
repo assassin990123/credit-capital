@@ -98,7 +98,7 @@ import { computed } from "vue";
 import { useStore } from "@/store";
 import { ref, watchEffect } from "vue";
 import { showConnectResult } from "@/utils/notifications";
-import { shortenAddress, caplUSDConversion, format } from "@/utils";
+import { shortenAddress, caplToUSD, format } from "@/utils";
 
 export default {
   setup() {
@@ -113,7 +113,7 @@ export default {
         await store.dispatch("rewards/getRewardsInfo");
         await store.dispatch("balancer/getPoolTokens");
         await store.dispatch("dashboard/fetchTVL");
-        const price = format(caplUSDConversion(1, store));
+        const price = format(caplToUSD(1, store));
         if (price) {
           CAPLPrice.value = price;
         }
@@ -139,7 +139,7 @@ export default {
         ? (buttonString.value = shortenAddress(wallet.value))
         : (buttonString.value = "Connect Wallet");
 
-      const price = format(caplUSDConversion(1, store));
+      const price = format(caplToUSD(1, store));
       if (price) {
         CAPLPrice.value = price;
       }
