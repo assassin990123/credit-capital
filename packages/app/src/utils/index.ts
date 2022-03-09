@@ -162,7 +162,6 @@ export const getDailyEarnings = (
   caplPerDay: number,
   totalStaked: number
 ): number => {
-  // 43200 blocks / day on polygon
-
-  return caplPerDay * 43200 * (userPosition / totalStaked);
+  // TODO: Get caplPerDay from contract, not hardcoded. Unsure what caplPerDay is, caplPerDay/1e13 seems to get a fairly close value though
+  return 5000 * (userPosition / totalStaked); 
 };
