@@ -53,7 +53,7 @@
               type="submit"
               @click="handleAddLiquidity()"
               :class="
-                addLiquidityButtonDisabled ? 'btn-custom-gray' : 'btn-custom'
+                addLiquidityButtonClassNameForState
               "
               :disabled="addLiquidityButtonDisabled"
             >
@@ -81,6 +81,7 @@ let caplLiquidity: Ref<number> = ref(0);
 let approvalFlag: Ref<string | null> = ref("");
 let addLiquidityButtonString: Ref<string> = ref("Add Liquidity");
 let addLiquidityButtonDisabled = ref(true);
+let addLiquidityButtonClassNameForState: Ref<string> = ref("btn-custom-gray");
 
 const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
@@ -103,6 +104,7 @@ watchEffect(async () => {
     ) {
       addLiquidityButtonDisabled.value = true;
       addLiquidityButtonString.value = "Add Liquidity";
+      addLiquidityButtonClassNameForState.value = "btn-custom-gray"
     } else {
       addLiquidityButtonDisabled.value = false;
       const { approvalRequired, flag } = await checkAllAllowances(store, [
@@ -113,8 +115,8 @@ watchEffect(async () => {
       approvalFlag.value = flag;
 
       approvalRequired
-        ? (addLiquidityButtonString.value = "Approve")
-        : (addLiquidityButtonString.value = "Add Liquidity");
+        ? (addLiquidityButtonString.value = "Approve", addLiquidityButtonClassNameForState.value = "btn-custom")
+        : (addLiquidityButtonString.value = "Add Liquidity", addLiquidityButtonClassNameForState.value = "btn-custom-green");
     }
   }
 });
