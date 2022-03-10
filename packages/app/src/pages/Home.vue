@@ -1,36 +1,5 @@
 <template>
   <div class="home">
-    <!-- Hero -->
-    <div
-      class="hero-3-bg"
-      style="
-        background: url('/images/hero/banner-4.png');
-        background-repeat: no-repeat;
-      "
-    >
-      <!-- Container -->
-      <div class="container">
-        <!-- row -->
-        <div class="row align-items-center justify-content-center">
-          <!-- col -->
-          <div
-            class="col-xl-7 offset-xl-1 col-lg-7 wow fadeInDown animated floating"
-            data-wow-delay="0.4s"
-          >
-            <img
-              src="/images/hero/sh4-bn.png"
-              alt=""
-              class="img-fluid d-block mx-auto"
-            />
-          </div>
-          <!-- /col -->
-        </div>
-        <!-- /row -->
-      </div>
-      <!-- /Container -->
-    </div>
-    <!-- /Hero -->
-
     <section class="section-1">
       <div class="hero wow fadeInDown animated floating">
         <div class="container">
