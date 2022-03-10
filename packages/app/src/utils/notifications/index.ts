@@ -56,7 +56,7 @@ export const checkWalletConnect = () => {
 
 export const balanceExceeded = () => {
   dismissNotification();
-  toastID = toast.info(UnLock);
+  handleToasts("info", "Notification", "Please unlock your wallet!")
   return false;
 };
 
@@ -89,6 +89,14 @@ export const handleToasts = (type: string, title: string, text: string) => {
     break;
     case "success":
       toastID = toast.success({
+        component: ToastComponent,
+        props:  {
+            title: title,
+            text: text
+        }});
+    break;
+    case "error":
+      toastID = toast.error({
         component: ToastComponent,
         props:  {
             title: title,
