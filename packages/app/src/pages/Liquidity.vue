@@ -24,7 +24,7 @@
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>My Balance</span></div>
-                <div class="panel-explanation">
+                <div class="panel-explanation myBalance" @click="insertBalanceCAPL">
                   {{ caplBalance.toFixed(4) }} CAPL
                 </div>
               </div>
@@ -44,7 +44,7 @@
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>My Balance</span></div>
-                <div class="panel-explanation">
+                <div class="panel-explanation" @click="insertBalanceUSDC">
                   {{ usdcBalance.toFixed(4) }} USDC
                 </div>
               </div>
@@ -168,10 +168,14 @@ function onChange() {
   checkConnection(store);
 }
 
-// allows for a user to switch between swapping USDC and CAPL
+const insertBalanceCAPL = () => {
+  caplLiquidity.value = caplBalance.value;
+};
 
-// conversion rates for swaps
-// TODO: conversion rates for liquidity
+const insertBalanceUSDC = () => {
+  usdcLiquidity.value = usdcBalance.value;
+};
+
 </script>
 
 <style>
