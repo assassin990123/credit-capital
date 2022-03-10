@@ -8,7 +8,7 @@ const state: DashboardState = {
   dailyEarnings: 0,
   tvl: 0,
   lpTokenSupply: 0,
-  revenueProjectionPerDay: 0
+  revenueProjectionPerDay: 0,
 };
 
 const getters = {
@@ -21,9 +21,9 @@ const getters = {
   getLpTokenSupply(state: DashboardState) {
     return state.lpTokenSupply;
   },
-  getRevenueProjectionPerDay () {
+  getRevenueProjectionPerDay() {
     return state.revenueProjectionPerDay;
-  }
+  },
 };
 
 const actions = {
@@ -76,7 +76,6 @@ const actions = {
     rootState: RootState;
     dispatch: Dispatch;
   }) {
-
     if (rootState.rewards.caplPerSecond === 0) {
       await dispatch("rewards/getCaplPerSecond", null, { root: true });
     }
@@ -92,9 +91,11 @@ const actions = {
     }
     const userStakedLPTokens = rootState.rewards.userStakedPosition;
 
-
-    commit("setRevenueProjectionPerDay", rewardsPerDay / totalStakedLPTokens * userStakedLPTokens);
-  }
+    commit(
+      "setRevenueProjectionPerDay",
+      (rewardsPerDay / totalStakedLPTokens) * userStakedLPTokens
+    );
+  },
 };
 
 const mutations = {
@@ -106,9 +107,12 @@ const mutations = {
     state.lpTokenSupply = _lpTokenSupply;
   },
 
-  setRevenueProjectionPerDay(state: DashboardState, _revenueProjectionPerDay: number) {
+  setRevenueProjectionPerDay(
+    state: DashboardState,
+    _revenueProjectionPerDay: number
+  ) {
     state.revenueProjectionPerDay = _revenueProjectionPerDay;
-  }
+  },
 };
 
 export default {

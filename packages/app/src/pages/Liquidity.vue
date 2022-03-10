@@ -24,7 +24,7 @@
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>My Balance</span></div>
-                <div class="panel-explanation">
+                <div class="panel-explanation myBalance" @click="insertBalanceCAPL">
                   {{ caplBalance.toFixed(4) }} CAPL
                 </div>
               </div>
@@ -44,7 +44,7 @@
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>My Balance</span></div>
-                <div class="panel-explanation">
+                <div class="panel-explanation" @click="insertBalanceUSDC">
                   {{ usdcBalance.toFixed(4) }} USDC
                 </div>
               </div>
@@ -52,9 +52,7 @@
             <button
               type="submit"
               @click="handleAddLiquidity()"
-              :class="
-                addLiquidityButtonClassNameForState
-              "
+              :class="addLiquidityButtonClassNameForState"
               :disabled="addLiquidityButtonDisabled"
             >
               {{ addLiquidityButtonString }}
@@ -95,8 +93,8 @@ watchEffect(async () => {
     return;
   }
   if (
-    checkAvailability(caplLiquidity.value, caplBalance) &&
-    checkAvailability(usdcLiquidity.value, usdcBalance)
+    checkAvailability(caplLiquidity.value, caplBalance.value) &&
+    checkAvailability(usdcLiquidity.value, usdcBalance.value)
   ) {
     if (
       Number(caplLiquidity.value) === 0 &&
@@ -104,7 +102,7 @@ watchEffect(async () => {
     ) {
       addLiquidityButtonDisabled.value = true;
       addLiquidityButtonString.value = "Add Liquidity";
-      addLiquidityButtonClassNameForState.value = "btn-custom-gray"
+      addLiquidityButtonClassNameForState.value = "btn-custom-gray";
     } else {
       addLiquidityButtonDisabled.value = false;
       const { approvalRequired, flag } = await checkAllAllowances(store, [
@@ -115,9 +113,14 @@ watchEffect(async () => {
       approvalFlag.value = flag;
 
       approvalRequired
-        ? (addLiquidityButtonString.value = "Approve", addLiquidityButtonClassNameForState.value = "btn-custom")
-        : (addLiquidityButtonString.value = "Add Liquidity", addLiquidityButtonClassNameForState.value = "btn-custom-green");
+        ? ((addLiquidityButtonString.value = "Approve"),
+          (addLiquidityButtonClassNameForState.value = "btn-custom"))
+        : ((addLiquidityButtonString.value = "Add Liquidity"),
+          (addLiquidityButtonClassNameForState.value = "btn-custom-green"));
     }
+  } else {
+    addLiquidityButtonDisabled.value = true;
+    addLiquidityButtonClassNameForState.value = "btn-custom-gray";
   }
 });
 
@@ -168,10 +171,14 @@ function onChange() {
   checkConnection(store);
 }
 
-// allows for a user to switch between swapping USDC and CAPL
+const insertBalanceCAPL = () => {
+  caplLiquidity.value = caplBalance.value;
+};
 
-// conversion rates for swaps
-// TODO: conversion rates for liquidity
+const insertBalanceUSDC = () => {
+  usdcLiquidity.value = usdcBalance.value;
+};
+
 </script>
 
 <style>
