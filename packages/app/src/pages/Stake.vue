@@ -19,6 +19,7 @@
               type="submit"
               :class="stakeButtonClassName"
               @click="handleStake"
+              :disabled="stakeButtonDisabled"
             >
               {{ stakeButtonText }}
             </button>
@@ -74,11 +75,12 @@ const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
 
+let stakeButtonDisabled:Ref<boolean> = ref(false)
+
 // this function checks the allowance a user has alloted our rewards contract via the LP token
 watchEffect(async () => {
   if (
-    isUserConnected.value &&
-    checkAvailability(stakeAmount.value, lpBalance.value)
+    isUserConnected.value
   ) {
     if (stakeAmount.value == 0) {
       stakeButtonText.value = "Stake";
@@ -98,6 +100,14 @@ watchEffect(async () => {
         stakeButtonText.value = "Approve";
         stakeButtonClassName.value = "btn-custom";
       }
+    }
+    if (!checkAvailability(stakeAmount.value, lpBalance.value)) {
+      stakeButtonDisabled.value = true
+      stakeButtonClassName.value = "btn-custom-gray";
+    }
+    else {
+      stakeButtonDisabled.value = false
+      stakeButtonClassName.value = "btn-custom-green";
     }
   }
 });

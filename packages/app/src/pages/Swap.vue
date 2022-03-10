@@ -42,6 +42,7 @@
               type="button"
               @click="handleSwap()"
               :class="swapButtonClassName"
+              :disabled="swapButtonDisabled"
             >
               {{ swapButtonString }}
             </button>
@@ -84,6 +85,9 @@ const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
 const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
+
+let swapButtonDisabled:Ref<boolean> = ref(false)
+
 watchEffect(async () => {
   if (isUserConnected.value) {
     if (swapAmount.value == 0) {
@@ -96,15 +100,24 @@ watchEffect(async () => {
         "balancer"
       ))
         ? ((swapButtonString.value = "Swap"),
-          (swapButtonClassName.value = "btn-custom-green"))
+          (swapButtonClassName.value = "btn-custom-green"),
+          (swapButtonDisabled.value = false))
         : ((swapButtonString.value = "Approve"),
           (swapButtonClassName.value = "btn-custom"));
     }
     swapTokenSymbol.value == "CAPL"
-      ? checkAvailability(swapAmount.value, caplBalance.value)
-      : checkAvailability(swapAmount.value, usdcBalance.value);
+      ? handleAvailability(swapAmount.value, caplBalance.value)
+      : handleAvailability(swapAmount.value, usdcBalance.value);
   }
 });
+
+const handleAvailability = (amount: number, balance: number) => {
+  if (checkAvailability(amount, balance)) return
+  else {
+    swapButtonDisabled.value = true
+    swapButtonClassName.value = "btn-custom-gray";
+  }
+}
 
 // handles swapping button logic, dependant on current string
 const handleSwap = async () => {

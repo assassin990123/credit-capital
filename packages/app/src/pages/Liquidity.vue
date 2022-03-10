@@ -118,6 +118,9 @@ watchEffect(async () => {
         : ((addLiquidityButtonString.value = "Add Liquidity"),
           (addLiquidityButtonClassNameForState.value = "btn-custom-green"));
     }
+  } else {
+    addLiquidityButtonDisabled.value = true;
+    addLiquidityButtonClassNameForState.value = "btn-custom-gray";
   }
 });
 
