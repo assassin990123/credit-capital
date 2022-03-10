@@ -30,7 +30,7 @@ export const checkBalance = (balance: number) => {
 export const checkAvailability = (amount: number, balance: number) => {
   if (amount > balance) {
     dismissNotification();
-    handleToasts("info", "Notification", "Amount must be greater than zero.")
+    handleToasts("info", "Notification", "Amount must be greater than your banance.")
     return false;
   }
 
@@ -68,7 +68,6 @@ function dismissNotification() {
 
 
 export const handleToasts = (type: string, title: string, text: string) => {
-  dismissNotification();
   // check type flag
   switch (type) {
     case "info":
