@@ -12,9 +12,14 @@
               v-model="stakeAmount"
             />
             <div class="myBalance">
-              Balance: <a @click="insertBalance">{{ lpBalance.toFixed(4) }}</a> USDC-CAPL
+              Balance:
+              <a @click="insertBalance">{{ lpBalance.toFixed(4) }}</a> USDC-CAPL
             </div>
-            <button type="submit" :class="stakeButtonClassName" @click="handleStake">
+            <button
+              type="submit"
+              :class="stakeButtonClassName"
+              @click="handleStake"
+            >
               {{ stakeButtonText }}
             </button>
           </div>
@@ -51,7 +56,11 @@ import { checkAllowance } from "@/utils";
 // @ts-ignore
 import { useStore } from "@/store";
 // @ts-ignore
-import { checkConnection, checkBalance } from "@/utils/notifications";
+import {
+  checkConnection,
+  checkBalance,
+  checkAvailability,
+} from "@/utils/notifications";
 
 const store = useStore();
 const stakeAmount: Ref<number> = ref(0);
@@ -67,22 +76,26 @@ const isUserConnected = computed(
 
 // this function checks the allowance a user has alloted our rewards contract via the LP token
 watchEffect(async () => {
-  if (isUserConnected.value) {
-
+  if (
+    isUserConnected.value &&
+    checkAvailability(stakeAmount.value, lpBalance.value)
+  ) {
     if (stakeAmount.value == 0) {
       stakeButtonText.value = "Stake";
       stakeButtonClassName.value = "btn-custom-gray";
     } else {
-      if (await checkAllowance(
-        store,
-      "LP", // static for now
-      stakeAmount.value,
-      "stake"
-      )) {
-        (stakeButtonText.value = "Stake");
+      if (
+        await checkAllowance(
+          store,
+          "LP", // static for now
+          stakeAmount.value,
+          "stake"
+        )
+      ) {
+        stakeButtonText.value = "Stake";
         stakeButtonClassName.value = "btn-custom-green";
       } else {
-        (stakeButtonText.value = "Approve");
+        stakeButtonText.value = "Approve";
         stakeButtonClassName.value = "btn-custom";
       }
     }
@@ -126,5 +139,8 @@ const unstake = () => {
 .stake-panel-content {
   height: 40vh;
   padding: 10px 40px;
+}
+.black-text {
+  color: black !important;
 }
 </style>

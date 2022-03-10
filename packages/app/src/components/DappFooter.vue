@@ -7,7 +7,7 @@
             {{ tvl }} USD<br />Total Value Locked
           </a>
           <a href="javascript:void(0)" class="stack-btn">
-            {{format(dailyEarnings)}} USD<br />Daily Revenue
+            {{ format(dailyEarnings) }} USD<br />Daily Revenue
           </a>
         </div>
       </div>
@@ -34,22 +34,19 @@ const userPosition = computed(
 const caplPerSecond = computed(() => store.getters["rewards/getCaplPerSecond"]);
 const totalStaked = computed(() => store.getters["rewards/getTotalStaked"]);
 
-
-
 watchEffect(async () => {
   if (isUserConnected.value === true) {
     // @ts-ignore
-    tvl.value = format((computed(() => store.getters["dashboard/getTVL"])).value);
-  }
-  else {
+    tvl.value = format(computed(() => store.getters["dashboard/getTVL"]).value);
+  } else {
     // @ts-ignore
-      tvl.value = format('0');
+    tvl.value = format("0");
   }
-    dailyEarnings.value = getDailyEarnings(
-      userPosition.value,
-      caplPerSecond.value,
-      totalStaked.value
-    );
+  dailyEarnings.value = getDailyEarnings(
+    userPosition.value,
+    caplPerSecond.value,
+    totalStaked.value
+  );
 });
 </script>
 

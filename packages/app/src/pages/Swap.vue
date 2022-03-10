@@ -38,7 +38,11 @@
                 </div>
               </div>
             </div>
-            <button type="button" @click="handleSwap()" :class="swapButtonClassName">
+            <button
+              type="button"
+              @click="handleSwap()"
+              :class="swapButtonClassName"
+            >
               {{ swapButtonString }}
             </button>
           </div>
@@ -59,7 +63,11 @@ import {
   format,
   stringToNumber,
 } from "@/utils";
-import { checkConnection, checkBalance } from "@/utils/notifications";
+import {
+  checkConnection,
+  checkBalance,
+  checkAvailability,
+} from "@/utils/notifications";
 
 const store: any = useStore();
 let swapAmount: Ref<number> = ref(0);
@@ -70,24 +78,32 @@ let swapTokenResult: Ref<string> = ref("");
 let swapButtonString = ref("Swap");
 let swapButtonClassName = ref("btn-custom-gray");
 
+const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
+const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
+
 const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
 watchEffect(async () => {
-  if (isUserConnected.value)
-  console.log(swapAmount.value);
+  if (isUserConnected.value) {
     if (swapAmount.value == 0) {
-      swapButtonClassName.value = "btn-custom-gray"
+      swapButtonClassName.value = "btn-custom-gray";
     } else {
-        (await checkAllowance(
-          store,
-          swapTokenSymbol.value,
-          Number(swapAmount.value),
-          "balancer"
-        ))
-          ? (swapButtonString.value = "Swap", swapButtonClassName.value = "btn-custom-green")
-          : (swapButtonString.value = "Approve", swapButtonClassName.value = "btn-custom")
+      (await checkAllowance(
+        store,
+        swapTokenSymbol.value,
+        Number(swapAmount.value),
+        "balancer"
+      ))
+        ? ((swapButtonString.value = "Swap"),
+          (swapButtonClassName.value = "btn-custom-green"))
+        : ((swapButtonString.value = "Approve"),
+          (swapButtonClassName.value = "btn-custom"));
     }
+    swapTokenSymbol.value == "CAPL"
+      ? checkAvailability(swapAmount.value, caplBalance.value)
+      : checkAvailability(swapAmount.value, usdcBalance.value);
+  }
 });
 
 // handles swapping button logic, dependant on current string

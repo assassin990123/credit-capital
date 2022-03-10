@@ -11,7 +11,9 @@
         </div>
         <div class="title-cus">
           <h2>APR</h2>
-          <div class="dashboard-daily-earning-panel-value">{{format(caplToUSD(dailyEarnings, store) / tvl * 36500) }}%</div>
+          <div class="dashboard-daily-earning-panel-value">
+            {{ format((caplToUSD(dailyEarnings, store) / tvl) * 36500) }}%
+          </div>
         </div>
         <div class="title-cus">
           <h2>TVL</h2>
@@ -24,7 +26,10 @@
         <div class="dashboard-daily-earning-capl-header">
           <h2>CAPL</h2>
           <h2>
-            {{ format(caplBalance) }} ({{ format(caplToUSD(caplBalance, store)) }} USD)
+            {{ format(caplBalance) }} ({{
+              format(caplToUSD(caplBalance, store))
+            }}
+            USD)
           </h2>
         </div>
         <div class="dashboard-daily-earning-capl-content">
@@ -45,7 +50,7 @@
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
               {{ format(lpBalance) }} USDC-CAPL Shares ({{
-                format(lpToUSD(lpBalance, store)) 
+                format(lpToUSD(lpBalance, store))
               }}
               USD)
               <br />
@@ -66,14 +71,19 @@
               Daily Revenue
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
-              {{ format(dailyEarnings)}} CAPL ({{ format(caplToUSD(dailyEarnings, store))}} USD)
+              {{ format(dailyEarnings) }} CAPL ({{
+                format(caplToUSD(dailyEarnings, store))
+              }}
+              USD)
             </div>
           </div>
           <div class="dashboard-daily-earning-capl-content-row">
             <div class="dashboard-daily-earning-capl-content-title">
               Daily Yield
             </div>
-            <div class="dashboard-daily-earning-capl-content-value">{{format(caplToUSD(dailyEarnings, store) / tvl * 100) }}%</div>
+            <div class="dashboard-daily-earning-capl-content-value">
+              {{ format((caplToUSD(dailyEarnings, store) / tvl) * 100) }}%
+            </div>
           </div>
         </div>
       </div>
@@ -94,7 +104,9 @@
           <div class="dashboard-revenue-projection-value">
             {{ format(dailyEarnings) }} CAPL
           </div>
-          <div class="green-txt">{{ format(caplToUSD(dailyEarnings, store)) }} USD</div>
+          <div class="green-txt">
+            {{ format(caplToUSD(dailyEarnings, store)) }} USD
+          </div>
         </div>
       </div>
       <div class="dashboard-revenue-projection-content">
@@ -138,7 +150,10 @@
       <div class="dashboard-portfolio-section">
         <div class="dashboard-portfolio-section-address">
           <h2>WALLET ADDRESS</h2>
-          <div class="dashboard-portfolio-section-address-value" v-bind:title="wallet">
+          <div
+            class="dashboard-portfolio-section-address-value"
+            v-bind:title="wallet"
+          >
             {{ walletAddress }}
           </div>
         </div>
@@ -146,7 +161,12 @@
         <div class="dashboard-portfolio-section-panel">
           <div class="dashboard-portfolio-section-panel-row">
             <div>CAPL Tokens</div>
-            <div>{{ format(caplBalance) }} CAPL ({{ format(caplToUSD(caplBalance, store)) }} USD)</div>
+            <div>
+              {{ format(caplBalance) }} CAPL ({{
+                format(caplToUSD(caplBalance, store))
+              }}
+              USD)
+            </div>
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC Tokens</div>
@@ -175,20 +195,29 @@
         <div class="dashboard-portfolio-section-panel">
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC-CAPL Shares</div>
-            <div>{{ format(userPosition) }} USDC-CAPL Shares ({{ format(lpToUSD(userPosition, store)) }} USD)</div>
+            <div>
+              {{ format(userPosition) }} USDC-CAPL Shares ({{
+                format(lpToUSD(userPosition, store))
+              }}
+              USD)
+            </div>
           </div>
           <div class="dashboard-portfolio-section-panel-row">
             <div>Pending Rewards</div>
             <div>
-              {{ format(pendingRewards) }} CAPL ({{ format(caplToUSD(pendingRewards, store)) }} USD)
+              {{ format(pendingRewards) }} CAPL ({{
+                format(caplToUSD(pendingRewards, store))
+              }}
+              USD)
             </div>
           </div>
         </div>
-        <router-link to="reward" class="reward-link" >
+        <router-link to="reward" class="reward-link">
           <button type="submit" class="reward-btn">Claim Rewards</button>
         </router-link>
       </div>
-      <div class="dashboard-portfolio-section" style="display:none;"><!--todo: Implement historic data-->
+      <div class="dashboard-portfolio-section" style="display: none">
+        <!--todo: Implement historic data-->
         <div class="dashboard-portfolio-capl-row">
           <div>CAPL Price</div>
           <div>1.0357 USD</div>
@@ -220,10 +249,10 @@
         </div>
       </div>
     </div>
-    <div class="protfolio-title-main" style="display:none;">
+    <div class="protfolio-title-main" style="display: none">
       <h2 class="text-center">PLATFORM</h2>
     </div>
-    <div class="dashboard-platform" style="display:none;">
+    <div class="dashboard-platform" style="display: none">
       <div class="dashboard-platform-section">
         <div class="dashboard-platform-header">
           <h2>CAPL</h2>
@@ -855,10 +884,10 @@ watchEffect(() => {
   font-size: 18px;
 }
 .stake-link {
-  text-align:right;
-  font-size:20px;
+  text-align: right;
+  font-size: 20px;
 }
 .stake-link ul {
-  display:inline;
+  display: inline;
 }
 </style>

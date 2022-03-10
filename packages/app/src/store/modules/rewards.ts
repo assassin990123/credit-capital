@@ -177,8 +177,8 @@ const actions = {
       ethers.utils.formatUnits(unlockedAmount, 18)
     );
 
-      // // listen in
-      // await actions.ethereumListener({ commit, rootState });
+    // // listen in
+    // await actions.ethereumListener({ commit, rootState });
   },
 
   // async ethereumListener({ commit, rootState }: { commit: Function, rootState: RootState }) {

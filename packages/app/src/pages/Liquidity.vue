@@ -52,9 +52,7 @@
             <button
               type="submit"
               @click="handleAddLiquidity()"
-              :class="
-                addLiquidityButtonClassNameForState
-              "
+              :class="addLiquidityButtonClassNameForState"
               :disabled="addLiquidityButtonDisabled"
             >
               {{ addLiquidityButtonString }}
@@ -95,8 +93,8 @@ watchEffect(async () => {
     return;
   }
   if (
-    checkAvailability(caplLiquidity.value, caplBalance) &&
-    checkAvailability(usdcLiquidity.value, usdcBalance)
+    checkAvailability(caplLiquidity.value, caplBalance.value) &&
+    checkAvailability(usdcLiquidity.value, usdcBalance.value)
   ) {
     if (
       Number(caplLiquidity.value) === 0 &&
@@ -104,7 +102,7 @@ watchEffect(async () => {
     ) {
       addLiquidityButtonDisabled.value = true;
       addLiquidityButtonString.value = "Add Liquidity";
-      addLiquidityButtonClassNameForState.value = "btn-custom-gray"
+      addLiquidityButtonClassNameForState.value = "btn-custom-gray";
     } else {
       addLiquidityButtonDisabled.value = false;
       const { approvalRequired, flag } = await checkAllAllowances(store, [
@@ -115,8 +113,10 @@ watchEffect(async () => {
       approvalFlag.value = flag;
 
       approvalRequired
-        ? (addLiquidityButtonString.value = "Approve", addLiquidityButtonClassNameForState.value = "btn-custom")
-        : (addLiquidityButtonString.value = "Add Liquidity", addLiquidityButtonClassNameForState.value = "btn-custom-green");
+        ? ((addLiquidityButtonString.value = "Approve"),
+          (addLiquidityButtonClassNameForState.value = "btn-custom"))
+        : ((addLiquidityButtonString.value = "Add Liquidity"),
+          (addLiquidityButtonClassNameForState.value = "btn-custom-green"));
     }
   }
 });

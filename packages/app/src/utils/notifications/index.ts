@@ -20,6 +20,7 @@ export const checkConnection = (store: any) => {
 
   return true;
 };
+
 export const checkBalance = (balance: number) => {
   if (balance == 0) {
     dismissNotification();
@@ -52,6 +53,12 @@ export const showConnectResult = (store: any) => {
 };
 
 export const checkWalletConnect = () => {
+  dismissNotification();
+  toastID = toast.info(UnLock);
+  return false;
+};
+
+export const balanceExceeded = () => {
   dismissNotification();
   toastID = toast.info(UnLock);
   return false;

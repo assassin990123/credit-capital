@@ -43,20 +43,21 @@ export const calculateCAPLUSDPrice = (
 //total pool value = USDC balance + capl balance * capl price
 //LP token price = total pool value / lp token supply
 // user positioninUSD = lp token price + user position
-export const calculateLPUSDPrice = (
-  amount: number,
-  store: any,
-): number => {
+export const calculateLPUSDPrice = (amount: number, store: any): number => {
   const poolTokens = store.getters["balancer/getPoolTokens"];
   const lpTokenSupply = store.getters["dashboard/getLpTokenSupply"];
-  if (poolTokens == null || poolTokens.balances == undefined || lpTokenSupply == undefined) {
+  if (
+    poolTokens == null ||
+    poolTokens.balances == undefined ||
+    lpTokenSupply == undefined
+  ) {
     return 0;
   }
   const USDC = poolTokens.balances[0];
   const CAPL = poolTokens.balances[1];
   // Pool Value: USDC Balance + CAPL Balance * CAPL Price - see calculateCAPLUSDPrice()
-  const poolValue = Number(USDC) + (Number(CAPL) * Number(USDC) / Number(CAPL));
-  return amount * poolValue / lpTokenSupply;
+  const poolValue = Number(USDC) + (Number(CAPL) * Number(USDC)) / Number(CAPL);
+  return (amount * poolValue) / lpTokenSupply;
 };
 
 export interface Constant {
@@ -111,8 +112,7 @@ export const checkAllowance = (
     symbol == "CAPL"
       ? (allowance = state.getters["tokens/getCAPLBalancerVaultAllowance"])
       : (allowance = state.getters["tokens/getUSDCBalancerVaultAllowance"]);
-  } 
-  else if (flag == "stake") {
+  } else if (flag == "stake") {
     allowance = state.getters["tokens/getLPAllowance"];
   }
   return allowance >= amount;
@@ -130,7 +130,7 @@ export const checkAllAllowances = (
   let count = 0;
   let approvalRequired = false;
   let flag: string | null = null;
-  console.log(usdcBalancerVaultAllowance, caplBalancerVaultAllowance)
+  console.log(usdcBalancerVaultAllowance, caplBalancerVaultAllowance);
   // known:
   // amounts[0] -> usdc, amounts[1] -> capl
   if (amounts[0] !== 0 && usdcBalancerVaultAllowance < amounts[0]) {
@@ -158,10 +158,7 @@ export const caplToUSD = (amount: number, store: any): number => {
   );
 };
 export const lpToUSD = (amount: number, store: any): number => {
-  return calculateLPUSDPrice(
-    amount,
-    store,
-  );
+  return calculateLPUSDPrice(amount, store);
 };
 
 export const stringToNumber = (str: any) => {
@@ -189,5 +186,5 @@ export const getDailyEarnings = (
   totalStaked: number
 ): number => {
   // caplPerSecond * seconds per day * ratio of user's position vs total staked. Accounting for token decimals.
-  return caplPerSecond * 86400 * userPosition / totalStaked / 1e18; 
+  return (caplPerSecond * 86400 * userPosition) / totalStaked / 1e18;
 };

@@ -35,15 +35,7 @@
           <!-- /col -->
           <!-- col -->
           <div
-            class="
-              col-xl-7
-              offset-xl-1
-              col-lg-7
-              wow
-              fadeInDown
-              animated
-              floating
-            "
+            class="col-xl-7 offset-xl-1 col-lg-7 wow fadeInDown animated floating"
             data-wow-delay="0.4s"
           >
             <img

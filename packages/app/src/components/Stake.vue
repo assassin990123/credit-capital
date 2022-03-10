@@ -94,18 +94,18 @@ import { useStore } from "@/store";
 import { calculateCAPLUSDPrice } from "@/utils";
 
 const store = useStore();
+
 let swapToken = ref("");
 let swapTokenResult = ref("");
 let liquidityToken = ref("");
 let liquidityTokenResult = ref("");
 
 function resetInput() {
-  this.swapToken = "";
-
-  //this.email = "";
+  swapToken.value = "";
 }
+
 function resetInput2() {
-  this.liquidityToken = "";
+  liquidityToken.value = "";
 }
 
 function swap() {

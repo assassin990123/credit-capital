@@ -68,7 +68,6 @@ const actions = {
     { commit, rootState }: { commit: Commit; rootState: RootState },
     { symbol }: { symbol: string }
   ) {
-
     let contract;
     let decimals;
     symbol == "CAPL"

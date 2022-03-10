@@ -61,8 +61,8 @@ watchEffect(async () => {
       );
     }
   } else {
-    pendingRewardsCAPL.value = format('0');
-    pendingRewardsUSDC.value = format('0');
+    pendingRewardsCAPL.value = format("0");
+    pendingRewardsUSDC.value = format("0");
   }
 });
 </script>
