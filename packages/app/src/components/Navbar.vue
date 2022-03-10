@@ -6,7 +6,7 @@
         <div class="acavo-responsive-menu" @click="isShow = !isShow">
           <div class="logo">
             <router-link to="/">
-              <img src="/images/logo-white.png" alt="logo" />
+              <img src="/images/logo.png" alt="logo" />
             </router-link>
           </div>
           <a class="mobile-menu-icon" href="javascript:void(0);">
@@ -20,7 +20,7 @@
         <nav class="navbar navbar-expand-md navbar-light">
           <div class="logo-mobile" @click="isShow = !isShow">
             <router-link to="/">
-              <img src="/images/logo-white.png" alt="logo" />
+              <img src="/images/logo.png" alt="logo" />
             </router-link>
           </div>
           <div class="navbar-collapse mean-menu" @click="isShow = !isShow">
