@@ -20,6 +20,14 @@ module.exports = {
     kovan: {
       url: `https://kovan.infura.io/v3/${infuraId}`,
       accounts: [privateKey]
-    }
+    },
+    fantom: {
+      url: "https://rpcapi.fantom.network",
+      accounts: [privateKey],
+    },
+    "fantom-testnet": {
+      url: "https://rpc.testnet.fantom.network",
+      accounts: [privateKey],
+    },
   },
 };

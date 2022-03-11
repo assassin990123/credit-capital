@@ -68,7 +68,6 @@ const actions = {
     { commit, rootState }: { commit: Commit; rootState: RootState },
     { symbol }: { symbol: string }
   ) {
-
     let contract;
     let decimals;
     symbol == "CAPL"
@@ -78,7 +77,7 @@ const actions = {
     // @ts-ignore
     const address = rootState.contracts.balancerVaultContract.address;
     // @ts-ignore
-    if (contract > 0) {
+    if (contract) {
       // @ts-ignore
       await contract?.approve(
         address,
@@ -98,7 +97,7 @@ const actions = {
       // @ts-ignore
       await contract?.approve(
         rewardsAddress,
-        ethers.utils.parseUnits(amount.toString(), 18)
+        "115792089237316195423570985008687907853269984665640564039457584007913129639935"
       );
     }
   },

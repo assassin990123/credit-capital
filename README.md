@@ -33,8 +33,18 @@ The app will then be available at ``http://localhost:8080/``
     PRIVATE_KEY=[Metamask PrivateKey]
     INFURA_ID=[Infura Project ID]
     ```
+**In order to deploy the account (private key) used for deployment must have admin access to the CAPL token.**
+**In order to deploy the contracts, CAPL must have already been deployed**
 
-- then, deploy the smart contracts with
-    ``yarn deploy-testnet``
+There are three chains currently supported:
+
+**kovan**
+``yarn deploy-testnet-kovan``
+
+**fantom testnet**
+``yarn deploy-testnet-fantom``
+
+**fantom**
+``yarn deploy-fantom``
 
 - last, copy the contract addresses from the ``.config.js`` file located in the ``sol`` package into ``packages/app/src/constants``

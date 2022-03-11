@@ -12,11 +12,24 @@
               v-model="stakeAmount"
             />
             <div class="myBalance">
-              Balance: <a @click="insertBalance">{{ lpBalance.toFixed(4) }}</a> USDC-CAPL
+              My Balance
+              <a @click="insertBalance">{{ lpBalance.toFixed(4) }} USDC-CAPL</a>
             </div>
-            <button type="submit" class="btn-custom" @click="handleStake">
+            <button
+              type="submit"
+              :class="stakeButtonClassName"
+              @click="handleStake"
+              :disabled="stakeButtonDisabled"
+            >
               {{ stakeButtonText }}
             </button>
+            <div class="explainer">
+              USDC-CAPL Liquidity Pool Tokens are locked into CreditCapital vault for 4 years, 4 months, 4 weeks, and 4 days.
+              Staking rewards can be claimed on the 
+              <router-link to="reward" class="button">Rewards</router-link> page at any time.
+              Don't have LP tokens? 
+              <router-link to="liquidity" class="button">Buy Some</router-link> now.
+            </div>
           </div>
         </div>
         <div class="panel stake-panel">
@@ -29,11 +42,16 @@
               v-model="unstakeAmount"
             />
             <div class="myBalance">
-              Unlocked Balance: <a>{{ unstakeAmount.toFixed(4) }}</a> USDC-CAPL
+              Unlocked Balance: <a>{{ unstakeAmount }} USDC-CAPL</a>
             </div>
             <button type="submit" class="btn-custom" @click="unstake">
               Withdraw
             </button>
+            <div class="explainer">
+              USDC-CAPL Liquidity Pool Tokens may be withdrawn after the time lock period expires.
+              Staking rewards can be claimed on the 
+              <router-link to="reward" class="button">Rewards</router-link> page at any time.
+            </div>
           </div>
         </div>
       </div>
@@ -51,32 +69,59 @@ import { checkAllowance } from "@/utils";
 // @ts-ignore
 import { useStore } from "@/store";
 // @ts-ignore
-import { checkConnection, checkBalance } from "@/utils/notifications";
+import {
+  checkConnection,
+  checkBalance,
+  checkAvailability,
+} from "@/utils/notifications";
 
 const store = useStore();
 const stakeAmount: Ref<number> = ref(0);
 const stakeButtonText: Ref<string> = ref("Stake");
+const stakeButtonClassName: Ref<string> = ref("btn-custom-gray");
+const unstakeAmount = ref(0);
 // for we make the user withdraw the total unlockedAmount.
-const unstakeAmount = computed(
-  () => store.getters["rewards/getUserUnlockedAmount"]
-);
 const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
 
 const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
 
+let stakeButtonDisabled:Ref<boolean> = ref(false)
+
 // this function checks the allowance a user has alloted our rewards contract via the LP token
 watchEffect(async () => {
-  !isUserConnected.value ||
-  (await checkAllowance(
-    store,
-    "LP", // static for now
-    stakeAmount.value,
-    "stake"
-  ))
-    ? (stakeButtonText.value = "Stake")
-    : (stakeButtonText.value = "Approve");
+  if (
+    isUserConnected.value
+  ) {
+    if (stakeAmount.value == 0) {
+      stakeButtonText.value = "Stake";
+      stakeButtonClassName.value = "btn-custom-gray";
+    } else {
+      if (
+        await checkAllowance(
+          store,
+          "LP", // static for now
+          stakeAmount.value,
+          "stake"
+        )
+      ) {
+        stakeButtonText.value = "Stake";
+        stakeButtonClassName.value = "btn-custom-green";
+      } else {
+        stakeButtonText.value = "Approve";
+        stakeButtonClassName.value = "btn-custom";
+      }
+    }
+    if (!checkAvailability(stakeAmount.value, lpBalance.value)) {
+      stakeButtonDisabled.value = true
+      stakeButtonClassName.value = "btn-custom-gray";
+    }
+    else {
+      stakeButtonDisabled.value = false
+      stakeButtonClassName.value = "btn-custom-green";
+    }
+  }
 });
 
 const handleStake = async () => {
@@ -114,7 +159,10 @@ const unstake = () => {
 }
 
 .stake-panel-content {
-  height: 40vh;
+  height: 50vh;
   padding: 10px 40px;
+}
+.black-text {
+  color: black !important;
 }
 </style>

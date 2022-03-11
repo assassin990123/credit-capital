@@ -8,10 +8,14 @@
             <div class="rewards-display">
               {{ pendingRewardsCAPL + " CAPL" }}<br />
               ({{ pendingRewardsUSDC + " USD" }})
-            </div>
             <div class="rewards-section">
               <button class="rewards-section-item" @click="claim">CLAIM</button>
               <!-- <div class="rewards-section-item">COMPOUND</div> -->
+              <div class="explainer">
+                Claim your rewards whenever you want! If you aren't earning, you may want to
+                <router-link to="stake" class="button">Stake</router-link> some tokens.
+              </div>
+            </div>
             </div>
           </div>
         </div>
@@ -48,16 +52,21 @@ const claim = () => {
 };
 
 watchEffect(async () => {
-  if (connected.value && pendingRewards.value >= 0) {
-    await store.dispatch("balancer/getPoolTokens");
-    pendingRewardsCAPL.value = format(pendingRewards.value);
-    pendingRewardsUSDC.value = format(
-      calculateCAPLUSDPrice(
-        pendingRewards.value,
-        "CAPL",
-        store.getters["balancer/getPoolTokens"]
-      )
-    );
+  if (connected.value === true) {
+    if (pendingRewards.value >= 0) {
+      await store.dispatch("balancer/getPoolTokens");
+      pendingRewardsCAPL.value = format(pendingRewards.value);
+      pendingRewardsUSDC.value = format(
+        calculateCAPLUSDPrice(
+          pendingRewards.value,
+          "CAPL",
+          store.getters["balancer/getPoolTokens"]
+        )
+      );
+    }
+  } else {
+    pendingRewardsCAPL.value = format("0");
+    pendingRewardsUSDC.value = format("0");
   }
 });
 </script>
@@ -76,9 +85,9 @@ watchEffect(async () => {
 
 .rewards-display {
   border: 1px solid #000000;
-  font-size: 70px;
+  font-size: 50px;
   font-weight: 700;
-  padding: 40px 20px;
+  padding: 20px 20px;
   text-align: center;
 }
 
@@ -86,7 +95,6 @@ watchEffect(async () => {
   /* display: flex;
   flex-direction: row; */
   justify-content: space-between;
-  margin-top: 50px;
 }
 
 .rewards-section-item {

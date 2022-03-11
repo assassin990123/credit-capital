@@ -7,7 +7,8 @@ import { ethers } from "ethers";
 const state: DashboardState = {
   dailyEarnings: 0,
   tvl: 0,
-  revenueProjectionPerDay: 0
+  lpTokenSupply: 0,
+  revenueProjectionPerDay: 0,
 };
 
 const getters = {
@@ -17,9 +18,12 @@ const getters = {
   getTVL(state: DashboardState) {
     return state.tvl;
   },
-  getRevenueProjectionPerDay () {
+  getLpTokenSupply(state: DashboardState) {
+    return state.lpTokenSupply;
+  },
+  getRevenueProjectionPerDay() {
     return state.revenueProjectionPerDay;
-  }
+  },
 };
 
 const actions = {
@@ -53,6 +57,7 @@ const actions = {
     lpTokenTotalSupply = ethers.utils.formatEther(
       lpTokenTotalSupply.toString()
     );
+    commit("setLpTokenSupply", lpTokenTotalSupply);
 
     const tvlTokenPrice =
       (Number(usdcBalance) +
@@ -71,7 +76,6 @@ const actions = {
     rootState: RootState;
     dispatch: Dispatch;
   }) {
-
     if (rootState.rewards.caplPerSecond === 0) {
       await dispatch("rewards/getCaplPerSecond", null, { root: true });
     }
@@ -87,9 +91,11 @@ const actions = {
     }
     const userStakedLPTokens = rootState.rewards.userStakedPosition;
 
-
-    commit("setRevenueProjectionPerDay", rewardsPerDay / totalStakedLPTokens * userStakedLPTokens);
-  }
+    commit(
+      "setRevenueProjectionPerDay",
+      (rewardsPerDay / totalStakedLPTokens) * userStakedLPTokens
+    );
+  },
 };
 
 const mutations = {
@@ -97,9 +103,16 @@ const mutations = {
     state.tvl = _tvl;
   },
 
-  setRevenueProjectionPerDay(state: DashboardState, _revenueProjectionPerDay: number) {
+  setLpTokenSupply(state: DashboardState, _lpTokenSupply: number) {
+    state.lpTokenSupply = _lpTokenSupply;
+  },
+
+  setRevenueProjectionPerDay(
+    state: DashboardState,
+    _revenueProjectionPerDay: number
+  ) {
     state.revenueProjectionPerDay = _revenueProjectionPerDay;
-  }
+  },
 };
 
 export default {

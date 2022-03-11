@@ -3,12 +3,12 @@
     <div class="stack-bottom-area">
       <div class="stack-bottom-area-inner">
         <div class="stack-button-area">
-          <a href="javascript:void(0)" class="stack-btn"
-            >{{ tvl.toFixed(3) }} USD<br />Total Value Locked</a
-          >
-          <a href="javascript:void(0)" class="stack-btn"
-            >987.65 USD<br />Daily Revenue</a
-          >
+          <a href="javascript:void(0)" class="stack-btn">
+            {{ tvl }} USD<br />Total Value Locked
+          </a>
+          <a href="javascript:void(0)" class="stack-btn">
+            {{ format(dailyEarnings) }} USD<br />Daily Revenue
+          </a>
         </div>
       </div>
     </div>
@@ -16,12 +16,38 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, Ref, ref, watchEffect } from "vue";
 import { useStore } from "@/store";
+import { format, getDailyEarnings } from "@/utils";
 
+const tvl = ref(0);
 const store = useStore();
+const isUserConnected = computed(
+  () => store.getters["accounts/isUserConnected"]
+);
 
-const tvl = computed(() => store.getters["dashboard/getTVL"]);
+const dailyEarnings: Ref<number> = ref(0);
+// daily earnings
+const userPosition = computed(
+  () => store.getters["rewards/getUserStakedPosition"]
+);
+const caplPerSecond = computed(() => store.getters["rewards/getCaplPerSecond"]);
+const totalStaked = computed(() => store.getters["rewards/getTotalStaked"]);
+
+watchEffect(async () => {
+  if (isUserConnected.value === true) {
+    // @ts-ignore
+    tvl.value = format(computed(() => store.getters["dashboard/getTVL"]).value);
+  } else {
+    // @ts-ignore
+    tvl.value = format("0");
+  }
+  dailyEarnings.value = getDailyEarnings(
+    userPosition.value,
+    caplPerSecond.value,
+    totalStaked.value
+  );
+});
 </script>
 
 <style>

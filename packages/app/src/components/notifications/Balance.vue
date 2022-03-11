@@ -6,7 +6,7 @@
       <span></span>
     </div>
     <div>
-      <div class="toastnotification-content">Amount must be greater than zero.</div>
+      <div class="toastnotification-content">Balance Exceeded.</div>
     </div>
   </div>
 </template>

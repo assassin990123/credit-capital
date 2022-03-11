@@ -151,6 +151,10 @@ const actions = {
     rootState: RootState;
     dispatch: Dispatch;
   }) {
+    if (rootState.accounts.isConnected === false) {
+      return 10;
+    }
+
     // if state.vaultContract is null, call the `setContracts` function
     if (rootState.contracts.vaultContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -172,7 +176,20 @@ const actions = {
       "setUserUnlockedAmount",
       ethers.utils.formatUnits(unlockedAmount, 18)
     );
+
+    // // listen in
+    // await actions.ethereumListener({ commit, rootState });
   },
+
+  // async ethereumListener({ commit, rootState }: { commit: Function, rootState: RootState }) {
+  //   (window as any).ethereum.on("accountsChanged", (accounts: any) => {
+  //     // If user has locked/logout from MetaMask, this resets the accounts array to empty
+  //     if (!accounts.length) {
+  //       // logic to handle what happens once MetaMask is locked
+  //       commit("setUserUnlockedAmount", 10);
+  //     }
+  //   });
+  // },
 
   async stake(
     { rootState, dispatch }: { rootState: RootState; dispatch: Dispatch },

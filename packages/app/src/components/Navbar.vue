@@ -3,8 +3,8 @@
   <div class="navbar-area">
     <div class="acavo-responsive-nav">
       <div class="container">
-        <div class="acavo-responsive-menu">
-          <div class="logo" @click="isShow = !isShow">
+        <div class="acavo-responsive-menu" @click="isShow = !isShow">
+          <div class="logo">
             <router-link to="/">
               <img src="/images/logo-white.png" alt="logo" />
             </router-link>
@@ -23,22 +23,22 @@
               <img src="/images/logo-white.png" alt="logo" />
             </router-link>
           </div>
-          <div class="navbar-collapse mean-menu">
+          <div class="navbar-collapse mean-menu" @click="isShow = !isShow">
             <ul class="navbar-nav">
-              <li class="nav-item" @click="isShow = !isShow">
+              <li class="nav-item">
                 <router-link to="/">Home</router-link>
               </li>
-              <li class="nav-item" @click="isShow = !isShow">
-                <router-link to="stake">Stake</router-link>
-              </li>
-              <li class="nav-item" @click="isShow = !isShow">
+              <li class="nav-item">
                 <router-link to="reward">Rewards</router-link>
               </li>
-              <li class="nav-item" @click="isShow = !isShow">
-                <router-link to="swap">Swap</router-link>
+              <li class="nav-item">
+                <router-link to="stake">Stake</router-link>
               </li>
-              <li class="nav-item" @click="isShow = !isShow">
+              <li class="nav-item">
                 <router-link to="liquidity">Liquidity</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link to="swap">Swap</router-link>
               </li>
               <!-- <li class="nav-item">
                 <router-link to="treasury">Treasury</router-link>
@@ -46,16 +46,16 @@
             </ul>
           </div>
           <div>
-            <ul class="nav-btn-custom">
-              <li class="nav-item" @click="isShow = !isShow">
+            <ul class="nav-btn-custom" @click="isShow = !isShow">
+              <li class="nav-item">
                 <span>CAPL &dollar;{{ CAPLPrice }}</span>
               </li>
-              <li class="nav-item" @click="isShow = !isShow">
+              <li class="nav-item">
                 <router-link to="dashboard"
                   ><button class="connectButton">Dashboard</button>
                 </router-link>
               </li>
-              <li class="nav-item" @click="isShow = !isShow">
+              <li class="nav-item">
                 <button class="connectButton" @click="connectWeb3">
                   {{ buttonString }}
                 </button>
@@ -98,7 +98,7 @@ import { computed } from "vue";
 import { useStore } from "@/store";
 import { ref, watchEffect } from "vue";
 import { showConnectResult } from "@/utils/notifications";
-import { shortenAddress, caplUSDConversion, format } from "@/utils";
+import { shortenAddress, caplToUSD, format } from "@/utils";
 
 export default {
   setup() {
@@ -107,14 +107,16 @@ export default {
     let CAPLPrice = ref("0.00");
     let buttonString = ref("Connect Wallet");
 
-    const connectWeb3 =  async () => {
+    const connectWeb3 = async () => {
       await store.dispatch("accounts/connectWeb3");
-      await store.dispatch("rewards/getRewardsInfo");
-      await store.dispatch("balancer/getPoolTokens");
-      await store.dispatch("dashboard/fetchTVL");
-      const price = format(caplUSDConversion(1, store));
-      if (price) {
-        CAPLPrice.value = price;
+      if (isConnected.value) {
+        await store.dispatch("rewards/getRewardsInfo");
+        await store.dispatch("balancer/getPoolTokens");
+        await store.dispatch("dashboard/fetchTVL");
+        const price = format(caplToUSD(1, store));
+        if (price) {
+          CAPLPrice.value = price;
+        }
       }
 
       showConnectResult(store);
@@ -127,7 +129,7 @@ export default {
     const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
     // check the localstorage for determine the user was connected
-    if (localStorage.getItem('isConnected')) {
+    if (localStorage.getItem("isConnected")) {
       // reconnect web3
       connectWeb3();
     }
@@ -137,7 +139,7 @@ export default {
         ? (buttonString.value = shortenAddress(wallet.value))
         : (buttonString.value = "Connect Wallet");
 
-      const price = format(caplUSDConversion(1, store));
+      const price = format(caplToUSD(1, store));
       if (price) {
         CAPLPrice.value = price;
       }
@@ -152,7 +154,7 @@ export default {
       buttonString,
       CAPLPrice,
       showMoons,
-      connectWeb3
+      connectWeb3,
     };
   },
   data: function () {

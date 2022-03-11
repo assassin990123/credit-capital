@@ -54,7 +54,7 @@ const actions = {
     provider = new ethers.providers.Web3Provider(provider);
 
     if (provider) {
-      if (!await (window as any).ethereum._metamask.isUnlocked()) {
+      if (!(await (window as any).ethereum._metamask.isUnlocked())) {
         checkWalletConnect();
       } else {
         const accounts = await (window as any).ethereum.request({
@@ -79,6 +79,13 @@ const actions = {
 
   async ethereumListener({ commit }: { commit: Function }) {
     (window as any).ethereum.on("accountsChanged", (accounts: any) => {
+      // If user has locked/logout from MetaMask, this resets the accounts array to empty
+      if (!accounts.length) {
+        // logic to handle what happens once MetaMask is locked
+        commit("setIsConnected", false);
+        localStorage.removeItem("isConnected");
+      }
+
       if (state.isConnected) {
         commit("setActiveAccount", accounts[0]);
         commit("setWeb3Provider", state.web3Provider);
@@ -91,17 +98,20 @@ const actions = {
       commit("setWeb3Provider", state.web3Provider);
     });
 
-    (window as any).ethereum.on('disconnect', async (error: ProviderRpcError) => {
-      try {
-        // remove the connection state from localstorage
-        localStorage.removeItem("isConnected");
+    (window as any).ethereum.on(
+      "disconnect",
+      async (error: ProviderRpcError) => {
+        try {
+          // remove the connection state from localstorage
+          localStorage.removeItem("isConnected");
 
-        // reload page
-        window.location.reload();
-      } catch (e) {
-        console.error("error: ", error.message);
+          // reload page
+          window.location.reload();
+        } catch (e) {
+          console.error("error: ", error.message);
+        }
       }
-    });
+    );
   },
 
   async checkNetwork() {
