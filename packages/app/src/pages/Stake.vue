@@ -67,7 +67,6 @@ import { watchEffect, ref, Ref, computed } from "vue";
 // @ts-ignore
 import { 
   checkAllowance, 
-  validateInput 
 } from "@/utils";
 // @ts-ignore
 import { useStore } from "@/store";
@@ -97,7 +96,8 @@ watchEffect(async () => {
   if (
     isUserConnected.value
   ) {
-    console.log(stakeAmount.value);
+    stakeAmount.value = Number(parseFloat((stakeAmount.value).toString()).toFixed(18));
+
     if (stakeAmount.value == 0) {
       stakeButtonText.value = "Stake";
       stakeButtonClassName.value = "btn-custom-gray";
@@ -125,10 +125,6 @@ watchEffect(async () => {
       }
     }
     
-  }
-  
-  if (validateInput((stakeAmount.value).toString())) {
-    stakeAmount.value = Number(parseFloat((stakeAmount.value).toString()).toFixed(18));
   }
 });
 

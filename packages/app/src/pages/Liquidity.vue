@@ -75,7 +75,6 @@ import { ref, Ref, watchEffect, computed } from "vue";
 import { useStore } from "@/store";
 import { 
   checkAllAllowances,
-  validateInput,
 } from "@/utils";
 import { checkConnection, checkAvailability } from "@/utils/notifications";
 
@@ -96,14 +95,6 @@ const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
 const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
 
 watchEffect(async () => {
-  if (validateInput((usdcLiquidity.value).toString())) {
-    usdcLiquidity.value = Number(parseFloat((usdcLiquidity.value).toString()).toFixed(6));
-  }
-
-  if (validateInput((caplLiquidity.value).toString())) {
-    caplLiquidity.value = Number(parseFloat((caplLiquidity.value).toString()).toFixed(18));
-  }
-
   if (!isUserConnected.value) {
     return;
   }
@@ -111,6 +102,9 @@ watchEffect(async () => {
     checkAvailability(caplLiquidity.value, caplBalance.value) &&
     checkAvailability(usdcLiquidity.value, usdcBalance.value)
   ) {
+    usdcLiquidity.value = Number(parseFloat((usdcLiquidity.value).toString()).toFixed(6));
+    caplLiquidity.value = Number(parseFloat((caplLiquidity.value).toString()).toFixed(18));
+
     if (
       Number(caplLiquidity.value) === 0 &&
       Number(usdcLiquidity.value) === 0

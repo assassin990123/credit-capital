@@ -74,7 +74,6 @@ import {
   checkAllowance,
   format,
   stringToNumber,
-  validateInput,
 } from "@/utils";
 import {
   checkConnection,
@@ -122,11 +121,9 @@ watchEffect(async () => {
       : handleAvailability(swapAmount.value, usdcBalance.value);
   }
 
-  if (validateInput((swapAmount.value).toString())) {
-    swapTokenSymbol.value == "USDC"
-    ? swapAmount.value = Number(parseFloat((swapAmount.value).toString()).toFixed(6))
-    : swapAmount.value = Number(parseFloat((swapAmount.value).toString()).toFixed(18))
-  }
+  swapTokenSymbol.value == "USDC"
+  ? swapAmount.value = Number(parseFloat((swapAmount.value).toString()).toFixed(6))
+  : swapAmount.value = Number(parseFloat((swapAmount.value).toString()).toFixed(18))
 });
 
 const handleAvailability = (amount: number, balance: number) => {
