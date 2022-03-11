@@ -1,9 +1,5 @@
 import { useToast } from "vue-toastification";
-import Balance from "../../components/notifications/Balance.vue";
-import Connection from "../../components/notifications/Connection.vue";
-import ConnectionSuccess from "../../components/notifications/ConnectionSuccess.vue";
-import ConnectionFailed from "../../components/notifications/ConnectionFailed.vue";
-import UnLock from "../../components/notifications/UnLock.vue";
+import ToastComponent from "../../components/notifications/ToastComponent.vue";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
@@ -14,7 +10,7 @@ let toastID: any;
 export const checkConnection = (store: any) => {
   if (!store.getters["accounts/isUserConnected"]) {
     dismissNotification();
-    toastID = toast.info(Connection);
+    handleToasts("info", "Notification", "Please connect your wallet!");
     return false;
   }
 
@@ -24,7 +20,7 @@ export const checkConnection = (store: any) => {
 export const checkBalance = (balance: number) => {
   if (balance == 0) {
     dismissNotification();
-    toastID = toast.info(Balance);
+    handleToasts("info", "Notification", "Amount must be greater than zero.");
     return false;
   }
 
@@ -34,7 +30,7 @@ export const checkBalance = (balance: number) => {
 export const checkAvailability = (amount: number, balance: number) => {
   if (amount > balance) {
     dismissNotification();
-    toastID = toast.info(Balance);
+    handleToasts("info", "Notification", "Amount must be greater than zero.")
     return false;
   }
 
@@ -44,23 +40,23 @@ export const checkAvailability = (amount: number, balance: number) => {
 export const showConnectResult = (store: any) => {
   if (store.getters["accounts/isUserConnected"]) {
     dismissNotification();
-    toastID = toast.success(ConnectionSuccess);
+    handleToasts("success", "Notification", "Connected Successfully!")
     return true;
   }
 
-  toastID = toast.error(ConnectionFailed);
+  handleToasts("error", "Notification", "Connected Faild!")
   return false;
 };
 
 export const checkWalletConnect = () => {
   dismissNotification();
-  toastID = toast.info(UnLock);
+  handleToasts("info", "Notification", "Please unlock your wallet!")
   return false;
 };
 
 export const balanceExceeded = () => {
   dismissNotification();
-  toastID = toast.info(UnLock);
+  handleToasts("info", "Notification", "Please unlock your wallet!")
   return false;
 };
 
@@ -69,3 +65,43 @@ function dismissNotification() {
     toast.dismiss(toastID);
   }
 }
+
+
+export const handleToasts = (type: string, title: string, text: string) => {
+  dismissNotification();
+  // check type flag
+  switch (type) {
+    case "info":
+      toastID = toast.info({
+        component: ToastComponent,
+        props:  {
+            title: title,
+            text: text
+        }});
+    break;
+    case "warn":
+      toastID = toast.warning({
+        component: ToastComponent,
+        props:  {
+            title: title,
+            text: text
+        }});
+    break;
+    case "success":
+      toastID = toast.success({
+        component: ToastComponent,
+        props:  {
+            title: title,
+            text: text
+        }});
+    break;
+    case "error":
+      toastID = toast.error({
+        component: ToastComponent,
+        props:  {
+            title: title,
+            text: text
+        }});
+    break;
+  }
+};
