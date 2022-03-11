@@ -6,8 +6,7 @@
           <h1 class="panel-title">swap</h1>
           <div class="panel-content swap-panel-content liquidity-box-main">
             <div class="panel-header">
-              <div class="panel-explanation"></div>
-              <!-- <div class="ellipses">&hellip;</div> -->
+              <div class="panel-explanation">Swap CAPL and USDC tokens</div>
             </div>
             <div class="panel-display1">
               <div class="swap-description">
@@ -46,6 +45,10 @@
             >
               {{ swapButtonString }}
             </button>
+            <div class="explainer">
+              Use this page to trade USDC and CAPL tokens. Trades are subject to a 0.3% swap fee.
+              Want to earn instead? Consider using your tokens to <router-link to="liquidity" class="button">Add Liquidity</router-link> to this pool.
+            </div>
           </div>
         </div>
       </div>

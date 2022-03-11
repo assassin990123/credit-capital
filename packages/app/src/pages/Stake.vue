@@ -23,6 +23,13 @@
             >
               {{ stakeButtonText }}
             </button>
+            <div class="explainer">
+              USDC-CAPL Liquidity Pool Tokens are locked into CreditCapital vault for 4 years, 4 months, 4 weeks, and 4 days.
+              Staking rewards can be claimed on the 
+              <router-link to="reward" class="button">Rewards</router-link> page at any time.
+              Don't have LP tokens? 
+              <router-link to="liquidity" class="button">Buy Some</router-link> now.
+            </div>
           </div>
         </div>
         <div class="panel stake-panel">
@@ -40,6 +47,11 @@
             <button type="submit" class="btn-custom" @click="unstake">
               Withdraw
             </button>
+            <div class="explainer">
+              USDC-CAPL Liquidity Pool Tokens may be withdrawn after the time lock period expires.
+              Staking rewards can be claimed on the 
+              <router-link to="reward" class="button">Rewards</router-link> page at any time.
+            </div>
           </div>
         </div>
       </div>
@@ -147,7 +159,7 @@ const unstake = () => {
 }
 
 .stake-panel-content {
-  height: 40vh;
+  height: 50vh;
   padding: 10px 40px;
 }
 .black-text {

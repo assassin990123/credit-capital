@@ -7679,10 +7679,6 @@ textarea:focus {
   min-width: 250px;
 }
 
-.reward-main-sec .rewards-section {
-  margin: 50px auto 50px auto;
-}
-
 /*============================================
 
                 29 -- Swap
@@ -8327,4 +8323,13 @@ button.tab-inner-content-item {
     padding: 10px 30px;
     margin: 20px 0 0 0;
   }
+}
+.explainer {
+  margin-top: 20px;
+  color:#000;
+  font-size:14px;
+  font-weight:normal;
+}
+.explainer a {
+  color: #ff8900;
 }
