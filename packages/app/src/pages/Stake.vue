@@ -110,6 +110,7 @@ watchEffect(async () => {
           "stake"
         )
       ) {
+        stakeButtonText.value = "Stake";
         if (!checkAvailability(stakeAmount.value, lpBalance.value)) {
           stakeButtonDisabled.value = true
           stakeButtonClassName.value = "btn-custom-gray";
