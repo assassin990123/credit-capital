@@ -2115,7 +2115,7 @@ textarea:focus {
   flex-direction: column;
   -webkit-transition: 0.5s;
   transition: 0.5s;
-  background-color: #fff;
+  background-color: #000;
 }
 
 .others-option-for-responsive .dot-menu .inner .circle.circle-two,
