@@ -6,8 +6,7 @@
           <h1 class="panel-title">swap</h1>
           <div class="panel-content swap-panel-content liquidity-box-main">
             <div class="panel-header">
-              <div class="panel-explanation"></div>
-              <!-- <div class="ellipses">&hellip;</div> -->
+              <div class="panel-explanation">Swap CAPL and USDC tokens</div>
             </div>
             <div class="panel-display1">
               <div class="swap-description">
@@ -23,6 +22,14 @@
                     class="input-custom"
                     placeholder="0.00"
                   />
+                </div>
+              </div>
+              <div class="myBalance" style="margin-top:-20px;">My Balance
+                <div v-if="swapTokenSymbol === 'USDC'" class="panel-explanation myBalance" @click="insertBalanceUSDC">
+                  <a>{{ usdcBalance }} USDC</a>
+                </div>
+                <div v-else class="panel-explanation myBalance" @click="insertBalanceCAPL">
+                  <a>{{ caplBalance }} CAPL</a>
                 </div>
               </div>
             </div>
@@ -46,6 +53,10 @@
             >
               {{ swapButtonString }}
             </button>
+            <div class="explainer">
+              Use this page to trade USDC and CAPL tokens. Trades are subject to a 0.3% swap fee.
+              Want to earn instead? Consider using your tokens to <router-link to="liquidity" class="button">Add Liquidity</router-link> to this pool.
+            </div>
           </div>
         </div>
       </div>
@@ -63,6 +74,7 @@ import {
   checkAllowance,
   format,
   stringToNumber,
+  validateInput,
 } from "@/utils";
 import {
   checkConnection,
@@ -108,6 +120,11 @@ watchEffect(async () => {
     swapTokenSymbol.value == "CAPL"
       ? handleAvailability(swapAmount.value, caplBalance.value)
       : handleAvailability(swapAmount.value, usdcBalance.value);
+  }
+
+  if (validateInput((swapAmount.value).toString())) {
+    const validated = (swapAmount.value).toString();
+    swapAmount.value = Number(validated.substr(0, validated.indexOf(".")) + validated.substr(validated.indexOf("."), 5));
   }
 });
 
@@ -163,7 +180,6 @@ const switchTokens = () => {
 };
 
 // conversion rates for swaps
-// TODO: conversion rates for liquidity
 async function exchangeCAPLToUSDC() {
   if (checkConnection(store)) {
     await store.dispatch("balancer/getPoolTokens");
@@ -176,6 +192,15 @@ async function exchangeCAPLToUSDC() {
     swapTokenResult.value = format(exchangedBalance)!;
   }
 }
+const insertBalanceCAPL = () => {
+  swapAmount.value = caplBalance.value;
+  exchangeCAPLToUSDC();
+};
+
+const insertBalanceUSDC = () => {
+  swapAmount.value = usdcBalance.value;
+  exchangeCAPLToUSDC();
+};
 </script>
 
 <style>
@@ -264,4 +289,70 @@ async function exchangeCAPLToUSDC() {
     padding: 25px 30px 25px 30px;
   }
 } */
+.swap-description {
+  display: flex;
+  flex: row;
+  justify-content: space-between;
+  color: #7f7f7f;
+}
+
+.swap-input-body {
+  margin: 10px 0;
+  border-radius: 20px;
+  border: 1px solid #f7f8fa;
+  background: #fff;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+}
+
+.swap-input-inner {
+  border-radius: 20px;
+  background: #fff;
+  z-index: 1;
+  width: initial;
+  transition: height 1s ease 0s;
+}
+
+.swap-input {
+  -webkit-box-shadow: inset 1px 1px 10px 5px rgba(247, 248, 250, 1);
+  -moz-box-shadow: inset 1px 1px 10px 5px rgba(247, 248, 250, 1);
+  box-shadow: inset 1px 1px 10px 5px rgba(247, 248, 250, 1);
+  background: #f7f8fa;
+  border-radius: 20px;
+  border: none;
+  width: 100%;
+  height: auto;
+  padding: 5px 10px;
+  font-size: 25px;
+  color: #000;
+  font-weight: 700;
+  border: 1px solid #f7f8fc;
+}
+
+.swap-input:hover {
+  border: 1px solid #ffca03;
+}
+
+.swap-input-below {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  padding: 10px 10px;
+  font-size: 20px;
+  font-weight: 700;
+  background: #f7f8fa;
+  border-radius: 20px;
+}
+
+.swap-token-symbol {
+  padding: 0 20px;
+  background: rgb(237, 238, 242);
+  border: 1px solid rgb(237, 238, 242);
+  border-radius: 20px;
+  box-shadow: rgb(0 0 0 / 8%) 0px 6px 10px;
+  cursor: pointer;
+}
+
+.swap-token-symbol:hover {
+  background: rgb(206, 208, 217);
+}
 </style>

@@ -29,16 +29,16 @@
                 <router-link to="/">Home</router-link>
               </li>
               <li class="nav-item">
-                <router-link to="stake">Stake</router-link>
-              </li>
-              <li class="nav-item">
                 <router-link to="reward">Rewards</router-link>
               </li>
               <li class="nav-item">
-                <router-link to="swap">Swap</router-link>
+                <router-link to="stake">Stake</router-link>
               </li>
               <li class="nav-item">
                 <router-link to="liquidity">Liquidity</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link to="swap">Swap</router-link>
               </li>
               <!-- <li class="nav-item">
                 <router-link to="treasury">Treasury</router-link>
@@ -96,16 +96,18 @@
 <script lang="ts">
 import { computed } from "vue";
 import { useStore } from "@/store";
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect, Ref, reactive } from "vue";
 import { showConnectResult } from "@/utils/notifications";
 import { shortenAddress, caplToUSD, format } from "@/utils";
 
 export default {
   setup() {
     const store = useStore();
+    let interval: any;
 
-    let CAPLPrice = ref("0.00");
+    let CAPLPrice = reactive(ref("0.00"));
     let buttonString = ref("Connect Wallet");
+    let poolTokens: Ref<string | undefined> = reactive(ref("0"))
 
     const connectWeb3 = async () => {
       await store.dispatch("accounts/connectWeb3");
@@ -113,13 +115,17 @@ export default {
         await store.dispatch("rewards/getRewardsInfo");
         await store.dispatch("balancer/getPoolTokens");
         await store.dispatch("dashboard/fetchTVL");
-        const price = format(caplToUSD(1, store));
-        if (price) {
-          CAPLPrice.value = price;
-        }
       }
 
       showConnectResult(store);
+    };
+
+    const getTokenBalance = async () => {
+      await store.dispatch("balancer/getPoolTokens");
+      poolTokens.value = format(caplToUSD(1, store));
+      if (poolTokens.value) {
+        CAPLPrice.value = poolTokens.value;
+      }
     };
 
     const isConnected = computed(
@@ -129,20 +135,19 @@ export default {
     const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
     // check the localstorage for determine the user was connected
-    if (localStorage.getItem("isConnected")) {
-      // reconnect web3
-      connectWeb3();
-    }
+    watchEffect(() => {
+      if (localStorage.getItem("isConnected")) {
+        connectWeb3();
+        interval = setInterval(getTokenBalance, 2000);
+      } else {
+        clearInterval(interval);
+      }
+    });
 
     watchEffect(() => {
       isConnected.value
         ? (buttonString.value = shortenAddress(wallet.value))
         : (buttonString.value = "Connect Wallet");
-
-      const price = format(caplToUSD(1, store));
-      if (price) {
-        CAPLPrice.value = price;
-      }
     });
 
     function showMoons() {
@@ -210,7 +215,15 @@ export default {
   cursor: pointer;
   z-index: 10;
 }
-
+.navbar-area {
+  background-color: #000 !important;
+}
+.acavo-nav .navbar .navbar-nav .nav-item a {
+  color: #fff !important;
+}
+.nav-item span {
+  color: #fff !important;
+}
 /** MEDIA QUERIES */
 @media screen and (min-width: 1000px) {
 }

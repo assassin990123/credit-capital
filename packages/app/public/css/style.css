@@ -843,8 +843,8 @@ textarea:focus {
   height: auto;
   border-radius: 25px;
   padding: 0 10px;
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .nav-item span {
@@ -900,6 +900,8 @@ textarea:focus {
   .navbar-collapse.mean-menu ul.navbar-nav li.nav-item a {
     color: #fff;
     margin: 10px 0;
+    font-weight: 700;
+    font-size: 18px;
   }
 
   .acavo-nav .navbar .navbar-nav .nav-item {
@@ -2090,7 +2092,7 @@ textarea:focus {
   cursor: pointer;
   z-index: 9991;
   position: absolute;
-  right: 60px;
+  right: 0;
   top: -40px;
 }
 
@@ -2105,10 +2107,12 @@ textarea:focus {
 }
 
 .others-option-for-responsive .dot-menu .inner .circle {
-  height: 7px;
-  width: 7px;
-  border-radius: 100%;
+  height: 3px;
+  width: 30px;
+  border-radius: 20px;
   margin: 0 2px;
+  display: flex;
+  flex-direction: column;
   -webkit-transition: 0.5s;
   transition: 0.5s;
   background-color: #fff;
@@ -2117,12 +2121,12 @@ textarea:focus {
 .others-option-for-responsive .dot-menu .inner .circle.circle-two,
 .others-option-for-responsive .dot-menu .inner .circle.circle-three,
 .others-option-for-responsive .dot-menu .inner .circle.circle-one {
-  margin: 5px;
+  margin: 7px;
 }
 
-.others-option-for-responsive .dot-menu:hover .inner .circle {
+/* .others-option-for-responsive .dot-menu:hover .inner .circle {
   background-color: #ff8900;
-}
+} */
 
 .others-option-for-responsive .container {
   position: relative;
@@ -7679,10 +7683,6 @@ textarea:focus {
   min-width: 250px;
 }
 
-.reward-main-sec .rewards-section {
-  margin: 50px auto 50px auto;
-}
-
 /*============================================
 
                 29 -- Swap
@@ -7710,73 +7710,6 @@ textarea:focus {
   border: 2px solid;
   border-radius: 25px;
   border-color: #ffca03;
-}
-
-.swap-description {
-  display: flex;
-  flex: row;
-  justify-content: space-between;
-  color: #7f7f7f;
-}
-
-.swap-input-body {
-  margin: 10px 0;
-  border-radius: 20px;
-  border: 1px solid #f7f8fa;
-  background: #fff;
-  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-}
-
-.swap-input-inner {
-  border-radius: 20px;
-  background: #fff;
-  z-index: 1;
-  width: initial;
-  transition: height 1s ease 0s;
-}
-
-.swap-input {
-  -webkit-box-shadow: inset 1px 1px 10px 5px rgba(247, 248, 250, 1);
-  -moz-box-shadow: inset 1px 1px 10px 5px rgba(247, 248, 250, 1);
-  box-shadow: inset 1px 1px 10px 5px rgba(247, 248, 250, 1);
-  background: #f7f8fa;
-  border-radius: 20px;
-  border: none;
-  width: 100%;
-  height: auto;
-  padding: 5px 10px;
-  font-size: 25px;
-  color: #000;
-  font-weight: 700;
-  border: 1px solid #f7f8fc;
-}
-
-.swap-input:hover {
-  border: 1px solid #ffca03;
-}
-
-.swap-input-below {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: space-between;
-  padding: 10px 10px;
-  font-size: 20px;
-  font-weight: 700;
-  background: #f7f8fa;
-  border-radius: 20px;
-}
-
-.swap-token-symbol {
-  padding: 0 20px;
-  background: rgb(237, 238, 242);
-  border: 1px solid rgb(237, 238, 242);
-  border-radius: 20px;
-  box-shadow: rgb(0 0 0 / 8%) 0px 6px 10px;
-  cursor: pointer;
-}
-
-.swap-token-symbol:hover {
-  background: rgb(206, 208, 217);
 }
 
 .panel-display.swap-panel-display {
@@ -8249,11 +8182,14 @@ button.tab-inner-content-item {
 
 .myBalance {
   white-space: nowrap;
-  text-align: center;
+  text-align: right;
+  color: #7f7f7f;
 }
 .myBalance a {
   text-decoration: underline !important;
   cursor: pointer;
+  font-weight: bold;
+  color: #000 !important;
 }
 
 /* Mobile menu style start here */
@@ -8265,7 +8201,7 @@ button.tab-inner-content-item {
 @media screen and (max-width: 1199px) {
   .others-option-for-responsive .dot-menu .inner {
     display: block;
-    transform: rotate(90deg);
+    /* transform: rotate(90deg); */
   }
   .mobile-menu-icon {
     display: none;
@@ -8280,13 +8216,14 @@ button.tab-inner-content-item {
     margin-top: 10px;
     padding: 30px 0;
     display: block;
+    transition: 5ms ease-out;
   }
   .acavo-nav .navbar-expand-md {
     flex-wrap: wrap;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    padding: 0 25px;
+    /* padding: 0 25px; */
   }
   .acavo-nav .navbar .navbar-nav {
     flex-wrap: wrap;
@@ -8319,12 +8256,23 @@ button.tab-inner-content-item {
   }
   .acavo-nav .navbar .navbar-nav .nav-item {
     margin: 10px 0;
+    padding-left: 10px;
   }
   .acavo-nav .nav-btn-custom .nav-item {
-    padding-left: 0;
+    padding-left: 10px;
   }
+
   .acavo-nav .nav-item .connectButton {
     padding: 10px 30px;
     margin: 20px 0 0 0;
   }
+}
+.explainer {
+  margin-top: 20px;
+  color: #000;
+  font-size: 14px;
+  font-weight: normal;
+}
+.explainer a {
+  color: #ff8900;
 }
