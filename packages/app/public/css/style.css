@@ -835,8 +835,8 @@ textarea:focus {
   padding-left: 20px;
 }
 
-.nav-item .connectButton {
-  color: #fff;
+.nav-item .connectButton, .button {
+  color: #fff !important;
   background-color: #ff9d0f;
   font-family: Nunito, sans-serif;
   width: auto;
@@ -845,6 +845,8 @@ textarea:focus {
   padding: 0 10px;
   font-size: 20px;
   font-weight: 700;
+  border:solid 2px #FFF;
+  white-space: nowrap;
 }
 
 .nav-item span {
