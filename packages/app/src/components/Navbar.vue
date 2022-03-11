@@ -210,7 +210,15 @@ export default {
   cursor: pointer;
   z-index: 10;
 }
-
+.navbar-area {
+  background-color: #000 !important;
+}
+.acavo-nav .navbar .navbar-nav .nav-item a {
+  color: #fff !important;
+}
+.nav-item span {
+  color: #fff !important;
+}
 /** MEDIA QUERIES */
 @media screen and (min-width: 1000px) {
 }
