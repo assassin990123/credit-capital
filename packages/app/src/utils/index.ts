@@ -118,6 +118,10 @@ export const checkAllowance = (
   return allowance >= amount;
 };
 
+export const validateInput = (amount: string) => {
+  return amount.indexOf(".") >= 0;
+};
+
 export const checkAllAllowances = (
   state: any,
   amounts: Array<number>
