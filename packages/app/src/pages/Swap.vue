@@ -123,8 +123,9 @@ watchEffect(async () => {
   }
 
   if (validateInput((swapAmount.value).toString())) {
-    const validated = (swapAmount.value).toString();
-    swapAmount.value = Number(validated.substr(0, validated.indexOf(".")) + validated.substr(validated.indexOf("."), 5));
+    swapTokenSymbol.value == "USDC"
+    ? swapAmount.value = Number(parseFloat((swapAmount.value).toString()).toFixed(6))
+    : swapAmount.value = Number(parseFloat((swapAmount.value).toString()).toFixed(18))
   }
 });
 

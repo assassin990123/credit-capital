@@ -128,8 +128,7 @@ watchEffect(async () => {
   }
   
   if (validateInput((stakeAmount.value).toString())) {
-    const validated = (stakeAmount.value).toString();
-    stakeAmount.value = Number(validated.substr(0, validated.indexOf(".")) + validated.substr(validated.indexOf("."), 5));
+    stakeAmount.value = Number(parseFloat((stakeAmount.value).toString()).toFixed(18));
   }
 });
 

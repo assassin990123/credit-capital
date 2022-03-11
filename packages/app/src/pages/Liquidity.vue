@@ -97,13 +97,11 @@ const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
 
 watchEffect(async () => {
   if (validateInput((usdcLiquidity.value).toString())) {
-    const validated = (usdcLiquidity.value).toString();
-    usdcLiquidity.value = Number(validated.substr(0, validated.indexOf(".")) + validated.substr(validated.indexOf("."), 5));
+    usdcLiquidity.value = Number(parseFloat((usdcLiquidity.value).toString()).toFixed(6));
   }
 
   if (validateInput((caplLiquidity.value).toString())) {
-    const validated = (caplLiquidity.value).toString();
-    caplLiquidity.value = Number(validated.substr(0, validated.indexOf(".")) + validated.substr(validated.indexOf("."), 5));
+    caplLiquidity.value = Number(parseFloat((caplLiquidity.value).toString()).toFixed(18));
   }
 
   if (!isUserConnected.value) {
