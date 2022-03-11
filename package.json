@@ -10,7 +10,8 @@
     "deploy-testnet-fantom": "lerna exec --scope cc-sol -- yarn deploy-testnet-fantom",
     "deploy-fantom": "lerna exec --scope cc-sol -- yarn deploy-kovan",
     "test": "lerna exec --scope cc-sol -- yarn test",
-    "lint": "lerna run lint"
+    "lint": "lerna run lint",
+    "upgrade": "lerna exec -- yarn upgrade"
   },
   "name": "credit-capital"
 }
