@@ -994,11 +994,11 @@ watchEffect(() => {
 }
 
 .section-1 .container .sec-1-inner p {
-  margin: 0;
+  padding: 20px 0 0 0;
   font-size: 12px;
   font-style: italic;
   font-weight: 400;
-  color: #fff;
+  color: #ff8900;
 }
 
 .section-1 .container .sec-1-inner p span {
@@ -1006,11 +1006,12 @@ watchEffect(() => {
   font-size: 16px;
   font-style: normal;
   margin-right: 10px;
+  color: #ff8900;
 }
 
 .section-1 .container .sec-1-inner h1 {
   font-size: 50px;
-  color: #fff;
+  color: #ff8900;
   margin: 0;
   position: relative;
   line-height: 50px;
