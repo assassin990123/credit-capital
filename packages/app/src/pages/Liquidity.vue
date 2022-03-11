@@ -24,7 +24,7 @@
               <div class="text-right">
                 <div class="panel-explanation"><span>My Balance</span></div>
                 <div class="panel-explanation myBalance" @click="insertBalanceCAPL">
-                  {{ caplBalance.toFixed(4) }} CAPL
+                  <a>{{ caplBalance.toFixed(4) }} CAPL</a>
                 </div>
               </div>
             </div>
@@ -43,8 +43,8 @@
               </div>
               <div class="text-right">
                 <div class="panel-explanation"><span>My Balance</span></div>
-                <div class="panel-explanation" @click="insertBalanceUSDC">
-                  {{ usdcBalance.toFixed(4) }} USDC
+                <div class="panel-explanation myBalance" @click="insertBalanceUSDC">
+                  <a>{{ usdcBalance.toFixed(4) }} USDC</a>
                 </div>
               </div>
             </div>
