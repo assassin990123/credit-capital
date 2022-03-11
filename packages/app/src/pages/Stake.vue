@@ -65,7 +65,10 @@
 import DappFooter from "@/components/DappFooter.vue";
 import { watchEffect, ref, Ref, computed } from "vue";
 // @ts-ignore
-import { checkAllowance } from "@/utils";
+import { 
+  checkAllowance, 
+  validateInput 
+} from "@/utils";
 // @ts-ignore
 import { useStore } from "@/store";
 // @ts-ignore
@@ -121,6 +124,11 @@ watchEffect(async () => {
       stakeButtonDisabled.value = false
       stakeButtonClassName.value = "btn-custom-green";
     }
+  }
+  
+  if (validateInput((stakeAmount.value).toString())) {
+    const validated = (stakeAmount.value).toString();
+    stakeAmount.value = Number(validated.substr(0, validated.indexOf(".")) + validated.substr(validated.indexOf("."), 5));
   }
 });
 

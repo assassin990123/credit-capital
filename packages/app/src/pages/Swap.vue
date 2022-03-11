@@ -74,6 +74,7 @@ import {
   checkAllowance,
   format,
   stringToNumber,
+  validateInput,
 } from "@/utils";
 import {
   checkConnection,
@@ -119,6 +120,11 @@ watchEffect(async () => {
     swapTokenSymbol.value == "CAPL"
       ? handleAvailability(swapAmount.value, caplBalance.value)
       : handleAvailability(swapAmount.value, usdcBalance.value);
+  }
+
+  if (validateInput((swapAmount.value).toString())) {
+    const validated = (swapAmount.value).toString();
+    swapAmount.value = Number(validated.substr(0, validated.indexOf(".")) + validated.substr(validated.indexOf("."), 5));
   }
 });
 
