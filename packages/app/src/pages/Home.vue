@@ -102,6 +102,62 @@
       </div>
     </section>
     <!-- Who we are end here -->
+
+    <!-- DEFI Section code start here -->
+    <div class="user-roles-sec-main">
+      <div class="container">
+        <div class="user-roles-inner">
+          <div class="user-roles-title">
+            <h2><span>What</span> Is Defi?</h2>
+            <span>Decentralized Finance (DeFi)</span>
+          </div>
+        </div>
+        <div class="user-roles-main-con">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="user-roles-con-main">
+                <h3>Notable Facts About DeFi</h3>
+                <p>
+                  1. DeFi is an umbrella term for financial services that run on
+                  public blockchains. There are DeFi applications that enable
+                  you to earn interest, borrow, lend, buy insurance, trade
+                  derivatives, trade assets, and more.
+                </p>
+                <p>
+                  2. DeFi is a vertical within the crypto asset ecosystem that
+                  has achieved stellar growth over the last two years generating
+                  a broad and fast growing user base. Just like cryptocurrency,
+                  DeFi is global, peer-to-peer (meaning directly between two
+                  people, not routed through a centralized system),
+                  pseudonymous, and open to all.
+                </p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="user-roles-right-main">
+                <p>
+                  3. Defi is faster than traditional banking. Through automation
+                  built into the technology of DeFi (and it's core technology of
+                  Blockchain) via the use of 'Smart Contracts'. By turning real
+                  world contracts into code, all that is necessary to compete
+                  and execute on a loan for example, is to fulfill pre-written
+                  requirements online. No notaries, smaller legal teams, and
+                  less waiting.
+                </p>
+                <p>
+                  4. Through the use of DeFi technology many traditional models
+                  and methods of investment can be replicated and improved upon
+                  with the foundation of blockchain and access to
+                  cryptocurrency.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- DEFI Section code end here -->
+
     <!-- Our goal start here -->
     <section class="section-4">
       <div class="container">
@@ -289,18 +345,6 @@
     </section>
 
     <!-- The Solution start here -->
-    <!-- Thankyou section code start here -->
-    <div class="thankyou-con-main">
-      <div class="container">
-        <div class="thankyou-item-block">
-          <div class="thankyou-item-block-inner">
-            <h2>Thank you</h2>
-            <p>For your time.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Thankyou section code end here -->
     <!-- Roadmap Section code start here -->
     <div class="roadmap-sec-main">
       <div class="container p-0">
@@ -314,11 +358,11 @@
           <div class="row">
             <div class="col-md-6">
               <div class="roadmap-block">
-                <div class="roadmap-block-left">
+                <div class="roadmap-block-left roadmap-complete">
                   <h3>1</h3>
                 </div>
                 <div class="roadmap-block-right">
-                  <h4>1: Protocol Foundation: (90%)</h4>
+                  <h4>1: Protocol Foundation</h4>
                   <p>
                     Develop Token, Liquidity Pool, Staking, and Rewards systems.
                     Test and deploy to main-net. Optional Feature: Develop and
@@ -331,7 +375,7 @@
                   <h3>2</h3>
                 </div>
                 <div class="roadmap-block-right">
-                  <h4>2: Sovereign Treasury (20%)</h4>
+                  <h4>2: Sovereign Treasury</h4>
                   <p>
                     Develop Token, Liquidity Pool, Staking, and Rewards systems.
                     Test and deploy to main-net. Optional Feature: Develop and
@@ -358,7 +402,7 @@
                 </div>
                 <div class="roadmap-block-right">
                   <h4>
-                    4: Stabletoken Loans, Liquidity Pool (Liquidity/Rewards 80%)
+                    4: Stabletoken Loans, Liquidity Pool
                   </h4>
                   <p>
                     Develop Token, Liquidity Pool, Staking, and Rewards systems.
@@ -374,7 +418,7 @@
                   <h3>5</h3>
                 </div>
                 <div class="roadmap-block-right">
-                  <h4>5: NFT Real Estate (Legal Concepts ~ 25%)</h4>
+                  <h4>5: NFT Real Estate</h4>
                   <p>
                     Set up legal structure/entities to facilitate crypto-real
                     estate transactions. Develop NFT series, DApp updates,
@@ -567,7 +611,7 @@
     <!-- Second section code end here -->
 
     <!-- User Roles Section code start here -->
-    <div class="user-roles-sec-main">
+    <!-- <div class="user-roles-sec-main">
       <div class="container">
         <div class="user-roles-inner">
           <div class="user-roles-title">
@@ -582,16 +626,10 @@
                 <h3>About Investing</h3>
                 <p>
                   Investing is a long term investment strategy on CreditCapital
-                  that yields delayed rewards of the CAPL token. CAPL will
+                  that yields continual rewards of the CAPL token. CAPL will
                   accrue value as the platform grows and is adopted giving
-                  bonders an advantage in the long term while helping the
+                  investors an advantage in the long term while helping the
                   system.
-                </p>
-                <p>
-                  CreditCapital allows bonding of multiple assets in exchange
-                  for discounted CAPL. Bond sales are considered revenue and a
-                  percentage is shared with CAPL stakers. The longer you bond
-                  the bigger thediscount in rewarded CAPL you recieve.
                 </p>
               </div>
             </div>
@@ -605,17 +643,12 @@
                   standardized discount rate based on the time they purchased
                   the bond versus the risk assessed value of the token.
                 </p>
-                <p>
-                  By bonding, you gain more CAPL for the value you are locking
-                  up via discount. You are rewarded at the end of the Bond
-                  lockup date.
-                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- User Roles Section code end here -->
 
     <!-- User Roles Staker code start here -->
@@ -629,21 +662,21 @@
           <div class="row">
             <div class="col-md-12">
               <div class="staker-con-block-area">
-                <h3>About Staking</h3>
                 <p>
                   Staking is the passive, long-term strategy of CreditCapital.
-                  Stake your tokens to earn a regular income.
+                  Stake your USDC-CAPL Liquidity Pool tokens to earn a regular income.
                 </p>
                 <p>
-                  Stakers earn CAPL passively when they stake their LP tokens
+                  Stakers earn CAPL passively when they stake their Liquidity Pool tokens
                   from CreditCapital operated Liquidity Pools. When providing
-                  liquidity, users can stake their LP tokens into therewards
-                  vault and receive participation rewards in the form of CAPL.
+                  liquidity, users can stake their LP tokens into the rewards
+                  vault and receive participation rewards in the form of CAPL tokens.
                 </p>
                 <p>
                   The amount of rewards a Staker receives is determined by the
                   percentage of pool value they own.
                 </p>
+                <router-link to="stake" class="button">Stake Now</router-link>
               </div>
             </div>
           </div>
@@ -658,7 +691,7 @@
         <div class="user-roles-inner">
           <div class="user-roles-title">
             <h2><span>User</span> Roles</h2>
-            <span>Borrower</span>
+            <span>Borrower (coming soon)</span>
           </div>
         </div>
         <div class="user-roles-main-con">
@@ -734,19 +767,10 @@
                     or other cryptocurrencies.
                   </li>
                   <li>
-                    The Capital and Credit stable tokens will be pegged to the
-                    Bitcoin as a collateralized stablecoin and will achieve
-                    stability by being fully collateralized by Bitcoin.
-                  </li>
-                  <li>
-                    Bitcoin is pegged to the US dollar and so you can always
-                    redeem Capital and Credit stable tokens for US$1.00, giving
-                    it a stable price.
-                  </li>
-                  <li>
-                    In turn, you will always be able to redeem 1 Capital and
-                    Credit stable tokens for 1 Credit or Capital token
-                    collateralized by the peg to Bitcoin.
+                    The CCUSD stable token will be pegged to the US Dollar
+                    as a collateralized stablecoin and will achieve
+                    stability by being fully collateralized by assets and
+                    rewarding appropriate balance of liquidity pools.
                   </li>
                 </ul>
               </div>
@@ -818,6 +842,7 @@
                       doing so are rewarded with both a portion of the fees
                       generated by that pool, as well as bonus CAPL rewards.
                     </p>
+                    <router-link to="swap" class="button">Swap Tokens</router-link>
                   </div>
                 </div>
               </div>
@@ -843,7 +868,7 @@
                       <div class="paltform-right-heading-inner">
                         <h3>Token</h3>
                         <p>
-                          APL may be paid out in the form of extra rewards,
+                          CAPL may be paid out in the form of extra rewards,
                           which is a controlled form of inflation. However 90%
                           of the income the platform receives directly results
                           in buy pressure on CAPL through the various Liquidity
@@ -922,60 +947,6 @@
     </div>
     <!-- Platform Function section code end here -->
 
-    <!-- DEFI Section code start here -->
-    <div class="user-roles-sec-main">
-      <div class="container">
-        <div class="user-roles-inner">
-          <div class="user-roles-title">
-            <h2><span>What</span> Is Defi?</h2>
-            <span>Decentralized Finance (DeFi)</span>
-          </div>
-        </div>
-        <div class="user-roles-main-con">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="user-roles-con-main">
-                <h3>Notable Facts About DeFi</h3>
-                <p>
-                  1. DeFi is an umbrella term for financial services that run on
-                  public blockchains. There are DeFi applications that enable
-                  you to earn interest, borrow, lend, buy insurance, trade
-                  derivatives, trade assets, and more.
-                </p>
-                <p>
-                  2. DeFi is a vertical within the crypto asset ecosystem that
-                  has achieved stellar growth over the last two years generating
-                  a broad and fast growing user base. Just like cryptocurrency,
-                  DeFi is global, peer-to-peer (meaning directly between two
-                  people, not routed through a centralized system),
-                  pseudonymous, and open to all.
-                </p>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="user-roles-right-main">
-                <p>
-                  3. Defi is faster than traditional banking. Through automation
-                  built into the technology of DeFi (and it's core technology of
-                  Blockchain) via the use of 'Smart Contracts'. By turning real
-                  world contracts into code, all that is necessary to compete
-                  and execute on a loan for example, is to fulfill pre-written
-                  requirements online. No notaries, smaller legal teams, and
-                  less waiting.
-                </p>
-                <p>
-                  4. Through the use of DeFi technology many traditional models
-                  and methods of investment can be replicated and improved upon
-                  with the foundation of blockchain and access to
-                  cryptocurrency.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- DEFI Section code end here -->
   </div>
 </template>
 
@@ -1738,6 +1709,13 @@ margin: 0 auto;
     rgba(255, 142, 9, 1) 100%
   );
   border-radius: 100%;
+}
+.roadmap-complete {
+  background: linear-gradient(
+    90deg,
+    rgba(208, 255, 123, 1) 0%,
+    rgba(142, 255, 9, 1) 100%
+  );
 }
 .roadmap-block-left h3 {
   font-size: 56px;
