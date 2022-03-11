@@ -23,7 +23,7 @@
             <p>
               Bringing the speed and privacy of cryptocurrency to our valued
               customers in the private investment world for consistently high
-              yields, secure funds management and privacy.
+              yields, secure fund management and privacy.
             </p>
             <h1>
               Re-Constructing traditional models of investment through the power
