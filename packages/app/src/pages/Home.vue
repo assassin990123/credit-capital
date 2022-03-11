@@ -155,6 +155,9 @@
           </div>
         </div>
       </div>
+      <div class="shap-main-sec">
+        <img src="images/bg/sh4-bn.png" alt="" class="img-fluid" />
+      </div>
     </div>
     <!-- DEFI Section code end here -->
 
@@ -682,6 +685,9 @@
           </div>
         </div>
       </div>
+      <div class="shap-main-sec">
+        <img src="images/bg/sh4-bn.png" alt="" class="img-fluid" />
+      </div>
     </div>
     <!-- User Roles Staker code end here -->
 
@@ -737,6 +743,9 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="shap-main-sec">
+        <img src="images/bg/sh4-bn.png" alt="" class="img-fluid" />
       </div>
     </div>
     <!-- User Roles Borrower Section code end here -->
@@ -1854,9 +1863,10 @@ margin: 0 auto;
 .second-item-block-main {
   margin: 0px;
   padding: 0px;
-  background-image: url("/images/bg-img.jpg");
+  background-image: url("/images/bg/apr-img.png");
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center center;
   height: 100%;
   width: 100%;
   position: relative;
@@ -2071,6 +2081,7 @@ margin: 0 auto;
 /*user-roles section css start*/
 .user-roles-sec-main {
   padding: 80px 0px 80px 0;
+  position: relative;
 }
 
 .user-roles-title {
@@ -2168,7 +2179,10 @@ margin: 0 auto;
 .stable-token-main-sec {
   margin: 0px;
   padding: 100px 0;
-  background: #3c3c3c;
+  background-image: url("/images/bg/stable-bg.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 .stable-token-con-area {
   margin: 0px;
@@ -2178,7 +2192,7 @@ margin: 0 auto;
 .stable-token-con-area-inner {
   margin: 0 auto;
   padding: 80px;
-  background: rgba(255, 137, 0, 0.5);
+  background: rgba(255, 137, 0, 0.7);
   width: 70%;
   text-align: center;
 }
@@ -2229,9 +2243,12 @@ margin: 0 auto;
 
 /* Treasury section css start */
 .treasury-main-sec {
-  margin: 60px 0;
+  margin: 60px 0 0 0;
   padding: 100px 0;
-  background: #eceee8;
+  background-image: url("/images/bg/sovereign.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
 }
 .treasury-main-con {
   margin: 0px;
@@ -2240,7 +2257,7 @@ margin: 0 auto;
 .treasury-inner-con {
   margin: 0 auto;
   padding: 80px 30px;
-  background: rgba(255, 137, 0, 0.5);
+  background: rgba(255, 137, 0, 0.7);
   width: 70%;
   text-align: center;
 }
@@ -2292,7 +2309,10 @@ margin: 0 auto;
   right: 0;
   height: 100%;
   width: 64%;
-  background: #3c3c3c;
+  background-image: url("/images/bg/platform.png");
+  background-size: cover;
+  background-position: right;
+  background-repeat: no-repeat;
   z-index: -1;
 }
 .platform-left-main-sec {
@@ -2338,7 +2358,7 @@ margin: 0 auto;
 }
 .paltform-right-heading-inner {
   padding: 30px;
-  background: rgba(255, 142, 8, 0.7);
+  background: rgba(255, 142, 8, 0.9);
 }
 .paltform-right-heading-inner h3 {
   font-size: 30px;
@@ -2360,7 +2380,7 @@ margin: 0 auto;
 .platform-bottom-inner {
   margin: 0px;
   padding: 30px;
-  background: rgba(255, 142, 8, 0.7);
+  background: rgba(255, 142, 8, 0.9);
   width: 85%;
 }
 .platform-bottom-inner h3 {
@@ -2383,7 +2403,7 @@ margin: 0 auto;
 .platform-right-inner {
   margin: 0px;
   padding: 30px;
-  background: rgba(255, 142, 8, 0.7);
+  background: rgba(255, 142, 8, 0.9);
 }
 .platform-right-inner h2 {
   font-size: 35px;
@@ -2426,4 +2446,13 @@ margin: 0 auto;
   margin: 0px;
 }
 /* Platform function css end */
+.user-roles-inner {
+  position: relative;
+}
+.shap-main-sec {
+  position: absolute;
+  right: 0;
+  top: -30px;
+  width: 15%;
+}
 </style>
