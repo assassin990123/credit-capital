@@ -97,6 +97,7 @@ watchEffect(async () => {
   if (
     isUserConnected.value
   ) {
+    console.log(stakeAmount.value);
     if (stakeAmount.value == 0) {
       stakeButtonText.value = "Stake";
       stakeButtonClassName.value = "btn-custom-gray";
@@ -110,20 +111,20 @@ watchEffect(async () => {
         )
       ) {
         stakeButtonText.value = "Stake";
-        stakeButtonClassName.value = "btn-custom-green";
+        if (!checkAvailability(stakeAmount.value, lpBalance.value)) {
+          stakeButtonDisabled.value = true
+          stakeButtonClassName.value = "btn-custom-gray";
+        }
+        else {
+          stakeButtonDisabled.value = false
+          stakeButtonClassName.value = "btn-custom-green";
+        }
       } else {
         stakeButtonText.value = "Approve";
         stakeButtonClassName.value = "btn-custom";
       }
     }
-    if (!checkAvailability(stakeAmount.value, lpBalance.value)) {
-      stakeButtonDisabled.value = true
-      stakeButtonClassName.value = "btn-custom-gray";
-    }
-    else {
-      stakeButtonDisabled.value = false
-      stakeButtonClassName.value = "btn-custom-green";
-    }
+    
   }
   
   if (validateInput((stakeAmount.value).toString())) {
