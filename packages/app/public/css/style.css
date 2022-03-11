@@ -843,8 +843,8 @@ textarea:focus {
   height: auto;
   border-radius: 25px;
   padding: 0 10px;
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .nav-item span {
@@ -900,6 +900,8 @@ textarea:focus {
   .navbar-collapse.mean-menu ul.navbar-nav li.nav-item a {
     color: #fff;
     margin: 10px 0;
+    font-weight: 700;
+    font-size: 18px;
   }
 
   .acavo-nav .navbar .navbar-nav .nav-item {
@@ -2090,7 +2092,7 @@ textarea:focus {
   cursor: pointer;
   z-index: 9991;
   position: absolute;
-  right: 60px;
+  right: 0;
   top: -40px;
 }
 
@@ -2105,10 +2107,12 @@ textarea:focus {
 }
 
 .others-option-for-responsive .dot-menu .inner .circle {
-  height: 7px;
-  width: 7px;
-  border-radius: 100%;
+  height: 3px;
+  width: 30px;
+  border-radius: 20px;
   margin: 0 2px;
+  display: flex;
+  flex-direction: column;
   -webkit-transition: 0.5s;
   transition: 0.5s;
   background-color: #fff;
@@ -2117,12 +2121,12 @@ textarea:focus {
 .others-option-for-responsive .dot-menu .inner .circle.circle-two,
 .others-option-for-responsive .dot-menu .inner .circle.circle-three,
 .others-option-for-responsive .dot-menu .inner .circle.circle-one {
-  margin: 5px;
+  margin: 7px;
 }
 
-.others-option-for-responsive .dot-menu:hover .inner .circle {
+/* .others-option-for-responsive .dot-menu:hover .inner .circle {
   background-color: #ff8900;
-}
+} */
 
 .others-option-for-responsive .container {
   position: relative;
@@ -7708,7 +7712,6 @@ textarea:focus {
   border-color: #ffca03;
 }
 
-
 .panel-display.swap-panel-display {
   border-radius: 25px;
   border-color: #ffca03;
@@ -8185,7 +8188,7 @@ button.tab-inner-content-item {
 .myBalance a {
   text-decoration: underline !important;
   cursor: pointer;
-  font-weight:bold;
+  font-weight: bold;
   color: #000 !important;
 }
 
@@ -8198,7 +8201,7 @@ button.tab-inner-content-item {
 @media screen and (max-width: 1199px) {
   .others-option-for-responsive .dot-menu .inner {
     display: block;
-    transform: rotate(90deg);
+    /* transform: rotate(90deg); */
   }
   .mobile-menu-icon {
     display: none;
@@ -8213,13 +8216,14 @@ button.tab-inner-content-item {
     margin-top: 10px;
     padding: 30px 0;
     display: block;
+    transition: 5ms ease-out;
   }
   .acavo-nav .navbar-expand-md {
     flex-wrap: wrap;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    padding: 0 25px;
+    /* padding: 0 25px; */
   }
   .acavo-nav .navbar .navbar-nav {
     flex-wrap: wrap;
@@ -8252,10 +8256,12 @@ button.tab-inner-content-item {
   }
   .acavo-nav .navbar .navbar-nav .nav-item {
     margin: 10px 0;
+    padding-left: 10px;
   }
   .acavo-nav .nav-btn-custom .nav-item {
-    padding-left: 0;
+    padding-left: 10px;
   }
+
   .acavo-nav .nav-item .connectButton {
     padding: 10px 30px;
     margin: 20px 0 0 0;
@@ -8263,9 +8269,9 @@ button.tab-inner-content-item {
 }
 .explainer {
   margin-top: 20px;
-  color:#000;
-  font-size:14px;
-  font-weight:normal;
+  color: #000;
+  font-size: 14px;
+  font-weight: normal;
 }
 .explainer a {
   color: #ff8900;
