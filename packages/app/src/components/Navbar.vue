@@ -29,16 +29,16 @@
                 <router-link to="/">Home</router-link>
               </li>
               <li class="nav-item">
-                <router-link to="stake">Stake</router-link>
-              </li>
-              <li class="nav-item">
                 <router-link to="reward">Rewards</router-link>
               </li>
               <li class="nav-item">
-                <router-link to="swap">Swap</router-link>
+                <router-link to="stake">Stake</router-link>
               </li>
               <li class="nav-item">
                 <router-link to="liquidity">Liquidity</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link to="swap">Swap</router-link>
               </li>
               <!-- <li class="nav-item">
                 <router-link to="treasury">Treasury</router-link>
