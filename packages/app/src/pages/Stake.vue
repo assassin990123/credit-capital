@@ -8,7 +8,6 @@
             <input
               type="number"
               placeholder="0.00"
-              v-on:change="validateInput"
               class="input-custom"
               v-model="stakeAmount"
             />
@@ -125,11 +124,11 @@ watchEffect(async () => {
       stakeButtonDisabled.value = false
       stakeButtonClassName.value = "btn-custom-green";
     }
-
-    if (!validateInput((stakeAmount.value).toString())) {
-      const validated = (stakeAmount.value).toString();
-      stakeAmount.value = Number(validated.substr(0, validated.indexOf(".")) + validated.substr(validated.indexOf("."), 3));
-    }
+  }
+  
+  if (validateInput((stakeAmount.value).toString())) {
+    const validated = (stakeAmount.value).toString();
+    stakeAmount.value = Number(validated.substr(0, validated.indexOf(".")) + validated.substr(validated.indexOf("."), 5));
   }
 });
 

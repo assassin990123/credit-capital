@@ -73,7 +73,10 @@
 import DappFooter from "@/components/DappFooter.vue";
 import { ref, Ref, watchEffect, computed } from "vue";
 import { useStore } from "@/store";
-import { checkAllAllowances } from "@/utils";
+import { 
+  checkAllAllowances,
+  validateInput,
+} from "@/utils";
 import { checkConnection, checkAvailability } from "@/utils/notifications";
 
 const store: any = useStore();
@@ -93,6 +96,16 @@ const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
 const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
 
 watchEffect(async () => {
+  if (validateInput((usdcLiquidity.value).toString())) {
+    const validated = (usdcLiquidity.value).toString();
+    usdcLiquidity.value = Number(validated.substr(0, validated.indexOf(".")) + validated.substr(validated.indexOf("."), 5));
+  }
+
+  if (validateInput((caplLiquidity.value).toString())) {
+    const validated = (caplLiquidity.value).toString();
+    caplLiquidity.value = Number(validated.substr(0, validated.indexOf(".")) + validated.substr(validated.indexOf("."), 5));
+  }
+
   if (!isUserConnected.value) {
     return;
   }
