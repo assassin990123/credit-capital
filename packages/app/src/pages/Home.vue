@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <section class="section-1">
-      <div class="hero wow fadeInDown animated floating">
+      <div class="hero wow fadeInDown floating">
         <div class="container">
           <div class="sec-1-inner">
             <p>
@@ -994,10 +994,11 @@ watchEffect(() => {
 }
 
 .section-1 .container .sec-1-inner p {
-  padding: 20px 0 0 0;
+  margin: 0;
   font-size: 12px;
   font-style: italic;
   font-weight: 400;
+  color: #fff;
   color: #ff8900;
 }
 
@@ -1006,11 +1007,11 @@ watchEffect(() => {
   font-size: 16px;
   font-style: normal;
   margin-right: 10px;
-  color: #ff8900;
 }
 
 .section-1 .container .sec-1-inner h1 {
   font-size: 50px;
+  color: #fff;
   color: #ff8900;
   margin: 0;
   position: relative;

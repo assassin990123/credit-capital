@@ -3,7 +3,7 @@
     <div class="swap-container">
       <div class="inner-container reward-main-sec">
         <div class="rewards-container">
-          <h1 class="panel-title">PENDING REWARDS</h1>
+          <h1 class="panel-title">Pending Rewards</h1>
           <div class="rewards-content">
             <div class="rewards-display">
               {{ pendingRewardsCAPL + " CAPL" }}<br />
