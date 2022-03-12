@@ -15,10 +15,9 @@
     <section class="section-2">
       <div class="container">
         <div class="sec-2-inner">
-          <div class="text-left">
-            <div class="image-con-1"></div>
-            <div class="image-con-2"></div>
-          </div>
+          <img src="/images/pitch-deck/Sec-2-bakcground.png" alt="" />
+          <div class="text-left"></div>
+
           <div class="text-right">
             <p>
               Bringing the speed and privacy of cryptocurrency to our valued
@@ -61,6 +60,7 @@
             </p>
           </div>
           <div class="bg-sec-3">
+            <div class="sec-3-before"></div>
             <div class="sec-3-text-right">
               <h1>summary</h1>
               <ul>
@@ -97,6 +97,7 @@
                 </li>
               </ul>
             </div>
+            <div class="sec-3-after"></div>
           </div>
         </div>
       </div>
@@ -991,6 +992,7 @@ watchEffect(() => {
   -ms-flex-item-align: center;
   align-self: center;
   height: 100vh;
+  position: relative;
 }
 
 .section-1 .container .sec-1-inner p {
@@ -1000,6 +1002,7 @@ watchEffect(() => {
   font-weight: 400;
   color: #fff;
   color: #ff8900;
+  color: transparent;
 }
 
 .section-1 .container .sec-1-inner p span {
@@ -1013,6 +1016,7 @@ watchEffect(() => {
   font-size: 50px;
   color: #fff;
   color: #ff8900;
+  color: transparent;
   margin: 0;
   position: relative;
   line-height: 50px;
@@ -1027,81 +1031,38 @@ watchEffect(() => {
 }
 
 .section-1 .hero {
-  background: url("/images/hero/sh4-bn.png") no-repeat center left;
+  /* background: url("/images/hero/sh4-bn.png") no-repeat center left; */
+  background: url("/images/pitch-deck/Sec-1-2nd-bg.png");
   background-attachment: scroll;
-  padding: 300px 140px;
+  padding: 300px 200px;
 }
 
 /* Section 2 Start here */
 
 .section-2 {
-  /* background-image: url("/images/pitch-deck/CC-Mockup-Phone.png");
-  background-repeat: no-repeat;
-  background-position: left;
-  background-size: contain; */
-  padding: 50px 0;
-  margin: 100px 0;
-}
-.section-2 .sec-2-inner {
-  display: -ms-grid;
-  display: grid;
-  -ms-grid-columns: 1fr 1fr;
-  grid-template-columns: 1fr 1fr;
-  gap: 50px;
-}
-.section-2 .sec-2-inner .text-left {
-  /* transform: rotate(10deg); */
-  /* background-image: url("/images/pitch-deck/CC-Mockup-Phone.png"); */
-  background-image: url("/images/pitch-deck/CC-Mockup-Phone.png");
-  background-repeat: no-repeat;
-  background-position: left;
-  background-size: cover;
+  position: relative;
+  margin-top: 100px;
+  height: 100vh;
 }
 
-/* .section-2 .sec-2-inner .text-left .image-con-1 {
-  background: rgb(254, 181, 46);
-  background: -moz-linear-gradient(
-    40deg,
-    rgba(254, 181, 46, 1) 64%,
-    rgba(255, 255, 255, 1) 64%
-  );
-  background: -webkit-linear-gradient(
-    40deg,
-    rgba(254, 181, 46, 1) 64%,
-    rgba(255, 255, 255, 1) 64%
-  );
-  background: linear-gradient(
-    40deg,
-    rgba(254, 181, 46, 1) 64%,
-    rgba(255, 255, 255, 1) 64%
-  );
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#feb52e",endColorstr="#ffffff",GradientType=1);
-  width: 100%;
-  height: 300px;
-} */
-/*
-.section-2 .sec-2-inner .text-left .image-con-2 {
-  background: rgb(254, 181, 46);
-  background: -moz-linear-gradient(
-    140deg,
-    rgba(254, 181, 46, 1) 64%,
-    rgba(255, 255, 255, 1) 64%
-  );
-  background: -webkit-linear-gradient(
-    140deg,
-    rgba(254, 181, 46, 1) 64%,
-    rgba(255, 255, 255, 1) 64%
-  );
-  background: linear-gradient(
-    140deg,
-    rgba(254, 181, 46, 1) 64%,
-    rgba(255, 255, 255, 1) 64%
-  );
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#feb52e",endColorstr="#ffffff",GradientType=1);
-  border-radius: 0 20% 20% 0;
-  width: 100%;
-  height: 300px;
-} */
+.section-2 .sec-2-inner {
+  position: relative;
+  display: -ms-grid;
+  display: grid;
+  /* -ms-grid-columns: 20% 80%; */
+  grid-template-columns: 45% 55%;
+}
+
+.section-2 .sec-2-inner img {
+  position: absolute;
+  left: -5%;
+  top: 0;
+  transform: scale(90%);
+}
+
+.section-2 .sec-2-inner .text-left {
+  position: relative;
+}
 
 .section-2 .sec-2-inner .text-right {
   text-align: left;
@@ -1113,40 +1074,44 @@ watchEffect(() => {
   -ms-flex-direction: column;
   flex-direction: column;
   gap: 100px;
+  z-index: 999;
+  padding: 120px 0;
 }
 
 .section-2 .sec-2-inner .text-right h1 {
   text-transform: uppercase;
   color: #ff8900;
   font-size: 40px;
+  padding-top: 120px;
+  padding-right: 50px;
 }
 
 .section-2 .sec-2-inner .text-right p {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: normal;
   color: #75797b;
 }
 
 /* Who we are starts here */
 .section-3 {
-  padding: 50px 0;
+  padding: 100px 0;
   /* background: url("/images/hero/sh4-bn.png") no-repeat right; */
 }
 
 .section-3 .sec-3-inner {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 1fr;
-  grid-template-columns: 1fr 1fr;
-  gap: 50px;
-  border-radius: 500px 0 0 500px;
+  -ms-grid-columns: 1fr 1.5fr;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 10px;
 }
 
 .sec-3-inner .sec-3-text-left {
   padding-right: 100px;
-  text-align: justify;
+  text-align: left;
   background: #fff;
   padding: 30px 0;
+  z-index: 1;
 }
 .sec-3-inner .sec-3-text-left h1 {
   font-size: 80px;
@@ -1154,6 +1119,7 @@ watchEffect(() => {
 }
 
 .sec-3-inner .sec-3-text-left h1 span {
+  z-index: 999;
   background: rgb(255, 211, 129);
   background: -moz-linear-gradient(
     34deg,
@@ -1182,12 +1148,12 @@ watchEffect(() => {
   font-size: 30px;
   line-height: 50px;
   color: #989898;
-  margin: 0 0 10px 0;
+  margin: 0 0 30px 0;
   text-transform: uppercase;
 }
 
 .sec-3-inner .sec-3-text-left p {
-  font-size: 18px;
+  font-size: 20px;
   line-height: 28px;
   font-weight: normal;
   color: #75797b;
@@ -1196,38 +1162,28 @@ watchEffect(() => {
 
 .bg-sec-3 {
   background-blend-mode: color;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   background-image: url("/images/pitch-deck/AdobeStock_236963833.jpeg");
   background-repeat: no-repeat;
   background-position: left;
   background-size: cover;
   margin: 0;
   padding: 0;
-  /* background: rgb(54, 66, 72);
-  background: -moz-linear-gradient(
-    184deg,
-    rgba(54, 66, 72, 0) 0%,
-    rgba(94, 93, 93, 1) 100%
-  );
-  background: -webkit-linear-gradient(
-    184deg,
-    rgba(54, 66, 72, 0) 0%,
-    rgba(94, 93, 93, 1) 100%
-  );
-  background: linear-gradient(
-    184deg,
-    rgba(54, 66, 72, 0) 0%,
-    rgba(94, 93, 93, 1) 100%
-  );
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#364248",endColorstr="#5e5d5d",GradientType=1); */
   height: 100%;
   width: 100%;
   position: relative;
+}
+
+.sec-3-before {
+  background: url("/images/pitch-deck/Who-we-are-bg.png");
+  position: absolute;
   z-index: 1;
+  width: 100%;
+  height: 100%;
 }
 
 .sec-3-text-right {
-  padding: 30px 30px 30px 200px;
+  padding: 60px 30px 50px 350px;
 }
 
 .sec-3-text-right h1 {
@@ -1247,6 +1203,7 @@ watchEffect(() => {
   line-height: 25px;
   padding-bottom: 10px;
   font-size: 18px;
+  font-weight: 700;
 }
 
 /* Who we are end here */
