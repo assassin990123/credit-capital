@@ -13,7 +13,7 @@
                 <div class="panel-explanation"><span>amount</span></div>
                 <div class="panel-explanation">
                   <input
-                    type="text"
+                    type="number"
                     @input="onChange()"
                     v-model="caplLiquidity"
                     class="input-custom"
@@ -33,7 +33,7 @@
                 <div class="panel-explanation"><span>amount</span></div>
                 <div class="panel-explanation">
                   <input
-                    type="text"
+                    type="number"
                     @input="onChange()"
                     v-model="usdcLiquidity"
                     class="input-custom"
