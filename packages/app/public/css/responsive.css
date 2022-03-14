@@ -10,6 +10,7 @@ This file is use to implement the responsive design.
 //             03 -- Reward
 //             04 -- Swap
 //             05 -- Treasury
+//             06 -- Homepage
 
 ==============================================*/
 
@@ -215,7 +216,7 @@ This file is use to implement the responsive design.
 
 /*============================================
 
-                28 -- Reward Page
+                03 -- Reward Page
 
 ==============================================*/
 
@@ -248,7 +249,7 @@ This file is use to implement the responsive design.
 
 /*============================================
 
-                29 -- Swap
+                04 -- Swap
 
 ==============================================*/
 
@@ -290,7 +291,7 @@ This file is use to implement the responsive design.
 
 /*============================================
 
-                30 -- Treasury
+                05 -- Treasury
 
 ==============================================*/
 
@@ -348,5 +349,230 @@ This file is use to implement the responsive design.
 @media only screen and (max-width: 601px) {
   .line {
     width: 40%;
+  }
+}
+
+/*============================================
+
+                06 -- Homepage
+==============================================*/
+
+@media only screen and (max-width: 601px) {
+  .section-1 {
+    background-position: right center;
+    max-width: 100%;
+    background-repeat: no-repeat;
+  }
+  .section-1 .hero {
+    max-width: 100%;
+    background-position: left center;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+  .section-2 {
+    height: auto;
+  }
+  .section-2 .sec-2-inner img {
+    display: none;
+  }
+  .section-2 .sec-2-inner {
+    display: flex;
+    flex-flow: column wrap;
+  }
+  .section-2 .sec-2-inner .text-left img {
+    display: block;
+    position: static;
+    transform: scale(1);
+  }
+  .section-2 .sec-2-inner .text-right {
+    padding: 0 20px;
+    margin: 0;
+    gap: 0;
+  }
+  .section-2 .sec-2-inner .text-right h1 {
+    padding: 0;
+    font-size: 30px;
+  }
+  .section-2 .sec-2-inner .text-right p {
+    padding: 50px 0;
+  }
+  .section-3 {
+    padding: 50px 0;
+  }
+  .section-3 .sec-3-inner {
+    display: flex;
+    flex-flow: column-reverse wrap;
+  }
+  .sec-3-before {
+    display: none;
+  }
+  .sec-3-text-right {
+    padding: 20px 20px 20px 40px;
+    margin: 0;
+  }
+  .sec-3-text-right ul li {
+    font-weight: 500;
+  }
+
+  .sec-3-inner .sec-3-text-left h1 {
+    font-size: 40px;
+  }
+  .sec-3-inner .sec-3-text-left h1 span {
+    font-size: 40px;
+  }
+  .user-roles-sec-main {
+    padding: 0 20px;
+  }
+  .user-roles-con-main h3 {
+    font-size: 25px;
+  }
+  .user-roles-title h2 {
+    font-size: 40px;
+    font-weight: 600;
+    padding: 0;
+  }
+  .user-roles-title h2 span {
+    font-size: 40px;
+    font-weight: 600;
+    padding: 0;
+  }
+  .user-roles-title span {
+    font-size: 25px;
+  }
+  .sec-3-inner .sec-3-text-left {
+    padding: 50px 20px;
+  }
+  .section-4 {
+    padding: 50px 20px;
+  }
+  .section-4 .sec-4-inner .text-label h1 {
+    font-size: 40px;
+  }
+  .section-4 .sec-4-inner .text-label {
+    width: 100%;
+  }
+  .section-4 .sec-4-inner .sec-4 {
+    display: flex;
+    flex-flow: column wrap;
+    width: 75%;
+    margin: 0 auto;
+  }
+  .section-5 .sec-5-inner {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0;
+  }
+  .section-5 .sec-5-bg {
+    padding: 30px 20px;
+    background-size: cover;
+    width: 100%;
+    position: static;
+  }
+  .sec-5-right h1 {
+    font-size: 50px;
+  }
+  .section-6 {
+    padding: 50px 20px;
+  }
+  .section-6 .sec-6-heading {
+    padding: 0;
+  }
+  .section-6 .sec-6-heading::before {
+    z-index: -2;
+  }
+  .section-6 .sect-6-center .sec-6-inner {
+    flex-direction: column;
+    gap: 50px;
+  }
+  .section-6 .sect-6-center .sec-6-inner .sec-6-inner-box {
+    width: 100%;
+  }
+  .section-7 {
+    padding: 50px 0;
+  }
+  .sec-7-content {
+    display: block;
+  }
+  .sec-7-content .sec-7-right-ol .sec-7-inner-box-text .sec-7-tex-box {
+    margin-left: 40px;
+  }
+  .sec-7-content .sec-7-left-bl {
+    padding: 0;
+    margin-top: -50px;
+  }
+  .roadmap-sec-main {
+    padding: 100px 20px;
+  }
+  .second-user-block-inner h2 {
+    font-size: 35px;
+  }
+  .user-roles-inner {
+    padding: 0 20px;
+  }
+  .staker-con-block-area p {
+    max-width: 100%;
+  }
+  .user-roles-title {
+    padding: 30px 0;
+  }
+  .stable-token-main-sec {
+    margin-top: 30px;
+  }
+  .stable-token-con-area-inner {
+    padding: 50px 30px;
+    width: 80%;
+  }
+  .stable-token-con-area-inner h2 {
+    font-size: 30px;
+  }
+  .treasury-inner-con {
+    width: 80%;
+  }
+  .treasury-item-block {
+    flex-flow: column wrap;
+  }
+  .treasury-heading-main h2 {
+    font-size: 40px;
+    text-align: center;
+  }
+  .treasury-icon-area {
+    max-width: 50%;
+  }
+
+  .platform-main-sec:after {
+    width: 100%;
+    top: 110px;
+    max-height: 95%;
+  }
+  .platform-heading-row {
+    flex-flow: column wrap;
+  }
+  .platform-left-heading {
+    max-width: 100%;
+  }
+  .paltform-right-heading {
+    max-width: 80%;
+    padding: 0;
+  }
+  .platform-left-heading h2 {
+    font-size: 30px;
+  }
+  .platform-left-main-sec {
+    margin-top: -50px;
+  }
+  .paltform-right-heading-inner {
+    margin-top: 80px;
+  }
+  .platform-bottom-inner {
+    width: 80%;
+    margin: 0 auto;
+  }
+  .platform-right-inner {
+    width: 80%;
+    margin: 0 auto;
+  }
+  .section-6 .sec-6-heading::before {
+    display: none;
   }
 }
