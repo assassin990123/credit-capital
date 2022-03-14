@@ -26,9 +26,6 @@
           <div class="navbar-collapse mean-menu" @click="isShow = !isShow">
             <ul class="navbar-nav">
               <li class="nav-item">
-                <router-link to="/">Home</router-link>
-              </li>
-              <li class="nav-item">
                 <router-link to="reward">Rewards</router-link>
               </li>
               <li class="nav-item">
