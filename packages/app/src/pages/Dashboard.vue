@@ -17,7 +17,7 @@
         </div>
         <div class="title-cus">
           <h2>TVL</h2>
-          <div class="dashboard-daily-earning-panel-value">
+          <div v-if="userPosition" class="dashboard-daily-earning-panel-value">
             {{ format(lpToUSD(userPosition, store)) }} USD
           </div>
         </div>

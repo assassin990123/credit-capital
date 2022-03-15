@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <section class="section-1">
-      <div class="hero wow fadeInDown floating">
+      <div class="hero wow fadeInDown ">
         <div class="container">
           <div class="sec-1-inner">
             <p>
@@ -174,7 +174,7 @@
             <p>
               CreditCapital has reconstructed the traditional models for
               investing and lending by creating a decentralized finance (DeFi)
-              platform that offers consistently high yields, secure funds
+              platform that offers consistently high yields, secure fund
               management and privacy for investors.
             </p>
           </div>
