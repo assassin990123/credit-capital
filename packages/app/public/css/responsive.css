@@ -362,7 +362,7 @@ This file is use to implement the responsive design.
     background-position: right center;
     max-width: 100%;
     background-repeat: no-repeat;
-    max-height: 100vh;
+    min-height: 100vh;
   }
   .section-1 .hero {
     max-width: 85%;
@@ -463,6 +463,10 @@ This file is use to implement the responsive design.
     width: 75%;
     margin: 0 auto;
   }
+  .section-5 {
+    padding: 0;
+    margin-top: 50px;
+  }
   .section-5 .sec-5-inner {
     display: flex;
     flex-direction: column;
@@ -477,6 +481,9 @@ This file is use to implement the responsive design.
   }
   .sec-5-right h1 {
     font-size: 40px;
+  }
+  .section-6::before {
+    display: none;
   }
   .section-6 {
     padding: 0 20px;
@@ -585,5 +592,11 @@ This file is use to implement the responsive design.
   }
   .section-6 .sec-6-heading::before {
     display: none;
+  }
+  .platform-bottom-main {
+    margin-bottom: 50px;
+  }
+  .platform-right-inner h2 {
+    font-size: 30px;
   }
 }

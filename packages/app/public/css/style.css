@@ -7467,6 +7467,7 @@ textarea:focus {
   -moz-box-shadow: 0px 0px 22px 0px rgba(0, 0, 0, 0.17);
   box-shadow: 0px 0px 22px 0px rgba(0, 0, 0, 0.17);
   justify-content: center;
+  min-height: 500px;
 }
 
 .input-custom {
@@ -8300,6 +8301,7 @@ button.tab-inner-content-item {
   -ms-flex-item-align: center;
   align-self: center;
   position: relative;
+  min-height: 700px;
 }
 
 .section-1 .container .sec-1-inner p {
@@ -8345,7 +8347,6 @@ button.tab-inner-content-item {
   background-size: 100%;
   background-position: left center;
   padding-right: 100px;
-  height: 100vh;
 }
 
 /* Section 2 Start here */
@@ -8490,6 +8491,7 @@ button.tab-inner-content-item {
 
 .sec-3-before {
   background: url("/images/pitch-deck/Who-we-are-bg.png");
+  background-repeat: no-repeat;
   position: absolute;
   z-index: 1;
   width: 100%;
@@ -8779,6 +8781,7 @@ margin: 0 auto;
 
 .section-6 {
   padding: 100px 0;
+  position: relative;
 }
 
 .section-6 .sec-6-heading {
@@ -8786,17 +8789,16 @@ margin: 0 auto;
   padding-left: 200px;
 }
 
-.section-6 .sec-6-heading::before {
+.section-6::before {
   content: "";
-  width: 500px;
-  height: 500px;
+  width: 30%;
+  height: 30%;
   position: absolute;
   right: 0;
   top: 0;
   background: url("/images/pitch-deck/sh4-bn.png");
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
-  transform: translate(70%, -30%);
 }
 
 .section-6 .sec-6-heading h1 {
