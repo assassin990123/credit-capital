@@ -107,7 +107,7 @@ export default {
 
     let CAPLPrice = reactive(ref("0.00"));
     let buttonString = ref("Connect Wallet");
-    let poolTokens: Ref<string | undefined> = reactive(ref("0"))
+    let poolTokens: Ref<string | undefined> = reactive(ref("0"));
 
     const connectWeb3 = async () => {
       await store.dispatch("accounts/connectWeb3");
@@ -229,7 +229,7 @@ export default {
 }
 @media screen and (max-width: 962px) {
   .liquidity-box-main {
-    width: 98% !important;
+    /* width: 98% !important; */
     margin: 0 auto;
   }
   .stack-button-area {

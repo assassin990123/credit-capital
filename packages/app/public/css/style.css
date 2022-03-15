@@ -65,6 +65,7 @@ body {
   color: #7f839c;
   font-weight: 400;
   line-height: 2;
+  box-sizing: border-box;
 }
 
 h1,
@@ -832,9 +833,9 @@ textarea:focus {
   flex-wrap: wrap;
 }
 
-.nav-btn-custom .nav-item {
+/* .nav-btn-custom .nav-item {
   padding-left: 20px;
-}
+} */
 
 .nav-item .connectButton,
 .button {
@@ -857,6 +858,7 @@ textarea:focus {
   padding: 5px 10px;
   font-weight: 700;
   color: #000;
+  margin-right: 15px;
 }
 
 .nav-btn-custom .nav-item {
@@ -8262,9 +8264,9 @@ button.tab-inner-content-item {
     margin: 10px 0;
     padding-left: 10px;
   }
-  .acavo-nav .nav-btn-custom .nav-item {
+  /* .acavo-nav .nav-btn-custom .nav-item {
     padding-left: 10px;
-  }
+  } */
 
   .acavo-nav .nav-item .connectButton {
     padding: 10px 30px;
@@ -8288,7 +8290,7 @@ button.tab-inner-content-item {
 ==============================================*/
 
 .section-1 {
-  background-image: url("/images/pitch-deck/AdobeStock_304068536.jpeg");
+  background-image: url("/images/pitch-deck/Sec-1-bg.jpeg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -8297,7 +8299,6 @@ button.tab-inner-content-item {
   display: flex;
   -ms-flex-item-align: center;
   align-self: center;
-  height: 100vh;
   position: relative;
 }
 
@@ -8338,9 +8339,13 @@ button.tab-inner-content-item {
 
 .section-1 .hero {
   /* background: url("/images/hero/sh4-bn.png") no-repeat center left; */
-  background: url("/images/pitch-deck/Sec-1-2nd-bg.png");
+  background: url("/images/pitch-deck/Sec-1-2nd-bg-new.png");
   background-attachment: scroll;
-  padding: 300px 200px;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: left center;
+  padding-right: 100px;
+  height: 100vh;
 }
 
 /* Section 2 Start here */
@@ -8348,7 +8353,6 @@ button.tab-inner-content-item {
 .section-2 {
   position: relative;
   margin-top: 100px;
-  height: 100vh;
 }
 
 .section-2 .sec-2-inner {
@@ -8391,9 +8395,9 @@ button.tab-inner-content-item {
 .section-2 .sec-2-inner .text-right h1 {
   text-transform: uppercase;
   color: #ff8900;
-  font-size: 40px;
-  padding-top: 120px;
-  padding-right: 50px;
+  font-size: 30px;
+  padding-top: 60px;
+  padding-right: 30px;
 }
 
 .section-2 .sec-2-inner .text-right p {
@@ -8424,7 +8428,7 @@ button.tab-inner-content-item {
   z-index: 1;
 }
 .sec-3-inner .sec-3-text-left h1 {
-  font-size: 80px;
+  font-size: 60px;
   line-height: 70px;
 }
 
@@ -8449,7 +8453,7 @@ button.tab-inner-content-item {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffd381",endColorstr="#ffbe5d",GradientType=1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-size: 80px;
+  font-size: 60px;
   line-height: 70px;
 }
 
@@ -8493,7 +8497,7 @@ button.tab-inner-content-item {
 }
 
 .sec-3-text-right {
-  padding: 60px 30px 50px 350px;
+  padding: 60px 30px 0 350px;
 }
 
 .sec-3-text-right h1 {
@@ -9249,12 +9253,10 @@ margin: 0 auto;
   align-items: center;
   margin-top: 80px;
 }
-.assumes-investor-block i.las.la-bars {
-  min-width: 80px;
-  width: 80px;
-  height: 80px;
+.assumes-investor-block i.las.la-cogs {
+  font-size: 60px;
   background: rgb(255 255 255 / 40%);
-  margin-right: 50px;
+  margin-right: 20px;
 }
 .assumes-investor-block p {
   font-size: 16px;
