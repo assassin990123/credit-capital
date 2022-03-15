@@ -362,22 +362,25 @@ This file is use to implement the responsive design.
     background-position: right center;
     max-width: 100%;
     background-repeat: no-repeat;
+    min-height: 100vh;
   }
   .section-1 .hero {
-    max-width: 100%;
+    max-width: 85%;
     background-position: left center;
     background-size: contain;
     background-repeat: no-repeat;
   }
   .section-2 {
     height: auto;
+    margin: 100px 0;
+    padding: 0;
   }
   .section-2 .sec-2-inner img {
     display: none;
   }
   .section-2 .sec-2-inner {
     display: flex;
-    flex-flow: column wrap;
+    flex-flow: column-reverse wrap;
   }
   .section-2 .sec-2-inner .text-left img {
     display: block;
@@ -388,6 +391,7 @@ This file is use to implement the responsive design.
     padding: 0 20px;
     margin: 0;
     gap: 0;
+    flex-direction: column-reverse;
   }
   .section-2 .sec-2-inner .text-right h1 {
     padding: 0;
@@ -397,7 +401,8 @@ This file is use to implement the responsive design.
     padding: 50px 0;
   }
   .section-3 {
-    padding: 50px 0;
+    margin: 50px 0;
+    padding: 0;
   }
   .section-3 .sec-3-inner {
     display: flex;
@@ -421,7 +426,8 @@ This file is use to implement the responsive design.
     font-size: 40px;
   }
   .user-roles-sec-main {
-    padding: 0 20px;
+    padding: 0;
+    margin: 50px 0;
   }
   .user-roles-con-main h3 {
     font-size: 25px;
@@ -457,6 +463,10 @@ This file is use to implement the responsive design.
     width: 75%;
     margin: 0 auto;
   }
+  .section-5 {
+    padding: 0;
+    margin-top: 50px;
+  }
   .section-5 .sec-5-inner {
     display: flex;
     flex-direction: column;
@@ -470,10 +480,14 @@ This file is use to implement the responsive design.
     position: static;
   }
   .sec-5-right h1 {
-    font-size: 50px;
+    font-size: 40px;
+  }
+  .section-6::before {
+    display: none;
   }
   .section-6 {
-    padding: 50px 20px;
+    padding: 0 20px;
+    margin: 100px 0;
   }
   .section-6 .sec-6-heading {
     padding: 0;
@@ -490,6 +504,7 @@ This file is use to implement the responsive design.
   }
   .section-7 {
     padding: 50px 0;
+    margin: 100px 0;
   }
   .sec-7-content {
     display: block;
@@ -502,19 +517,22 @@ This file is use to implement the responsive design.
     margin-top: -50px;
   }
   .roadmap-sec-main {
-    padding: 100px 20px;
+    padding: 50px 20px;
   }
   .second-user-block-inner h2 {
     font-size: 35px;
   }
   .user-roles-inner {
-    padding: 0 20px;
+    padding: 0;
   }
   .staker-con-block-area p {
     max-width: 100%;
   }
   .user-roles-title {
     padding: 30px 0;
+  }
+  .user-roles-main-con {
+    margin: 0;
   }
   .stable-token-main-sec {
     margin-top: 30px;
@@ -574,5 +592,11 @@ This file is use to implement the responsive design.
   }
   .section-6 .sec-6-heading::before {
     display: none;
+  }
+  .platform-bottom-main {
+    margin-bottom: 50px;
+  }
+  .platform-right-inner h2 {
+    font-size: 30px;
   }
 }
