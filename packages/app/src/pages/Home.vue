@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <section class="section-1">
-      <div class="hero wow fadeInDown floating">
+      <div class="hero wow fadeInDown ">
         <div class="container">
           <div class="sec-1-inner">
             <p>

@@ -9094,15 +9094,10 @@ margin: 0 auto;
   border-radius: 100%;
 }
 .roadmap-complete {
-  /* background: linear-gradient(
+  background: linear-gradient(
     90deg,
     rgba(208, 255, 123, 1) 0%,
     rgba(142, 255, 9, 1) 100%
-  ); */
-  background: linear-gradient(
-    90deg,
-    rgba(255, 208, 123, 1) 0%,
-    rgba(255, 142, 9, 1) 100%
   );
 }
 .roadmap-block-left h3 {
