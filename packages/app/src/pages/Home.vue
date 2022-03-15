@@ -174,7 +174,7 @@
             <p>
               CreditCapital has reconstructed the traditional models for
               investing and lending by creating a decentralized finance (DeFi)
-              platform that offers consistently high yields, secure funds
+              platform that offers consistently high yields, secure fund
               management and privacy for investors.
             </p>
           </div>
