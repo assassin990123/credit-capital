@@ -96,11 +96,12 @@ const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
 const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
+const chainId = computed(() => store.getters["accounts/getChainId"]);
 
 let swapButtonDisabled:Ref<boolean> = ref(false)
 
 watchEffect(async () => {
-  if (isUserConnected.value) {
+  if (isUserConnected.value && chainId.value == parseInt(process.env.VUE_APP_NETWORK_ID)) {
     if (swapAmount.value == 0) {
       swapButtonClassName.value = "btn-custom-gray";
     } else {
@@ -179,7 +180,7 @@ const switchTokens = () => {
 
 // conversion rates for swaps
 async function exchangeCAPLToUSDC() {
-  if (checkConnection(store)) {
+  if (checkConnection(store) && Number(chainId.value) == parseInt(process.env.VUE_APP_NETWORK_ID!)) {
     await store.dispatch("balancer/getPoolTokens");
 
     const exchangedBalance = calculateCAPLUSDPrice(
