@@ -19,10 +19,11 @@ const store = useStore();
 store.dispatch("contracts/setContracts");
 
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
+const chainId = computed(() => store.getters["accounts/getChainId"]);
 
 // watch for user connection
 watchEffect(async () => {
-  if (isConnected.value) {
+  if (isConnected.value && chainId.value == parseInt(process.env.VUE_APP_NETWORK_ID)) {
     interval = setInterval(w3Lopp, 2000);
   } else {
     clearInterval(interval);
@@ -30,6 +31,7 @@ watchEffect(async () => {
 });
 
 const w3Lopp = () => {
+  console.log('loop');
   store.dispatch("tokens/getAllowances");
   store.dispatch("tokens/getTokenBalances");
   // update user position states

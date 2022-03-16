@@ -60,7 +60,15 @@ const actions = {
         const accounts = await (window as any).ethereum.request({
           method: "eth_requestAccounts",
         });
-        await actions.checkNetwork();
+        
+        // get the chain id
+        const network: number = await (window as any).ethereum.request({ method: 'net_version' });
+        commit("setChainData", network);
+
+        if (network !== parseInt(ChainID)) {
+          await actions.checkNetwork();
+        }
+
         commit("setIsConnected", true);
         commit("setActiveAccount", accounts[0]);
         commit("setWeb3Provider", markRaw(provider));
@@ -94,24 +102,24 @@ const actions = {
 
     (window as any).ethereum.on("chainChanged", async (chainId: any) => {
       await actions.checkNetwork();
-      commit("setChainData", chainId);
+      commit("setChainData", parseInt(chainId.toString(16), 16));
       commit("setWeb3Provider", state.web3Provider);
     });
 
-    (window as any).ethereum.on(
-      "disconnect",
-      async (error: ProviderRpcError) => {
-        try {
-          // remove the connection state from localstorage
-          localStorage.removeItem("isConnected");
+    // (window as any).ethereum.on(
+    //   "disconnect",
+    //   async (error: ProviderRpcError) => {
+    //     try {
+    //       // remove the connection state from localstorage
+    //       localStorage.removeItem("isConnected");
 
-          // reload page
-          window.location.reload();
-        } catch (e) {
-          console.error("error: ", error.message);
-        }
-      }
-    );
+    //       // reload page
+    //       window.location.reload();
+    //     } catch (e) {
+    //       console.error("error: ", error.message);
+    //     }
+    //   }
+    // );
   },
 
   async checkNetwork() {
@@ -142,7 +150,7 @@ const actions = {
             console.error(addError);
           }
         }
-        console.error(error);
+        console.error("Error message when Chain Id changed: ", error);
       }
     }
   },
