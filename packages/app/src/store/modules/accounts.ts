@@ -65,7 +65,7 @@ const actions = {
         const network: number = await (window as any).ethereum.request({ method: 'net_version' });
         commit("setChainData", network);
 
-        if (network !== parseInt(ChainID)) {
+        if (network != parseInt(ChainID)) {
           await actions.checkNetwork();
         }
 
@@ -101,31 +101,18 @@ const actions = {
     });
 
     (window as any).ethereum.on("chainChanged", async (chainId: any) => {
-      await actions.checkNetwork();
+      // set chain id to clear interval function
       commit("setChainData", parseInt(chainId.toString(16), 16));
+      // try to change network
+      await actions.checkNetwork();
       commit("setWeb3Provider", state.web3Provider);
     });
-
-    // (window as any).ethereum.on(
-    //   "disconnect",
-    //   async (error: ProviderRpcError) => {
-    //     try {
-    //       // remove the connection state from localstorage
-    //       localStorage.removeItem("isConnected");
-
-    //       // reload page
-    //       window.location.reload();
-    //     } catch (e) {
-    //       console.error("error: ", error.message);
-    //     }
-    //   }
-    // );
   },
 
   async checkNetwork() {
     if ((window as any).ethereum) {
       const hexadecimal = "0x" + parseInt(ChainID).toString(16);
-
+      
       try {
         // check if the chain to connect to is installed
         await (window as any).ethereum.request({
