@@ -13,7 +13,7 @@ import { useStore } from "@/store";
 import { computed, watchEffect } from "vue";
 
 document.title = "CreditCapital: Your Personal, Private Hedge Fund";
-let interval;
+let interval:any;
 const store = useStore();
 // create contract instances with provider
 store.dispatch("contracts/setContracts");
@@ -23,15 +23,15 @@ const chainId = computed(() => store.getters["accounts/getChainId"]);
 
 // watch for user connection
 watchEffect(async () => {
-  if (isConnected.value && chainId.value == parseInt(process.env.VUE_APP_NETWORK_ID)) {
+  if (isConnected.value && Number(chainId.value) == parseInt(process.env.VUE_APP_NETWORK_ID!)) {
     interval = setInterval(w3Lopp, 2000);
   } else {
+    // @ts-ignore
     clearInterval(interval);
   }
 });
 
 const w3Lopp = () => {
-  console.log('loop');
   store.dispatch("tokens/getAllowances");
   store.dispatch("tokens/getTokenBalances");
   // update user position states

@@ -53,7 +53,7 @@ const claim = () => {
 };
 
 watchEffect(async () => {
-  if (connected.value === true && chainId.value == parseInt(process.env.VUE_APP_NETWORK_ID)) {
+  if (connected.value === true && Number(chainId.value) == parseInt(process.env.VUE_APP_NETWORK_ID!)) {
     if (pendingRewards.value >= 0) {
       await store.dispatch("balancer/getPoolTokens");
       pendingRewardsCAPL.value = format(pendingRewards.value);

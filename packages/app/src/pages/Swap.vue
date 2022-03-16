@@ -180,7 +180,7 @@ const switchTokens = () => {
 
 // conversion rates for swaps
 async function exchangeCAPLToUSDC() {
-  if (checkConnection(store) && chainId.value == parseInt(process.env.VUE_APP_NETWORK_ID)) {
+  if (checkConnection(store) && Number(chainId.value) == parseInt(process.env.VUE_APP_NETWORK_ID!)) {
     await store.dispatch("balancer/getPoolTokens");
 
     const exchangedBalance = calculateCAPLUSDPrice(

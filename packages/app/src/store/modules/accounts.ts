@@ -101,11 +101,13 @@ const actions = {
     });
 
     (window as any).ethereum.on("chainChanged", async (chainId: any) => {
+      if (chainId !== process.env.VUE_APP_NETWORK_ID_HEX) commit('setChainData', 0)
+      else commit('setChainData', parseInt(ChainID))
       // set chain id to clear interval function
-      commit("setChainData", parseInt(chainId.toString(16), 16));
       // try to change network
-      await actions.checkNetwork();
-      commit("setWeb3Provider", state.web3Provider);
+      window.location.reload()
+      //await actions.checkNetwork();
+      //commit("setWeb3Provider", state.web3Provider);
     });
   },
 
