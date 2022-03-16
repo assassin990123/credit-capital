@@ -44,7 +44,7 @@
             <div class="myBalance">
               Unlocked Balance: <a>{{ unstakeAmount }} USDC-CAPL</a>
             </div>
-            <button type="submit" class="btn-custom" @click="unstake">
+            <button type="submit" class="btn-custom" @click="unstakeFromBalance">
               Withdraw
             </button>
             <div class="explainer">
@@ -61,100 +61,85 @@
 </template>
 
 <script setup lang="ts">
-// @ts-ignore
 import DappFooter from "@/components/DappFooter.vue";
-import { watchEffect, ref, Ref, computed } from "vue";
-// @ts-ignore
+import { ref, computed, watch } from "vue";
 import { 
   checkAllowance, 
 } from "@/utils";
-// @ts-ignore
-import { useStore } from "@/store";
-// @ts-ignore
 import {
   checkConnection,
   checkBalance,
   checkAvailability,
 } from "@/utils/notifications";
+import { useTokens } from "@/use/tokens";
+import { useAccounts } from "@/use/accounts";
+import { useRewards } from "@/use/rewards";
 
-const store = useStore();
-const stakeAmount: Ref<number> = ref(0);
-const stakeButtonText: Ref<string> = ref("Stake");
-const stakeButtonClassName: Ref<string> = ref("btn-custom-gray");
+const { connected } = useAccounts()
+const { stake, unstake } = useRewards()
+const { tokens, approveRewards } = useTokens()
+
+const stakeAmount = ref(0);
+const stakeButtonText = ref("Stake");
+const stakeButtonClassName = ref("btn-custom-gray");
 const unstakeAmount = ref(0);
 // for we make the user withdraw the total unlockedAmount.
-const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
+const lpBalance = computed(() => tokens.lp.balance);
 
-const isUserConnected = computed(
-  () => store.getters["accounts/isUserConnected"]
-);
-
-let stakeButtonDisabled:Ref<boolean> = ref(false)
+let stakeButtonDisabled = ref(false)
 
 // this function checks the allowance a user has alloted our rewards contract via the LP token
-watchEffect(async () => {
-  if (
-    isUserConnected.value
-  ) {
-    stakeAmount.value = Number(parseFloat((stakeAmount.value).toString()).toFixed(18));
+watch(connected, async (connected) => {
+  if (!connected) { return }
 
-    if (stakeAmount.value == 0) {
+  stakeAmount.value = Number(parseFloat((stakeAmount.value).toString()).toFixed(18));
+
+  if (stakeAmount.value == 0) {
+    stakeButtonText.value = "Stake";
+    stakeButtonClassName.value = "btn-custom-gray";
+  } else {
+    if (
+      await checkAllowance(
+        "LP", // static for now
+        stakeAmount.value,
+        "stake"
+      )
+    ) {
       stakeButtonText.value = "Stake";
-      stakeButtonClassName.value = "btn-custom-gray";
-    } else {
-      if (
-        await checkAllowance(
-          store,
-          "LP", // static for now
-          stakeAmount.value,
-          "stake"
-        )
-      ) {
-        stakeButtonText.value = "Stake";
-        if (!checkAvailability(stakeAmount.value, lpBalance.value)) {
-          stakeButtonDisabled.value = true
-          stakeButtonClassName.value = "btn-custom-gray";
-        }
-        else {
-          stakeButtonDisabled.value = false
-          stakeButtonClassName.value = "btn-custom-green";
-        }
-      } else {
-        stakeButtonText.value = "Approve";
-        stakeButtonClassName.value = "btn-custom";
+      if (!checkAvailability(stakeAmount.value, lpBalance.value)) {
+        stakeButtonDisabled.value = true
+        stakeButtonClassName.value = "btn-custom-gray";
       }
+      else {
+        stakeButtonDisabled.value = false
+        stakeButtonClassName.value = "btn-custom-green";
+      }
+    } else {
+      stakeButtonText.value = "Approve";
+      stakeButtonClassName.value = "btn-custom";
     }
-    
   }
 });
 
 const handleStake = async () => {
-  if (checkConnection(store) && checkBalance(stakeAmount.value)) {
-    stakeButtonText.value == "Stake" ? await stake() : await approve();
-  }
-};
+  if (!checkConnection() || !checkBalance(stakeAmount.value)) { return }
 
-const approve = async () => {
-  await store.dispatch("tokens/approveRewards", {
-    amount: stakeAmount.value,
-  });
-};
+  if (stakeButtonText.value == "Stake") {
+    await stake({ amount: stakeAmount.value })
+  } else {
+    await approveRewards({amount: stakeAmount.value})
+  }
+}
 
 const insertBalance = () => {
   stakeAmount.value = lpBalance.value;
 };
 
-const stake = () => {
-  store.dispatch("rewards/stake", { amount: stakeAmount.value });
-};
-
-const unstake = () => {
-  // check connection
-  if (checkConnection(store) && checkBalance(unstakeAmount.value)) {
-    store.dispatch("rewards/unstake", { amount: unstakeAmount.value });
+const unstakeFromBalance = () => {
+  if (checkConnection() && checkBalance(unstakeAmount.value)) {
+    unstake({ amount: unstakeAmount.value })
   }
 };
-// userPosition = computed(() => store.getters["rewards/getUserPosition"]);
 </script>
 
 <style>

@@ -11,11 +11,11 @@
   </div>
 </template>
 
-<script>
-export default {
-  // ...
-  props: ['title', 'text']
-}
+<script setup lang="ts">
+defineProps<{
+  title: string,
+  text: string
+}>()
 </script>
 
 <style>

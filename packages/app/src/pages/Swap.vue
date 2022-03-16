@@ -67,8 +67,7 @@
 
 <script setup lang="ts">
 import DappFooter from "@/components/DappFooter.vue";
-import { ref, Ref, watchEffect, computed } from "vue";
-import { useStore } from "@/store";
+import { ref, computed, watch } from "vue";
 import {
   calculateCAPLUSDPrice,
   checkAllowance,
@@ -80,51 +79,55 @@ import {
   checkBalance,
   checkAvailability,
 } from "@/utils/notifications";
+import { useTokens } from "@/use/tokens";
+import { useAccounts } from "@/use/accounts";
+import { useBalancer } from "@/use/balancer";
 
-const store: any = useStore();
-let swapAmount: Ref<number> = ref(0);
-let swapTokenSymbol: Ref<string> = ref("USDC");
-let swapToTokenSymbol: Ref<string> = ref("CAPL");
+const { connected } = useAccounts()
+const { tokens, approveBalancerVault } = useTokens()
+const { balancer, singleSwap, getPoolTokens } = useBalancer()
 
-let swapTokenResult: Ref<string> = ref("");
+let swapAmount = ref(0);
+let swapTokenSymbol = ref("USDC");
+let swapToTokenSymbol = ref("CAPL");
+
+let swapTokenResult = ref("");
 let swapButtonString = ref("Swap");
 let swapButtonClassName = ref("btn-custom-gray");
 
-const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
-const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
+const caplBalance = computed(() => tokens.capl.balance);
+const usdcBalance = computed(() => tokens.usdc.balance);
 
-const isUserConnected = computed(
-  () => store.getters["accounts/isUserConnected"]
-);
+const swapButtonDisabled = ref(false)
 
-let swapButtonDisabled:Ref<boolean> = ref(false)
-
-watchEffect(async () => {
-  if (isUserConnected.value) {
-    if (swapAmount.value == 0) {
-      swapButtonClassName.value = "btn-custom-gray";
+watch(connected, async (connected) => {
+  if (connected) {
+    if (!swapAmount.value) {
+      swapButtonClassName.value = "btn-custom-gray"
+    } else if (await checkAllowance(
+      swapTokenSymbol.value,
+      Number(swapAmount.value),
+      "balancer"
+    )) {
+      swapButtonString.value = "Swap"
+      swapButtonClassName.value = "btn-custom-green"
+      swapButtonDisabled.value = false
     } else {
-      (await checkAllowance(
-        store,
-        swapTokenSymbol.value,
-        Number(swapAmount.value),
-        "balancer"
-      ))
-        ? ((swapButtonString.value = "Swap"),
-          (swapButtonClassName.value = "btn-custom-green"),
-          (swapButtonDisabled.value = false))
-        : ((swapButtonString.value = "Approve"),
-          (swapButtonClassName.value = "btn-custom"));
+      swapButtonString.value = "Approve"
+      swapButtonClassName.value = "btn-custom"
     }
+
     swapTokenSymbol.value == "CAPL"
       ? handleAvailability(swapAmount.value, caplBalance.value)
       : handleAvailability(swapAmount.value, usdcBalance.value);
   }
 
-  swapTokenSymbol.value == "USDC"
-  ? swapAmount.value = Number(parseFloat((swapAmount.value).toString()).toFixed(6))
-  : swapAmount.value = Number(parseFloat((swapAmount.value).toString()).toFixed(18))
-});
+  if (swapTokenSymbol.value === "USDC") {
+    swapAmount.value = Number(parseFloat((swapAmount.value).toString()).toFixed(6))
+  } else {
+    swapAmount.value = Number(parseFloat((swapAmount.value).toString()).toFixed(18))
+  }
+})
 
 const handleAvailability = (amount: number, balance: number) => {
   if (checkAvailability(amount, balance)) return
@@ -136,32 +139,14 @@ const handleAvailability = (amount: number, balance: number) => {
 
 // handles swapping button logic, dependant on current string
 const handleSwap = async () => {
-  if (checkConnection(store) && checkBalance(swapAmount.value)) {
-    swapButtonString.value == "Swap" ? await swap() : await approve();
+  if (!checkConnection() || !checkBalance(swapAmount.value)) { return }
+
+  if (swapButtonString.value == "Swap") {
+    await singleSwap({ amount: swapAmount.value, symbol: swapTokenSymbol.value, })
+  } else {
+    await approveBalancerVault({ symbol: swapTokenSymbol.value })
   }
 };
-
-// handles adding liquidity button logic, dependant on current string
-// we can assume that if usdcLiquidity > 0 then caplLiquidity > 0
-
-// approves a single token for swapping
-const approve = async () => {
-  const symbol = swapTokenSymbol.value;
-  await store.dispatch("tokens/approveBalancerVault", {
-    symbol,
-  });
-};
-
-// handles three cases
-// 1. USDC Approvals, 2. CAPL approvals, 3. Both tokens approvals
-// TODO: Refactor these store.dispatch calls into individual functions
-
-async function swap() {
-  await store.dispatch("balancer/singleSwap", {
-    amount: swapAmount.value,
-    symbol: swapTokenSymbol.value,
-  });
-}
 
 // allows for a user to switch between swapping USDC and CAPL
 const switchTokens = () => {
@@ -178,14 +163,14 @@ const switchTokens = () => {
 };
 
 // conversion rates for swaps
-async function exchangeCAPLToUSDC() {
-  if (checkConnection(store)) {
-    await store.dispatch("balancer/getPoolTokens");
+const exchangeCAPLToUSDC = async() => {
+  if (checkConnection()) {
+    await getPoolTokens()
 
     const exchangedBalance = calculateCAPLUSDPrice(
       swapAmount.value,
       swapTokenSymbol.value,
-      store.getters["balancer/getPoolTokens"]
+      balancer.poolTokens
     );
     swapTokenResult.value = format(exchangedBalance)!;
   }

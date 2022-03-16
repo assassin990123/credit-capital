@@ -963,24 +963,3 @@
     <!-- Platform Function section code end here -->
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed, watchEffect } from "vue";
-import { useStore } from "@/store";
-// import gearicon from "../../public/images/gear-icon.png";
-
-const store = useStore();
-
-const connected = computed(() => store.getters.getConnected);
-// Temp hack to get this to build without errors.
-// eslint-disable-next-line no-unused-vars
-const wallet = computed(() => store.getters.getWallet);
-
-watchEffect(() => {
-  if (connected.value) {
-    // do web3 stuff
-  }
-});
-</script>
-
-<style></style>

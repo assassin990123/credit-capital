@@ -72,7 +72,6 @@
     </div>
   </div>
 </template>
-<script lang="ts" setup></script>
 
 <style>
 .platform-main-sec .dashboard-platform-header {

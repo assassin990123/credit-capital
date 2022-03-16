@@ -7,35 +7,42 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, watch } from "vue";
+import { useAccounts } from "./use/accounts";
+import { useContracts } from "./use/contracts";
+
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
-import { useStore } from "@/store";
-import { computed, watch } from "vue";
+import { useTokens } from "./use/tokens";
+import { useRewards } from "./use/rewards";
+import { useDashboard } from "./use/dashboard";
 
-document.title = "CreditCapital: Your Personal, Private Hedge Fund";
+const { connected } = useAccounts()
+const { setContracts } = useContracts()
+const { getAllowances, getTokenBalances } = useTokens()
+const { getRewardsInfo, getPendingRewards } = useRewards()
+const { fetchTVL } = useDashboard()
+
 let interval: any;
-const store = useStore();
-// create contract instances with provider
-store.dispatch("contracts/setContracts");
-
-const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
 
 const w3Lopp = () => {
-  store.dispatch("tokens/getAllowances");
-  store.dispatch("tokens/getTokenBalances");
+  getAllowances()
+  getTokenBalances()
   // update user position states
-  store.dispatch("rewards/getRewardsInfo");
-  store.dispatch("rewards/getPendingRewards");
-  store.dispatch("dashboard/fetchTVL");
+  getRewardsInfo()
+  getPendingRewards()
+  fetchTVL()
 };
 
-watch(isConnected, (connected) => {
+watch(connected, (connected) => {
   if (connected) {
     interval = setInterval(w3Lopp, 2000)
   } else {
     clearInterval(interval)
   }
 })
+
+onMounted(setContracts)
 </script>
 
 <style>

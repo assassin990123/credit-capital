@@ -45,7 +45,7 @@
           <div>
             <ul class="nav-btn-custom" @click="isShow = !isShow">
               <li class="nav-item">
-                <span>CAPL &dollar;{{ CAPLPrice }}</span>
+                <span>CAPL ${{ CAPLPrice }}</span>
               </li>
               <li class="nav-item">
                 <router-link to="dashboard"
@@ -90,76 +90,41 @@
   <!-- End Navbar Area -->
 </template>
 
-<script lang="ts">
-import { computed } from "vue";
-import { useStore } from "@/store";
-import { ref, watchEffect, Ref, reactive } from "vue";
-import { showConnectResult } from "@/utils/notifications";
-import { shortenAddress, caplToUSD, format } from "@/utils";
+<script setup lang="ts">
+import { computed, ref, watch } from "vue"
+import { shortenAddress, caplToUSD, format } from "@/utils"
+import { useAccounts } from "@/use/accounts"
+import { useBalancer } from "@/use/balancer";
+import { useWeb3 } from "@/use/web3";
 
-export default {
-  setup() {
-    const store = useStore();
-    const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
+const {
+  connected,
+  activeAccount
+} = useAccounts()
+const { getPoolTokens } = useBalancer()
+const { connectWeb3 } = useWeb3()
 
-    let interval: any;
-    let CAPLPrice = reactive(ref("0.00"));
-    let buttonString = computed(() =>
-      isConnected.value ? shortenAddress(wallet.value) : 'Connect Wallet');
-    let poolTokens: Ref<string | undefined> = reactive(ref("0"));
+const isShow = ref(false)
+let interval: any
 
-    const connectWeb3 = async () => {
-      await store.dispatch("accounts/connectWeb3");
-      if (isConnected.value) {
-        await store.dispatch("rewards/getRewardsInfo");
-        await store.dispatch("balancer/getPoolTokens");
-        await store.dispatch("dashboard/fetchTVL");
-      }
+const poolTokens = ref('0' as string | undefined)
+const CAPLPrice = computed(() => poolTokens.value || '0.00')
+const buttonString = computed(() =>
+  connected.value ? shortenAddress(activeAccount.value) : 'Connect Wallet')
 
-      showConnectResult(store);
-    };
+const getTokenBalance = async () => {
+  await getPoolTokens()
+  poolTokens.value = format(caplToUSD(1))
+}
 
-    const getTokenBalance = async () => {
-      await store.dispatch("balancer/getPoolTokens");
-      poolTokens.value = format(caplToUSD(1, store));
-      if (poolTokens.value) {
-        CAPLPrice.value = poolTokens.value;
-      }
-    };
-
-    const isConnected = computed(
-      () => store.getters["accounts/isUserConnected"]
-    );
-
-
-    // check the localstorage for determine the user was connected
-    watchEffect(() => {
-      if (localStorage.getItem("isConnected")) {
-        connectWeb3();
-        interval = setInterval(getTokenBalance, 2000);
-      } else {
-        clearInterval(interval);
-      }
-    });
-
-    function showMoons() {
-      store.commit("showMoons", true);
-    }
-
-    return {
-      isConnected,
-      buttonString,
-      CAPLPrice,
-      showMoons,
-      connectWeb3,
-    };
-  },
-  data: function () {
-    return {
-      isShow: false,
-    };
-  },
-};
+watch(connected, (conn) => {
+  if (conn) {
+    connectWeb3()
+    interval = setInterval(getTokenBalance, 2000)
+  } else {
+    clearInterval(interval)
+  }
+})
 </script>
 
 <style>

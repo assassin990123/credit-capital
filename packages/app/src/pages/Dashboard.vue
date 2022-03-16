@@ -6,19 +6,19 @@
           <h2>DAILY EARNINGS</h2>
           <div class="dashboard-daily-earning-panel-value">
             {{ format(dailyEarnings) }} CAPL<br />
-            ({{ format(caplToUSD(dailyEarnings, store)) }} USD)
+            ({{ format(caplToUSD(dailyEarnings)) }} USD)
           </div>
         </div>
         <div class="title-cus">
           <h2>APR</h2>
           <div v-if="dailyEarnings " class="dashboard-daily-earning-panel-value">
-            {{ format((caplToUSD(dailyEarnings, store) / tvl) * 36500) }}%
+            {{ format((caplToUSD(dailyEarnings) / tvl) * 36500) }}%
           </div>
         </div>
         <div class="title-cus">
           <h2>TVL</h2>
-          <div v-if="userPosition" class="dashboard-daily-earning-panel-value">
-            {{ format(lpToUSD(userPosition, store)) }} USD
+          <div v-if="userStakedPosition" class="dashboard-daily-earning-panel-value">
+            {{ format(lpToUSD(userStakedPosition)) }} USD
           </div>
         </div>
       </div>
@@ -27,7 +27,7 @@
           <h2>CAPL</h2>
           <h2>
             {{ format(caplBalance) }} ({{
-              format(caplToUSD(caplBalance, store))
+              format(caplToUSD(caplBalance))
             }}
             USD)
           </h2>
@@ -39,7 +39,7 @@
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
               {{ format(caplBalance) }} CAPL ({{
-                format(caplToUSD(caplBalance, store))
+                format(caplToUSD(caplBalance))
               }}
               USD)
             </div>
@@ -50,7 +50,7 @@
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
               {{ format(lpBalance) }} USDC-CAPL Shares ({{
-                format(lpToUSD(lpBalance, store))
+                format(lpToUSD(lpBalance))
               }}
               USD)
               <br />
@@ -72,7 +72,7 @@
             </div>
             <div class="dashboard-daily-earning-capl-content-value">
               {{ format(dailyEarnings) }} CAPL ({{
-                format(caplToUSD(dailyEarnings, store))
+                format(caplToUSD(dailyEarnings))
               }}
               USD)
             </div>
@@ -82,7 +82,7 @@
               Daily Yield
             </div>
             <div v-if="dailyEarnings" class="dashboard-daily-earning-capl-content-value">
-              {{ format((caplToUSD(dailyEarnings, store) / tvl) * 100) }}%
+              {{ format((caplToUSD(dailyEarnings) / tvl) * 100) }}%
             </div>
           </div>
         </div>
@@ -93,10 +93,10 @@
         <h2>VAULT</h2>
         <div>
           <div class="dashboard-revenue-projection-value">
-            {{ format(userPosition) }} USDC-CAPL<br />
+            {{ format(userStakedPosition) }} USDC-CAPL<br />
           </div>
           <div class="green-txt">
-            {{ format(lpToUSD(userPosition, store)) }} USD
+            {{ format(lpToUSD(userStakedPosition)) }} USD
           </div>
         </div>
         <div class="revenue-block-main">
@@ -105,7 +105,7 @@
             {{ format(dailyEarnings) }} CAPL
           </div>
           <div class="green-txt">
-            {{ format(caplToUSD(dailyEarnings, store)) }} USD
+            {{ format(caplToUSD(dailyEarnings)) }} USD
           </div>
         </div>
       </div>
@@ -118,7 +118,7 @@
               {{ format(dailyEarnings * 7) }} CAPL
             </div>
             <div class="green-txt">
-              ({{ format(caplToUSD(dailyEarnings, store) * 9) }} USD)
+              ({{ format(caplToUSD(dailyEarnings) * 9) }} USD)
             </div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
@@ -127,7 +127,7 @@
               {{ format(dailyEarnings * 30) }} CAPL
             </div>
             <div class="green-txt">
-              ({{ format(caplToUSD(dailyEarnings, store) * 30) }} USD)
+              ({{ format(caplToUSD(dailyEarnings) * 30) }} USD)
             </div>
           </div>
           <div class="dashboard-revenue-projection-content-column">
@@ -137,7 +137,7 @@
               CAPL
             </div>
             <div class="green-txt">
-              ({{ format(caplToUSD(dailyEarnings, store) * 356) }} USD)
+              ({{ format(caplToUSD(dailyEarnings) * 356) }} USD)
             </div>
           </div>
         </div>
@@ -152,7 +152,7 @@
           <h2>WALLET ADDRESS</h2>
           <div
             class="dashboard-portfolio-section-address-value"
-            v-bind:title="wallet"
+            v-bind:title="activeAccount"
           >
             {{ walletAddress }}
           </div>
@@ -163,7 +163,7 @@
             <div>CAPL Tokens</div>
             <div>
               {{ format(caplBalance) }} CAPL ({{
-                format(caplToUSD(caplBalance, store))
+                format(caplToUSD(caplBalance))
               }}
               USD)
             </div>
@@ -176,7 +176,7 @@
             <div>USDC-CAPL Shares</div>
             <div>
               {{ format(lpBalance) }} USDC-CAPL Shares ({{
-                format(lpToUSD(lpBalance, store))
+                format(lpToUSD(lpBalance))
               }}
               USD)
               <div class="stake-link">
@@ -196,8 +196,8 @@
           <div class="dashboard-portfolio-section-panel-row">
             <div>USDC-CAPL Shares</div>
             <div>
-              {{ format(userPosition) }} USDC-CAPL Shares ({{
-                format(lpToUSD(userPosition, store))
+              {{ format(userStakedPosition) }} USDC-CAPL Shares ({{
+                format(lpToUSD(userStakedPosition))
               }}
               USD)
             </div>
@@ -206,7 +206,7 @@
             <div>Pending Rewards</div>
             <div>
               {{ format(pendingRewards) }} CAPL ({{
-                format(caplToUSD(pendingRewards, store))
+                format(caplToUSD(pendingRewards))
               }}
               USD)
             </div>
@@ -323,8 +323,7 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from "@/store";
-import { computed } from "vue";
+import { computed, toRefs } from "vue";
 import {
   caplToUSD,
   lpToUSD,
@@ -332,38 +331,38 @@ import {
   shortenAddress,
   format,
 } from "@/utils";
+import { useAccounts } from "@/use/accounts";
+import { useTokens } from "@/use/tokens";
+import { useDashboard } from "@/use/dashboard";
+import { useRewards } from "@/use/rewards";
 
-const store = useStore();
+const { connected, activeAccount} = useAccounts()
+const { rewards } = useRewards()
+const { tokens } = useTokens()
+const { dashboard } = useDashboard()
 
-const tvl = computed(() => store.getters["dashboard/getTVL"]);
+const { tvl } = toRefs(dashboard)
+const {
+  pendingRewards,
+  caplPerSecond,
+  totalStaked,
+  userStakedPosition
+} = toRefs(rewards)
 
-const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
-const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
-const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
-
-const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
-const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
-
-const userPosition = computed(
-  () => store.getters["rewards/getUserStakedPosition"]
-);
-const caplPerSecond = computed(() => store.getters["rewards/getCaplPerSecond"]);
-const totalStaked = computed(() => store.getters["rewards/getTotalStaked"]);
-
-const pendingRewards = computed(
-  () => store.getters["rewards/getPendingRewards"]
-);
+const caplBalance = computed(() => tokens.capl.balance)
+const usdcBalance = computed(() => tokens.usdc.balance)
+const lpBalance = computed(() => tokens.lp.balance)
 
 const walletAddress = computed(
-  () => isConnected.value ? shortenAddress(wallet.value) : 'Connect'
+  () => connected.value ? shortenAddress(activeAccount.value) : 'Connect'
 )
 const dailyEarnings = computed(() => {
-  if (userPosition.value > 0 &&
+  if (userStakedPosition.value > 0 &&
     caplPerSecond.value > 0 &&
     totalStaked.value > 0
   ) {
     return getDailyEarnings(
-      userPosition.value,
+      userStakedPosition.value,
       caplPerSecond.value,
       totalStaked.value
     )

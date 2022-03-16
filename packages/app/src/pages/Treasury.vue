@@ -77,7 +77,7 @@
           <Tab
             :sections="['Withdraw', 'Deposit', 'Revenue']"
             :value="selected"
-            :onChange="onChangeTab"
+            @change="onChangeTab"
           />
           <div class="tab-content treasury-outstanding">
             <div class="tab-inner-content">
@@ -105,8 +105,8 @@
 import Tab from "@/components/Tab.vue";
 import { ref } from "vue";
 
-const selected = ref("WITHDRAW");
-const onChangeTab = (v) => (selected.value = v);
+const selected = ref("Withdraw");
+const onChangeTab = (sel: string) => (selected.value = sel);
 </script>
 
 <style>

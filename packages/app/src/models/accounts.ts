@@ -3,5 +3,5 @@ export interface AccountState {
   chainId: number | null;
   web3Provider: any;
   signer: any;
-  isConnected: boolean;
+  connected: boolean;
 }

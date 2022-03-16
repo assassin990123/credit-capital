@@ -16,29 +16,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useStore } from "@/store";
-import { format, getDailyEarnings } from "@/utils";
+import { computed } from "vue"
+import { format, getDailyEarnings } from "@/utils"
+import { useAccounts } from "@/use/accounts"
+import { useRewards } from "@/use/rewards"
+import { useDashboard } from "@/use/dashboard"
 
-const store = useStore();
-const isUserConnected = computed(
-  () => store.getters["accounts/isUserConnected"]
-);
+const { connected } = useAccounts()
+const { rewards } = useRewards()
+const { dashboard } = useDashboard()
 
-const userPosition = computed(
-  () => store.getters["rewards/getUserStakedPosition"]
-);
-const caplPerSecond = computed(() => store.getters["rewards/getCaplPerSecond"]);
-const totalStaked = computed(() => store.getters["rewards/getTotalStaked"]);
-
-const tvl = computed(() => {
-  if (!isUserConnected.value) { return '0' }
-  return store.getters['dashboard/getTVL']
-})
+const tvl = computed(() => connected.value ? dashboard.tvl : 0)
 const dailyEarnings = computed(() => getDailyEarnings(
-  userPosition.value,
-  caplPerSecond.value,
-  totalStaked.value
+  rewards.userStakedPosition,
+  rewards.caplPerSecond,
+  rewards.totalStaked
 ))
 </script>
 

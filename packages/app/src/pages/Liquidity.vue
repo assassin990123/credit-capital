@@ -14,7 +14,7 @@
                 <div class="panel-explanation">
                   <input
                     type="number"
-                    @input="onChange()"
+                    @input="checkConnection"
                     v-model="caplLiquidity"
                     class="input-custom"
                     placeholder="0.00"
@@ -34,7 +34,7 @@
                 <div class="panel-explanation">
                   <input
                     type="number"
-                    @input="onChange()"
+                    @input="checkConnection"
                     v-model="usdcLiquidity"
                     class="input-custom"
                     placeholder="0.00"
@@ -70,34 +70,34 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import {  checkAllAllowances } from "@/utils";
+import {
+  checkConnection,
+  checkAvailability
+} from "@/utils/notifications";
 import DappFooter from "@/components/DappFooter.vue";
-import { ref, Ref, watchEffect, computed } from "vue";
-import { useStore } from "@/store";
-import { 
-  checkAllAllowances,
-} from "@/utils";
-import { checkConnection, checkAvailability } from "@/utils/notifications";
+import { useAccounts } from "@/use/accounts";
+import { useTokens } from "@/use/tokens";
+import { useBalancer } from "@/use/balancer";
 
-const store: any = useStore();
-let usdcLiquidity: Ref<number> = ref(0);
-let caplLiquidity: Ref<number> = ref(0);
+const { connected } = useAccounts()
+const { addLiquidity } = useBalancer()
+const { tokens, approveAll } = useTokens()
 
-let approvalFlag: Ref<string | null> = ref("");
-let addLiquidityButtonString: Ref<string> = ref("Add Liquidity");
+let usdcLiquidity = ref(0);
+let caplLiquidity = ref(0);
+
+let approvalFlag = ref('')
+let addLiquidityButtonString = ref("Add Liquidity");
 let addLiquidityButtonDisabled = ref(true);
-let addLiquidityButtonClassNameForState: Ref<string> = ref("btn-custom-gray");
+let addLiquidityButtonClassNameForState = ref("btn-custom-gray");
 
-const isUserConnected = computed(
-  () => store.getters["accounts/isUserConnected"]
-);
+const caplBalance = computed(() => tokens.capl.balance);
+const usdcBalance = computed(() => tokens.usdc.balance);
 
-const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
-const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
-
-watchEffect(async () => {
-  if (!isUserConnected.value) {
-    return;
-  }
+watch(connected, async (connected) => {
+  if (!connected) { return }
   if (
     checkAvailability(caplLiquidity.value, caplBalance.value) &&
     checkAvailability(usdcLiquidity.value, usdcBalance.value)
@@ -114,12 +114,12 @@ watchEffect(async () => {
       addLiquidityButtonClassNameForState.value = "btn-custom-gray";
     } else {
       addLiquidityButtonDisabled.value = false;
-      const { approvalRequired, flag } = await checkAllAllowances(store, [
+      const { approvalRequired, flag } = await checkAllAllowances([
         Number(usdcLiquidity.value),
         Number(caplLiquidity.value),
       ]);
 
-      approvalFlag.value = flag;
+      approvalFlag.value = flag || '';
 
       approvalRequired
         ? ((addLiquidityButtonString.value = "Approve"),
@@ -133,52 +133,19 @@ watchEffect(async () => {
   }
 });
 
-// handles swapping button logic, dependant on current string
-
 // handles adding liquidity button logic, dependant on current string
 // we can assume that if usdcLiquidity > 0 then caplLiquidity > 0
 const handleAddLiquidity = async () => {
-  if (checkConnection(store)) {
-    addLiquidityButtonString.value == "Add Liquidity"
-      ? await addLiquidity()
-      : await approveAll();
-  }
-};
-
-// handles three cases
-// 1. USDC Approvals, 2. CAPL approvals, 3. Both tokens approvals
-// TODO: Refactor these store.dispatch calls into individual functions
-const approveAll = async () => {
-  if (!approvalFlag.value) return;
-
-  if (approvalFlag.value == "USDC") {
-    await store.dispatch("tokens/approveBalancerVault", {
-      symbol: "USDC",
-    });
-  } else if (approvalFlag.value == "CAPL") {
-    await store.dispatch("tokens/approveBalancerVault", {
-      symbol: "CAPL",
-    });
+  if (!checkConnection()) { return }
+  if (addLiquidityButtonString.value === 'Add Liquidity') {
+    await addLiquidity({
+      caplAmount: Number(caplLiquidity.value),
+      usdcAmount: Number(usdcLiquidity.value),
+    })
   } else {
-    await store.dispatch("tokens/approveBalancerVault", {
-      symbol: "USDC",
-    });
-    await store.dispatch("tokens/approveBalancerVault", {
-      symbol: "CAPL",
-    });
+    approveAll(approvalFlag.value)
   }
 };
-
-function addLiquidity() {
-  store.dispatch("balancer/addLiquidity", {
-    caplAmount: Number(caplLiquidity.value),
-    usdcAmount: Number(usdcLiquidity.value),
-  });
-}
-
-function onChange() {
-  checkConnection(store);
-}
 
 const insertBalanceCAPL = () => {
   caplLiquidity.value = caplBalance.value;

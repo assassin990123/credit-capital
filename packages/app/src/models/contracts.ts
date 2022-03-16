@@ -1,8 +1,8 @@
 export interface ContractState {
-  balancerVaultContract: object | null;
-  rewardsContract: object | null;
-  vaultContract: object | null;
-  caplContract: object | null;
-  usdcContract: object | null;
-  lpContract: object | null;
+  balancerVaultContract: any | null;
+  rewardsContract: any | null;
+  vaultContract: any | null;
+  caplContract: any | null;
+  usdcContract: any | null;
+  lpContract: any | null;
 }

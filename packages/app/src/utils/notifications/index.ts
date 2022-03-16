@@ -1,3 +1,4 @@
+import { accounts } from "@/use/accounts"
 import { useToast } from "vue-toastification";
 import ToastComponent from "../../components/notifications/ToastComponent.vue";
 
@@ -7,14 +8,14 @@ const ChainID = process.env.VUE_APP_NETWORK_ID
 
 const toast = useToast();
 let toastID: any;
-export const checkConnection = (store: any) => {
-  if (!store.getters["accounts/isUserConnected"]) {
+export const checkConnection = () => {
+  if (!accounts.connected) {
     dismissNotification();
     handleToasts("info", "Notification", "Please connect your wallet!");
-    return false;
+    return false
   }
 
-  return true;
+  return true
 };
 
 export const checkBalance = (balance: number) => {
@@ -37,8 +38,8 @@ export const checkAvailability = (amount: number, balance: number) => {
   return true;
 };
 
-export const showConnectResult = (store: any) => {
-  if (store.getters["accounts/isUserConnected"]) {
+export const showConnectResult = () => {
+  if (accounts.connected) {
     dismissNotification();
     handleToasts("success", "Notification", "Connected Successfully!")
     return true;

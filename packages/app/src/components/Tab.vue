@@ -2,7 +2,7 @@
   <div class="tab-container">
     <div
       class="tab-item"
-      @click="onChange(section)"
+      @click="$emit('change', section)"
       :class="{
         'last-tab-item': index === sections.length - 1,
         'tab-item-selected': section === value,
@@ -15,14 +15,14 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  props: {
-    sections: [String],
-    value: String,
-    onChange: Function,
-  },
-};
+<script setup lang="ts">
+defineEmits<{
+  (event: 'change', section: string): void
+}>()
+defineProps<{
+  sections: string[],
+  value: string
+}>()
 </script>
 
 <style>

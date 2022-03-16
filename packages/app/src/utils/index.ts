@@ -1,3 +1,7 @@
+import { tokens } from '@/use/tokens'
+import { balancer } from '@/use/balancer'
+import { dashboard } from '@/use/dashboard'
+
 export const format = (n: any) => {
   if (n < 1e5) {
     return Number(n).toFixed(2);
@@ -43,9 +47,9 @@ export const calculateCAPLUSDPrice = (
 //total pool value = USDC balance + capl balance * capl price
 //LP token price = total pool value / lp token supply
 // user positioninUSD = lp token price + user position
-export const calculateLPUSDPrice = (amount: number, store: any): number => {
-  const poolTokens = store.getters["balancer/getPoolTokens"];
-  const lpTokenSupply = store.getters["dashboard/getLpTokenSupply"];
+export const calculateLPUSDPrice = (amount: number): number => {
+  const poolTokens = balancer.poolTokens;
+  const lpTokenSupply = dashboard.lpTokenSupply;
   if (
     poolTokens == null ||
     poolTokens.balances == undefined ||
@@ -100,32 +104,21 @@ export const shortenAddress = (address: string, chars = 3): string => {
 };
 
 export const checkAllowance = (
-  state: any,
   symbol: string,
   amount: number,
   flag: string
 ): boolean => {
-  console.log(flag, symbol, amount);
-  let allowance;
-
-  if (flag == "balancer") {
-    symbol == "CAPL"
-      ? (allowance = state.getters["tokens/getCAPLBalancerVaultAllowance"])
-      : (allowance = state.getters["tokens/getUSDCBalancerVaultAllowance"]);
-  } else if (flag == "stake") {
-    allowance = state.getters["tokens/getLPAllowance"];
-  }
+  const allowance = flag === 'balancer'
+    ? (symbol === 'CAPL' ? tokens.capl.allowance : tokens.usdc.allowance)
+    : flag === 'stake' ? tokens.lp.allowance : 0
   return allowance >= amount;
 };
 
-export const checkAllAllowances = (
-  state: any,
-  amounts: Array<number>
-): { approvalRequired: boolean; flag: string | null } => {
-  const usdcBalancerVaultAllowance =
-    state.getters["tokens/getUSDCBalancerVaultAllowance"];
-  const caplBalancerVaultAllowance =
-    state.getters["tokens/getCAPLBalancerVaultAllowance"];
+export const checkAllAllowances = (amounts: Array<number>): {
+  approvalRequired: boolean; flag: string | null
+} => {
+  const usdcBalancerVaultAllowance = tokens.usdc.allowance
+  const caplBalancerVaultAllowance = tokens.capl.allowance
 
   let count = 0;
   let approvalRequired = false;
@@ -150,15 +143,11 @@ export const checkAllAllowances = (
   // if
 };
 
-export const caplToUSD = (amount: number, store: any): number => {
-  return calculateCAPLUSDPrice(
-    amount,
-    "CAPL",
-    store.getters["balancer/getPoolTokens"]
-  );
+export const caplToUSD = (amount: number): number => {
+  return calculateCAPLUSDPrice(amount, "CAPL", balancer.poolTokens);
 };
-export const lpToUSD = (amount: number, store: any): number => {
-  return calculateLPUSDPrice(amount, store);
+export const lpToUSD = (amount: number): number => {
+  return calculateLPUSDPrice(amount);
 };
 
 export const stringToNumber = (str: any) => {
@@ -188,3 +177,5 @@ export const getDailyEarnings = (
   // caplPerSecond * seconds per day * ratio of user's position vs total staked. Accounting for token decimals.
   return (caplPerSecond * 86400 * userPosition) / totalStaked / 1e18;
 };
+
+export const getEthereum = () => (window as any).ethereum
