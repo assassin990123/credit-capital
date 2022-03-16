@@ -140,3 +140,5 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+packages/sol/contracts/.deps/
