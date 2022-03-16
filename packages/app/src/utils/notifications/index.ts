@@ -44,7 +44,7 @@ export const showConnectResult = (store: any) => {
     return true;
   }
 
-  handleToasts("error", "Notification", "Connected Faild!")
+  handleToasts("error", "Notification", "Connection Failed!")
   return false;
 };
 
