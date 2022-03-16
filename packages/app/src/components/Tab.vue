@@ -16,9 +16,7 @@
 </template>
 
 <script setup lang="ts">
-defineEmits<{
-  (event: 'change', section: string): void
-}>()
+defineEmits(['change'])
 defineProps<{
   sections: string[],
   value: string

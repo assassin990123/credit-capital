@@ -41,7 +41,7 @@ export const useRewards = () => {
   const getUserPosition = async () => {
     if (vaultContract.value === null) { setContracts() }
 
-    const userPosition = vaultContract.value?.getUserPosition(
+    const userPosition = await vaultContract.value?.getUserPosition(
       findObjectContract('LP', tokens, ChainID),
       activeAccount.value
     )

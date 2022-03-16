@@ -117,13 +117,15 @@ const getTokenBalance = async () => {
   poolTokens.value = format(caplToUSD(1))
 }
 
-watch(connected, (conn) => {
-  if (conn) {
+watch(connected, () => {
+  if (localStorage.getItem('isConnected')) {
     connectWeb3()
     interval = setInterval(getTokenBalance, 2000)
   } else {
     clearInterval(interval)
   }
+}, {
+  immediate: true
 })
 </script>
 

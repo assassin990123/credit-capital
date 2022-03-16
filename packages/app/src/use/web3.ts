@@ -81,7 +81,6 @@ export const useWeb3 = () => {
   }
 
   const initWeb3 = async () => {
-    console.log('init web3', connected.value)
     if (connected.value) { return }
 
     const ethProvider: any = await detectEthereumProvider()
@@ -94,7 +93,7 @@ export const useWeb3 = () => {
         })
 
         await checkNetwork()
-        accounts.connected = true
+        connected.value = true
         accounts.activeAccount = accounts[0]
         accounts.web3Provider = provider
         accounts.signer = markRaw(provider.getSigner(activeAccount.value))

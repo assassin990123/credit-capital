@@ -39,16 +39,14 @@ export const useBalancer = () => {
     const poolTokens = await balancerVaultContract.value.getPoolTokens(poolID)
 
     const usdcBalance = poolTokens.balances[0]
-    const caplBalance = poolTokens.blaances[1]
-
-    const balances = [
-      ethers.utils.formatUnits(usdcBalance, 6),
-      ethers.utils.formatEther(caplBalance)
-    ]
+    const caplBalance = poolTokens.balances[1]
 
     balancer.poolTokens = {
       tokens: poolTokens.tokens,
-      balances: balances
+      balances: [
+        ethers.utils.formatUnits(usdcBalance, 6),
+        ethers.utils.formatEther(caplBalance)
+      ]
     }
   }
 
