@@ -324,7 +324,7 @@
 
 <script setup lang="ts">
 import { useStore } from "@/store";
-import { computed, watchEffect, ref, Ref } from "vue";
+import { computed } from "vue";
 import {
   caplToUSD,
   lpToUSD,
@@ -334,8 +334,6 @@ import {
 } from "@/utils";
 
 const store = useStore();
-
-const dailyEarnings: Ref<number> = ref(0);
 
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
 
@@ -356,24 +354,22 @@ const pendingRewards = computed(
   () => store.getters["rewards/getPendingRewards"]
 );
 
-let walletAddress = ref("Connect");
-
-watchEffect(() => {
-  isConnected.value
-    ? (walletAddress.value = shortenAddress(wallet.value))
-    : (walletAddress.value = "Connect");
-  if (
-    userPosition.value > 0 &&
+const walletAddress = computed(
+  () => isConnected.value ? shortenAddress(wallet.value) : 'Connect'
+)
+const dailyEarnings = computed(() => {
+  if (userPosition.value > 0 &&
     caplPerSecond.value > 0 &&
     totalStaked.value > 0
   ) {
-    dailyEarnings.value = getDailyEarnings(
+    return getDailyEarnings(
       userPosition.value,
       caplPerSecond.value,
       totalStaked.value
-    );
+    )
   }
-});
+  return 0
+})
 </script>
 
 <style>

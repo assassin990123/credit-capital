@@ -100,10 +100,12 @@ import { shortenAddress, caplToUSD, format } from "@/utils";
 export default {
   setup() {
     const store = useStore();
-    let interval: any;
+    const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
+    let interval: any;
     let CAPLPrice = reactive(ref("0.00"));
-    let buttonString = ref("Connect Wallet");
+    let buttonString = computed(() =>
+      isConnected.value ? shortenAddress(wallet.value) : 'Connect Wallet');
     let poolTokens: Ref<string | undefined> = reactive(ref("0"));
 
     const connectWeb3 = async () => {
@@ -129,7 +131,6 @@ export default {
       () => store.getters["accounts/isUserConnected"]
     );
 
-    const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
     // check the localstorage for determine the user was connected
     watchEffect(() => {
@@ -139,12 +140,6 @@ export default {
       } else {
         clearInterval(interval);
       }
-    });
-
-    watchEffect(() => {
-      isConnected.value
-        ? (buttonString.value = shortenAddress(wallet.value))
-        : (buttonString.value = "Connect Wallet");
     });
 
     function showMoons() {

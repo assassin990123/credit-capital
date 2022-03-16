@@ -10,24 +10,15 @@
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import { useStore } from "@/store";
-import { computed, watchEffect } from "vue";
+import { computed, watch } from "vue";
 
 document.title = "CreditCapital: Your Personal, Private Hedge Fund";
-let interval;
+let interval: any;
 const store = useStore();
 // create contract instances with provider
 store.dispatch("contracts/setContracts");
 
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
-
-// watch for user connection
-watchEffect(async () => {
-  if (isConnected.value) {
-    interval = setInterval(w3Lopp, 2000);
-  } else {
-    clearInterval(interval);
-  }
-});
 
 const w3Lopp = () => {
   store.dispatch("tokens/getAllowances");
@@ -37,6 +28,14 @@ const w3Lopp = () => {
   store.dispatch("rewards/getPendingRewards");
   store.dispatch("dashboard/fetchTVL");
 };
+
+watch(isConnected, (connected) => {
+  if (connected) {
+    interval = setInterval(w3Lopp, 2000)
+  } else {
+    clearInterval(interval)
+  }
+})
 </script>
 
 <style>

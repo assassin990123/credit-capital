@@ -29,7 +29,7 @@
 <script lang="ts" setup>
 // @ts-ignore
 import DappFooter from "@/components/DappFooter.vue";
-import { computed, watchEffect, ref } from "vue";
+import { computed } from "vue";
 // @ts-ignore
 import { useStore } from "@/store";
 // @ts-ignore
@@ -37,8 +37,6 @@ import { calculateCAPLUSDPrice, format } from "@/utils";
 import { checkConnection } from "@/utils/notifications";
 
 const store = useStore();
-const pendingRewardsCAPL = ref(0);
-const pendingRewardsUSDC = ref(0);
 
 const connected = computed(() => store.getters["accounts/isUserConnected"]);
 const pendingRewards = computed(
@@ -51,24 +49,16 @@ const claim = () => {
   }
 };
 
-watchEffect(async () => {
-  if (connected.value === true) {
-    if (pendingRewards.value >= 0) {
-      await store.dispatch("balancer/getPoolTokens");
-      pendingRewardsCAPL.value = format(pendingRewards.value);
-      pendingRewardsUSDC.value = format(
-        calculateCAPLUSDPrice(
-          pendingRewards.value,
-          "CAPL",
-          store.getters["balancer/getPoolTokens"]
-        )
-      );
-    }
-  } else {
-    pendingRewardsCAPL.value = format("0");
-    pendingRewardsUSDC.value = format("0");
-  }
-});
+const pendingRewardsCAPL = computed(
+  () => connected.value ? format(pendingRewards.value) : 0
+)
+const pendingRewardsUSDC = computed(() => connected.value ? format(
+  calculateCAPLUSDPrice(
+    pendingRewards.value,
+    "CAPL",
+    store.getters["balancer/getPoolTokens"]
+  )
+) : 0)
 </script>
 
 <style>
