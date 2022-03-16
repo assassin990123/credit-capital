@@ -18,7 +18,7 @@ yarn && yarn serve
 
 Check out the `app` repository. In there you will find scaffolding for our app.
 
-The stack is `vue3`, `typescript`, `vuex`, `web3`, `web3modal`, `ethers` and several wallet provider librarires.
+The stack is `vue3`, `typescript`, `web3`, `web3modal`, `ethers` and several wallet provider librarires.
 
 ### features
 
