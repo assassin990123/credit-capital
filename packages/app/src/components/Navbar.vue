@@ -102,7 +102,7 @@ export default {
     const store = useStore();
     let interval: any;
 
-    let CAPLPrice = reactive(ref("0.00"));
+    let CAPLPrice = computed(() => poolTokens.value || '0.00');
     let buttonString = ref("Connect Wallet");
     let poolTokens: Ref<string | undefined> = reactive(ref("0"));
 
@@ -120,9 +120,6 @@ export default {
     const getTokenBalance = async () => {
       await store.dispatch("balancer/getPoolTokens");
       poolTokens.value = format(caplToUSD(1, store));
-      if (poolTokens.value) {
-        CAPLPrice.value = poolTokens.value;
-      }
     };
 
     const isConnected = computed(
