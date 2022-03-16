@@ -44,7 +44,11 @@
     "parserOptions": {
       "parser": "@typescript-eslint/parser"
     },
-    "rules": {}
+    "rules": {},
+    "globals": {
+      "defineProps": "readonly",
+      "defineEmits": "readonly"
+    }
   },
   "browserslist": [
     "> 1%",
