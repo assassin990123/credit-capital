@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import DappFooter from "@/components/DappFooter.vue";
-import { ref, Ref, watch, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import { useStore } from "@/store";
 import {
   calculateCAPLUSDPrice,
