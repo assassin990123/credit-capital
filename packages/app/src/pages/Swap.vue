@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import DappFooter from "@/components/DappFooter.vue";
-import { ref, Ref, watchEffect, computed } from "vue";
+import { ref, Ref, watch, computed } from "vue";
 import { useStore } from "@/store";
 import {
   calculateCAPLUSDPrice,
@@ -82,11 +82,11 @@ import {
 } from "@/utils/notifications";
 
 const store: any = useStore();
-let swapAmount: Ref<number> = ref(0);
-let swapTokenSymbol: Ref<string> = ref("USDC");
-let swapToTokenSymbol: Ref<string> = ref("CAPL");
+let swapAmount = ref(0);
+let swapTokenSymbol = ref("USDC");
+let swapToTokenSymbol = ref("CAPL");
 
-let swapTokenResult: Ref<string> = ref("");
+let swapTokenResult = ref("");
 let swapButtonString = ref("Swap");
 let swapButtonClassName = ref("btn-custom-gray");
 
@@ -97,9 +97,9 @@ const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
 
-let swapButtonDisabled:Ref<boolean> = ref(false)
+let swapButtonDisabled = ref(false)
 
-watchEffect(async () => {
+watch(isUserConnected, async () => {
   if (isUserConnected.value) {
     if (swapAmount.value == 0) {
       swapButtonClassName.value = "btn-custom-gray";

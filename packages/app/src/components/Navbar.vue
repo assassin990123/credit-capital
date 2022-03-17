@@ -93,7 +93,7 @@
 <script lang="ts">
 import { computed } from "vue";
 import { useStore } from "@/store";
-import { ref, watchEffect, Ref, reactive } from "vue";
+import { ref, watch, reactive } from "vue";
 import { showConnectResult } from "@/utils/notifications";
 import { shortenAddress, caplToUSD, format } from "@/utils";
 
@@ -104,7 +104,7 @@ export default {
 
     let CAPLPrice = computed(() => poolTokens.value || '0.00');
     let buttonString = ref("Connect Wallet");
-    let poolTokens: Ref<string | undefined> = reactive(ref("0"));
+    let poolTokens = reactive(ref("0" as string | undefined));
 
     const connectWeb3 = async () => {
       await store.dispatch("accounts/connectWeb3");
@@ -129,7 +129,7 @@ export default {
     const wallet = computed(() => store.getters["accounts/getActiveAccount"]);
 
     // check the localstorage for determine the user was connected
-    watchEffect(() => {
+    watch(isConnected, () => {
       if (localStorage.getItem("isConnected")) {
         connectWeb3();
         interval = setInterval(getTokenBalance, 2000);
@@ -138,7 +138,7 @@ export default {
       }
     });
 
-    watchEffect(() => {
+    watch(isConnected, () => {
       isConnected.value
         ? (buttonString.value = shortenAddress(wallet.value))
         : (buttonString.value = "Connect Wallet");

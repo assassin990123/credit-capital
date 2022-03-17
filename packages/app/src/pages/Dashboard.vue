@@ -324,7 +324,7 @@
 
 <script setup lang="ts">
 import { useStore } from "@/store";
-import { computed, watchEffect, ref, Ref } from "vue";
+import { computed, watch, ref } from "vue";
 import {
   caplToUSD,
   lpToUSD,
@@ -335,7 +335,7 @@ import {
 
 const store = useStore();
 
-const dailyEarnings: Ref<number> = ref(0);
+const dailyEarnings = ref(0);
 
 const tvl = computed(() => store.getters["dashboard/getTVL"]);
 
@@ -358,7 +358,7 @@ const pendingRewards = computed(
 
 let walletAddress = ref("Connect");
 
-watchEffect(() => {
+watch(isConnected, () => {
   isConnected.value
     ? (walletAddress.value = shortenAddress(wallet.value))
     : (walletAddress.value = "Connect");

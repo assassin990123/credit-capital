@@ -965,7 +965,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watchEffect } from "vue";
+import { computed, watch } from "vue";
 import { useStore } from "@/store";
 // import gearicon from "../../public/images/gear-icon.png";
 
@@ -976,7 +976,7 @@ const connected = computed(() => store.getters.getConnected);
 // eslint-disable-next-line no-unused-vars
 const wallet = computed(() => store.getters.getWallet);
 
-watchEffect(() => {
+watch(connected, () => {
   if (connected.value) {
     // do web3 stuff
   }

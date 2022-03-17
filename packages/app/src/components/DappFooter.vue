@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, Ref, ref, watchEffect } from "vue";
+import { computed, ref, watch } from "vue";
 import { useStore } from "@/store";
 import { format, getDailyEarnings } from "@/utils";
 
@@ -26,7 +26,7 @@ const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
 
-const dailyEarnings: Ref<number> = ref(0);
+const dailyEarnings = ref(0);
 // daily earnings
 const userPosition = computed(
   () => store.getters["rewards/getUserStakedPosition"]
@@ -34,7 +34,7 @@ const userPosition = computed(
 const caplPerSecond = computed(() => store.getters["rewards/getCaplPerSecond"]);
 const totalStaked = computed(() => store.getters["rewards/getTotalStaked"]);
 
-watchEffect(async () => {
+watch(isUserConnected, async () => {
   if (isUserConnected.value === true) {
     // @ts-ignore
     tvl.value = format(computed(() => store.getters["dashboard/getTVL"]).value);

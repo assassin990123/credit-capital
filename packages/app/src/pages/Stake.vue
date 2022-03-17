@@ -63,7 +63,7 @@
 <script setup lang="ts">
 // @ts-ignore
 import DappFooter from "@/components/DappFooter.vue";
-import { watchEffect, ref, Ref, computed } from "vue";
+import { watch, ref, computed } from "vue";
 // @ts-ignore
 import { 
   checkAllowance, 
@@ -78,9 +78,9 @@ import {
 } from "@/utils/notifications";
 
 const store = useStore();
-const stakeAmount: Ref<number> = ref(0);
-const stakeButtonText: Ref<string> = ref("Stake");
-const stakeButtonClassName: Ref<string> = ref("btn-custom-gray");
+const stakeAmount = ref(0);
+const stakeButtonText = ref("Stake");
+const stakeButtonClassName = ref("btn-custom-gray");
 const unstakeAmount = ref(0);
 // for we make the user withdraw the total unlockedAmount.
 const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
@@ -89,10 +89,10 @@ const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
 
-let stakeButtonDisabled:Ref<boolean> = ref(false)
+let stakeButtonDisabled = ref(false)
 
 // this function checks the allowance a user has alloted our rewards contract via the LP token
-watchEffect(async () => {
+watch(isUserConnected, async () => {
   if (
     isUserConnected.value
   ) {

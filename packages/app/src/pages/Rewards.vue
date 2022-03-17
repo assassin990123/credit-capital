@@ -29,7 +29,7 @@
 <script lang="ts" setup>
 // @ts-ignore
 import DappFooter from "@/components/DappFooter.vue";
-import { computed, watchEffect, ref } from "vue";
+import { computed, watch, ref } from "vue";
 // @ts-ignore
 import { useStore } from "@/store";
 // @ts-ignore
@@ -51,7 +51,7 @@ const claim = () => {
   }
 };
 
-watchEffect(async () => {
+watch(connected, async () => {
   if (connected.value === true) {
     if (pendingRewards.value >= 0) {
       await store.dispatch("balancer/getPoolTokens");

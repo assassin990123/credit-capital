@@ -71,7 +71,7 @@
 
 <script setup lang="ts">
 import DappFooter from "@/components/DappFooter.vue";
-import { ref, Ref, watchEffect, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import { useStore } from "@/store";
 import { 
   checkAllAllowances,
@@ -79,13 +79,13 @@ import {
 import { checkConnection, checkAvailability } from "@/utils/notifications";
 
 const store: any = useStore();
-let usdcLiquidity: Ref<number> = ref(0);
-let caplLiquidity: Ref<number> = ref(0);
+let usdcLiquidity = ref(0);
+let caplLiquidity = ref(0);
 
-let approvalFlag: Ref<string | null> = ref("");
-let addLiquidityButtonString: Ref<string> = ref("Add Liquidity");
+let approvalFlag = ref("" as string | null);
+let addLiquidityButtonString = ref("Add Liquidity");
 let addLiquidityButtonDisabled = ref(true);
-let addLiquidityButtonClassNameForState: Ref<string> = ref("btn-custom-gray");
+let addLiquidityButtonClassNameForState = ref("btn-custom-gray");
 
 const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
@@ -94,7 +94,7 @@ const isUserConnected = computed(
 const caplBalance = computed(() => store.getters["tokens/getCAPLBalance"]);
 const usdcBalance = computed(() => store.getters["tokens/getUSDCBalance"]);
 
-watchEffect(async () => {
+watch(isUserConnected, async () => {
   if (!isUserConnected.value) {
     return;
   }
