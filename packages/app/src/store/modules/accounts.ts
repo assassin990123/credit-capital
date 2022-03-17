@@ -60,7 +60,15 @@ const actions = {
         const accounts = await (window as any).ethereum.request({
           method: "eth_requestAccounts",
         });
-        await actions.checkNetwork();
+        
+        // get the chain id
+        const network: number = await (window as any).ethereum.request({ method: 'net_version' });
+        commit("setChainData", network);
+
+        if (network != parseInt(ChainID)) {
+          await actions.checkNetwork();
+        }
+
         commit("setIsConnected", true);
         commit("setActiveAccount", accounts[0]);
         commit("setWeb3Provider", markRaw(provider));
@@ -93,31 +101,20 @@ const actions = {
     });
 
     (window as any).ethereum.on("chainChanged", async (chainId: any) => {
-      await actions.checkNetwork();
-      commit("setChainData", chainId);
-      commit("setWeb3Provider", state.web3Provider);
+      if (chainId !== process.env.VUE_APP_NETWORK_ID_HEX) commit('setChainData', 0)
+      else commit('setChainData', parseInt(ChainID))
+      // set chain id to clear interval function
+      // try to change network
+      window.location.reload()
+      //await actions.checkNetwork();
+      //commit("setWeb3Provider", state.web3Provider);
     });
-
-    (window as any).ethereum.on(
-      "disconnect",
-      async (error: ProviderRpcError) => {
-        try {
-          // remove the connection state from localstorage
-          localStorage.removeItem("isConnected");
-
-          // reload page
-          window.location.reload();
-        } catch (e) {
-          console.error("error: ", error.message);
-        }
-      }
-    );
   },
 
   async checkNetwork() {
     if ((window as any).ethereum) {
       const hexadecimal = "0x" + parseInt(ChainID).toString(16);
-
+      
       try {
         // check if the chain to connect to is installed
         await (window as any).ethereum.request({
@@ -142,7 +139,7 @@ const actions = {
             console.error(addError);
           }
         }
-        console.error(error);
+        console.error("Error message when Chain Id changed: ", error);
       }
     }
   },
