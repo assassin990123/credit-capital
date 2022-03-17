@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <section class="section-1">
-      <div class="hero wow fadeInDown ">
+      <div class="hero wow fadeInDown">
         <div class="container">
           <div class="sec-1-inner">
             <p>
@@ -803,7 +803,8 @@
               <div class="treasury-inner-con">
                 <div class="treasury-item-block">
                   <div class="treasury-icon-area">
-                    <img src="/images/gear.png" />
+                    <!-- <img src="/images/gear.png" /> -->
+                    <i class="las la-cogs"></i>
                   </div>
                   <div class="treasury-heading-main">
                     <h2>Sovereign Treasury</h2>
@@ -838,7 +839,8 @@
               <div class="treasury-inner-con">
                 <div class="treasury-item-block">
                   <div class="treasury-icon-area">
-                    <img src="/images/gear.png" />
+                    <!-- <img src="/images/gear.png" /> -->
+                    <i class="las la-cogs"></i>
                   </div>
                   <div class="treasury-heading-main">
                     <h2>Liquidity pool</h2>

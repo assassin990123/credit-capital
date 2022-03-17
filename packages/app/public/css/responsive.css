@@ -356,6 +356,105 @@ This file is use to implement the responsive design.
 
                 06 -- Homepage
 ==============================================*/
+@media only screen and (min-width: 1400px) {
+  .section-1 {
+    min-height: 800px;
+  }
+  .section-2 .sec-2-inner .text-right h1 {
+    padding-top: 120px;
+  }
+}
+
+@media only screen and (max-width: 1270px) {
+  .section-2 .sec-2-inner .text-right {
+    padding-top: 50px;
+  }
+  .section-2 .sec-2-inner .text-right p {
+    padding-right: 0;
+  }
+  .section-2 .sec-2-inner .text-right h1 {
+    padding-right: 0;
+  }
+  .sec-3-text-right {
+    padding-left: 210px;
+    padding-top: 110px;
+    position: relative;
+    z-index: 2;
+  }
+}
+
+@media only screen and (max-width: 962px) {
+  .section-2 {
+    margin-top: 50px;
+    margin-bottom: 25px;
+  }
+  .sec-3-text-right {
+    padding: 60px 30px 0 350px;
+  }
+  .section-2 .sec-2-inner .text-right {
+    gap: 45px;
+  }
+  .section-2 .sec-2-inner .text-right {
+    padding: 10px 0;
+    font-size: 18px;
+  }
+  .section-2 .sec-2-inner .text-right h1 {
+    padding: 0;
+    font-size: 25px;
+  }
+  .section-3 {
+    padding: 0;
+    margin-bottom: 50px;
+  }
+  .section-3 .sec-3-inner {
+    display: flex;
+    flex-direction: column;
+  }
+  .section-4 {
+    padding: 0;
+  }
+  .section-4 .sec-4-inner .sec-4 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .section-4 .sec-4-inner .sec-4 .sec-4-col-1,
+  .section-4 .sec-4-inner .sec-4 .sec-4-col-2,
+  .section-4 .sec-4-inner .sec-4 .sec-4-col-3,
+  .section-4 .sec-4-inner .sec-4 .sec-4-col-4,
+  .section-4 .sec-4-inner .sec-4 .sec-4-col-5 {
+    max-width: 235px;
+    max-height: 380px;
+  }
+  .section-5 .sec-5-inner {
+    margin-left: -120px;
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+  }
+  .sec-5-right h1 {
+    font-size: 60px;
+  }
+  .section-6 {
+    padding: 0;
+  }
+  .section-6 .sect-6-center .sec-6-inner {
+    gap: 20px;
+  }
+  .sec-7-content .sec-7-right-ol .sec-7-inner-box-num {
+    font-size: 50px;
+  }
+  .sec-7-content .sec-7-right-ol .sec-7-inner-box-text {
+    margin-left: 20px;
+  }
+  .sec-7-content .sec-7-left-bl {
+    padding: 30px;
+    transform: translateY(15%);
+  }
+  .platform-right-inner {
+    margin-top: 50px;
+  }
+}
 
 @media only screen and (max-width: 601px) {
   .section-1 {
@@ -427,7 +526,7 @@ This file is use to implement the responsive design.
   }
   .user-roles-sec-main {
     padding: 0;
-    margin: 50px 0;
+    margin: 50px 20px;
   }
   .user-roles-con-main h3 {
     font-size: 25px;
@@ -503,14 +602,11 @@ This file is use to implement the responsive design.
     width: 100%;
   }
   .section-7 {
-    padding: 50px 0;
-    margin: 100px 0;
+    padding: 0;
+    margin: 50px 0;
   }
   .sec-7-content {
     display: block;
-  }
-  .sec-7-content .sec-7-right-ol .sec-7-inner-box-text .sec-7-tex-box {
-    margin-left: 40px;
   }
   .sec-7-content .sec-7-left-bl {
     padding: 0;
@@ -524,6 +620,8 @@ This file is use to implement the responsive design.
   }
   .user-roles-inner {
     padding: 0;
+    margin-left: 20px;
+    margin-right: 20px;
   }
   .staker-con-block-area p {
     max-width: 100%;
@@ -539,13 +637,13 @@ This file is use to implement the responsive design.
   }
   .stable-token-con-area-inner {
     padding: 50px 30px;
-    width: 80%;
+    width: 90%;
   }
   .stable-token-con-area-inner h2 {
     font-size: 30px;
   }
   .treasury-inner-con {
-    width: 80%;
+    width: 90%;
   }
   .treasury-item-block {
     flex-flow: column wrap;
@@ -575,6 +673,7 @@ This file is use to implement the responsive design.
   }
   .platform-left-heading h2 {
     font-size: 30px;
+    display: flex;
   }
   .platform-left-main-sec {
     margin-top: -50px;
