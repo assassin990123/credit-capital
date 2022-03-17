@@ -8526,7 +8526,7 @@ button.tab-inner-content-item {
 /* Our goal start here */
 
 .section-4 {
-  padding: 100px 0;
+  padding: 80px 0;
 }
 
 .section-4 .sec-4-inner {
@@ -9102,8 +9102,8 @@ margin: 0 auto;
 .roadmap-complete {
   background: linear-gradient(
     90deg,
-    rgba(208, 255, 123, 1) 0%,
-    rgba(142, 255, 9, 1) 100%
+    rgba(255, 208, 123, 1) 0%,
+    rgba(255, 142, 9, 1) 100%
   );
 }
 .roadmap-block-left h3 {
