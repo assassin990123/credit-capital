@@ -464,7 +464,7 @@
                   <h3>8</h3>
                 </div>
                 <div class="roadmap-block-right">
-                  <h4>8: Multi Chain Asset Managements</h4>
+                  <h4>8: Multi Chain Asset Management</h4>
                   <p>
                     Modify and deploy contracts on multiple chains: Polygon,
                     Fantom, Avalanche, Ethereum. Utilize existing, or build
