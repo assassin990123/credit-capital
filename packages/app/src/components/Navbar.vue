@@ -93,7 +93,7 @@
 <script lang="ts">
 import { computed } from "vue";
 import { useStore } from "@/store";
-import { ref, watch, reactive } from "vue";
+import { ref, watch } from "vue";
 import { showConnectResult } from "@/utils/notifications";
 import { shortenAddress, caplToUSD, format } from "@/utils";
 
