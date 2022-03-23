@@ -37,10 +37,11 @@ import { calculateCAPLUSDPrice, format } from "@/utils";
 import { checkConnection } from "@/utils/notifications";
 
 const store = useStore();
-const pendingRewardsCAPL = ref(0);
-const pendingRewardsUSDC = ref(0);
+const pendingRewardsCAPL = ref('0' as string | undefined);
+const pendingRewardsUSDC = ref('0' as string | undefined);
 
 const connected = computed(() => store.getters["accounts/isUserConnected"]);
+const chainId = computed(() => store.getters["accounts/getChainId"]);
 const pendingRewards = computed(
   () => store.getters["rewards/getPendingRewards"]
 );
@@ -52,7 +53,7 @@ const claim = () => {
 };
 
 watch(connected, async () => {
-  if (connected.value === true) {
+  if (connected.value === true && Number(chainId.value) == parseInt(process.env.VUE_APP_NETWORK_ID!)) {
     if (pendingRewards.value >= 0) {
       await store.dispatch("balancer/getPoolTokens");
       pendingRewardsCAPL.value = format(pendingRewards.value);

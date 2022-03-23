@@ -104,11 +104,12 @@ export default {
 
     let CAPLPrice = computed(() => poolTokens.value || '0.00');
     let buttonString = ref("Connect Wallet");
-    let poolTokens = reactive(ref("0" as string | undefined));
+    let poolTokens = ref('0' as string | undefined);
+    const chainId = computed(() => store.getters["accounts/getChainId"]);
 
     const connectWeb3 = async () => {
       await store.dispatch("accounts/connectWeb3");
-      if (isConnected.value) {
+      if (isConnected.value && chainId.value == process.env.VUE_APP_NETWORK_ID) {
         await store.dispatch("rewards/getRewardsInfo");
         await store.dispatch("balancer/getPoolTokens");
         await store.dispatch("dashboard/fetchTVL");
@@ -132,6 +133,9 @@ export default {
     watch(isConnected, () => {
       if (localStorage.getItem("isConnected")) {
         connectWeb3();
+      }
+
+      if (isConnected.value && chainId.value == process.env.VUE_APP_NETWORK_ID) {
         interval = setInterval(getTokenBalance, 2000);
       } else {
         clearInterval(interval);

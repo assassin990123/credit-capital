@@ -19,12 +19,14 @@ const store = useStore();
 store.dispatch("contracts/setContracts");
 
 const isConnected = computed(() => store.getters["accounts/isUserConnected"]);
+const chainId = computed(() => store.getters["accounts/getChainId"]);
 
 // watch for user connection
 watch(isConnected, async () => {
-  if (isConnected.value) {
+  if (isConnected.value && Number(chainId.value) == parseInt(process.env.VUE_APP_NETWORK_ID!)) {
     interval = setInterval(w3Lopp, 2000);
   } else {
+    // @ts-ignore
     clearInterval(interval);
   }
 });
