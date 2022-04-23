@@ -62,6 +62,8 @@ interface ITreasuryStorage {
         view
         returns (IUserPositions.UserPosition memory);
 
+    function assetsUnderManagement() public returns (uint256);
+
     function getUnlockedAmount(address _token, address _user)
         external
         view

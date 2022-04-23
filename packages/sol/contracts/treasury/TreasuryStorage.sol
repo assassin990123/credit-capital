@@ -19,7 +19,7 @@ contract TreasuryStorage is AccessControl {
         keccak256("REVENUE_CONTROLLER");
 
     // tracking the total assets under the management (contract balance + outstanding(loanded, debt etc...))
-    uint256 assetsUnderManagement;
+    uint256 public assetsUnderManagement;
 
     // treasury shares represent a users percentage amount in the treasury pot
     ITreasuryShares treasuryShares;

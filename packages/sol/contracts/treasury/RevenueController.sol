@@ -143,7 +143,7 @@ contract RevenueController is AccessControl {
         uint256 profit = IERC20(_token).balanceOf(address(this));
 
         // get the total amount the assets (total amount in the contract + outstanding amount)
-        uint256 assetsUnderManagement = ITreasuryStorage(treasuryStorage).getAUM();
+        uint256 assetsUnderManagement = ITreasuryStorage(treasuryStorage).assetsUnderManagement();
 
         // get the user position
         IUserPositions.UserPosition memory userPosition = ITreasuryStorage(
