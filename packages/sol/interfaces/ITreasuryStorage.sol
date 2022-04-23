@@ -25,8 +25,7 @@ interface ITreasuryStorage {
     function setUserPosition(
         address _token,
         address _user,
-        uint256 _profit,
-        uint256 _lastRequestBlock
+        uint256 _profit
     ) external;
 
     function addPool(address _token) external;

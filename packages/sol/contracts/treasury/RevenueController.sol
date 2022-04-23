@@ -19,9 +19,6 @@ contract RevenueController is AccessControl {
     // all principal must go back to the treasury, profit stays here.
     address treasuryStorage;
 
-    // block counts per day
-    uint256 blocksPerDay = 1 days / 6; // this value comes from a block in polygon chain is generated every 6 seconds.
-
     event Deposit(address indexed _token, address _user, uint256 _amount);
     event PoolUpdated(address indexed _token, uint256 _amount);
     event PoolAdded(address indexed _token);
@@ -98,14 +95,13 @@ contract RevenueController is AccessControl {
             _principal
         );
 
-        // set the last distribution block
-        // update user state(in this case - the profit) in the storage
-        ITreasuryStorage(treasuryStorage).setUserPosition(
-            _token,
-            msg.sender,
-            0,
-            block.number
-        );
+        // // set the last distribution block
+        // // update user state(in this case - the profit) in the storage
+        // ITreasuryStorage(treasuryStorage).setUserPosition(
+        //     _token,
+        //     msg.sender,
+        //     0
+        // );
 
         // the profit remains here
         IERC20(_token).safeTransferFrom(msg.sender, address(this), _profit);
@@ -154,7 +150,7 @@ contract RevenueController is AccessControl {
             treasuryStorage
         ).getUserPosition(_token, msg.sender);
 
-        // get passed block count for calcualtion of distribution
+        // get user weight count for calcualtion of distribution
         uint256 allocPerShare = userPosition.totalAmount / assetsUnderManagement;
 
         // get total amount to distribute
@@ -171,8 +167,7 @@ contract RevenueController is AccessControl {
         ITreasuryStorage(treasuryStorage).setUserPosition(
             _token,
             msg.sender,
-            allocAmount,
-            block.number
+            allocAmount
         );
 
         // update the pool state
