@@ -25,7 +25,6 @@ contract TreasuryStorage is AccessControl {
         uint256 totalAmount;
         uint256 loanedAmount; // amount that has been taken out of the treasury storage as a loan
         uint256 profit;
-        uint256 lastAllocRequestBlock; // track the last block when the profit has distributed from the RevenueController
     }
 
     // Mapping from user to userpostion of the token
@@ -195,7 +194,6 @@ contract TreasuryStorage is AccessControl {
             totalAmount: _totalAmount,
             loanedAmount: 0,
             profit: 0,
-            lastAllocRequestBlock: block.number
         });
     }
 
@@ -203,7 +201,6 @@ contract TreasuryStorage is AccessControl {
         address _token,
         address _user,
         uint256 _profit,
-        uint256 _lastAllockRequetBlock
     ) external onlyRole(REVENUE_CONTROLLER) {
         UserPosition storage userPosition = UserPositions[_user][_token];
         unchecked {
@@ -212,7 +209,6 @@ contract TreasuryStorage is AccessControl {
         unchecked {
             userPosition.totalAmount += _profit;
         }
-        userPosition.lastAllocRequestBlock = _lastAllockRequetBlock;
     }
 
     function addPool(address _token) external onlyRole(REVENUE_CONTROLLER) {
