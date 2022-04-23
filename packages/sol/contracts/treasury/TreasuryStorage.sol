@@ -210,7 +210,7 @@ contract TreasuryStorage is AccessControl {
         UserPositions[_user][_token] = UserPosition({
             totalAmount: _totalAmount,
             loanedAmount: 0,
-            profit: 0,
+            profit: 0
         });
 
         // update the AUM amount
@@ -221,7 +221,7 @@ contract TreasuryStorage is AccessControl {
     function setUserPosition(
         address _token,
         address _user,
-        uint256 _profit,
+        uint256 _profit
     ) external onlyRole(REVENUE_CONTROLLER) {
         UserPosition storage userPosition = UserPositions[_user][_token];
 

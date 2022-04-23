@@ -60,7 +60,7 @@ contract Vault is AccessControl, Pausable {
         addPool(_token, _rewardsPerSecond);
     }
 
-    function setTimelock(uint256 _timelock) external onlyRole(DEFAULT_ADMIN_ROLE) () {
+    function setTimelock(uint256 _timelock) external onlyRole(DEFAULT_ADMIN_ROLE) {
         timelock = _timelock;
     }
 
