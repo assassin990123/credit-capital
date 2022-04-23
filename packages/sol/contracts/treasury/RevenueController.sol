@@ -138,12 +138,16 @@ contract RevenueController is AccessControl {
         @dev - this function calculates the amount of access token to distribute to the treasury storage contract:
              -  current access token balance / blocksPerDay * 30 days = transfer amount.
      */
-    function getTokenAlloc(address _token) public view returns (uint256) {
+    function getTokenAlloc(address _token) public view returns (uint256 allocAmount) {
         // get the access token profit
         uint256 profit = IERC20(_token).balanceOf(address(this));
 
+        if (profit == 0) {
+            return 0;
+        }
+
         // get the total amount the assets (total amount in the contract + outstanding amount)
-        uint256 assetsUnderManagement = ITreasuryStorage(treasuryStorage).assetsUnderManagement();
+        uint256 assetsUnderManagement = ITreasuryStorage(treasuryStorage).getAUM(_token);
 
         // get the user position
         IUserPositions.UserPosition memory userPosition = ITreasuryStorage(
@@ -154,10 +158,7 @@ contract RevenueController is AccessControl {
         uint256 allocPerShare = userPosition.totalAmount / assetsUnderManagement;
 
         // get total amount to distribute
-        uint256 allocAmount = profit * allocPerShare;
-
-        // returns the distribution amount to the user
-        return allocAmount;
+        allocAmount = profit * allocPerShare;
     }
 
     /**
