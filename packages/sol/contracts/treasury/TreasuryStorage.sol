@@ -18,6 +18,9 @@ contract TreasuryStorage is AccessControl {
     bytes32 public constant REVENUE_CONTROLLER =
         keccak256("REVENUE_CONTROLLER");
 
+    // tracking the total assets under the management (contract balance + outstanding(loanded, debt etc...))
+    uint256 assetsUnderManagement;
+
     // treasury shares represent a users percentage amount in the treasury pot
     ITreasuryShares treasuryShares;
 
@@ -110,6 +113,9 @@ contract TreasuryStorage is AccessControl {
             unchecked {
                 userPosition.totalAmount += _amount;
             }
+            
+            // update the AUM amount
+            assetsUnderManagement += _amount;
         }
 
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
@@ -136,6 +142,9 @@ contract TreasuryStorage is AccessControl {
         unchecked {
             pool.totalPooled -= _amount;
         }
+
+        // update the AUM
+        assetsUnderManagement -= _amount;
 
         // transfer access token amount to the user
         IERC20(_token).safeTransfer(_user, _amount);
@@ -195,6 +204,10 @@ contract TreasuryStorage is AccessControl {
             loanedAmount: 0,
             profit: 0,
         });
+
+        // update the AUM amount
+        assetsUnderManagement += _totalAmount;
+
     }
 
     function setUserPosition(
@@ -203,12 +216,16 @@ contract TreasuryStorage is AccessControl {
         uint256 _profit,
     ) external onlyRole(REVENUE_CONTROLLER) {
         UserPosition storage userPosition = UserPositions[_user][_token];
+
         unchecked {
             userPosition.profit += _profit;
         }
         unchecked {
             userPosition.totalAmount += _profit;
         }
+
+        // update the AUM
+        assetsUnderManagement += _profit;
     }
 
     function addPool(address _token) external onlyRole(REVENUE_CONTROLLER) {

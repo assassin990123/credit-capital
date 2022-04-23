@@ -22,9 +22,6 @@ contract RevenueController is AccessControl {
     // block counts per day
     uint256 blocksPerDay = 1 days / 6; // this value comes from a block in polygon chain is generated every 6 seconds.
 
-    // last alloc block per each access token
-    mapping(address => uint256) LastRequestedBlocks;
-
     event Deposit(address indexed _token, address _user, uint256 _amount);
     event PoolUpdated(address indexed _token, uint256 _amount);
     event PoolAdded(address indexed _token);
@@ -142,8 +139,11 @@ contract RevenueController is AccessControl {
              -  current access token balance / blocksPerDay * 30 days = transfer amount.
      */
     function getTokenAlloc(address _token) public view returns (uint256) {
-        // get the access token balance
-        uint256 balance = IERC20(_token).balanceOf(address(this));
+        // get the access token profit
+        uint256 profit = IERC20(_token).balanceOf(address(this));
+
+        // get the total amount the assets (total amount in the contract + outstanding amount)
+        uint256 assetsUnderManagement = ITreasuryStorage(treasuryStorage).getAUM();
 
         // get the user position
         IUserPositions.UserPosition memory userPosition = ITreasuryStorage(
@@ -151,13 +151,10 @@ contract RevenueController is AccessControl {
         ).getUserPosition(_token, msg.sender);
 
         // get passed block count for calcualtion of distribution
-        uint256 passedBlocks = block.number -
-            userPosition.lastAllocRequestBlock;
+        uint256 allocPerShare = userPosition.totalAmount / assetsUnderManagement;
 
-        // get amount per block
-        uint256 allocPerBlock = balance / (blocksPerDay * 30 + passedBlocks); // 518,400 blocks per day
         // get total amount to distribute
-        uint256 allocAmount = allocPerBlock * passedBlocks;
+        uint256 allocAmount = profit * allocPerShare;
 
         // returns the distribution amount to the user
         return allocAmount;

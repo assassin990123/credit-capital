@@ -12,7 +12,6 @@ interface IUserPositions {
         uint256 totalAmount;
         uint256 loanedAmount; // amount that has been taken out of the treasury storage as a loan
         uint256 profit;
-        uint256 lastAllocRequestBlock; // track the last block when the profit has distributed from the RevenueController
     }
 }
 
