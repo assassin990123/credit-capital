@@ -18,6 +18,9 @@ contract TreasuryStorage is AccessControl {
     bytes32 public constant REVENUE_CONTROLLER =
         keccak256("REVENUE_CONTROLLER");
 
+    // tracking the total assets under the management (contract balance + outstanding(loanded, debt etc...))
+    mapping(address => uint256) assetsUnderManagement;
+
     // treasury shares represent a users percentage amount in the treasury pot
     ITreasuryShares treasuryShares;
 
@@ -25,7 +28,6 @@ contract TreasuryStorage is AccessControl {
         uint256 totalAmount;
         uint256 loanedAmount; // amount that has been taken out of the treasury storage as a loan
         uint256 profit;
-        uint256 lastAllocRequestBlock; // track the last block when the profit has distributed from the RevenueController
     }
 
     // Mapping from user to userpostion of the token
@@ -93,6 +95,14 @@ contract TreasuryStorage is AccessControl {
         return UserPositions[_user][_token];
     }
 
+    function getAUM(address _token)
+        external
+        view
+        returns (uint256)
+    {
+        return assetsUnderManagement[_token];
+    }
+
     /**
         Write functions
      */
@@ -111,6 +121,9 @@ contract TreasuryStorage is AccessControl {
             unchecked {
                 userPosition.totalAmount += _amount;
             }
+            
+            // update the AUM amount
+            assetsUnderManagement[_token] += _amount;
         }
 
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
@@ -137,6 +150,9 @@ contract TreasuryStorage is AccessControl {
         unchecked {
             pool.totalPooled -= _amount;
         }
+
+        // update the AUM
+        assetsUnderManagement[_token] -= _amount;
 
         // transfer access token amount to the user
         IERC20(_token).safeTransfer(_user, _amount);
@@ -194,25 +210,30 @@ contract TreasuryStorage is AccessControl {
         UserPositions[_user][_token] = UserPosition({
             totalAmount: _totalAmount,
             loanedAmount: 0,
-            profit: 0,
-            lastAllocRequestBlock: block.number
+            profit: 0
         });
+
+        // update the AUM amount
+        assetsUnderManagement[_token] += _totalAmount;
+
     }
 
     function setUserPosition(
         address _token,
         address _user,
-        uint256 _profit,
-        uint256 _lastAllockRequetBlock
+        uint256 _profit
     ) external onlyRole(REVENUE_CONTROLLER) {
         UserPosition storage userPosition = UserPositions[_user][_token];
+
         unchecked {
             userPosition.profit += _profit;
         }
         unchecked {
             userPosition.totalAmount += _profit;
         }
-        userPosition.lastAllocRequestBlock = _lastAllockRequetBlock;
+
+        // update the AUM
+        assetsUnderManagement[_token] += _profit;
     }
 
     function addPool(address _token) external onlyRole(REVENUE_CONTROLLER) {

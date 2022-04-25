@@ -19,12 +19,6 @@ contract RevenueController is AccessControl {
     // all principal must go back to the treasury, profit stays here.
     address treasuryStorage;
 
-    // block counts per day
-    uint256 blocksPerDay = 1 days / 6; // this value comes from a block in polygon chain is generated every 6 seconds.
-
-    // last alloc block per each access token
-    mapping(address => uint256) LastRequestedBlocks;
-
     event Deposit(address indexed _token, address _user, uint256 _amount);
     event PoolUpdated(address indexed _token, uint256 _amount);
     event PoolAdded(address indexed _token);
@@ -101,14 +95,13 @@ contract RevenueController is AccessControl {
             _principal
         );
 
-        // set the last distribution block
-        // update user state(in this case - the profit) in the storage
-        ITreasuryStorage(treasuryStorage).setUserPosition(
-            _token,
-            msg.sender,
-            0,
-            block.number
-        );
+        // // set the last distribution block
+        // // update user state(in this case - the profit) in the storage
+        // ITreasuryStorage(treasuryStorage).setUserPosition(
+        //     _token,
+        //     msg.sender,
+        //     0
+        // );
 
         // the profit remains here
         IERC20(_token).safeTransferFrom(msg.sender, address(this), _profit);
@@ -141,26 +134,27 @@ contract RevenueController is AccessControl {
         @dev - this function calculates the amount of access token to distribute to the treasury storage contract:
              -  current access token balance / blocksPerDay * 30 days = transfer amount.
      */
-    function getTokenAlloc(address _token) public view returns (uint256) {
-        // get the access token balance
-        uint256 balance = IERC20(_token).balanceOf(address(this));
+    function getTokenAlloc(address _token) public view returns (uint256 allocAmount) {
+        // get the access token profit
+        uint256 profit = IERC20(_token).balanceOf(address(this));
+
+        if (profit == 0) {
+            return 0;
+        }
+
+        // get the total amount the assets (total amount in the contract + outstanding amount)
+        uint256 assetsUnderManagement = ITreasuryStorage(treasuryStorage).getAUM(_token);
 
         // get the user position
         IUserPositions.UserPosition memory userPosition = ITreasuryStorage(
             treasuryStorage
         ).getUserPosition(_token, msg.sender);
 
-        // get passed block count for calcualtion of distribution
-        uint256 passedBlocks = block.number -
-            userPosition.lastAllocRequestBlock;
+        // get user weight count for calcualtion of distribution
+        uint256 allocPerShare = userPosition.totalAmount / assetsUnderManagement;
 
-        // get amount per block
-        uint256 allocPerBlock = balance / (blocksPerDay * 30 + passedBlocks); // 518,400 blocks per day
         // get total amount to distribute
-        uint256 allocAmount = allocPerBlock * passedBlocks;
-
-        // returns the distribution amount to the user
-        return allocAmount;
+        allocAmount = profit * allocPerShare;
     }
 
     /**
@@ -173,8 +167,7 @@ contract RevenueController is AccessControl {
         ITreasuryStorage(treasuryStorage).setUserPosition(
             _token,
             msg.sender,
-            allocAmount,
-            block.number
+            allocAmount
         );
 
         // update the pool state

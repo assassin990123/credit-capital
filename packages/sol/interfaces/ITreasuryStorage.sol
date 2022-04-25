@@ -12,7 +12,6 @@ interface IUserPositions {
         uint256 totalAmount;
         uint256 loanedAmount; // amount that has been taken out of the treasury storage as a loan
         uint256 profit;
-        uint256 lastAllocRequestBlock; // track the last block when the profit has distributed from the RevenueController
     }
 }
 
@@ -26,8 +25,7 @@ interface ITreasuryStorage {
     function setUserPosition(
         address _token,
         address _user,
-        uint256 _profit,
-        uint256 _lastRequestBlock
+        uint256 _profit
     ) external;
 
     function addPool(address _token) external;
@@ -62,6 +60,8 @@ interface ITreasuryStorage {
         external
         view
         returns (IUserPositions.UserPosition memory);
+
+    function getAUM(address _token) external view returns (uint256);
 
     function getUnlockedAmount(address _token, address _user)
         external
