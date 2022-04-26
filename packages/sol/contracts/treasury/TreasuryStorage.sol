@@ -3,13 +3,8 @@ pragma solidity 0.8.11;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-
-interface ITreasuryShares {
-    function mint(address _to, uint256 _amount) external;
-}
 
 contract TreasuryStorage is AccessControl {
     using SafeERC20 for IERC20;
@@ -17,12 +12,6 @@ contract TreasuryStorage is AccessControl {
     // user Roles for RBAC
     bytes32 public constant REVENUE_CONTROLLER =
         keccak256("REVENUE_CONTROLLER");
-
-    // tracking the total assets under the management (contract balance + outstanding(loanded, debt etc...))
-    mapping(address => uint256) assetsUnderManagement;
-
-    // treasury shares represent a users percentage amount in the treasury pot
-    ITreasuryShares treasuryShares;
 
     struct UserPosition {
         uint256 totalAmount;
@@ -34,16 +23,15 @@ contract TreasuryStorage is AccessControl {
     mapping(address => mapping(address => UserPosition)) UserPositions; // user => (token => userposition)
 
     struct Pool {
-        uint256 totalPooled; // total token pooled in the contract
+        uint256 totalPooled; // loaned + actually in the contract
+        uint256 totalLoaned; // loaned
         bool isActive; // determine if the pool exists
     }
 
     // pool tracking
     mapping(address => Pool) Pools; // token => pool
 
-    constructor(address _treasuryShares) {
-        treasuryShares = ITreasuryShares(_treasuryShares);
-
+    constructor() {
         // setup the admin role for the storage owner
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
@@ -95,14 +83,6 @@ contract TreasuryStorage is AccessControl {
         return UserPositions[_user][_token];
     }
 
-    function getAUM(address _token)
-        external
-        view
-        returns (uint256)
-    {
-        return assetsUnderManagement[_token];
-    }
-
     /**
         Write functions
      */
@@ -121,9 +101,6 @@ contract TreasuryStorage is AccessControl {
             unchecked {
                 userPosition.totalAmount += _amount;
             }
-            
-            // update the AUM amount
-            assetsUnderManagement[_token] += _amount;
         }
 
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
@@ -151,9 +128,6 @@ contract TreasuryStorage is AccessControl {
             pool.totalPooled -= _amount;
         }
 
-        // update the AUM
-        assetsUnderManagement[_token] -= _amount;
-
         // transfer access token amount to the user
         IERC20(_token).safeTransfer(_user, _amount);
     }
@@ -180,7 +154,7 @@ contract TreasuryStorage is AccessControl {
 
         // update the total amount of the access token pooled
         unchecked {
-            Pools[_token].totalPooled -= _amount;
+            Pools[_token].totalLoaned += _amount;
         }
 
         IERC20(_token).safeTransfer(_user, _amount);
@@ -212,10 +186,6 @@ contract TreasuryStorage is AccessControl {
             loanedAmount: 0,
             profit: 0
         });
-
-        // update the AUM amount
-        assetsUnderManagement[_token] += _totalAmount;
-
     }
 
     function setUserPosition(
@@ -231,9 +201,6 @@ contract TreasuryStorage is AccessControl {
         unchecked {
             userPosition.totalAmount += _profit;
         }
-
-        // update the AUM
-        assetsUnderManagement[_token] += _profit;
     }
 
     function addPool(address _token) external onlyRole(REVENUE_CONTROLLER) {
@@ -253,12 +220,5 @@ contract TreasuryStorage is AccessControl {
         }
 
         return pool;
-    }
-
-    function mintTreasuryShares(address _destination, uint256 _amount)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        treasuryShares.mint(_destination, _amount);
     }
 }

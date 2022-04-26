@@ -95,14 +95,6 @@ contract RevenueController is AccessControl {
             _principal
         );
 
-        // // set the last distribution block
-        // // update user state(in this case - the profit) in the storage
-        // ITreasuryStorage(treasuryStorage).setUserPosition(
-        //     _token,
-        //     msg.sender,
-        //     0
-        // );
-
         // the profit remains here
         IERC20(_token).safeTransferFrom(msg.sender, address(this), _profit);
     }
@@ -142,8 +134,9 @@ contract RevenueController is AccessControl {
             return 0;
         }
 
+        uint256 pool = ITreasuryStorage(treasuryStorage).getPool(_token);
         // get the total amount the assets (total amount in the contract + outstanding amount)
-        uint256 assetsUnderManagement = ITreasuryStorage(treasuryStorage).getAUM(_token);
+        uint256 assetsUnderManagement = pool.totalPooled;
 
         // get the user position
         IUserPositions.UserPosition memory userPosition = ITreasuryStorage(

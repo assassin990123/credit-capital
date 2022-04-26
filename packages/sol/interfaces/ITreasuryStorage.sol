@@ -61,8 +61,6 @@ interface ITreasuryStorage {
         view
         returns (IUserPositions.UserPosition memory);
 
-    function getAUM(address _token) external view returns (uint256);
-
     function getUnlockedAmount(address _token, address _user)
         external
         view
