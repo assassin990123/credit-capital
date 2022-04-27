@@ -117,7 +117,7 @@ contract RevenueController is AccessControl {
     function loan(address token, uint256 amount) external {
         // check if the amount is under allowance
         require(
-            TreasuryStorage.getUnlockedAmount(token, msg.sender) >= amount,
+            TreasuryStorage.getUnlockedAmount(token) >= amount,
             "Can not loan over unlocked amount"
         );
 
@@ -136,9 +136,9 @@ contract RevenueController is AccessControl {
 
         for(uint i; i < length; i++) {
             address user = TreasuryStorage.whitelist(i);
-            uint256 weight = TreasuryStorage.weights(i);
+            uint256 weight = TreasuryStorage.getWeight(user);
 
-            sharedProfit = weight * _profit;
+            uint sharedProfit = weight * _profit;
             IERC20(_token).safeTransfer(user, sharedProfit);
 
             emit DistributeTokenAlloc(_token, user, sharedProfit);

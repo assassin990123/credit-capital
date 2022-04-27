@@ -7,11 +7,9 @@ interface IPool {
     }
 }
 
-interface IUserPositions {
-    struct UserPosition {
-        uint256 totalAmount;
+interface ILoanPositions {
+    struct LoanPosition {
         uint256 loanedAmount; // amount that has been taken out of the treasury storage as a loan
-        uint256 profit;
     }
 }
 
@@ -46,12 +44,15 @@ interface ITreasuryStorage {
         uint256 _principal
     ) external;
 
-    function getUnlockedAmount(address _token, address _user)
-        public
+    function getUnlockedAmount(address _token)
+        external
         view
         returns (uint256);
 
-    function getWhitelistLength() external view returns (uint256 _lenght);
+    function getWhitelistLength() external view returns (uint256);
+
+    function whitelist(uint _index) external view returns(address);
+    function getWeight(address _user) external view returns(uint);
     
     function checkIfPoolExists(address _token) external returns (bool);
 }

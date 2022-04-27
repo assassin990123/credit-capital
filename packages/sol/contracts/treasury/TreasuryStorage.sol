@@ -42,18 +42,10 @@ contract TreasuryStorage is AccessControl {
     }
 
     /**
-        Read functions
+        Getters
      */
     function checkIfPoolExists(address _token) public view returns (bool) {
         return Pools[_token].isActive;
-    }
-
-    function checkIfUserPositionExists(address _user, address _token)
-        public
-        view
-        returns (bool)
-    {
-        return UserPositions[_user][_token].totalAmount > 0;
     }
 
     function getUnlockedAmount(address _token)
@@ -68,35 +60,27 @@ contract TreasuryStorage is AccessControl {
     function getPool(address _token) external view returns (Pool memory) {
         return Pools[_token];
     }
-    
-    function setPoolTokenPrice(address _token, uint256 _price) external OnlyRole(DEFAULT_ADMIN_ROLE) {
-        PoolPrices[_token] = _price;
-    }
 
     function getPoolTokenPrice(address _token) external view returns (uint256 price) {
         return PoolPrices[_token];
     }
 
-    function getWhitelistLength() external view returns (uint256 lenght) {
-        return whitelist.lenght;
+    function getWhitelistLength() external view returns (uint256 length) {
+        return whitelist.length;
+    }
+    
+    function getWeight(address _user) external view returns (uint256 weight) {
+        return Weights[_user];
     }
     
     /**
         This function get the total amount of the access token under management.
      */
     function getAUM() external view returns (uint256 total) {
-        for(let i; i < poolAddresses.length; i++) {
+        for(uint i; i < poolAddresses.length; i++) {
             address token = poolAddresses[i];
-            total += Pools[token] * PoolPrices[token];
+            total += Pools[token].totalPooled * PoolPrices[token];
         }
-    }
-
-    function getUserPosition(address _token, address _user)
-        public
-        view
-        returns (UserPosition memory)
-    {
-        return UserPositions[_user][_token];
     }
 
     /**
@@ -108,13 +92,6 @@ contract TreasuryStorage is AccessControl {
         uint256 _amount
     ) external {
         require(checkIfPoolExists(_token), "Pool does not exist");
-
-        // update pool
-        UserPosition storage userPosition = UserPositions[_user][_token];
-        unchecked {
-            userPosition.totalAmount += _amount;
-        }
-
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
     }
 
@@ -132,7 +109,6 @@ contract TreasuryStorage is AccessControl {
         Pool storage pool = Pools[_token];
         unchecked {
             pool.totalPooled -= _amount;
-            pool.freeAmount
         }
 
         // transfer access token amount to the user
@@ -148,19 +124,19 @@ contract TreasuryStorage is AccessControl {
         uint256 _amount
     ) external {
         require(
-            getUnlockedAmount(_token, _user) >= _amount,
+            getUnlockedAmount(_token) >= _amount,
             "The amount exceed the treasury balance."
         );
 
         // update user state
         UserPosition storage userPosition = UserPositions[_user][_token];
         unchecked {
-            userPosition.loanedAmount += _amount;
+            userPosition.loanAmount += _amount;
         }
 
         // update the total amount of the access token pooled
         unchecked {
-            Pools[_token].totalLoaned += _amount;
+            Pools[_token].loanedAmount += _amount;
         }
 
         IERC20(_token).safeTransfer(_user, _amount);
@@ -174,26 +150,15 @@ contract TreasuryStorage is AccessControl {
         // get the userposition
         UserPosition storage userPosition = UserPositions[_user][_token];
         unchecked {
-            userPosition.loanedAmount -= _principal;
+            userPosition.loanAmount -= _principal;
         }
 
         unchecked {
-            Pools[_token].totalLoaned -= _principal;
+            Pools[_token].loanedAmount -= _principal;
         }
 
         // transfer token from the user
         IERC20(_token).safeTransferFrom(_user, address(this), _principal);
-    }
-
-    function addUserPosition(
-        address _token,
-        address _user,
-        uint256 _totalAmount
-    ) internal {
-        UserPositions[_user][_token] = UserPosition({
-            totalAmount: _totalAmount,
-            loanedAmount: 0
-        });
     }
 
     function addPool(address _token) external onlyRole(REVENUE_CONTROLLER) {
@@ -201,7 +166,7 @@ contract TreasuryStorage is AccessControl {
 
         Pools[_token] = Pool({
             totalPooled: 0,
-            totalLoaned: 0,
+            loanedAmount: 0,
             isActive: true
         });
     }
@@ -220,11 +185,11 @@ contract TreasuryStorage is AccessControl {
     }
 
     // RBAC Oracle, price setter (getter needed as well, not included here)
-    function setPoolTokenPrice(address _token, uint _price) OnlyRole(DEFAULT_ADMIN_ROLE) {
-        poolPrices[_token] = _price
+    function setPoolTokenPrice(address _token, uint _price) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        PoolPrices[_token] = _price;
     }
 
-    function addWhitelist(address _user) OnlyRole(DEFAULT_ADMIN_ROLE) {
+    function addWhitelist(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
         whitelist.push(_user);
     }
 }
