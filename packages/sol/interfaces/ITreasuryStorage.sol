@@ -22,12 +22,6 @@ interface ITreasuryStorage {
         uint256 _amount
     ) external;
 
-    function setUserPosition(
-        address _token,
-        address _user,
-        uint256 _profit
-    ) external;
-
     function addPool(address _token) external;
 
     function updatePool(address _token, uint256 _allocAmount)
@@ -52,19 +46,12 @@ interface ITreasuryStorage {
         uint256 _principal
     ) external;
 
-    function getTokenSupply(address _token) external returns (uint256);
-
-    function getPool(address _token) external returns (IPool.Pool memory);
-
-    function getUserPosition(address _token, address _user)
-        external
-        view
-        returns (IUserPositions.UserPosition memory);
-
     function getUnlockedAmount(address _token, address _user)
-        external
+        public
         view
         returns (uint256);
 
+    function getWhitelistLength() external view returns (uint256 _lenght);
+    
     function checkIfPoolExists(address _token) external returns (bool);
 }

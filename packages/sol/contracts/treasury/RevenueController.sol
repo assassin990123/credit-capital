@@ -19,6 +19,9 @@ contract RevenueController is AccessControl {
     // all principal must go back to the treasury, profit stays here.
     address treasuryStorage;
 
+    // track user weight
+    mapping(address => uint) Weights;
+
     event Deposit(address indexed _token, address _user, uint256 _amount);
     event PoolUpdated(address indexed _token, uint256 _amount);
     event PoolAdded(address indexed _token);
@@ -105,7 +108,7 @@ contract RevenueController is AccessControl {
     function withdraw(address _token) external {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
 
-        uint256 amount = TreasuryStorage.getUnlockedAmount(_token, msg.sender);
+        uint256 amount = TreasuryStorage.getUnlockedAmount(_token);
         TreasuryStorage.withdraw(_token, msg.sender, amount);
 
         emit Withdraw(_token, msg.sender, amount);
@@ -123,62 +126,23 @@ contract RevenueController is AccessControl {
     }
 
     /**
-        @dev - this function calculates the amount of access token to distribute to the treasury storage contract:
-             -  current access token balance / blocksPerDay * 30 days = transfer amount.
-     */
-    function getTokenAlloc(address _token) public view returns (uint256 allocAmount) {
-        // get the access token profit
-        uint256 profit = IERC20(_token).balanceOf(address(this));
-
-        if (profit == 0) {
-            return 0;
-        }
-
-        uint256 pool = ITreasuryStorage(treasuryStorage).getPool(_token);
-        // get the total amount the assets (total amount in the contract + outstanding amount)
-        uint256 assetsUnderManagement = pool.totalPooled;
-
-        // get the user position
-        IUserPositions.UserPosition memory userPosition = ITreasuryStorage(
-            treasuryStorage
-        ).getUserPosition(_token, msg.sender);
-
-        // get user weight count for calcualtion of distribution
-        uint256 allocPerShare = userPosition.totalAmount / assetsUnderManagement;
-
-        // get total amount to distribute
-        allocAmount = profit * allocPerShare;
-    }
-
-    /**
         This function returns the allocAmount calculated to distribute to the treasury storage
      */
-    function distributeTokenAlloc(address _token) external {
-        uint256 allocAmount = getTokenAlloc(_token);
+    function splitter(address _token, uint _profit) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        TreasuryStorage = ITreasuryStorage(treasuryStorage);
 
-        // update user state(in this case - the profit) in the storage
-        ITreasuryStorage(treasuryStorage).setUserPosition(
-            _token,
-            msg.sender,
-            allocAmount
-        );
+        // get length of the whitelist
+        uint256 length = TreasuryStorage.getWhitelistLength();
 
-        // update the pool state
-        ITreasuryStorage(treasuryStorage).updatePool(_token, allocAmount);
+        for(uint i; i < length; i++) {
+            address user = TreasuryStorage.whitelist(i);
+            uint256 weight = TreasuryStorage.weights(i);
 
-        // get the distributable access token amount
-        IERC20(_token).safeTransfer(treasuryStorage, allocAmount);
+            sharedProfit = weight * _profit;
+            IERC20(_token).safeTransfer(user, sharedProfit);
 
-        emit DistributeTokenAlloc(_token, msg.sender, allocAmount);
-    }
-
-    function getTotalManagedValue(address _token)
-        external
-        returns (uint256 totalManagedValue)
-    {
-        totalManagedValue = ITreasuryStorage(treasuryStorage).getTokenSupply(
-            _token
-        );
+            emit DistributeTokenAlloc(_token, user, sharedProfit);
+        }
     }
 
     /**
