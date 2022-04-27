@@ -13,12 +13,12 @@ contract TreasuryStorage is AccessControl {
     bytes32 public constant REVENUE_CONTROLLER =
         keccak256("REVENUE_CONTROLLER");
 
-    struct UserPosition {
+    struct LoanPosition {
         uint256 loanAmount; // amount that has been taken out of the treasury storage as a loan
     }
 
-    // Mapping from user to userpostion of the token
-    mapping(address => mapping(address => UserPosition)) UserPositions; // user => (token => userposition)
+    // Mapping from user to loanpostion of the token
+    mapping(address => mapping(address => LoanPosition)) LoanPositions; // user => (token => loanposition)
 
     struct Pool {
         uint256 totalPooled; // loaned + actually in the contract
@@ -129,7 +129,7 @@ contract TreasuryStorage is AccessControl {
         );
 
         // update user state
-        UserPosition storage userPosition = UserPositions[_user][_token];
+        LoanPosition storage userPosition = LoanPositions[_user][_token];
         unchecked {
             userPosition.loanAmount += _amount;
         }
@@ -147,8 +147,8 @@ contract TreasuryStorage is AccessControl {
         address _token,
         uint256 _principal
     ) external onlyRole(REVENUE_CONTROLLER) {
-        // get the userposition
-        UserPosition storage userPosition = UserPositions[_user][_token];
+        // get the loanposition
+        LoanPosition storage userPosition = LoanPositions[_user][_token];
         unchecked {
             userPosition.loanAmount -= _principal;
         }
