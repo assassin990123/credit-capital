@@ -88,9 +88,6 @@ contract RevenueController is AccessControl {
         uint256 _principal,
         uint256 _profit
     ) external {
-        // update pool info
-        ITreasuryStorage(treasuryStorage).updatePool(_token, _principal);
-
         // call the treasuryStorage's returnPrincipal function
         ITreasuryStorage(treasuryStorage).returnPrincipal(
             msg.sender,

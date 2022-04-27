@@ -17,7 +17,7 @@ const deployContracts = async (deployer) => {
     1_000_000,
   ]);
   const capl = await deployContract("CreditCapitalPlatformToken", [100]);
-  const storage = await deployContract("TreasuryStorage", [lp.address]);
+  const storage = await deployContract("TreasuryStorage");
   const controller = await deployContract("RevenueController", [
     capl.address,
     storage.address,
@@ -59,32 +59,28 @@ describe("Treasury", async () => {
       // deposit new userposition
       await controller.connect(deployer).deposit(lp.address, 250_000);
 
-      const user = await storage.getUserPosition(lp.address, deployer.address);
+      const user = await storage.getLoanPosition(lp.address, deployer.address);
       const pool = await storage.getPool(lp.address);
       const userbalance = await lp.balanceOf(deployer.address);
 
-      expect(user.totalAmount).to.equal(250_000);
+      expect(user.loanAmount).to.equal(0);
       expect(pool.totalPooled).to.equal(250_000);
       expect(userbalance).to.equal(750_000);
     });
   });
 
   describe("Withdraw", () => {
-    it("Should update userposition", async () => {
+    it("Should update pool", async () => {
       // add pool for the capl
       await controller.addPool(lp.address); // 10 CAPL per block
 
       // approve lp token allowance
       await lp.approve(storage.address, 250_000);
 
-      // deposit new userposition
+      // deposit new pool
       await controller.deposit(lp.address, 250_000);
 
       // check the storage states
-      expect(
-        (await storage.getUserPosition(lp.address, deployer.address))
-          .totalAmount
-      ).to.equal(250_000);
       expect((await storage.getPool(lp.address)).totalPooled).to.equal(250_000);
       expect(await lp.balanceOf(deployer.address)).to.equal(750_000);
       expect(await lp.balanceOf(storage.address)).to.equal(250_000);
@@ -93,10 +89,6 @@ describe("Treasury", async () => {
       await controller.withdraw(lp.address);
 
       // check the storage states
-      expect(
-        (await storage.getUserPosition(lp.address, deployer.address))
-          .totalAmount
-      ).to.equal(0);
       expect((await storage.getPool(lp.address)).totalPooled).to.equal(0);
       expect(await lp.balanceOf(deployer.address)).to.equal(1_000_000);
       expect(await lp.balanceOf(storage.address)).to.equal(0);
@@ -116,9 +108,9 @@ describe("Treasury", async () => {
 
       // check the storage states
       expect(
-        (await storage.getUserPosition(lp.address, deployer.address))
-          .totalAmount
-      ).to.equal(250_000);
+        (await storage.getLoanPosition(lp.address, deployer.address))
+          .loanAmount
+      ).to.equal(0);
       expect((await storage.getPool(lp.address)).totalPooled).to.equal(250_000);
 
       // loan token
@@ -126,14 +118,11 @@ describe("Treasury", async () => {
 
       // check the storage states
       expect(
-        (await storage.getUserPosition(lp.address, deployer.address))
-          .totalAmount
-      ).to.equal(250_000);
-      expect(
-        (await storage.getUserPosition(lp.address, deployer.address))
-          .loanedAmount
+        (await storage.getLoanPosition(lp.address, deployer.address))
+          .loanAmount
       ).to.equal(50_000);
-      expect((await storage.getPool(lp.address)).totalPooled).to.equal(200_000);
+      expect((await storage.getPool(lp.address)).totalPooled).to.equal(250_000);
+      expect((await storage.getPool(lp.address)).loanedAmount).to.equal(50_000);
     });
 
     it("Can't loan over unlockedAmount", async () => {
@@ -148,15 +137,14 @@ describe("Treasury", async () => {
 
       // check the storage states
       expect(
-        (await storage.getUserPosition(lp.address, deployer.address))
-          .totalAmount
-      ).to.equal(250_000);
+        (await storage.getLoanPosition(lp.address, deployer.address))
+          .loanAmount
+      ).to.equal(0);
       expect((await storage.getPool(lp.address)).totalPooled).to.equal(250_000);
 
       // get user's unlocked amount
       const unlocked = await storage.getUnlockedAmount(
-        lp.address,
-        deployer.address
+        lp.address
       );
 
       // loaning will be reverted token
@@ -166,10 +154,11 @@ describe("Treasury", async () => {
         expect(error.message).match(/Can not loan over unlocked amount/);
       }
       expect(
-        (await storage.getUserPosition(lp.address, deployer.address))
-          .loanedAmount
+        (await storage.getLoanPosition(lp.address, deployer.address))
+          .loanAmount
       ).to.equal(0);
       expect((await storage.getPool(lp.address)).totalPooled).to.equal(250_000);
+      expect((await storage.getPool(lp.address)).loanedAmount).to.equal(0);
     });
   });
 
@@ -186,9 +175,9 @@ describe("Treasury", async () => {
 
       // check the storage states
       expect(
-        (await storage.getUserPosition(lp.address, deployer.address))
-          .totalAmount
-      ).to.equal(250_000);
+        (await storage.getLoanPosition(lp.address, deployer.address))
+          .loanAmount
+      ).to.equal(0);
       expect((await storage.getPool(lp.address)).totalPooled).to.equal(250_000);
 
       // approve lp token allowance
@@ -199,14 +188,11 @@ describe("Treasury", async () => {
 
       // check the storage states
       expect(
-        (await storage.getUserPosition(lp.address, deployer.address))
-          .totalAmount
-      ).to.equal(250_000);
-      expect(
-        (await storage.getUserPosition(lp.address, deployer.address))
-          .loanedAmount
+        (await storage.getLoanPosition(lp.address, deployer.address))
+          .loanAmount
       ).to.equal(50_000);
-      expect((await storage.getPool(lp.address)).totalPooled).to.equal(200_000);
+      expect((await storage.getPool(lp.address)).totalPooled).to.equal(250_000);
+      expect((await storage.getPool(lp.address)).loanedAmount).to.equal(50_000);
 
       // approve lp token allowance
       await lp.approve(controller.address, 51_000);
@@ -216,38 +202,31 @@ describe("Treasury", async () => {
 
       // check the storage states
       expect(
-        (await storage.getUserPosition(lp.address, deployer.address))
-          .totalAmount
-      ).to.equal(250_000);
-      expect(
-        (await storage.getUserPosition(lp.address, deployer.address))
-          .loanedAmount
+        (await storage.getLoanPosition(lp.address, deployer.address))
+          .loanAmount
       ).to.equal(0);
       expect((await storage.getPool(lp.address)).totalPooled).to.equal(250_000);
+      expect((await storage.getPool(lp.address)).loanedAmount).to.equal(0);
 
       // the profit should be remain in controller
       expect(await lp.balanceOf(controller.address)).to.equal(1000);
 
-      // fast forward
-      await network.provider.send("evm_increaseTime", [3600]);
-      await network.provider.send("evm_mine"); // this one will have 02:00 PM as its timestamp
+      // // distribute user alloc based on time
+      // const allocAmount = Number(await controller.getTokenAlloc(lp.address));
 
-      // distribute user alloc based on time
-      const allocAmount = Number(await controller.getTokenAlloc(lp.address));
+      // // return token alloc to the user
+      // await controller.distributeTokenAlloc(lp.address);
 
-      // return token alloc to the user
-      await controller.distributeTokenAlloc(lp.address);
-
-      expect(
-        (await storage.getUserPosition(lp.address, deployer.address))
-          .totalAmount
-      ).to.equal(250_000 + allocAmount);
-      expect(
-        (await storage.getUserPosition(lp.address, deployer.address)).profit
-      ).to.equal(allocAmount);
-      expect((await storage.getPool(lp.address)).totalPooled).to.equal(
-        250_000 + allocAmount
-      );
+      // expect(
+      //   (await storage.getLoanPosition(lp.address, deployer.address))
+      //     .loanAmount
+      // ).to.equal(250_000 + allocAmount);
+      // expect(
+      //   (await storage.getLoanPosition(lp.address, deployer.address)).profit
+      // ).to.equal(allocAmount);
+      // expect((await storage.getPool(lp.address)).totalPooled).to.equal(
+      //   250_000 + allocAmount
+      // );
     });
   });
 });

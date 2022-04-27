@@ -61,6 +61,10 @@ contract TreasuryStorage is AccessControl {
         return Pools[_token];
     }
 
+    function getLoanPosition(address _token, address _user) external view returns (LoanPosition memory) {
+        return LoanPositions[_user][_token];
+    }
+
     function getPoolTokenPrice(address _token) external view returns (uint256 price) {
         return PoolPrices[_token];
     }
