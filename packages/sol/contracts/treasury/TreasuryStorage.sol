@@ -133,9 +133,9 @@ contract TreasuryStorage is AccessControl {
         );
 
         // update user state
-        LoanPosition storage userPosition = LoanPositions[_user][_token];
+        LoanPosition storage loanPosition = LoanPositions[_user][_token];
         unchecked {
-            userPosition.loanAmount += _amount;
+            loanPosition.loanAmount += _amount;
         }
 
         // update the total amount of the access token pooled
@@ -152,9 +152,9 @@ contract TreasuryStorage is AccessControl {
         uint256 _principal
     ) external onlyRole(REVENUE_CONTROLLER) {
         // get the loanposition
-        LoanPosition storage userPosition = LoanPositions[_user][_token];
+        LoanPosition storage loanPosition = LoanPositions[_user][_token];
         unchecked {
-            userPosition.loanAmount -= _principal;
+            loanPosition.loanAmount -= _principal;
         }
 
         unchecked {
