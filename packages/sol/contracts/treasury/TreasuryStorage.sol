@@ -173,6 +173,9 @@ contract TreasuryStorage is AccessControl {
             loanedAmount: 0,
             isActive: true
         });
+
+        // add pooladdress
+        poolAddresses.push(_token);
     }
 
     function updatePool(address _token, uint256 _amount)
