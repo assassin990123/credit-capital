@@ -200,7 +200,7 @@ contract TreasuryStorage is AccessControl {
         whitelist.push(_user);
     }
 
-    function setWeight(address _user, uint256 _weight) onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setWeight(address _user, uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
         Weights[_user] = _weight;
     }
 }
