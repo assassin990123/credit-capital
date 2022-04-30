@@ -12,10 +12,12 @@ import "../../interfaces/ITreasuryStorage.sol";
 contract RevenueController is AccessControl {
     using SafeERC20 for IERC20;
 
-    ITreasuryStorage TreasuryStorage;
     // treasury storage contract, similar to the vault contract.
     // all principal must go back to the treasury, profit stays here.
+    ITreasuryStorage TreasuryStorage;
     address treasuryStorage;
+
+    uint256 CAPL_PRECISION = 1e18;
 
     // track user weight
     mapping(address => uint) Weights;
@@ -132,7 +134,8 @@ contract RevenueController is AccessControl {
             address user = TreasuryStorage.whitelist(i);
             uint256 weight = TreasuryStorage.getWeight(user);
 
-            uint sharedProfit = weight * _profit;
+            uint sharedProfit = (_profit / CAPL_PRECISION) * weight;
+            console.log('sharedProfit', sharedProfit);
             IERC20(_token).safeTransfer(user, sharedProfit);
 
             emit DistributeTokenAlloc(_token, user, sharedProfit);
