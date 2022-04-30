@@ -12,8 +12,6 @@ import "../../interfaces/ITreasuryStorage.sol";
 contract RevenueController is AccessControl {
     using SafeERC20 for IERC20;
 
-    IERC20 capl;
-
     ITreasuryStorage TreasuryStorage;
     // treasury storage contract, similar to the vault contract.
     // all principal must go back to the treasury, profit stays here.
@@ -38,8 +36,7 @@ contract RevenueController is AccessControl {
 
     event Loan(address indexed _token, address indexed _user, uint256 _amount);
 
-    constructor(address _capl, address _treasuryStorage) {
-        capl = IERC20(_capl);
+    constructor(address _treasuryStorage) {
         treasuryStorage = _treasuryStorage;
 
         // setup the admin role for the storage owner
@@ -81,7 +78,7 @@ contract RevenueController is AccessControl {
 
     /**
         @dev - this function sends the principal back to the storage contract via a function called treasuryStorage.returnPrincipal (to be implemented).
-             - the profit remains in the revenue controller contract to be distributed by getCAPLAlloc function below.
+             - the profit remains in the revenue controller contract to be distributed by splitter function below.
      */
     function treasuryIncome(
         address _token,
