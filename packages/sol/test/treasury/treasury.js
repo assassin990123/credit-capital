@@ -16,13 +16,11 @@ const deployContracts = async (deployer) => {
     deployer.address,
     1_000_000,
   ]);
-  const capl = await deployContract("CreditCapitalPlatformToken", [100]);
   const storage = await deployContract("TreasuryStorage");
   const controller = await deployContract("RevenueController", [
-    capl.address,
     storage.address,
   ]);
-  return { lp, capl, controller, storage };
+  return { lp, controller, storage };
 };
 
 describe("Treasury", async () => {
@@ -30,7 +28,6 @@ describe("Treasury", async () => {
   let user;
   let user2;
   let lp;
-  let capl;
   let storage;
   let controller;
 
@@ -39,7 +36,7 @@ describe("Treasury", async () => {
     [deployer, user, user2] = await ethers.getSigners();
 
     // deploy token contract
-    ({ lp, capl, storage, controller } = await deployContracts(deployer));
+    ({ lp, storage, controller } = await deployContracts(deployer));
 
     // grant controller the REVENUE_CONTROLLER role of storage contract
     await storage.grantRole(
@@ -50,8 +47,8 @@ describe("Treasury", async () => {
 
   describe("Deposit", () => {
     it("Should add userposition", async () => {
-      // add pool for the capl
-      await controller.addPool(lp.address); // 10 CAPL per block
+      // add pool
+      await controller.addPool(lp.address);
 
       // approve lp token allowance
       await lp.approve(storage.address, 250_000);
@@ -72,7 +69,7 @@ describe("Treasury", async () => {
   describe("Withdraw", () => {
     it("Should update pool", async () => {
       // add pool for the capl
-      await controller.addPool(lp.address); // 10 CAPL per block
+      await controller.addPool(lp.address);
 
       // approve lp token allowance
       await lp.approve(storage.address, 250_000);
@@ -163,7 +160,7 @@ describe("Treasury", async () => {
   });
 
   describe("Treasury Income, Profit", () => {
-    it("Deposit, loan, return principal and distributeTokenAlloc", async () => {
+    it("Deposit, loan, return principal and split the profits", async () => {
       // add pool for the capl
       await controller.addPool(lp.address);
 
@@ -198,7 +195,7 @@ describe("Treasury", async () => {
       await lp.approve(controller.address, 51_000);
 
       // return loaned amount
-      await controller.treasuryIncome(lp.address, 50_000, 1000); // 1000 LP for profit
+      await controller.treasuryIncome(lp.address, 50_000, 1_000); // 1_000 LP for profit
 
       // check the storage states
       expect(
@@ -209,24 +206,24 @@ describe("Treasury", async () => {
       expect((await storage.getPool(lp.address)).loanedAmount).to.equal(0);
 
       // the profit should be remain in controller
-      expect(await lp.balanceOf(controller.address)).to.equal(1000);
+      expect(await lp.balanceOf(controller.address)).to.equal(1_000);
 
-      // // distribute user alloc based on time
-      // const allocAmount = Number(await controller.getTokenAlloc(lp.address));
+      /* split the profit based on the user weight */
+      // set the user weight - deployer/user/user2 : 50%/30%%/20%
+      await storage.setWeight(deployer.address, 0.5);
+      await storage.setWeight(user.address, 0.3);
+      await storage.setWeight(user2.address, 0.2);
 
-      // // return token alloc to the user
-      // await controller.distributeTokenAlloc(lp.address);
+      // splitter
+      await controller.splitter(lp.address, 1_000);
 
-      // expect(
-      //   (await storage.getLoanPosition(lp.address, deployer.address))
-      //     .loanAmount
-      // ).to.equal(250_000 + allocAmount);
-      // expect(
-      //   (await storage.getLoanPosition(lp.address, deployer.address)).profit
-      // ).to.equal(allocAmount);
-      // expect((await storage.getPool(lp.address)).totalPooled).to.equal(
-      //   250_000 + allocAmount
-      // );
+      // check the user balance
+      expect(await lp.balanceOf(deployer.address)).to.equal(500);
+      expect(await lp.balanceOf(user.address)).to.equal(500);
+      expect(await lp.balanceOf(user2.address)).to.equal(500);
+
+      // check controller balance
+      expect(await lp.balanceOf(controller.address)).to.equal(0);
     });
   });
 });
