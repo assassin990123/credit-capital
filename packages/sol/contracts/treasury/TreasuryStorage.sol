@@ -48,6 +48,16 @@ contract TreasuryStorage is AccessControl {
         return Pools[_token].isActive;
     }
 
+    function whitelistCheck(address _user) public view returns (bool) {
+        for (uint i = 0; i < whitelist.length; i++) {
+            if (whitelist[i] == _user) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     function getUnlockedAmount(address _token)
         public
         view
@@ -197,7 +207,19 @@ contract TreasuryStorage is AccessControl {
     }
 
     function addWhitelist(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(!whitelistCheck(_user), "Whitelist: existing user");
         whitelist.push(_user);
+    }
+
+    function removeWhitelistedUser(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(whitelistCheck(_user), "Whitelist: not existing user");
+
+        // get index
+        for (uint i = 0; i < whitelist.length; i++) {
+            if (whitelist[i] == _user) {
+                delete whitelist[i];
+            }
+        }
     }
 
     function setWeight(address _user, uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {

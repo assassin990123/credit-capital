@@ -207,6 +207,11 @@ describe("Treasury", async () => {
       expect(_formatEther(await lp.balanceOf(user.address)).toFixed(0)).to.equal('0');
       expect(_formatEther(await lp.balanceOf(user2.address)).toFixed(0)).to.equal('0');
 
+      // check weights of the user before split
+      expect(_formatEther(await storage.getWeight(deployer.address)).toFixed(1)).to.equal('0.5');
+      expect(_formatEther(await storage.getWeight(user.address)).toFixed(1)).to.equal('0.3');
+      expect(_formatEther(await storage.getWeight(user2.address)).toFixed(1)).to.equal('0.2');
+
       // add whitelisted users
       await storage.addWhitelist(deployer.address);
       await storage.addWhitelist(user.address);
