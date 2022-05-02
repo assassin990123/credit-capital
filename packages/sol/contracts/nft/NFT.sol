@@ -6,19 +6,43 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, AccessControl {
+    using Counters for Counters.Counter;
+
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    Counters.Counter private _tokenIdCounter;
+
+    // @dev - NFT transfer locks
+    mapping(uint => bool) locks;
+
+    // @dev - NFT on chain data
+    struct NFTData {
+        string name;
+        string description;
+        uint value; // in dollars
+    }
+
+    mapping(uint => NFTData) metadataOnChain;
 
     constructor() ERC721("MyToken", "MTK") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
     }
 
-    function safeMint(address to, uint256 tokenId, string memory uri)
-        public
-        onlyRole(MINTER_ROLE)
-    {
+    function lockNFT(uint _tokenId, bool _lock) external {
+        locks[_tokenId] = _lock;
+    }
+
+    function safeMint(address to, string memory uri, string calldata name, string calldata description, uint value) public onlyRole(MINTER_ROLE) {
+        uint256 tokenId = _tokenIdCounter.current();
+        metadataOnChain[tokenId] = NFTData(
+            name,
+            description,
+            value
+        );
+        _tokenIdCounter.increment();
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
     }
@@ -29,6 +53,7 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
         internal
         override(ERC721, ERC721Enumerable)
     {
+        require(!locks[tokenId], "NFT is locked");
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
