@@ -135,7 +135,6 @@ contract RevenueController is AccessControl {
             uint256 weight = TreasuryStorage.getWeight(user);
 
             uint sharedProfit = (_profit / CAPL_PRECISION) * weight;
-            console.log('sharedProfit', sharedProfit);
             IERC20(_token).safeTransfer(user, sharedProfit);
 
             emit DistributeTokenAlloc(_token, user, sharedProfit);

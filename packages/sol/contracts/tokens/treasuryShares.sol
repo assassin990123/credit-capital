@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract CreditCapitalPlatformToken is
+contract TreasuryShares is
     ERC20,
     ERC20Burnable,
     ERC20Capped,
