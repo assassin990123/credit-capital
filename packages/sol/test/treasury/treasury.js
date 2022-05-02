@@ -222,8 +222,8 @@ describe("Treasury", async () => {
 
       // check the user balance
       expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749500');
-      expect(_formatEther(await lp.balanceOf(user.address)).toFixed(0)).to.equal('500');
-      expect(_formatEther(await lp.balanceOf(user2.address)).toFixed(0)).to.equal('500');
+      expect(_formatEther(await lp.balanceOf(user.address)).toFixed(0)).to.equal('300');
+      expect(_formatEther(await lp.balanceOf(user2.address)).toFixed(0)).to.equal('200');
 
       // check controller balance
       expect(_formatEther(await lp.balanceOf(controller.address)).toFixed(0)).to.equal('0');

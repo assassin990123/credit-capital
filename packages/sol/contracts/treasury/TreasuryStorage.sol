@@ -54,7 +54,6 @@ contract TreasuryStorage is AccessControl {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -79,8 +78,8 @@ contract TreasuryStorage is AccessControl {
         return PoolPrices[_token];
     }
 
-    function getWhitelistLength() external view returns (uint256 length) {
-        return whitelist.length;
+    function getWhitelist() external view returns (address[] memory) {
+        return whitelist;
     }
     
     function getWeight(address _user) external view returns (uint256 weight) {

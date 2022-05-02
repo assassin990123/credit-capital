@@ -128,10 +128,10 @@ contract RevenueController is AccessControl {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
 
         // get length of the whitelist
-        uint256 length = TreasuryStorage.getWhitelistLength();
+        address[] memory whitelist = TreasuryStorage.getWhitelist();
 
-        for(uint i; i < length; i++) {
-            address user = TreasuryStorage.whitelist(i);
+        for(uint i; i < whitelist.length; i++) {
+            address user = whitelist[i];
             uint256 weight = TreasuryStorage.getWeight(user);
 
             uint sharedProfit = (_profit / CAPL_PRECISION) * weight;
