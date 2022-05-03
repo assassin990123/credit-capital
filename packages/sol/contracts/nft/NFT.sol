@@ -16,13 +16,13 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
 
     // @dev - NFT transfer locks
     mapping(uint => bool) locks;
-    uint public timeLock;
 
     // @dev - NFT on chain data
     struct NFTData {
         string name;
         string description;
         uint value; // in dollars
+        uint timelockEnd;
     }
 
     mapping(uint => NFTData) metadataOnChain;
@@ -37,13 +37,9 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
         return metadataOnChain[_tokenId];
     }
 
-    function lockNFT(uint _tokenId, bool _lock) external {
-        locks[_tokenId] = _lock;
-    }
-
-    // function to set locking time. RBAC
-    function setTimeLock(uint _timelock) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        timeLock = _timelock;
+    function lockNFT(uint _tokenId, uint _timelock) external {
+        require(ownerOf(_tokenId) == msg.sender, "Permission: the sender is not the owner of this token");
+        metadataOnChain[_tokenId].timelockEnd = block.timestamp + _timelock;
     }
 
     function safeMint(address to, string memory uri, string calldata name, string calldata description, uint value) public onlyRole(MINTER_ROLE) {
@@ -52,7 +48,8 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
         metadataOnChain[tokenId] = NFTData(
             name,
             description,
-            value
+            value,
+            block.timestamp
         );
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
@@ -64,7 +61,7 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
         internal
         override(ERC721, ERC721Enumerable)
     {
-        require(!locks[tokenId], "NFT is locked");
+        require(metadataOnChain[tokenId].timelockEnd <= block.timestamp, "Timelock: Locked token");
         super._beforeTokenTransfer(from, to, tokenId);
     }
 

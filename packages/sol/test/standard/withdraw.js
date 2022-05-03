@@ -87,7 +87,7 @@ const poolChecks = (
   );
 };
 
-describe("Rewards Vault", function () {
+describe("Withdraw Vault", function () {
   it("Deposit and withdraw a new position", async function () {
     const accounts = await hre.ethers.getSigners();
     const { deployer, alice } = await setupAccounts(accounts);
