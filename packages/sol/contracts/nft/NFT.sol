@@ -32,6 +32,11 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
         _grantRole(MINTER_ROLE, msg.sender);
     }
 
+    /** Getters */
+    function getMetadataOnChain(uint _tokenId) external view returns (NFTData memory) {
+        return metadataOnChain[_tokenId];
+    }
+
     function lockNFT(uint _tokenId, bool _lock) external {
         locks[_tokenId] = _lock;
     }
@@ -42,13 +47,13 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
     }
 
     function safeMint(address to, string memory uri, string calldata name, string calldata description, uint value) public onlyRole(MINTER_ROLE) {
+        _tokenIdCounter.increment();
         uint256 tokenId = _tokenIdCounter.current();
         metadataOnChain[tokenId] = NFTData(
             name,
             description,
             value
         );
-        _tokenIdCounter.increment();
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
     }
