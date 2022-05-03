@@ -12,6 +12,10 @@ import "../../interfaces/ITreasuryStorage.sol";
 contract RevenueController is AccessControl {
     using SafeERC20 for IERC20;
 
+    // user Roles for RBAC
+    bytes32 public constant OPERATOR_ROLE =
+        keccak256("OPERATOR_ROLE");
+
     // treasury storage contract, similar to the vault contract.
     // all principal must go back to the treasury, profit stays here.
     ITreasuryStorage TreasuryStorage;
@@ -43,6 +47,7 @@ contract RevenueController is AccessControl {
 
         // setup the admin role for the storage owner
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        grantRole(OPERATOR_ROLE, msg.sender);
     }
 
     /**
@@ -101,7 +106,7 @@ contract RevenueController is AccessControl {
     /**
         @dev - this funciton withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
      */
-    function withdraw(address _token) external {
+    function withdraw(address _token) external onlyRole(OPERATOR_ROLE) {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
 
         uint256 amount = TreasuryStorage.getUnlockedAmount(_token);

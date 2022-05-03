@@ -16,6 +16,7 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
 
     // @dev - NFT transfer locks
     mapping(uint => bool) locks;
+    uint public timeLock;
 
     // @dev - NFT on chain data
     struct NFTData {
@@ -33,6 +34,11 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
 
     function lockNFT(uint _tokenId, bool _lock) external {
         locks[_tokenId] = _lock;
+    }
+
+    // function to set locking time. RBAC
+    function setTimeLock(uint _timelock) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        timeLock = _timelock;
     }
 
     function safeMint(address to, string memory uri, string calldata name, string calldata description, uint value) public onlyRole(MINTER_ROLE) {

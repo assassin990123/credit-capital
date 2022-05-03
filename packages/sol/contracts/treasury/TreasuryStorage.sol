@@ -112,7 +112,7 @@ contract TreasuryStorage is AccessControl {
         address _token,
         address _user,
         uint256 _amount
-    ) external {
+    ) external onlyRole(REVENUE_CONTROLLER) {
         require(
             getUnlockedAmount(_token) >= _amount,
             "Withdrawn amount exceed the allowance"
