@@ -15,13 +15,15 @@ contract RevenueController is AccessControl {
     // user Roles for RBAC
     bytes32 public constant OPERATOR_ROLE =
         keccak256("OPERATOR_ROLE");
+    uint256 CAPL_PRECISION = 1e18;
 
     // treasury storage contract, similar to the vault contract.
     // all principal must go back to the treasury, profit stays here.
     ITreasuryStorage TreasuryStorage;
     address treasuryStorage;
 
-    uint256 CAPL_PRECISION = 1e18;
+    // whitelisted address
+    address[] whitelist;
 
     // track user weight
     mapping(address => uint) Weights;
@@ -48,6 +50,36 @@ contract RevenueController is AccessControl {
         // setup the admin role for the storage owner
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         grantRole(OPERATOR_ROLE, msg.sender);
+    }
+
+    /** Whitelist */
+    function getWhitelist() public view returns (address[] memory) {
+        return whitelist;
+    }
+    
+    function addWhitelist(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(!whitelistCheck(_user), "Whitelist: existing user");
+        whitelist.push(_user);
+    }
+    
+    function whitelistCheck(address _user) internal view returns (bool) {
+        for (uint i = 0; i < whitelist.length; i++) {
+            if (whitelist[i] == _user) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function removeWhitelistedUser(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(whitelistCheck(_user), "Whitelist: not existing user");
+
+        // get index
+        for (uint i = 0; i < whitelist.length; i++) {
+            if (whitelist[i] == _user) {
+                delete whitelist[i];
+            }
+        }
     }
 
     /**
@@ -131,9 +163,6 @@ contract RevenueController is AccessControl {
      */
     function splitter(address _token, uint _profit) external onlyRole(DEFAULT_ADMIN_ROLE) {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
-
-        // get length of the whitelist
-        address[] memory whitelist = TreasuryStorage.getWhitelist();
 
         for(uint i; i < whitelist.length; i++) {
             address user = whitelist[i];

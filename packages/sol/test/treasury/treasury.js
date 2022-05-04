@@ -213,9 +213,9 @@ describe("Treasury", async () => {
       expect(_formatEther(await storage.getWeight(user2.address)).toFixed(1)).to.equal('0.2');
 
       // add whitelisted users
-      await storage.addWhitelist(deployer.address);
-      await storage.addWhitelist(user.address);
-      await storage.addWhitelist(user2.address);
+      await controller.addWhitelist(deployer.address);
+      await controller.addWhitelist(user.address);
+      await controller.addWhitelist(user2.address);
 
       // splitter
       await controller.splitter(lp.address, BigInt(1_000 * 10 ** 18));

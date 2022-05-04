@@ -49,7 +49,6 @@ interface ITreasuryStorage {
         view
         returns (uint256);
 
-    function getWhitelist() external view returns(address[] memory);
     function getWeight(address _user) external view returns(uint);
     
     function checkIfPoolExists(address _token) external returns (bool);

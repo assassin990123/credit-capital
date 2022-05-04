@@ -26,8 +26,6 @@ contract TreasuryStorage is AccessControl {
         bool isActive; // determine if the pool exists
     }
 
-    // whitelisted address
-    address[] whitelist;
     address[] poolAddresses;
 
     // pool tracking
@@ -46,15 +44,6 @@ contract TreasuryStorage is AccessControl {
      */
     function checkIfPoolExists(address _token) public view returns (bool) {
         return Pools[_token].isActive;
-    }
-
-    function whitelistCheck(address _user) public view returns (bool) {
-        for (uint i = 0; i < whitelist.length; i++) {
-            if (whitelist[i] == _user) {
-                return true;
-            }
-        }
-        return false;
     }
 
     function getUnlockedAmount(address _token)
@@ -76,10 +65,6 @@ contract TreasuryStorage is AccessControl {
 
     function getPoolTokenPrice(address _token) external view returns (uint256 price) {
         return PoolPrices[_token];
-    }
-
-    function getWhitelist() external view returns (address[] memory) {
-        return whitelist;
     }
     
     function getWeight(address _user) external view returns (uint256 weight) {
@@ -203,22 +188,6 @@ contract TreasuryStorage is AccessControl {
     // RBAC Oracle, price setter (getter needed as well, not included here)
     function setPoolTokenPrice(address _token, uint _price) external onlyRole(DEFAULT_ADMIN_ROLE) {
         PoolPrices[_token] = _price;
-    }
-
-    function addWhitelist(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(!whitelistCheck(_user), "Whitelist: existing user");
-        whitelist.push(_user);
-    }
-
-    function removeWhitelistedUser(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(whitelistCheck(_user), "Whitelist: not existing user");
-
-        // get index
-        for (uint i = 0; i < whitelist.length; i++) {
-            if (whitelist[i] == _user) {
-                delete whitelist[i];
-            }
-        }
     }
 
     function setWeight(address _user, uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
