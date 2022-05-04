@@ -82,6 +82,15 @@ contract RevenueController is AccessControl {
         }
     }
 
+    /** Weight */
+    function getWeight(address _user) public view returns (uint256 weight) {
+        return Weights[_user];
+    }
+
+    function setWeight(address _user, uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        Weights[_user] = _weight;
+    }
+
     /**
         @dev - this function deposits eligible token amounts to the treasury storage, updating the corresponding storage state (to be implemented)
      */
@@ -166,7 +175,7 @@ contract RevenueController is AccessControl {
 
         for(uint i; i < whitelist.length; i++) {
             address user = whitelist[i];
-            uint256 weight = TreasuryStorage.getWeight(user);
+            uint256 weight = Weights[user];
 
             uint sharedProfit = (_profit / CAPL_PRECISION) * weight;
             IERC20(_token).safeTransfer(user, sharedProfit);

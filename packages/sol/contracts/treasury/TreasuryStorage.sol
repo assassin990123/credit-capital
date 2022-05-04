@@ -31,8 +31,6 @@ contract TreasuryStorage is AccessControl {
     // pool tracking
     mapping(address => Pool) Pools; // token => pool
     mapping(address => uint) PoolPrices;
-    // track user weight
-    mapping(address => uint) Weights;
 
     constructor() {
         // setup the admin role for the storage owner
@@ -65,10 +63,6 @@ contract TreasuryStorage is AccessControl {
 
     function getPoolTokenPrice(address _token) external view returns (uint256 price) {
         return PoolPrices[_token];
-    }
-    
-    function getWeight(address _user) external view returns (uint256 weight) {
-        return Weights[_user];
     }
     
     /**
@@ -188,9 +182,5 @@ contract TreasuryStorage is AccessControl {
     // RBAC Oracle, price setter (getter needed as well, not included here)
     function setPoolTokenPrice(address _token, uint _price) external onlyRole(DEFAULT_ADMIN_ROLE) {
         PoolPrices[_token] = _price;
-    }
-
-    function setWeight(address _user, uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        Weights[_user] = _weight;
     }
 }

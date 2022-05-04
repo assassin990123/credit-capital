@@ -198,9 +198,9 @@ describe("Treasury", async () => {
 
       /* split the profit based on the user weight */
       // set the user weight - deployer/user/user2 : 50%/30%%/20%
-      await storage.setWeight(deployer.address, BigInt(0.5 * 10 ** 18));
-      await storage.setWeight(user.address, BigInt(0.3 * 10 ** 18));
-      await storage.setWeight(user2.address, BigInt(0.2 * 10 ** 18));
+      await controller.setWeight(deployer.address, BigInt(0.5 * 10 ** 18));
+      await controller.setWeight(user.address, BigInt(0.3 * 10 ** 18));
+      await controller.setWeight(user2.address, BigInt(0.2 * 10 ** 18));
 
       // check balances of the user before split
       expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749000');
@@ -208,9 +208,9 @@ describe("Treasury", async () => {
       expect(_formatEther(await lp.balanceOf(user2.address)).toFixed(0)).to.equal('0');
 
       // check weights of the user before split
-      expect(_formatEther(await storage.getWeight(deployer.address)).toFixed(1)).to.equal('0.5');
-      expect(_formatEther(await storage.getWeight(user.address)).toFixed(1)).to.equal('0.3');
-      expect(_formatEther(await storage.getWeight(user2.address)).toFixed(1)).to.equal('0.2');
+      expect(_formatEther(await controller.getWeight(deployer.address)).toFixed(1)).to.equal('0.5');
+      expect(_formatEther(await controller.getWeight(user.address)).toFixed(1)).to.equal('0.3');
+      expect(_formatEther(await controller.getWeight(user2.address)).toFixed(1)).to.equal('0.2');
 
       // add whitelisted users
       await controller.addWhitelist(deployer.address);
