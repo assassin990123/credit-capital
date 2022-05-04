@@ -14,15 +14,12 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     Counters.Counter private _tokenIdCounter;
 
-    // @dev - NFT transfer locks
-    mapping(uint => bool) locks;
-
     // @dev - NFT on chain data
     struct NFTData {
         string name;
         string description;
         uint value; // in dollars
-        uint timelockEnd;
+        bool isLocked;
     }
 
     mapping(uint => NFTData) metadataOnChain;
@@ -37,9 +34,9 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
         return metadataOnChain[_tokenId];
     }
 
-    function lockNFT(uint _tokenId, uint _timelock) external {
+    function lockNFT(uint _tokenId, bool _lock) external {
         require(ownerOf(_tokenId) == msg.sender, "Permission: the sender is not the owner of this token");
-        metadataOnChain[_tokenId].timelockEnd = block.timestamp + _timelock;
+        metadataOnChain[_tokenId].isLocked = _lock;
     }
 
     function safeMint(address to, string memory uri, string calldata name, string calldata description, uint value) public onlyRole(MINTER_ROLE) {
@@ -49,7 +46,7 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
             name,
             description,
             value,
-            block.timestamp
+            false
         );
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
@@ -61,7 +58,7 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
         internal
         override(ERC721, ERC721Enumerable)
     {
-        require(metadataOnChain[tokenId].timelockEnd <= block.timestamp, "Timelock: Locked token");
+        require(!metadataOnChain[tokenId].isLocked, "Denied: Locked token");
         super._beforeTokenTransfer(from, to, tokenId);
     }
 

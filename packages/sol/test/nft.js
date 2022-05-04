@@ -86,42 +86,36 @@ describe("My Token / MTK", async () => {
     let metadata = await nft.getMetadataOnChain(tokenId);
 
     // get blocktimestamp
-    let blockNumBefore = await ethers.provider.getBlockNumber();
-    let blockBefore = await ethers.provider.getBlock(blockNumBefore);
-
     expect(metadata.name).to.equal(NAME);
     expect(metadata.description).to.equal(DESCRIPTION);
     expect(metadata.value).to.equal(VALUE);
-    expect(metadata.timelockEnd).to.equal(blockBefore.timestamp);
+    expect(metadata.isLocked).to.equal(false);
     expect(await nft.tokenURI(tokenId)).to.equal(URI);
 
     // lock nft
-    await nft.lockNFT(tokenId, TIMELOCK);
+    await nft.lockNFT(tokenId, true);
 
     // check the metadata on chain
     metadata = await nft.getMetadataOnChain(tokenId);
-    blockNumBefore = await ethers.provider.getBlockNumber();
-    blockBefore = await ethers.provider.getBlock(blockNumBefore);
-    expect(metadata.timelockEnd).to.equal(blockBefore.timestamp + TIMELOCK);
+    expect(metadata.isLocked).to.equal(true);
 
     // only the token owner can lock nft
     try {
-      await nft.connect(user).lockNFT(tokenId, TIMELOCK);
+      await nft.connect(user).lockNFT(tokenId, true);
     } catch (error) {
       expect(error.message).match(/Permission: the sender is not the owner of this token/);
     }
-    // console.log(Object.keys(nft));
+    // console.log(Object.keys(nft)); // get all contract methods
 
     // token transfer should be failed
     try {
-      await nft['safeTransferFrom(address,address,uint256)'](deployer.address, user.address, tokenId);
+      await nft['safeTransferFrom(address,address,uint256)'](deployer.address, user.address, tokenId); // overroaded function call
     } catch (error) {
-      expect(error.message).match(/Timelock: Locked token/);
+      expect(error.message).match(/Denied: Locked token/);
     }
 
-    // fast forward 1h
-    await network.provider.send("evm_increaseTime", [3600]);
-    await network.provider.send("evm_mine");
+    // unlock nft
+    await nft.lockNFT(tokenId, false);
 
     await nft['safeTransferFrom(address,address,uint256)'](deployer.address, user.address, tokenId);
     expect(await nft.ownerOf(tokenId)).to.equal(user.address);
