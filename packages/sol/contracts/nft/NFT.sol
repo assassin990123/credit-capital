@@ -39,6 +39,10 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
         metadataOnChain[_tokenId].isLocked = _lock;
     }
 
+    function verifyLockedState(uint _tokenId) external view returns (bool) {
+        return metadataOnChain[_tokenId].isLocked;
+    }
+
     function safeMint(address to, string memory uri, string calldata name, string calldata description, uint value) public onlyRole(MINTER_ROLE) {
         _tokenIdCounter.increment();
         uint256 tokenId = _tokenIdCounter.current();
