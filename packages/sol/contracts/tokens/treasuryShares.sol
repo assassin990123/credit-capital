@@ -4,13 +4,11 @@ pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract TreasuryShares is
     ERC20,
     ERC20Burnable,
-    ERC20Capped,
     AccessControl
 {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -19,9 +17,8 @@ contract TreasuryShares is
      * @dev Sets the value of the `cap`. This value is immutable, it can only be
      * set once during construction.
      */
-    constructor(uint256 cap_)
+    constructor()
         ERC20("CreditCapital Platform Token", "CAPL")
-        ERC20Capped(cap_)
     {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
