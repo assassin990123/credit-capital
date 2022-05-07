@@ -34,7 +34,7 @@ contract TreasuryShares is
     function _mint(address account, uint256 amount)
         internal
         virtual
-        override(ERC20, ERC20Capped)
+        override(ERC20)
     {
         super._mint(account, amount);
     }
