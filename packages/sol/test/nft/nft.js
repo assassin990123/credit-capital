@@ -95,9 +95,8 @@ describe("My Token / MTK", async () => {
     // lock nft
     await nft.lockNFT(tokenId, true);
 
-    // check the metadata on chain
-    metadata = await nft.getMetadataOnChain(tokenId);
-    expect(metadata.isLocked).to.equal(true);
+    // check the locked state
+    expect(await nft.verifyLockedState(tokenId)).to.equal(true);
 
     // only the token owner can lock nft
     try {
@@ -116,6 +115,9 @@ describe("My Token / MTK", async () => {
 
     // unlock nft
     await nft.lockNFT(tokenId, false);
+    
+    // check the locked state
+    expect(await nft.verifyLockedState(tokenId)).to.equal(false);
 
     await nft['safeTransferFrom(address,address,uint256)'](deployer.address, user.address, tokenId);
     expect(await nft.ownerOf(tokenId)).to.equal(user.address);
