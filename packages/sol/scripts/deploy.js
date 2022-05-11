@@ -1,21 +1,30 @@
 const hre = require("hardhat");
 const fs = require('fs');
 
+const USDC_CAPL_POOL_ID = "0x270c10cb22cf7dfcbb6435b9a0886bd05e5818e9000200000000000000000624";
+const USDC_ADDRESS = "0xc2569dd7d0fd715b054fbf16e75b001e5c0c1115";
+
 async function main() {
   /**
    * Standard contracts - Rewards, Vault
    */
-  const Vault = await hre.ethers.getContractFactory("Vault");
-  const vault = await Vault.deploy(process.env.LP_ADDRESS_KOVAN, BigInt(5000 / (24 * 60 * 60) * (10 ** 18)));
-  await vault.deployed();
-  console.log("vault deployed to:", vault.address);
-  await saveContractABI("vault", "Vault");
+  // const Vault = await hre.ethers.getContractFactory("Vault");
+  // const vault = await Vault.deploy(process.env.LP_ADDRESS_KOVAN, BigInt(5000 / (24 * 60 * 60) * (10 ** 18)));
+  // await vault.deployed();
+  // console.log("vault deployed to:", vault.address);
+  // await saveContractABI("vault", "Vault");
 
-  const Rewards = await hre.ethers.getContractFactory("Rewards");
-  const rewards = await Rewards.deploy(vault.address, process.env.CAPL_ADDRESS_KOVAN);
-  await rewards.deployed();
-  console.log("rewards deployed to:", rewards.address);
-  await saveContractABI("rewards", "Rewards");
+  // const Rewards = await hre.ethers.getContractFactory("Rewards");
+  // const rewards = await Rewards.deploy(vault.address, process.env.CAPL_ADDRESS_KOVAN);
+  // await rewards.deployed();
+  // console.log("rewards deployed to:", rewards.address);
+  // await saveContractABI("rewards", "Rewards");
+
+  const Swap = await hre.ethers.getContractFactory("Swap");
+  const swap = await Swap.deploy(process.env.CAPL_ADDRESS_KOVAN, USDC_ADDRESS, USDC_CAPL_POOL_ID);
+  await swap.deployed();
+  console.log("swap deployed to:", swap.address);
+  await saveContractABI("swap", "Swap");
 
   /**
    * Treasury contracts - RevenueController, TreasuryStorage
@@ -32,23 +41,23 @@ async function main() {
   await saveContractABI("revenuecontroller", "RevenueController");
    */  
 
-  /**
-   * Grant roles
-   */
-  await grantRoles(rewards, vault);
+  // /**
+  //  * Grant roles
+  //  */
+  // await grantRoles(rewards, vault);
   
-  // save deployed address in config file
-  let config = `
-  export const vaultcontractaddress = "${vault.address}"
-  export const rewardscontractaddress = "${rewards.address}"
-  `
-  /*
-    export const treasurystorage = "${treasurystorage.address}"
-  export const revenuecontroller = "${revenuecontroller.address}"
-  */
+  // // save deployed address in config file
+  // let config = `
+  // export const vaultcontractaddress = "${vault.address}"
+  // export const rewardscontractaddress = "${rewards.address}"
+  // `
+  // /*
+  //   export const treasurystorage = "${treasurystorage.address}"
+  // export const revenuecontroller = "${revenuecontroller.address}"
+  // */
 
-  let data = JSON.stringify(config);
-  fs.writeFileSync('config.js', JSON.parse(data));
+  // let data = JSON.stringify(config);
+  // fs.writeFileSync('config.js', JSON.parse(data));
 }
 
 async function saveContractABI(contract, contractArtifact) {

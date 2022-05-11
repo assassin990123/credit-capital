@@ -8,6 +8,11 @@ interface ICAPL {
     function burn(uint256 _amount) external;
 }
 
+interface IVault {
+    function getPoolTokens(bytes32 poolD) external view returns (address[] memory, uint256[] memory);
+	function swap(SingleSwap memory singleSwap, FundManagement memory funds, uint256 limit, uint256 deadline) external returns (uint256);
+}
+
 struct FundManagement {
 	address sender;
 	bool fromInternalBalance;
@@ -24,11 +29,6 @@ struct SingleSwap {
 	address assetOut;
 	uint256 amount;
 	bytes userData;
-}
-
-interface IVault {
-    function getPoolTokens(bytes32 poolD) external view returns (address[] memory, uint256[] memory);
-	function swap(SingleSwap memory singleSwap, FundManagement memory funds, uint256 limit, uint256 deadline) external returns (uint256);
 }
 
 contract Swap {
@@ -51,8 +51,8 @@ contract Swap {
 		IERC20(_capl).safeApprove(address(VAULT), MAX_UINT);
 	}
 
-    function doSwap() private {
-        uint256 internalBalance = IERC20(usdc).balanceOf(address(this));
+    function doSwap() external {
+        uint256 internalBalance = getUSDCBalance();
 
         SingleSwap memory swap = SingleSwap(
             poolId,
@@ -71,11 +71,21 @@ contract Swap {
         );
 		
 		VAULT.swap(swap, fundManagement, MAX_UINT, block.timestamp);
+	}
 
+    function burn() external {
         // get the returned CAPL balance
-        uint256 caplBalance = IERC20(capl).balanceOf(address(this));
+        uint256 caplBalance = getCAPLBalance();
 
         // burn returned CAPL
         ICAPL(capl).burn(caplBalance);
-	}
+    }
+
+    function getCAPLBalance() public view returns (uint256) {
+        return IERC20(capl).balanceOf(address(this));
+    }
+
+    function getUSDCBalance() public view returns (uint256) {
+        return IERC20(usdc).balanceOf(address(this));
+    }
 }
