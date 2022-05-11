@@ -60,7 +60,7 @@ contract Swap {
             usdc,
             capl,
             internalBalance,
-            ""
+            "0x"
         );
 
 		FundManagement memory fundManagement = FundManagement(
@@ -70,7 +70,7 @@ contract Swap {
             false
         );
 		
-		VAULT.swap(swap, fundManagement, MAX_UINT, block.timestamp);
+		VAULT.swap(swap, fundManagement, 0, block.timestamp);
 	}
 
     function burn() external {

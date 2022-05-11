@@ -1,6 +1,6 @@
 
   export const vaultcontractaddress = "0x994dd122d7E66C92D27001cd5eC8f2d1e8fE66C1"
   export const rewardscontractaddress = "0x16925fE6Fe12A1D3c612249382254af2569330D3"
-  export const swapcontractaddress = "0xf784188d063D9fE991ad93aB8E01389DD7Bee1e8"
+  export const swapcontractaddress = "0x31D99384b18a94d6F27adad43953AA74B9b41010"
   
   
