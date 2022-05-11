@@ -3,6 +3,7 @@ const fs = require('fs');
 
 const USDC_CAPL_POOL_ID = "0x270c10cb22cf7dfcbb6435b9a0886bd05e5818e9000200000000000000000624";
 const USDC_ADDRESS = "0xc2569dd7d0fd715b054fbf16e75b001e5c0c1115";
+const VAULT_ADDRESS="0xBA12222222228d8Ba445958a75a0704d566BF2C8"
 
 async function main() {
   /**
@@ -21,7 +22,7 @@ async function main() {
   // await saveContractABI("rewards", "Rewards");
 
   const Swap = await hre.ethers.getContractFactory("Swap");
-  const swap = await Swap.deploy(process.env.CAPL_ADDRESS_KOVAN, USDC_ADDRESS, USDC_CAPL_POOL_ID);
+  const swap = await Swap.deploy(process.env.CAPL_ADDRESS_KOVAN, USDC_ADDRESS, VAULT_ADDRESS, USDC_CAPL_POOL_ID);
   await swap.deployed();
   console.log("swap deployed to:", swap.address);
   await saveContractABI("swap", "Swap");

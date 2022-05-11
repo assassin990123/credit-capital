@@ -35,20 +35,23 @@ contract Swap {
     using SafeERC20 for IERC20;
 
     uint256 private constant MAX_UINT = 2 ** 256 - 1;
-    bytes32 poolId;
 
-    address capl;
-    address usdc;
+    bytes32 public poolId;
+    address public capl;
+    address public usdc;
 
-    IVault constant private VAULT = IVault(0xBA12222222228d8Ba445958a75a0704d566BF2C8);
+    IVault VAULT;
+    address public vault;
 
-	constructor(address _capl, address _usdc, uint _poolId) {
+	constructor(address _capl, address _usdc, address _vault, uint _poolId) {
         poolId = bytes32(_poolId);
         capl = _capl;
         usdc = _usdc;
+        vault = _vault;
 
-		IERC20(_usdc).approve(address(VAULT), MAX_UINT);
-		IERC20(_capl).safeApprove(address(VAULT), MAX_UINT);
+        VAULT = IVault(_vault);
+		IERC20(_usdc).approve(vault, MAX_UINT);
+		IERC20(_capl).safeApprove(vault, MAX_UINT);
 	}
 
     function doSwap() external {
