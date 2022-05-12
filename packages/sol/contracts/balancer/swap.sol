@@ -36,7 +36,6 @@ contract Swap {
     using SafeERC20 for IERC20;
 
     uint256 private constant MAX_UINT = 2 ** 256 - 1;
-    uint256 public deadline = 10 minutes;
 
     bytes32 public poolId;
     address public capl;
@@ -59,11 +58,6 @@ contract Swap {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 	}
 
-    // Deadline setter (RBAC)
-    function setDeadline(uint256 _deadline) onlyRole(DEFAUL_ADMIN_ROME) {
-        deadline = _deadline;
-    }
-
     function doSwap() external {
         uint256 internalBalance = getUSDCBalance();
 
@@ -83,7 +77,7 @@ contract Swap {
             false
         );
 		
-		VAULT.swap(swap, fundManagement, 0, block.timestamp + deadline);
+		VAULT.swap(swap, fundManagement, 0, block.timestamp + 10 minutes);
 	}
 
     function burn() external {
