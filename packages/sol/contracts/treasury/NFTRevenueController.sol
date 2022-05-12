@@ -185,7 +185,7 @@ contract NFTRevenueController is AccessControl {
             IERC721 nft = IERC721(nfts[i]);
             address nftOwner = nft.ownerOf(0); // we assume that the token id is just 0
 
-            uint sharedProfit = (profit / CAPL_PRECISION) * nftOwnerWeight / 100;
+            uint sharedProfit = ((profit / CAPL_PRECISION) * nftOwnerWeight / nfts.length) / 100;
             IERC20(_token).safeTransfer(nftOwner, sharedProfit);
 
             emit DistributeTokenAlloc(_token, nftOwner, sharedProfit);
