@@ -35,6 +35,7 @@ contract Swap {
     using SafeERC20 for IERC20;
 
     uint256 private constant MAX_UINT = 2 ** 256 - 1;
+    uint256 public constant DEADLINE = 10 minutes;
 
     bytes32 public poolId;
     address public capl;
@@ -73,7 +74,7 @@ contract Swap {
             false
         );
 		
-		VAULT.swap(swap, fundManagement, 0, block.timestamp);
+		VAULT.swap(swap, fundManagement, 0, block.timestamp + DEADLINE);
 	}
 
     function burn() external {
