@@ -3,6 +3,7 @@ pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 interface ICAPL {
     function burn(uint256 _amount) external;
@@ -35,7 +36,7 @@ contract Swap {
     using SafeERC20 for IERC20;
 
     uint256 private constant MAX_UINT = 2 ** 256 - 1;
-    uint256 public constant DEADLINE = 10 minutes;
+    uint256 public deadline = 10 minutes;
 
     bytes32 public poolId;
     address public capl;
@@ -53,7 +54,15 @@ contract Swap {
         VAULT = IVault(_vault);
 		IERC20(_usdc).approve(vault, MAX_UINT);
 		IERC20(_capl).safeApprove(vault, MAX_UINT);
+        
+        // setup the admin role for the storage owner
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 	}
+
+    // Deadline setter (RBAC)
+    function setDeadline(uint256 _deadline) onlyRole(DEFAUL_ADMIN_ROME) {
+        deadline = _deadline;
+    }
 
     function doSwap() external {
         uint256 internalBalance = getUSDCBalance();
@@ -74,7 +83,7 @@ contract Swap {
             false
         );
 		
-		VAULT.swap(swap, fundManagement, 0, block.timestamp + DEADLINE);
+		VAULT.swap(swap, fundManagement, 0, block.timestamp + deadline);
 	}
 
     function burn() external {
