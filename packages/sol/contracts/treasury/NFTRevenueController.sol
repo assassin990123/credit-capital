@@ -4,6 +4,7 @@ pragma solidity 0.8.11;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 // TreasurySotrage
 import "hardhat/console.sol";
@@ -53,31 +54,31 @@ contract NFTRevenueController is AccessControl {
         grantRole(OPERATOR_ROLE, msg.sender);
     }
 
-    /** Whitelist */
-    function getWhitelist() public view returns (address[] memory) {
+    /** NFT address */
+    function getNFTs() public view returns (address[] memory) {
         return nfts;
     }
 
-    function nftOnwerCheck(address _user) internal view returns (bool) {
+    function nftCheck(address _nft) internal view returns (bool) {
         for (uint i = 0; i < nfts.length; i++) {
-            if (nfts[i] == _user) {
+            if (nfts[i] == _nft) {
                 return true;
             }
         }
         return false;
     }
 
-    function addWhitelist(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(!nftOnwerCheck(_user), "Whitelist: existing user");
-        nfts.push(_user);
+    function addNFTAddress(address _nft) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(!nftCheck(_nft), "NFT address: existing nft address");
+        nfts.push(_nft);
     }
 
-    function removeWhitelistedUser(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(nftOnwerCheck(_user), "Whitelist: not existing user");
+    function removeNFTAddress(address _nft) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(nftCheck(_nft), "NFT address: not existing nft address");
 
         // get index
         for (uint i = 0; i < nfts.length; i++) {
-            if (nfts[i] == _user) {
+            if (nfts[i] == _nft) {
                 delete nfts[i];
             }
         }
@@ -178,13 +179,16 @@ contract NFTRevenueController is AccessControl {
         uint controllerProfit = (profit / CAPL_PRECISION) * controllerWeight / 100;
         IERC20(_token).safeTransfer(address(this), controllerProfit);
 
+        emit DistributeTokenAlloc(_token, address(this), controllerProfit);
+
         for(uint i; i < nfts.length; i++) {
-            address user = nfts[i];
+            IERC721 nft = IERC721(nfts[i]);
+            address nftOwner = nft.ownerOf(0); // we assume that the token id is just 0
 
             uint sharedProfit = (profit / CAPL_PRECISION) * nftOwnerWeight / 100;
-            IERC20(_token).safeTransfer(user, sharedProfit);
+            IERC20(_token).safeTransfer(nftOwner, sharedProfit);
 
-            emit DistributeTokenAlloc(_token, user, sharedProfit);
+            emit DistributeTokenAlloc(_token, nftOwner, sharedProfit);
         }
     }
 
