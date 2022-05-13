@@ -7,9 +7,9 @@ const NAME = "MTK1";
 const DESCRIPTION = "Example description";
 const VALUE = BigInt(0.1 * 10 ** 18);
 
-const deployContract = async (contract, params) => {
+const deployContract = async (contract, params, deployer) => {
   let c = await ethers.getContractFactory(contract);
-  if (params) c = await c.deploy(...params);
+  if (params) c = await c.connect(deployer).deploy(...params);
   else c = await c.deploy();
   return await c.deployed();
 };
@@ -20,14 +20,14 @@ const deployContracts = async (deployer) => {
     "LP",
     deployer.address,
     BigInt(1_000_000 * 10 ** 18),
-  ]);
-  const storage = await deployContract("TreasuryStorage");
+  ], deployer);
+  const storage = await deployContract("TreasuryStorage", [], deployer);
   const controller = await deployContract("RevenueController", [
     storage.address,
-  ]);
+  ], deployer);
   const nftController = await deployContract("NFTRevenueController", [
     storage.address,
-  ]);
+  ], deployer);
   return { lp, controller, nftController, storage };
 };
 
@@ -251,11 +251,12 @@ describe("Treasury", async () => {
     let nft1;
     let nft2;
     let nft3;
+
     before(async () => {
       // deploy nft contracts
-      nft1 = await deployContract("MyToken");
-      nft2 = await deployContract("MyToken");
-      nft3 = await deployContract("MyToken");
+      nft1 = await deployContract("MyToken", [], deployer);
+      nft2 = await deployContract("MyToken", [], user);
+      nft3 = await deployContract("MyToken", [], user2);
     });
 
     it("Deposit, loan, return principal and split the profits", async () => {
@@ -307,7 +308,6 @@ describe("Treasury", async () => {
       await nft3.connect(user2).safeMint(user2.address, URI, NAME, DESCRIPTION, VALUE);
 
       // We will have 3 nft token owners and split the profit per each owner
-
       // check balances of the user before split
       expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749000');
       expect(_formatEther(await lp.balanceOf(user.address)).toFixed(0)).to.equal('0');
@@ -324,9 +324,9 @@ describe("Treasury", async () => {
       // check the user balance
       expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749317');
       expect(_formatEther(await lp.balanceOf(user.address)).toFixed(0)).to.equal('317');
-      expect(_formatEther(await lp.balanceOf(user1.address)).toFixed(0)).to.equal('317');
+      expect(_formatEther(await lp.balanceOf(user2.address)).toFixed(0)).to.equal('317');
 
-      // check nftController balance
+      // check nftController balance - will remain 5% of the profit
       expect(_formatEther(await lp.balanceOf(nftController.address)).toFixed(0)).to.equal('50');
     });
   });

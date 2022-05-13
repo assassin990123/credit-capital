@@ -16,7 +16,6 @@ contract NFTRevenueController is AccessControl {
     // user Roles for RBAC
     bytes32 public constant OPERATOR_ROLE =
         keccak256("OPERATOR_ROLE");
-    uint256 CAPL_PRECISION = 1e18;
 
     // treasury storage contract, similar to the vault contract.
     // all principal must go back to the treasury, profit stays here.
@@ -175,18 +174,12 @@ contract NFTRevenueController is AccessControl {
     function splitter(address _token, uint _profit) external onlyRole(DEFAULT_ADMIN_ROLE) {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
         
-        // store 5% profit to the controller
-        uint controllerProfit = (_profit / CAPL_PRECISION) * controllerWeight / 100;
-        IERC20(_token).safeTransfer(address(this), controllerProfit);
-
-        emit DistributeTokenAlloc(_token, address(this), controllerProfit);
-
         for(uint i; i < nfts.length; i++) {
             IERC721 nft = IERC721(nfts[i]);
             address nftOwner = nft.ownerOf(1); // we assume that the token id is just 0
 
-            uint sharedProfit = ((_profit / CAPL_PRECISION) * nftOwnerWeight / nfts.length) / 100;
-            IERC20(_token).safeTransfer(nftOwner, sharedProfit);
+            uint sharedProfit = (_profit * nftOwnerWeight / nfts.length) / 100;
+            IERC20(_token).transfer(nftOwner, sharedProfit);
 
             emit DistributeTokenAlloc(_token, nftOwner, sharedProfit);
         }
