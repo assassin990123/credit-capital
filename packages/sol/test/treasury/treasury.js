@@ -6,9 +6,6 @@ const URI = "testuri";
 const NAME = "MTK1";
 const DESCRIPTION = "Example description";
 const VALUE = BigInt(0.1 * 10 ** 18);
-const MINTER_ROLE = ethers.utils.keccak256(
-  ethers.utils.toUtf8Bytes("MINTER_ROLE")
-);
 
 const deployContract = async (contract, params) => {
   let c = await ethers.getContractFactory(contract);
@@ -24,16 +21,14 @@ const deployContracts = async (deployer) => {
     deployer.address,
     BigInt(1_000_000 * 10 ** 18),
   ]);
-  const nft = await deployContract("MyToken");
   const storage = await deployContract("TreasuryStorage");
   const controller = await deployContract("RevenueController", [
     storage.address,
   ]);
   const nftController = await deployContract("NFTRevenueController", [
     storage.address,
-    nft.address
   ]);
-  return { lp, nft, controller, nftController, storage };
+  return { lp, controller, nftController, storage };
 };
 
 const _formatEther = (amount) => {
@@ -45,7 +40,6 @@ describe("Treasury", async () => {
   let user;
   let user2;
   let lp;
-  let nft;
   let storage;
   let controller;
   let nftController;
@@ -55,7 +49,7 @@ describe("Treasury", async () => {
     [deployer, user, user2] = await ethers.getSigners();
 
     // deploy token contract
-    ({ lp, nft, controller, nftController, storage } = await deployContracts(deployer));
+    ({ lp, controller, nftController, storage } = await deployContracts(deployer));
 
     // grant controller the REVENUE_CONTROLLER role of storage contract
     await storage.grantRole(
@@ -254,72 +248,86 @@ describe("Treasury", async () => {
   });
 
   describe("NFT Revenue Controller", () => {
-    describe("Treasury Income, Profit", () => {
-      it("Deposit, loan, return principal and split the profits", async () => {
-        // add pool for the capl
-        await nftController.addPool(lp.address);
+    let nft1;
+    let nft2;
+    let nft3;
+    before(async () => {
+      // deploy nft contracts
+      nft1 = await deployContract("MyToken");
+      nft2 = await deployContract("MyToken");
+      nft3 = await deployContract("MyToken");
+    });
 
-        // approve lp token allowance
-        await lp.approve(storage.address, BigInt(250_000 * 10 ** 18));
+    it("Deposit, loan, return principal and split the profits", async () => {
+      // add pool for the capl
+      await nftController.addPool(lp.address);
 
-        // deposit new userposition
-        await nftController.deposit(lp.address, BigInt(250_000 * 10 ** 18));
-        expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('750000');
+      // approve lp token allowance
+      await lp.approve(storage.address, BigInt(250_000 * 10 ** 18));
 
-        // check the storage states
-        expect(_formatEther((await storage.getLoanPosition(lp.address, deployer.address)).loanAmount).toFixed(0)).to.equal('0');
-        expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
+      // deposit new userposition
+      await nftController.deposit(lp.address, BigInt(250_000 * 10 ** 18));
+      expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('750000');
 
-        // approve lp token allowance
-        await lp.approve(storage.address, BigInt(50_000 * 10 ** 18));
+      // check the storage states
+      expect(_formatEther((await storage.getLoanPosition(lp.address, deployer.address)).loanAmount).toFixed(0)).to.equal('0');
+      expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
 
-        // loan token
-        await nftController.loan(lp.address, BigInt(50_000 * 10 ** 18));
-        expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('800000');
+      // approve lp token allowance
+      await lp.approve(storage.address, BigInt(50_000 * 10 ** 18));
 
-        // check the storage states
-        expect(_formatEther((await storage.getLoanPosition(lp.address, deployer.address)).loanAmount).toFixed(0)).to.equal('50000');
-        expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
-        expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('50000');
+      // loan token
+      await nftController.loan(lp.address, BigInt(50_000 * 10 ** 18));
+      expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('800000');
 
-        // approve lp token allowance
-        await lp.approve(nftController.address, BigInt(51_000 * 10 **18));
+      // check the storage states
+      expect(_formatEther((await storage.getLoanPosition(lp.address, deployer.address)).loanAmount).toFixed(0)).to.equal('50000');
+      expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
+      expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('50000');
 
-        // return loaned amount
-        await nftController.treasuryIncome(lp.address, BigInt(50_000 * 10 ** 18), BigInt(1_000 * 10 ** 18)); // 1_000 LP for profit
-        expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749000'); // return loanAmount + profit
+      // approve lp token allowance
+      await lp.approve(nftController.address, BigInt(51_000 * 10 **18));
 
-        // check the storage states
-        expect(_formatEther((await storage.getLoanPosition(lp.address, deployer.address)).loanAmount).toFixed(0)).to.equal('0');
-        expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
-        expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('0');
+      // return loaned amount
+      await nftController.treasuryIncome(lp.address, BigInt(50_000 * 10 ** 18), BigInt(1_000 * 10 ** 18)); // 1_000 LP for profit
+      expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749000'); // return loanAmount + profit
 
-        // the profit should be remain in nftController
-        expect(_formatEther(await lp.balanceOf(nftController.address))).to.equal(1_000);
+      // check the storage states
+      expect(_formatEther((await storage.getLoanPosition(lp.address, deployer.address)).loanAmount).toFixed(0)).to.equal('0');
+      expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
+      expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('0');
 
-        /* split the profit based on the user weight */
-        // mint nft token
-        await nft.safeMint(deployer.address, URI, NAME, DESCRIPTION, VALUE);
-        // check balances of the user before split
-        expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749000');
+      // the profit should be remain in nftController
+      expect(_formatEther(await lp.balanceOf(nftController.address))).to.equal(1_000);
 
-        // check weights of the user before split
-        expect(_formatEther(await nftController.getWeight(deployer.address)).toFixed(1)).to.equal('0.5');
+      /* split the profit based on the user weight */
+      // mint nft token
+      await nft1.safeMint(deployer.address, URI, NAME, DESCRIPTION, VALUE);
+      await nft2.connect(user).safeMint(user.address, URI, NAME, DESCRIPTION, VALUE);
+      await nft3.connect(user2).safeMint(user2.address, URI, NAME, DESCRIPTION, VALUE);
 
-        // add whitelisted users
-        await nftController.addWhitelist(deployer.address);
-        await nftController.addWhitelist(user.address);
-        await nftController.addWhitelist(user2.address);
+      // We will have 3 nft token owners and split the profit per each owner
 
-        // splitter
-        await nftController.splitter(lp.address, BigInt(1_000 * 10 ** 18));
+      // check balances of the user before split
+      expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749000');
+      expect(_formatEther(await lp.balanceOf(user.address)).toFixed(0)).to.equal('0');
+      expect(_formatEther(await lp.balanceOf(user2.address)).toFixed(0)).to.equal('0');
 
-        // check the user balance
-        expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749500');
+      // add nft addresses
+      await nftController.addNFTAddress(nft1.address);
+      await nftController.addNFTAddress(nft2.address);
+      await nftController.addNFTAddress(nft3.address);
 
-        // check nftController balance
-        expect(_formatEther(await lp.balanceOf(nftController.address)).toFixed(0)).to.equal('0');
-      });
+      // splitter
+      await nftController.splitter(lp.address, BigInt(1_000 * 10 ** 18));
+
+      // check the user balance
+      expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749317');
+      expect(_formatEther(await lp.balanceOf(user.address)).toFixed(0)).to.equal('317');
+      expect(_formatEther(await lp.balanceOf(user1.address)).toFixed(0)).to.equal('317');
+
+      // check nftController balance
+      expect(_formatEther(await lp.balanceOf(nftController.address)).toFixed(0)).to.equal('50');
     });
   });
 });

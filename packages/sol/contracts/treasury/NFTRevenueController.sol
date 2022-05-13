@@ -176,16 +176,16 @@ contract NFTRevenueController is AccessControl {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
         
         // store 5% profit to the controller
-        uint controllerProfit = (profit / CAPL_PRECISION) * controllerWeight / 100;
+        uint controllerProfit = (_profit / CAPL_PRECISION) * controllerWeight / 100;
         IERC20(_token).safeTransfer(address(this), controllerProfit);
 
         emit DistributeTokenAlloc(_token, address(this), controllerProfit);
 
         for(uint i; i < nfts.length; i++) {
             IERC721 nft = IERC721(nfts[i]);
-            address nftOwner = nft.ownerOf(0); // we assume that the token id is just 0
+            address nftOwner = nft.ownerOf(1); // we assume that the token id is just 0
 
-            uint sharedProfit = ((profit / CAPL_PRECISION) * nftOwnerWeight / nfts.length) / 100;
+            uint sharedProfit = ((_profit / CAPL_PRECISION) * nftOwnerWeight / nfts.length) / 100;
             IERC20(_token).safeTransfer(nftOwner, sharedProfit);
 
             emit DistributeTokenAlloc(_token, nftOwner, sharedProfit);
