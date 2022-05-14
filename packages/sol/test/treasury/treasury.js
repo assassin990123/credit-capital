@@ -7,9 +7,10 @@ const NAME = "MTK1";
 const DESCRIPTION = "Example description";
 const VALUE = BigInt(0.1 * 10 ** 18);
 
-const VAULT_ADDRESS="0xBA12222222228d8Ba445958a75a0704d566BF2C8"
+const VAULT_ADDRESS = ethers.utils.getAddress("0xBA12222222228d8Ba445958a75a0704d566BF2C8");
 const USDC_CAPL_POOL_ID = "0x270c10cb22cf7dfcbb6435b9a0886bd05e5818e9000200000000000000000624";
-const USDC_ADDRESS = "0xc2569dd7d0fd715b054fbf16e75b001e5c0c1115";
+const USDC_ADDRESS = ethers.utils.getAddress("0xc2569dd7d0fd715b054fbf16e75b001e5c0c1115");
+const CAPL_ADDRESS = ethers.utils.getAddress(process.env.CAPL_ADDRESS_KOVAN);
 
 const deployContract = async (contract, params) => {
   let c = await ethers.getContractFactory(contract);
@@ -27,7 +28,7 @@ const deployContracts = async (deployer) => {
   ]);
 
   const nft = await deployContract("MyToken", []);
-  const swap = await deployContract("Swap", [process.env.CAPL_ADDRESS_KOVAN, USDC_ADDRESS, VAULT_ADDRESS, USDC_CAPL_POOL_ID]);
+  const swap = await deployContract("Swap", [CAPL_ADDRESS, USDC_ADDRESS, VAULT_ADDRESS, USDC_CAPL_POOL_ID]);
   const storage = await deployContract("TreasuryStorage", []);
   const controller = await deployContract("RevenueController", [
     storage.address,

@@ -12,6 +12,7 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
     using Counters for Counters.Counter;
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant LOCKER_ROLE = keccak256("LOCKER_ROLE");
     Counters.Counter private _tokenIdCounter;
 
     // @dev - NFT on chain data
@@ -34,8 +35,7 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
         return metadataOnChain[_tokenId];
     }
 
-    function handleLock(uint _tokenId, bool _lock) external {
-        require(ownerOf(_tokenId) == msg.sender, "Permission: the sender is not the owner of this token");
+    function handleLock(uint _tokenId, bool _lock) external onlyRole(LOCKER_ROLE) {
         metadataOnChain[_tokenId].isLocked = _lock;
     }
 

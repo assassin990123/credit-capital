@@ -50,7 +50,7 @@ contract Swap is AccessControl {
         vault = _vault;
 
         VAULT = IVault(_vault);
-		IERC20(_usdc).approve(vault, MAX_UINT);
+		IERC20(_usdc).safeApprove(vault, MAX_UINT);
 		IERC20(_capl).safeApprove(vault, MAX_UINT);
         
         // setup the admin role for the storage owner
