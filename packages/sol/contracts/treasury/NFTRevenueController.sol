@@ -8,6 +8,10 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 import "hardhat/console.sol";
 
+interface ISwap {
+    function swapAndBurn() external;
+}
+
 contract NFTRevenueController is AccessControl {
     using SafeERC20 for IERC20;
 
@@ -17,11 +21,16 @@ contract NFTRevenueController is AccessControl {
 
     // This controller will be represented by single NFT
     IERC721 NFT;
-    address nft;
+    address public nft;
+
+    // Swap contract
+    ISwap Swap;
+    address public swap;
 
     // track user weight
     uint256 public controllerWeight = 5; // 5% of the profit
-    uint256 public nftOwnerWeight = 95; // 95% of the profit
+    uint256 public swapWeight = 5; // 5% of the profit
+    uint256 public nftOwnerWeight = 90; // 95% of the profit
 
     event Deposit(address indexed _token, address _user, uint256 _amount);
     event Splitter(
@@ -35,10 +44,13 @@ contract NFTRevenueController is AccessControl {
         uint256 _amount
     );
 
-    constructor(address _nft) {
+    constructor(address _nft, address _swap) {
         // set representing NFT contract
         NFT = IERC721(_nft);
         nft = _nft;
+
+        Swap = ISwap(_swap);
+        swap = _swap;
 
         // setup the admin role for the storage owner
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -84,5 +96,12 @@ contract NFTRevenueController is AccessControl {
         IERC20(_token).safeTransfer(nftOwner, sharedProfit);
 
         emit Splitter(_token, nftOwner, sharedProfit);
+
+        // the revenue controller will also get 5% of the profit, and swap to CAPL.
+        uint profitForSwap = (_profit * swapWeight) / 100;
+        IERC20(_token).safeTransfer(swap, profitForSwap);
+
+        // 5% of the revenue will be swapped to CAPL and burned
+        Swap.swapAndBurn();
     }
 }

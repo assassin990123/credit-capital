@@ -93,14 +93,14 @@ describe("My Token / MTK", async () => {
     expect(await nft.tokenURI(tokenId)).to.equal(URI);
 
     // lock nft
-    await nft.lockNFT(tokenId, true);
+    await nft.handleLock(tokenId, true);
 
     // check the locked state
     expect(await nft.verifyLockedState(tokenId)).to.equal(true);
 
     // only the token owner can lock nft
     try {
-      await nft.connect(user).lockNFT(tokenId, true);
+      await nft.connect(user).handleLock(tokenId, true);
     } catch (error) {
       expect(error.message).match(/Permission: the sender is not the owner of this token/);
     }
@@ -114,7 +114,7 @@ describe("My Token / MTK", async () => {
     }
 
     // unlock nft
-    await nft.lockNFT(tokenId, false);
+    await nft.handleLock(tokenId, false);
     
     // check the locked state
     expect(await nft.verifyLockedState(tokenId)).to.equal(false);

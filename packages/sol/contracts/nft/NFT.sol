@@ -34,7 +34,7 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
         return metadataOnChain[_tokenId];
     }
 
-    function lockNFT(uint _tokenId, bool _lock) external {
+    function handleLock(uint _tokenId, bool _lock) external {
         require(ownerOf(_tokenId) == msg.sender, "Permission: the sender is not the owner of this token");
         metadataOnChain[_tokenId].isLocked = _lock;
     }

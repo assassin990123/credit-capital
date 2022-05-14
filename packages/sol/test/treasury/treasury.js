@@ -7,6 +7,10 @@ const NAME = "MTK1";
 const DESCRIPTION = "Example description";
 const VALUE = BigInt(0.1 * 10 ** 18);
 
+const VAULT_ADDRESS="0xBA12222222228d8Ba445958a75a0704d566BF2C8"
+const USDC_CAPL_POOL_ID = "0x270c10cb22cf7dfcbb6435b9a0886bd05e5818e9000200000000000000000624";
+const USDC_ADDRESS = "0xc2569dd7d0fd715b054fbf16e75b001e5c0c1115";
+
 const deployContract = async (contract, params) => {
   let c = await ethers.getContractFactory(contract);
   if (params) c = await c.deploy(...params);
@@ -21,15 +25,18 @@ const deployContracts = async (deployer) => {
     deployer.address,
     BigInt(1_000_000 * 10 ** 18),
   ]);
+
   const nft = await deployContract("MyToken", []);
+  const swap = await deployContract("Swap", [process.env.CAPL_ADDRESS_KOVAN, USDC_ADDRESS, VAULT_ADDRESS, USDC_CAPL_POOL_ID]);
   const storage = await deployContract("TreasuryStorage", []);
   const controller = await deployContract("RevenueController", [
     storage.address,
   ]);
   const nftController = await deployContract("NFTRevenueController", [
     nft.address,
+    swap.address
   ]);
-  return { lp, nft, controller, nftController, storage };
+  return { lp, nft, swap, controller, nftController, storage };
 };
 
 const _formatEther = (amount) => {
@@ -37,21 +44,16 @@ const _formatEther = (amount) => {
 };
 
 describe("Treasury", async () => {
-  let deployer;
-  let user;
-  let user2;
-  let lp;
-  let nft;
-  let storage;
-  let controller;
-  let nftController;
+  let deployer, user, user2;
+  let lp, nft;
+  let swap, storage, controller, nftController;
 
   beforeEach(async () => {
     // get accounts
     [deployer, user, user2] = await ethers.getSigners();
 
     // deploy token contract
-    ({ lp, nft, controller, nftController, storage } = await deployContracts(deployer));
+    ({ lp, nft, swap, controller, nftController, storage } = await deployContracts(deployer));
 
     // grant controller the REVENUE_CONTROLLER role of storage contract
     await storage.grantRole(
@@ -264,7 +266,7 @@ describe("Treasury", async () => {
       await nftController.splitter(lp.address, BigInt(250_000 * 10 ** 18), tokenId);
 
       // check the nft owner balance
-      expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('987500');
+      expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('975000');
 
       // check nftController balance - will remain 5% of the profit
       expect(_formatEther(await lp.balanceOf(nftController.address)).toFixed(0)).to.equal('12500');
