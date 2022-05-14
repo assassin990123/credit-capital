@@ -3,13 +3,13 @@ pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 interface ICAPL {
     function burn(uint256 _amount) external;
 }
 
 interface IVault {
-    function getPoolTokens(bytes32 poolD) external view returns (address[] memory, uint256[] memory);
 	function swap(SingleSwap memory singleSwap, FundManagement memory funds, uint256 limit, uint256 deadline) external returns (uint256);
 }
 
@@ -31,7 +31,7 @@ struct SingleSwap {
 	bytes userData;
 }
 
-contract Swap {
+contract Swap is AccessControl {
     using SafeERC20 for IERC20;
 
     uint256 private constant MAX_UINT = 2 ** 256 - 1;
@@ -52,10 +52,13 @@ contract Swap {
         VAULT = IVault(_vault);
 		IERC20(_usdc).approve(vault, MAX_UINT);
 		IERC20(_capl).safeApprove(vault, MAX_UINT);
+        
+        // setup the admin role for the storage owner
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 	}
 
-    function doSwap() external {
-        uint256 internalBalance = getUSDCBalance();
+    function swapAndBurn() external {
+        uint256 internalBalance = IERC20(usdc).balanceOf(address(this));
 
         SingleSwap memory swap = SingleSwap(
             poolId,
@@ -73,22 +76,12 @@ contract Swap {
             false
         );
 		
-		VAULT.swap(swap, fundManagement, 0, block.timestamp);
-	}
+		VAULT.swap(swap, fundManagement, 0, block.timestamp + 10 minutes);
 
-    function burn() external {
         // get the returned CAPL balance
-        uint256 caplBalance = getCAPLBalance();
+        uint256 caplBalance = IERC20(capl).balanceOf(address(this));
 
         // burn returned CAPL
         ICAPL(capl).burn(caplBalance);
-    }
-
-    function getCAPLBalance() public view returns (uint256) {
-        return IERC20(capl).balanceOf(address(this));
-    }
-
-    function getUSDCBalance() public view returns (uint256) {
-        return IERC20(usdc).balanceOf(address(this));
-    }
+	}
 }
