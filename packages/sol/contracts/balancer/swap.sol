@@ -10,7 +10,6 @@ interface ICAPL {
 }
 
 interface IVault {
-    function getPoolTokens(bytes32 poolD) external view returns (address[] memory, uint256[] memory);
 	function swap(SingleSwap memory singleSwap, FundManagement memory funds, uint256 limit, uint256 deadline) external returns (uint256);
 }
 
@@ -58,8 +57,8 @@ contract Swap is AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 	}
 
-    function doSwap() external {
-        uint256 internalBalance = getUSDCBalance();
+    function swapAndBurn() external {
+        uint256 internalBalance = IERC20(usdc).balanceOf(address(this));
 
         SingleSwap memory swap = SingleSwap(
             poolId,
@@ -78,21 +77,11 @@ contract Swap is AccessControl {
         );
 		
 		VAULT.swap(swap, fundManagement, 0, block.timestamp + 10 minutes);
-	}
 
-    function burn() external {
         // get the returned CAPL balance
-        uint256 caplBalance = getCAPLBalance();
+        uint256 caplBalance = IERC20(capl).balanceOf(address(this));
 
         // burn returned CAPL
         ICAPL(capl).burn(caplBalance);
-    }
-
-    function getCAPLBalance() public view returns (uint256) {
-        return IERC20(capl).balanceOf(address(this));
-    }
-
-    function getUSDCBalance() public view returns (uint256) {
-        return IERC20(usdc).balanceOf(address(this));
-    }
+	}
 }
