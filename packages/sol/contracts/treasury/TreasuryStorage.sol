@@ -121,7 +121,7 @@ contract TreasuryStorage is AccessControl {
         IERC20(_token).safeTransfer(_user, _amount);
     }
 
-    function returnPrincipal(
+    function repay(
         address _user,
         address _token,
         uint256 _principal

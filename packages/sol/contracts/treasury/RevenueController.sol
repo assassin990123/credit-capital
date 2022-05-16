@@ -126,7 +126,7 @@ contract TreasuryController is AccessControl {
 
     /**
         @dev - this function sends the principal back to the storage contract via a function called treasuryStorage.treasuryIncome (to be implemented).
-             - the profit remains in the revenue controller contract to be distributed by splitter function below.
+             - the profit remains in the revenue controller contract to be distributed by distributeRevenue function below.
      */
     function treasuryIncome(
         address _token,
@@ -134,7 +134,7 @@ contract TreasuryController is AccessControl {
         uint256 _profit
     ) external {
         // call the treasuryStorage's treasuryIncome function
-        ITreasuryStorage(treasuryStorage).returnPrincipal(
+        ITreasuryStorage(treasuryStorage).repay(
             msg.sender,
             _token,
             _principal
@@ -170,7 +170,7 @@ contract TreasuryController is AccessControl {
     /**
         This function returns the allocAmount calculated to distribute to the treasury storage
      */
-    function splitter(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function distributeRevenue(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
 
         // Contract balance to distribute

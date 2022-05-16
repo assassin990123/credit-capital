@@ -32,7 +32,7 @@ interface ITreasuryStorage {
         uint256 _amount
     ) external;
 
-    function returnPrincipal(
+    function repay(
         address _user,
         address _token,
         uint256 _principal
