@@ -1,9 +1,9 @@
 const hre = require("hardhat");
 const fs = require('fs');
 
+const VAULT_ADDRESS="0xBA12222222228d8Ba445958a75a0704d566BF2C8"
 const USDC_CAPL_POOL_ID = "0x270c10cb22cf7dfcbb6435b9a0886bd05e5818e9000200000000000000000624";
 const USDC_ADDRESS = "0xc2569dd7d0fd715b054fbf16e75b001e5c0c1115";
-const VAULT_ADDRESS="0xBA12222222228d8Ba445958a75a0704d566BF2C8"
 
 async function main() {
   /**
