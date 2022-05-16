@@ -2,15 +2,15 @@ const { expect } = require("chai");
 const { toUtf8Bytes } = require("ethers/lib/utils");
 const { ethers } = require("hardhat");
 
-const URI = "testuri";
-const NAME = "MTK1";
-const DESCRIPTION = "Example description";
-const VALUE = BigInt(0.1 * 10 ** 18);
+// const URI = "testuri";
+// const NAME = "MTK1";
+// const DESCRIPTION = "Example description";
+// const VALUE = BigInt(0.1 * 10 ** 18);
 
-const VAULT_ADDRESS = ethers.utils.getAddress("0xBA12222222228d8Ba445958a75a0704d566BF2C8");
-const USDC_CAPL_POOL_ID = "0x270c10cb22cf7dfcbb6435b9a0886bd05e5818e9000200000000000000000624";
-const USDC_ADDRESS = ethers.utils.getAddress("0xc2569dd7d0fd715b054fbf16e75b001e5c0c1115");
-const CAPL_ADDRESS = ethers.utils.getAddress(process.env.CAPL_ADDRESS_KOVAN);
+// const VAULT_ADDRESS = ethers.utils.getAddress("0xBA12222222228d8Ba445958a75a0704d566BF2C8");
+// const USDC_CAPL_POOL_ID = "0x270c10cb22cf7dfcbb6435b9a0886bd05e5818e9000200000000000000000624";
+// const USDC_ADDRESS = ethers.utils.getAddress("0xc2569dd7d0fd715b054fbf16e75b001e5c0c1115");
+// const CAPL_ADDRESS = ethers.utils.getAddress(process.env.CAPL_ADDRESS_KOVAN);
 
 const deployContract = async (contract, params) => {
   let c = await ethers.getContractFactory(contract);
@@ -27,17 +27,24 @@ const deployContracts = async (deployer) => {
     BigInt(1_000_000 * 10 ** 18),
   ]);
 
-  const nft = await deployContract("MyToken", []);
-  const swap = await deployContract("Swap", [CAPL_ADDRESS, USDC_ADDRESS, VAULT_ADDRESS, USDC_CAPL_POOL_ID]);
+  // const nft = await deployContract("MyToken", []);
+  // const swap = await deployContract("Swap", [CAPL_ADDRESS, USDC_ADDRESS, VAULT_ADDRESS, USDC_CAPL_POOL_ID]);
   const storage = await deployContract("TreasuryStorage", []);
   const controller = await deployContract("RevenueController", [
     storage.address,
   ]);
-  const nftController = await deployContract("NFTRevenueController", [
-    nft.address,
-    swap.address
-  ]);
-  return { lp, nft, swap, controller, nftController, storage };
+  // const nftController = await deployContract("NFTRevenueController", [
+  //   nft.address,
+  //   swap.address
+  // ]);
+  return {
+    lp,
+    // nft,
+    // swap,
+    controller,
+    // nftController,
+    storage
+  };
 };
 
 const _formatEther = (amount) => {
@@ -46,8 +53,9 @@ const _formatEther = (amount) => {
 
 describe("Treasury", async () => {
   let deployer, user, user2;
-  let lp, nft;
-  let swap, storage, controller, nftController;
+  let lp;
+  // let swap, nft, nftController;
+  let storage, controller;
 
   beforeEach(async () => {
     // get accounts
@@ -246,31 +254,31 @@ describe("Treasury", async () => {
     });
   });
 
-  describe("NFT Revenue Controller", () => {
-    it("Deposit profit and split the profits", async () => {
-      // approve lp token allowance
-      await lp.approve(nftController.address, BigInt(250_000 * 10 ** 18));
+  // describe("NFT Revenue Controller", () => {
+  //   it("Deposit profit and split the profits", async () => {
+  //     // approve lp token allowance
+  //     await lp.approve(nftController.address, BigInt(250_000 * 10 ** 18));
 
-      // deposit the profit from assets (NFT)
-      await nftController.depositProfit(lp.address, BigInt(250_000 * 10 ** 18));
-      // check the storage states
-      expect(_formatEther(await lp.balanceOf(nftController.address)).toFixed(0)).to.equal('250000');
-      expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('750000');
+  //     // deposit the profit from assets (NFT)
+  //     await nftController.depositProfit(lp.address, BigInt(250_000 * 10 ** 18));
+  //     // check the storage states
+  //     expect(_formatEther(await lp.balanceOf(nftController.address)).toFixed(0)).to.equal('250000');
+  //     expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('750000');
 
-      /* split the profit based on the weight */
-      // mint nft token
-      const transaction = await nft.safeMint(deployer.address, URI, NAME, DESCRIPTION, VALUE);
-      const tx = await transaction.wait();
-      const tokenId = tx.events[0].args[2];
+  //     /* split the profit based on the weight */
+  //     // mint nft token
+  //     const transaction = await nft.safeMint(deployer.address, URI, NAME, DESCRIPTION, VALUE);
+  //     const tx = await transaction.wait();
+  //     const tokenId = tx.events[0].args[2];
 
-      // splitter
-      await nftController.splitter(lp.address, BigInt(250_000 * 10 ** 18), tokenId);
+  //     // splitter
+  //     await nftController.splitter(lp.address, BigInt(250_000 * 10 ** 18), tokenId);
 
-      // check the nft owner balance
-      expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('975000');
+  //     // check the nft owner balance
+  //     expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('975000');
 
-      // check nftController balance - will remain 5% of the profit
-      expect(_formatEther(await lp.balanceOf(nftController.address)).toFixed(0)).to.equal('12500');
-    });
-  });
+  //     // check nftController balance - will remain 5% of the profit
+  //     expect(_formatEther(await lp.balanceOf(nftController.address)).toFixed(0)).to.equal('12500');
+  //   });
+  // });
 });
