@@ -145,7 +145,7 @@ contract RevenueController is AccessControl {
     }
 
     /**
-        @dev - this funciton withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
+        @dev - this function withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
      */
     function withdraw(address _token) external onlyRole(OPERATOR_ROLE) {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
