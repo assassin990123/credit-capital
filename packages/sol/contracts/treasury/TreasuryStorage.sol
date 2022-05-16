@@ -19,11 +19,16 @@ contract TreasuryStorage is AccessControl {
         bool isActive; // determine if the pool exists
     }
 
-    address[] poolAddresses;
-
     // pool tracking
+    address[] poolAddresses;
     mapping(address => Pool) Pools; // token => pool
     mapping(address => uint) PoolPrices;
+
+    // token distribution addresses
+    address[] distributionList;
+
+    // track whitelisted user weight
+    mapping(address => uint) Weights;
 
     constructor() {
         // setup the admin role for the storage owner
@@ -54,6 +59,14 @@ contract TreasuryStorage is AccessControl {
 
     function getPoolTokenPrice(address _token) external view returns (uint256 price) {
         return PoolPrices[_token];
+    }
+
+    function getDistributionList() external view returns (address[] memory) {
+        return distributionList;
+    }
+    
+    function getWeight(address _user) external view returns (uint256 weight) {
+        return Weights[_user];
     }
     
     /**

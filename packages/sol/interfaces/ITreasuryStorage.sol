@@ -44,5 +44,9 @@ interface ITreasuryStorage {
         returns (uint256);
 
     
+    function getDistributionList() external view returns (address[] memory);
+
+    function getWeight(address _user) external view returns (uint256 weight);
+
     function checkIfPoolExists(address _token) external returns (bool);
 }

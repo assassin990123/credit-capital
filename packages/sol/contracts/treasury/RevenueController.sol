@@ -22,12 +22,6 @@ contract TreasuryController is AccessControl {
     ITreasuryStorage TreasuryStorage;
     address treasuryStorage;
 
-    // token distribution addresses
-    address[] distributionList;
-
-    // track user weight
-    mapping(address => uint) Weights;
-
     event Deposit(address indexed _token, address _user, uint256 _amount);
     event PoolUpdated(address indexed _token, uint256 _amount);
     event PoolAdded(address indexed _token);
@@ -176,9 +170,12 @@ contract TreasuryController is AccessControl {
         // Contract balance to distribute
         uint contractBalance = IERC20(_token).balanceOf(address(this));
 
+        // get length of the distributionList
+        address[] memory distributionList = TreasuryStorage.getDistributionList();
+
         for(uint i; i < distributionList.length; i++) {
             address user = distributionList[i];
-            uint256 weight = Weights[user];
+            uint256 weight = TreasuryStorage.getWeight(user);
 
             uint sharedAmount = (contractBalance / CAPL_PRECISION) * weight;
             IERC20(_token).safeTransfer(user, sharedAmount);
