@@ -85,12 +85,7 @@ contract TreasuryStorage is AccessControl {
     ) external {
         require(checkIfPoolExists(_token), "Pool does not exist");
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
-
-        // update Pool info
-        Pool storage pool = Pools[_token];
-        unchecked {
-            pool.totalPooled += _amount;
-        }
+    }
 
     function withdraw(
         address _token,
@@ -176,9 +171,12 @@ contract TreasuryStorage is AccessControl {
         onlyRole(REVENUE_CONTROLLER)
         returns (Pool memory)
     {
+        // get real amount of pooled
         Pool storage pool = Pools[_token];
+        uint balance = IERC20(_token).balanceOf(address(this));
+
         unchecked {
-            pool.totalPooled += _amount;
+            pool.totalPooled = balance + pool.loanedAmount + _amount;
         }
 
         return pool;
