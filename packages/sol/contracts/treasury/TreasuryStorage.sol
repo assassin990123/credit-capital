@@ -183,4 +183,35 @@ contract TreasuryStorage is AccessControl {
     function setPoolTokenPrice(address _token, uint _price) external onlyRole(DEFAULT_ADMIN_ROLE) {
         PoolPrices[_token] = _price;
     }
+
+        
+    function addDistributionList(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(!distributionlistCheck(_user), "DistributionList: existing user");
+        distributionList.push(_user);
+    }
+    
+    function distributionlistCheck(address _user) internal view returns (bool) {
+        for (uint i = 0; i < distributionList.length; i++) {
+            if (distributionList[i] == _user) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function removeDistributionListedUser(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(distributionlistCheck(_user), "DistributionList: not existing user");
+
+        // get index
+        for (uint i = 0; i < distributionList.length; i++) {
+            if (distributionList[i] == _user) {
+                delete distributionList[i];
+            }
+        }
+    }
+
+    /** Weight */
+    function setWeight(address _user, uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        Weights[_user] = _weight;
+    }
 }
