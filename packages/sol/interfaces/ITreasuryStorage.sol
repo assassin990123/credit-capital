@@ -7,12 +7,6 @@ interface IPool {
     }
 }
 
-interface ILoanPositions {
-    struct LoanPosition {
-        uint256 loanedAmount; // amount that has been taken out of the treasury storage as a loan
-    }
-}
-
 interface ITreasuryStorage {
     function deposit(
         address _user,
@@ -26,7 +20,7 @@ interface ITreasuryStorage {
         external
         returns (IPool.Pool memory);
 
-    function loan(
+    function borrow(
         address _token,
         address _user,
         uint256 _amount

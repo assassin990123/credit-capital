@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "hardhat/console.sol";
 import "../../interfaces/ITreasuryStorage.sol";
 
-contract RevenueController is AccessControl {
+contract TreasuryController is AccessControl {
     using SafeERC20 for IERC20;
 
     // user Roles for RBAC
@@ -22,8 +22,8 @@ contract RevenueController is AccessControl {
     ITreasuryStorage TreasuryStorage;
     address treasuryStorage;
 
-    // whitelisted address
-    address[] whitelist;
+    // token distribution addresses
+    address[] distributionList;
 
     // track user weight
     mapping(address => uint) Weights;
@@ -42,7 +42,7 @@ contract RevenueController is AccessControl {
         uint256 _amount
     );
 
-    event Loan(address indexed _token, address indexed _user, uint256 _amount);
+    event Borrow(address indexed _token, address indexed _user, uint256 _amount);
 
     constructor(address _treasuryStorage) {
         treasuryStorage = _treasuryStorage;
@@ -52,32 +52,32 @@ contract RevenueController is AccessControl {
         grantRole(OPERATOR_ROLE, msg.sender);
     }
 
-    /** Whitelist */
-    function getWhitelist() public view returns (address[] memory) {
-        return whitelist;
+    /** DistributionList */
+    function getDistributionList() public view returns (address[] memory) {
+        return distributionList;
     }
     
-    function addWhitelist(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(!whitelistCheck(_user), "Whitelist: existing user");
-        whitelist.push(_user);
+    function addDistributionList(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(!distributionlistCheck(_user), "DistributionList: existing user");
+        distributionList.push(_user);
     }
     
-    function whitelistCheck(address _user) internal view returns (bool) {
-        for (uint i = 0; i < whitelist.length; i++) {
-            if (whitelist[i] == _user) {
+    function distributionlistCheck(address _user) internal view returns (bool) {
+        for (uint i = 0; i < distributionList.length; i++) {
+            if (distributionList[i] == _user) {
                 return true;
             }
         }
         return false;
     }
 
-    function removeWhitelistedUser(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(whitelistCheck(_user), "Whitelist: not existing user");
+    function removeDistributionListedUser(address _user) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(distributionlistCheck(_user), "DistributionList: not existing user");
 
         // get index
-        for (uint i = 0; i < whitelist.length; i++) {
-            if (whitelist[i] == _user) {
-                delete whitelist[i];
+        for (uint i = 0; i < distributionList.length; i++) {
+            if (distributionList[i] == _user) {
+                delete distributionList[i];
             }
         }
     }
@@ -125,7 +125,7 @@ contract RevenueController is AccessControl {
     }
 
     /**
-        @dev - this function sends the principal back to the storage contract via a function called treasuryStorage.returnPrincipal (to be implemented).
+        @dev - this function sends the principal back to the storage contract via a function called treasuryStorage.treasuryIncome (to be implemented).
              - the profit remains in the revenue controller contract to be distributed by splitter function below.
      */
     function treasuryIncome(
@@ -133,7 +133,7 @@ contract RevenueController is AccessControl {
         uint256 _principal,
         uint256 _profit
     ) external {
-        // call the treasuryStorage's returnPrincipal function
+        // call the treasuryStorage's treasuryIncome function
         ITreasuryStorage(treasuryStorage).returnPrincipal(
             msg.sender,
             _token,
@@ -145,7 +145,7 @@ contract RevenueController is AccessControl {
     }
 
     /**
-        @dev - this function withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
+        @dev - this funciton withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
      */
     function withdraw(address _token) external onlyRole(OPERATOR_ROLE) {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
@@ -156,31 +156,34 @@ contract RevenueController is AccessControl {
         emit Withdraw(_token, msg.sender, amount);
     }
 
-    function loan(address token, uint256 amount) external {
+    function borrow(address token, uint256 amount) external {
         // check if the amount is under allowance
         require(
             TreasuryStorage.getUnlockedAmount(token) >= amount,
-            "Can not loan over unlocked amount"
+            "Can not borrow over unlocked amount"
         );
 
         TreasuryStorage.loan(token, msg.sender, amount);
-        emit Loan(token, msg.sender, amount);
+        emit Borrow(token, msg.sender, amount);
     }
 
     /**
         This function returns the allocAmount calculated to distribute to the treasury storage
      */
-    function splitter(address _token, uint _profit) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function splitter(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
 
-        for(uint i; i < whitelist.length; i++) {
-            address user = whitelist[i];
+        // Contract balance to distribute
+        uint contractBalance = IERC20(_token).balanceOf(address(this));
+
+        for(uint i; i < distributionList.length; i++) {
+            address user = distributionList[i];
             uint256 weight = Weights[user];
 
-            uint sharedProfit = (_profit / CAPL_PRECISION) * weight;
-            IERC20(_token).safeTransfer(user, sharedProfit);
+            uint sharedAmount = (contractBalance / CAPL_PRECISION) * weight;
+            IERC20(_token).safeTransfer(user, sharedAmount);
 
-            emit DistributeTokenAlloc(_token, user, sharedProfit);
+            emit DistributeTokenAlloc(_token, user, sharedAmount);
         }
     }
 

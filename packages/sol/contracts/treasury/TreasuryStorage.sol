@@ -13,13 +13,6 @@ contract TreasuryStorage is AccessControl {
     bytes32 public constant REVENUE_CONTROLLER =
         keccak256("REVENUE_CONTROLLER");
 
-    struct LoanPosition {
-        uint256 loanAmount; // amount that has been taken out of the treasury storage as a loan
-    }
-
-    // Mapping from user to loanpostion of the token
-    mapping(address => mapping(address => LoanPosition)) LoanPositions; // user => (token => loanposition)
-
     struct Pool {
         uint256 totalPooled; // loaned + actually in the contract
         uint256 loanedAmount; // loaned
@@ -49,16 +42,14 @@ contract TreasuryStorage is AccessControl {
         view
         returns (uint256 unlockedAmount)
     {
-        Pool memory pool = Pools[_token];
-        return pool.totalPooled - pool.loanedAmount;
+        // get token balance of this contract
+        uint balance = IERC20(_token).balanceOf(address(this));
+
+        return balance;
     }
 
     function getPool(address _token) external view returns (Pool memory) {
         return Pools[_token];
-    }
-
-    function getLoanPosition(address _token, address _user) external view returns (LoanPosition memory) {
-        return LoanPositions[_user][_token];
     }
 
     function getPoolTokenPrice(address _token) external view returns (uint256 price) {
@@ -99,8 +90,10 @@ contract TreasuryStorage is AccessControl {
 
         // update Pool info
         Pool storage pool = Pools[_token];
+        uint balance = IERC20(_token).balanceOf(address(this));
+
         unchecked {
-            pool.totalPooled -= _amount;
+            pool.totalPooled = (balance + pool.loanedAmount) - _amount;
         }
 
         // transfer access token amount to the user
@@ -110,7 +103,7 @@ contract TreasuryStorage is AccessControl {
     /**
         @dev - this function transfers _amount to the user and updates the user position to denote the loaned amount and change in contract balance.
      */
-    function loan(
+    function borrow(
         address _token,
         address _user,
         uint256 _amount
@@ -119,12 +112,6 @@ contract TreasuryStorage is AccessControl {
             getUnlockedAmount(_token) >= _amount,
             "The amount exceed the treasury balance."
         );
-
-        // update user state
-        LoanPosition storage loanPosition = LoanPositions[_user][_token];
-        unchecked {
-            loanPosition.loanAmount += _amount;
-        }
 
         // update the total amount of the access token pooled
         unchecked {
@@ -139,12 +126,6 @@ contract TreasuryStorage is AccessControl {
         address _token,
         uint256 _principal
     ) external onlyRole(REVENUE_CONTROLLER) {
-        // get the loanposition
-        LoanPosition storage loanPosition = LoanPositions[_user][_token];
-        unchecked {
-            loanPosition.loanAmount -= _principal;
-        }
-
         unchecked {
             Pools[_token].loanedAmount -= _principal;
         }
@@ -156,8 +137,11 @@ contract TreasuryStorage is AccessControl {
     function addPool(address _token) external onlyRole(REVENUE_CONTROLLER) {
         require(!checkIfPoolExists(_token), "This pool already exists.");
 
+        // get current contract balance
+        uint balance = IERC20(_token).balanceOf(address(this));
+
         Pools[_token] = Pool({
-            totalPooled: 0,
+            totalPooled: balance,
             loanedAmount: 0,
             isActive: true
         });
@@ -176,7 +160,7 @@ contract TreasuryStorage is AccessControl {
         uint balance = IERC20(_token).balanceOf(address(this));
 
         unchecked {
-            pool.totalPooled = balance + pool.loanedAmount + _amount;
+            pool.totalPooled = (balance + pool.loanedAmount) + _amount;
         }
 
         return pool;
