@@ -10,8 +10,8 @@ contract TreasuryStorage is AccessControl {
     using SafeERC20 for IERC20;
 
     // user Roles for RBAC
-    bytes32 public constant REVENUE_CONTROLLER =
-        keccak256("REVENUE_CONTROLLER");
+    bytes32 public constant REVENUE_CONTROLLER = keccak256("REVENUE_CONTROLLER");
+    bytes32 public constant ORACLE_SETTER = keccak256("ORACLE_SETTER");
 
     struct Pool {
         uint256 totalPooled; // loaned + actually in the contract
@@ -188,7 +188,7 @@ contract TreasuryStorage is AccessControl {
     // RBAC Oracle, price setter 
     function setPoolTokenPrice(address _token, uint _price)
         external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+        onlyRole(ORACLE_SETTER)
     {
         PoolPrices[_token] = _price;
     }
