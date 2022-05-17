@@ -93,7 +93,7 @@ contract TreasuryStorage is AccessControl {
         // update Pool info
         Pool storage pool = Pools[_token];
         unchecked {
-            pool.totalPooled = pool.totalPooled + _amount;
+            pool.totalPooled += _amount;
         }
     }
 
@@ -111,7 +111,7 @@ contract TreasuryStorage is AccessControl {
         Pool storage pool = Pools[_token];
 
         unchecked {
-            pool.totalPooled = pool.totalPooled + _amount;
+            pool.totalPooled -= _amount;
         }
 
         // transfer specified amount of tokens to the user
