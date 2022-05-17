@@ -17,13 +17,12 @@ contract TreasuryController is AccessControl {
         keccak256("OPERATOR_ROLE");
     uint256 CAPL_PRECISION = 1e18;
 
-    // treasury storage contract, similar to the vault contract.
     // all principal must go back to the treasury, profit stays here.
     ITreasuryStorage TreasuryStorage;
     address treasuryStorage;
 
     event Deposit(address indexed _token, address _user, uint256 _amount);
-    event PoolUpdated(address indexed _token, uint256 _amount);
+    event PoolUpdated(address indexed _token);
     event PoolAdded(address indexed _token);
     event DistributeTokenAlloc(
         address indexed _token,
@@ -47,9 +46,11 @@ contract TreasuryController is AccessControl {
     }
 
     /**
-        @dev - this function deposits eligible token amounts to the treasury storage, updating the corresponding storage state (to be implemented)
+        @dev - Deposits tokens into the treasury, updating the AUM
      */
-    function deposit(address _token, uint256 _amount) external {
+    function deposit(address _token, uint256 _amount)
+        external
+    {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
 
         require(
@@ -57,37 +58,53 @@ contract TreasuryController is AccessControl {
             "Pool does not exist"
         );
 
-        // update pool to current block
-        updatePool(_token, _amount);
-
         TreasuryStorage.deposit(msg.sender, _token, _amount);
         emit Deposit(_token, msg.sender, _amount);
     }
 
-    function addPool(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        ITreasuryStorage(treasuryStorage).addPool(_token);
-    }
-
-    function updatePool(address _token, uint256 _amount)
-        internal
-        returns (IPool.Pool memory pool)
+    /**
+        @dev - Withdraws tokens from the treasury, updating the AUM
+     */
+    function withdraw(address _token, uint256 _amount)
+        external
+        onlyRole(OPERATOR_ROLE)
     {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
-        IPool.Pool memory npool = TreasuryStorage.updatePool(_token, _amount);
 
-        emit PoolUpdated(_token, _amount);
-        return npool;
+        // check if the amount is under allowance
+        require(
+            TreasuryStorage.getAvailableBalance(token) >= amount,
+            "Unable to withdraw more than available balance"
+        );
+        TreasuryStorage.withdraw(_token, msg.sender, amount);
+
+        emit Withdraw(_token, msg.sender, amount);
     }
 
     /**
-        @dev - this function sends the principal back to the storage contract via a function called treasuryStorage.treasuryIncome (to be implemented).
-             - the profit remains in the revenue controller contract to be distributed by distributeRevenue function below.
+        @dev - Temporarily withdraws tokens from the treasury while still tracking the AUM
      */
-    function treasuryIncome(
-        address _token,
-        uint256 _principal,
-        uint256 _profit
-    ) external {
+    function borrow(address token, uint256 amount)
+        external
+        onlyRole(OPERATOR_ROLE)
+    {
+        // check if the amount is under allowance
+        require(
+            TreasuryStorage.getAvailableBalance(token) >= amount,
+            "Unable to borrow more than available balance"
+        );
+
+        TreasuryStorage.borrow(token, msg.sender, amount);
+        emit Borrow(token, msg.sender, amount);
+    }
+
+    /**
+        @dev - This function sends the principal back to the treasury, leaving profit in the controller
+             - The profit can be distributed by distriubuteRevenue()
+     */
+    function treasuryIncome(address _token, uint256 _principal, uint256 _profit)
+        external 
+    {
         // call the treasuryStorage's treasuryIncome function
         ITreasuryStorage(treasuryStorage).repay(
             msg.sender,
@@ -100,32 +117,11 @@ contract TreasuryController is AccessControl {
     }
 
     /**
-        @dev - this funciton withdraws a token amount from the treasury storage, updating the corresponding storage state (to be implemented)
+        This function distributes its current token balance to the weighted distributionList 
      */
-    function withdraw(address _token) external onlyRole(OPERATOR_ROLE) {
-        TreasuryStorage = ITreasuryStorage(treasuryStorage);
-
-        uint256 amount = TreasuryStorage.getUnlockedAmount(_token);
-        TreasuryStorage.withdraw(_token, msg.sender, amount);
-
-        emit Withdraw(_token, msg.sender, amount);
-    }
-
-    function borrow(address token, uint256 amount) external {
-        // check if the amount is under allowance
-        require(
-            TreasuryStorage.getUnlockedAmount(token) >= amount,
-            "Can not borrow over unlocked amount"
-        );
-
-        TreasuryStorage.borrow(token, msg.sender, amount);
-        emit Borrow(token, msg.sender, amount);
-    }
-
-    /**
-        This function returns the allocAmount calculated to distribute to the treasury storage
-     */
-    function distributeRevenue(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function distributeRevenue(address _token)
+        external
+    {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
 
         // Contract balance to distribute
@@ -135,25 +131,51 @@ contract TreasuryController is AccessControl {
         address[] memory distributionList = TreasuryStorage.getDistributionList();
 
         for(uint i; i < distributionList.length; i++) {
-            address user = distributionList[i];
-            uint256 weight = TreasuryStorage.getWeight(user);
+            address addr = distributionList[i];
+            uint256 weight = TreasuryStorage.getWeight(addr);
 
             uint sharedAmount = (contractBalance / CAPL_PRECISION) * weight;
-            IERC20(_token).safeTransfer(user, sharedAmount);
+            IERC20(_token).safeTransfer(addr, sharedAmount);
 
-            emit DistributeTokenAlloc(_token, user, sharedAmount);
+            emit DistributeTokenAlloc(_token, addr, sharedAmount);
         }
+    }
+    /**
+        Manually updates the pool for a specific token in the case of mismatch.
+    */
+    function updatePool(address _token)
+        external
+        returns (IPool.Pool memory pool)
+    {
+        TreasuryStorage = ITreasuryStorage(treasuryStorage);
+        IPool.Pool memory npool = TreasuryStorage.updatePool(_token);
+
+        emit PoolUpdated(_token);
+        return npool;
     }
 
     /**
         ADMIN FUNCTIONS
-        TODO: Add RBAC @dev
     */
 
+    /**
+        Sets the address of the treasury storage contract
+    */
     function setTreasuryStorage(address _destination)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         treasuryStorage = _destination;
     }
+
+    /**
+        Adds a new pool to the allowed token list
+    */
+    function addPool(address _token)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        ITreasuryStorage(treasuryStorage).addPool(_token);
+    }
+
 }
