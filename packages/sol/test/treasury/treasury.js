@@ -30,7 +30,7 @@ const deployContracts = async (deployer) => {
   // const nft = await deployContract("MyToken", []);
   // const swap = await deployContract("Swap", [CAPL_ADDRESS, USDC_ADDRESS, VAULT_ADDRESS, USDC_CAPL_POOL_ID]);
   const storage = await deployContract("TreasuryStorage", []);
-  const controller = await deployContract("RevenueController", [
+  const controller = await deployContract("TreasuryController", [
     storage.address,
   ]);
   // const nftController = await deployContract("NFTRevenueController", [
@@ -71,7 +71,7 @@ describe("Treasury", async () => {
     );
   });
 
-  describe("RevenueController", () => {
+  describe("TreasuryController", () => {
     describe("Deposit", () => {
       it("Should add userposition", async () => {
         // add pool
@@ -83,11 +83,9 @@ describe("Treasury", async () => {
         // deposit new userposition
         await controller.connect(deployer).deposit(lp.address, BigInt(250_000 * 10 ** 18));
 
-        const user = await storage.getLoanPosition(lp.address, deployer.address);
         const pool = await storage.getPool(lp.address);
         const userbalance = await lp.balanceOf(deployer.address);
 
-        expect(_formatEther(user.loanAmount)).to.equal(0);
         expect(_formatEther(pool.totalPooled)).to.equal(250_000);
         expect(_formatEther(userbalance)).to.equal(750_000);
       });
@@ -131,16 +129,12 @@ describe("Treasury", async () => {
         await controller.deposit(lp.address, BigInt(250_000 * 10 ** 18));
         
         // check the storage states
-        let loanPosition = await storage.getLoanPosition(lp.address, deployer.address);
-        expect(_formatEther(loanPosition.loanAmount).toFixed(0)).to.equal('0');
         expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
 
         // loan token
-        await controller.loan(lp.address, BigInt(50_000 * 10 ** 18));
+        await controller.borrow(lp.address, BigInt(50_000 * 10 ** 18));
 
         // check the storage states
-        loanPosition = await storage.getLoanPosition(lp.address, deployer.address);
-        expect(_formatEther(loanPosition.loanAmount).toFixed(0)).to.equal('50000');
         expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
         expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('50000');
       });
@@ -156,7 +150,6 @@ describe("Treasury", async () => {
         await controller.deposit(lp.address, BigInt(250_000 * 10 ** 18));
 
         // check the storage states
-        expect(_formatEther((await storage.getLoanPosition(lp.address, deployer.address)).loanAmount).toFixed(0)).to.equal('0');
         expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
 
         // get user's unlocked amount
@@ -166,11 +159,10 @@ describe("Treasury", async () => {
 
         // loaning will be reverted token
         try {
-          await controller.loan(lp.address, unlocked + BigInt(50_000 * 10 ** 18));
+          await controller.borrow(lp.address, unlocked + BigInt(50_000 * 10 ** 18));
         } catch (error) {
-          expect(error.message).match(/Can not loan over unlocked amount/);
+          expect(error.message).match(/Can not borrow over unlocked amount/);
         }
-        expect(_formatEther((await storage.getLoanPosition(lp.address, deployer.address)).loanAmount).toFixed(0)).to.equal('0');
         expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
         expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('0');
       });
@@ -189,18 +181,16 @@ describe("Treasury", async () => {
         expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('750000');
 
         // check the storage states
-        expect(_formatEther((await storage.getLoanPosition(lp.address, deployer.address)).loanAmount).toFixed(0)).to.equal('0');
         expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
 
         // approve lp token allowance
         await lp.approve(storage.address, BigInt(50_000 * 10 ** 18));
 
         // loan token
-        await controller.loan(lp.address, BigInt(50_000 * 10 ** 18));
+        await controller.borrow(lp.address, BigInt(50_000 * 10 ** 18));
         expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('800000');
 
         // check the storage states
-        expect(_formatEther((await storage.getLoanPosition(lp.address, deployer.address)).loanAmount).toFixed(0)).to.equal('50000');
         expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
         expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('50000');
 
@@ -212,7 +202,6 @@ describe("Treasury", async () => {
         expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749000'); // return loanAmount + profit
 
         // check the storage states
-        expect(_formatEther((await storage.getLoanPosition(lp.address, deployer.address)).loanAmount).toFixed(0)).to.equal('0');
         expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
         expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('0');
 
@@ -221,9 +210,9 @@ describe("Treasury", async () => {
 
         /* split the profit based on the user weight */
         // set the user weight - deployer/user/user2 : 50%/30%%/20%
-        await controller.setWeight(deployer.address, BigInt(0.5 * 10 ** 18));
-        await controller.setWeight(user.address, BigInt(0.3 * 10 ** 18));
-        await controller.setWeight(user2.address, BigInt(0.2 * 10 ** 18));
+        await storage.setWeight(deployer.address, BigInt(0.5 * 10 ** 18));
+        await storage.setWeight(user.address, BigInt(0.3 * 10 ** 18));
+        await storage.setWeight(user2.address, BigInt(0.2 * 10 ** 18));
 
         // check balances of the user before split
         expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749000');
@@ -231,17 +220,17 @@ describe("Treasury", async () => {
         expect(_formatEther(await lp.balanceOf(user2.address)).toFixed(0)).to.equal('0');
 
         // check weights of the user before split
-        expect(_formatEther(await controller.getWeight(deployer.address)).toFixed(1)).to.equal('0.5');
-        expect(_formatEther(await controller.getWeight(user.address)).toFixed(1)).to.equal('0.3');
-        expect(_formatEther(await controller.getWeight(user2.address)).toFixed(1)).to.equal('0.2');
+        expect(_formatEther(await storage.getWeight(deployer.address)).toFixed(1)).to.equal('0.5');
+        expect(_formatEther(await storage.getWeight(user.address)).toFixed(1)).to.equal('0.3');
+        expect(_formatEther(await storage.getWeight(user2.address)).toFixed(1)).to.equal('0.2');
 
         // add whitelisted users
-        await controller.addWhitelist(deployer.address);
-        await controller.addWhitelist(user.address);
-        await controller.addWhitelist(user2.address);
+        await storage.addDistributionList(deployer.address);
+        await storage.addDistributionList(user.address);
+        await storage.addDistributionList(user2.address);
 
-        // splitter
-        await controller.splitter(lp.address, BigInt(1_000 * 10 ** 18));
+        // ditributeRevenue
+        await controller.distributeRevenue(lp.address);
 
         // check the user balance
         expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749500');
