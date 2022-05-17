@@ -60,9 +60,6 @@ contract TreasuryController is AccessControl {
 
         TreasuryStorage.deposit(msg.sender, _token, _amount);
         
-        // update pool status
-        updatePool(_token);
-
         emit Deposit(_token, msg.sender, _amount);
     }
 
