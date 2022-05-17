@@ -58,6 +58,9 @@ contract TreasuryController is AccessControl {
             "Pool does not exist"
         );
 
+        // update pool status
+        updatePool(_token);
+
         TreasuryStorage.deposit(msg.sender, _token, _amount);
         emit Deposit(_token, msg.sender, _amount);
     }
@@ -73,12 +76,12 @@ contract TreasuryController is AccessControl {
 
         // check if the amount is under allowance
         require(
-            TreasuryStorage.getAvailableBalance(token) >= amount,
+            TreasuryStorage.getAvailableBalance(_token) >= _amount,
             "Unable to withdraw more than available balance"
         );
-        TreasuryStorage.withdraw(_token, msg.sender, amount);
+        TreasuryStorage.withdraw(_token, msg.sender, _amount);
 
-        emit Withdraw(_token, msg.sender, amount);
+        emit Withdraw(_token, msg.sender, _amount);
     }
 
     /**
@@ -144,7 +147,7 @@ contract TreasuryController is AccessControl {
         Manually updates the pool for a specific token in the case of mismatch.
     */
     function updatePool(address _token)
-        external
+        public
         returns (IPool.Pool memory pool)
     {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);

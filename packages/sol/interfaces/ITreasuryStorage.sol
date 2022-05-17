@@ -16,7 +16,7 @@ interface ITreasuryStorage {
 
     function addPool(address _token) external;
 
-    function updatePool(address _token, uint256 _allocAmount)
+    function updatePool(address _token)
         external
         returns (IPool.Pool memory);
 
@@ -38,7 +38,7 @@ interface ITreasuryStorage {
         uint256 _principal
     ) external;
 
-    function getUnlockedAmount(address _token)
+    function getAvailableBalance(address _token)
         external
         view
         returns (uint256);
