@@ -58,10 +58,11 @@ contract TreasuryController is AccessControl {
             "Pool does not exist"
         );
 
+        TreasuryStorage.deposit(msg.sender, _token, _amount);
+        
         // update pool status
         updatePool(_token);
 
-        TreasuryStorage.deposit(msg.sender, _token, _amount);
         emit Deposit(_token, msg.sender, _amount);
     }
 

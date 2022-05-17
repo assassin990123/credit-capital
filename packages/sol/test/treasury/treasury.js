@@ -108,7 +108,7 @@ describe("Treasury", async () => {
         expect(_formatEther(await lp.balanceOf(storage.address))).to.equal(250_000);
 
         // withdraw token
-        await controller.withdraw(lp.address);
+        await controller.withdraw(lp.address, BigInt(250_000 * 10 ** 18));
 
         // check the storage states
         expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('0');
@@ -139,7 +139,7 @@ describe("Treasury", async () => {
         expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('50000');
       });
 
-      it("Can't loan over unlockedAmount", async () => {
+      it("Can't loan over available balance.", async () => {
         // add pool for the capl
         await controller.addPool(lp.address);
 
@@ -153,7 +153,7 @@ describe("Treasury", async () => {
         expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
 
         // get user's unlocked amount
-        const unlocked = await storage.getUnlockedAmount(
+        const unlocked = await storage.getAvailableBalance(
           lp.address
         );
 
@@ -161,7 +161,7 @@ describe("Treasury", async () => {
         try {
           await controller.borrow(lp.address, unlocked + BigInt(50_000 * 10 ** 18));
         } catch (error) {
-          expect(error.message).match(/Can not borrow over unlocked amount/);
+          expect(error.message).match(/Unable to borrow more than available balance/);
         }
         expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
         expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('0');
