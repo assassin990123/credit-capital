@@ -10,15 +10,8 @@ contract TreasuryStorage is AccessControl {
     using SafeERC20 for IERC20;
 
     // user Roles for RBAC
-    bytes32 public constant REVENUE_CONTROLLER =
-        keccak256("REVENUE_CONTROLLER");
-
-    struct LoanPosition {
-        uint256 loanAmount; // amount that has been taken out of the treasury storage as a loan
-    }
-
-    // Mapping from user to loanpostion of the token
-    mapping(address => mapping(address => LoanPosition)) LoanPositions; // user => (token => loanposition)
+    bytes32 public constant REVENUE_CONTROLLER = keccak256("REVENUE_CONTROLLER");
+    bytes32 public constant ORACLE_SETTER = keccak256("ORACLE_SETTER");
 
     struct Pool {
         uint256 totalPooled; // loaned + actually in the contract
@@ -26,11 +19,16 @@ contract TreasuryStorage is AccessControl {
         bool isActive; // determine if the pool exists
     }
 
-    address[] poolAddresses;
-
     // pool tracking
+    address[] poolAddresses;
     mapping(address => Pool) Pools; // token => pool
     mapping(address => uint) PoolPrices;
+
+    // token distribution addresses
+    address[] distributionList;
+
+    // track whitelisted user weight
+    mapping(address => uint) Weights;
 
     constructor() {
         // setup the admin role for the storage owner
@@ -44,29 +42,36 @@ contract TreasuryStorage is AccessControl {
         return Pools[_token].isActive;
     }
 
-    function getUnlockedAmount(address _token)
+    function getAvailableBalance(address _token)
         public
         view
-        returns (uint256 unlockedAmount)
+        returns (uint256 availableBalance)
     {
-        Pool memory pool = Pools[_token];
-        return pool.totalPooled - pool.loanedAmount;
+        // get token balance of this contract
+        uint balance = IERC20(_token).balanceOf(address(this));
+
+        return balance;
     }
 
     function getPool(address _token) external view returns (Pool memory) {
         return Pools[_token];
     }
 
-    function getLoanPosition(address _token, address _user) external view returns (LoanPosition memory) {
-        return LoanPositions[_user][_token];
-    }
-
     function getPoolTokenPrice(address _token) external view returns (uint256 price) {
         return PoolPrices[_token];
     }
+
+    function getDistributionList() external view returns (address[] memory) {
+        return distributionList;
+    }
+    
+    function getWeight(address _addr) external view returns (uint256 weight) {
+        return Weights[_addr];
+    }
     
     /**
-        This function get the total amount of the access token under management.
+        This function returns the total AUM value
+        This is the sum of each total token balance * the current token value
      */
     function getAUM() external view returns (uint256 total) {
         for(uint i; i < poolAddresses.length; i++) {
@@ -85,6 +90,11 @@ contract TreasuryStorage is AccessControl {
     ) external {
         require(checkIfPoolExists(_token), "Pool does not exist");
         IERC20(_token).safeTransferFrom(_user, address(this), _amount);
+        // update Pool info
+        Pool storage pool = Pools[_token];
+        unchecked {
+            pool.totalPooled += _amount;
+        }
     }
 
     function withdraw(
@@ -93,38 +103,33 @@ contract TreasuryStorage is AccessControl {
         uint256 _amount
     ) external onlyRole(REVENUE_CONTROLLER) {
         require(
-            getUnlockedAmount(_token) >= _amount,
-            "Withdrawn amount exceed the allowance"
+            getAvailableBalance(_token) >= _amount,
+            "Withdrawn amount exceeds available balance"
         );
 
         // update Pool info
         Pool storage pool = Pools[_token];
+
         unchecked {
             pool.totalPooled -= _amount;
         }
 
-        // transfer access token amount to the user
+        // transfer specified amount of tokens to the user
         IERC20(_token).safeTransfer(_user, _amount);
     }
 
     /**
         @dev - this function transfers _amount to the user and updates the user position to denote the loaned amount and change in contract balance.
      */
-    function loan(
+    function borrow(
         address _token,
         address _user,
         uint256 _amount
-    ) external {
+    ) external onlyRole(REVENUE_CONTROLLER) {
         require(
-            getUnlockedAmount(_token) >= _amount,
-            "The amount exceed the treasury balance."
+            getAvailableBalance(_token) >= _amount,
+            "Borrow amount exceeds available balance"
         );
-
-        // update user state
-        LoanPosition storage loanPosition = LoanPositions[_user][_token];
-        unchecked {
-            loanPosition.loanAmount += _amount;
-        }
 
         // update the total amount of the access token pooled
         unchecked {
@@ -134,17 +139,11 @@ contract TreasuryStorage is AccessControl {
         IERC20(_token).safeTransfer(_user, _amount);
     }
 
-    function returnPrincipal(
+    function repay(
         address _user,
         address _token,
         uint256 _principal
-    ) external onlyRole(REVENUE_CONTROLLER) {
-        // get the loanposition
-        LoanPosition storage loanPosition = LoanPositions[_user][_token];
-        unchecked {
-            loanPosition.loanAmount -= _principal;
-        }
-
+    ) external {
         unchecked {
             Pools[_token].loanedAmount -= _principal;
         }
@@ -153,11 +152,17 @@ contract TreasuryStorage is AccessControl {
         IERC20(_token).safeTransferFrom(_user, address(this), _principal);
     }
 
-    function addPool(address _token) external onlyRole(REVENUE_CONTROLLER) {
+    function addPool(address _token)
+        external
+        onlyRole(REVENUE_CONTROLLER)
+    {
         require(!checkIfPoolExists(_token), "This pool already exists.");
 
+        // get current contract balance
+        uint balance = IERC20(_token).balanceOf(address(this));
+
         Pools[_token] = Pool({
-            totalPooled: 0,
+            totalPooled: balance,
             loanedAmount: 0,
             isActive: true
         });
@@ -166,9 +171,11 @@ contract TreasuryStorage is AccessControl {
         poolAddresses.push(_token);
     }
 
-    function updatePool(address _token, uint256 _amount)
+    /**
+        In the case of manual token deposits, allows for recalculating the total AUM
+    */
+    function updatePool(address _token)
         external
-        onlyRole(REVENUE_CONTROLLER)
         returns (Pool memory)
     {
         // get real amount of pooled
@@ -176,14 +183,58 @@ contract TreasuryStorage is AccessControl {
         uint balance = IERC20(_token).balanceOf(address(this));
 
         unchecked {
-            pool.totalPooled = balance + pool.loanedAmount + _amount;
+            pool.totalPooled = (balance + pool.loanedAmount);
         }
 
         return pool;
     }
 
-    // RBAC Oracle, price setter (getter needed as well, not included here)
-    function setPoolTokenPrice(address _token, uint _price) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    // RBAC Oracle, price setter 
+    function setPoolTokenPrice(address _token, uint _price)
+        external
+        onlyRole(ORACLE_SETTER)
+    {
         PoolPrices[_token] = _price;
+    }
+
+        
+    function addDistributionList(address _addr)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(!distributionlistCheck(_addr), "DistributionList: Address already exists");
+        distributionList.push(_addr);
+    }
+    
+    function distributionlistCheck(address _addr) internal view returns (bool) {
+        for (uint i = 0; i < distributionList.length; i++) {
+            if (distributionList[i] == _addr) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function removeDistributionList(address _addr) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(distributionlistCheck(_addr), "DistributionList: Address does not exist");
+
+        // get index
+        for (uint i = 0; i < distributionList.length; i++) {
+            if (distributionList[i] == _addr) {
+                delete distributionList[i];
+            }
+        }
+    }
+
+    /** 
+    Sets the distribution weight for a specific address on the distribution list
+    Weights must be set as an integer representing a percent with two degrees of precision
+    Or more simply, a number between 1 and 10000. 10000 represents 100% of the pool.
+    Weights for all addresses are *assumed* to add up to 10,000. Weights less than 10,000 will
+    result in funds being left in the TreasuryController during distribution. Weights totaling more
+    than 10,000 will result in the distribution failing due to insufficient balance.
+    */
+    function setWeight(address _addr, uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        Weights[_addr] = _weight;
     }
 }

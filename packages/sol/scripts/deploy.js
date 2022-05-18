@@ -28,18 +28,18 @@ async function main() {
   await saveContractABI("swap", "Swap");
 
   /**
-   * Treasury contracts - RevenueController, TreasuryStorage
+   * Treasury contracts - TreasuryController, TreasuryStorage
   const TreasuryStorage = await hre.ethers.getContractFactory("TreasuryStorage");
   const treasurystorage = await TreasuryStorage.deploy(process.env.LP_TOKEN_ADDRESS);
   await treasurystorage.deployed();
   console.log("treasurystorage deployed to:", treasurystorage.address);
   await saveContractABI("treasurystorage", "TreasuryStorage");
  
-  const RevenueController = await hre.ethers.getContractFactory("RevenueController");
-  const revenuecontroller = await RevenueController.deploy(capl.address, treasurystorage.address);
-  await revenuecontroller.deployed();
-  console.log("revenuecontroller deployed to:", revenuecontroller.address);
-  await saveContractABI("revenuecontroller", "RevenueController");
+  const TreasuryController = await hre.ethers.getContractFactory("TreasuryController");
+  const treasuryController = await TreasuryController.deploy(capl.address, treasurystorage.address);
+  await treasuryController.deployed();
+  console.log("treasuryController deployed to:", treasuryController.address);
+  await saveContractABI("treasuryController", "TreasuryController");
    */  
 
   // /**
@@ -54,7 +54,7 @@ async function main() {
   // `
   // /*
   //   export const treasurystorage = "${treasurystorage.address}"
-  // export const revenuecontroller = "${revenuecontroller.address}"
+  // export const treasuryController = "${treasuryController.address}"
   // */
 
   // let data = JSON.stringify(config);

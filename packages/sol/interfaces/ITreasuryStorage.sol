@@ -7,12 +7,6 @@ interface IPool {
     }
 }
 
-interface ILoanPositions {
-    struct LoanPosition {
-        uint256 loanedAmount; // amount that has been taken out of the treasury storage as a loan
-    }
-}
-
 interface ITreasuryStorage {
     function deposit(
         address _user,
@@ -22,11 +16,11 @@ interface ITreasuryStorage {
 
     function addPool(address _token) external;
 
-    function updatePool(address _token, uint256 _allocAmount)
+    function updatePool(address _token)
         external
         returns (IPool.Pool memory);
 
-    function loan(
+    function borrow(
         address _token,
         address _user,
         uint256 _amount
@@ -38,17 +32,21 @@ interface ITreasuryStorage {
         uint256 _amount
     ) external;
 
-    function returnPrincipal(
+    function repay(
         address _user,
         address _token,
         uint256 _principal
     ) external;
 
-    function getUnlockedAmount(address _token)
+    function getAvailableBalance(address _token)
         external
         view
         returns (uint256);
 
     
+    function getDistributionList() external view returns (address[] memory);
+
+    function getWeight(address _user) external view returns (uint256 weight);
+
     function checkIfPoolExists(address _token) external returns (bool);
 }
