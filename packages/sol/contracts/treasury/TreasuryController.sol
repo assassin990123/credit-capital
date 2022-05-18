@@ -15,7 +15,6 @@ contract TreasuryController is AccessControl {
     // user Roles for RBAC
     bytes32 public constant OPERATOR_ROLE =
         keccak256("OPERATOR_ROLE");
-    uint256 CAPL_PRECISION = 1e18;
 
     // all principal must go back to the treasury, profit stays here.
     ITreasuryStorage TreasuryStorage;
@@ -121,6 +120,7 @@ contract TreasuryController is AccessControl {
         This function distributes its current token balance to the weighted distributionList 
         Each recipient address receives a weight between 1-10000 representing up to 100% with 2 degrees of precison
         Multiply the current contract balance by this weight, dividing by 10000 and transfer the resulting token amount
+        Total weights assumed to add up to 10000. Smaller total weights will leave a balance in this contract, larger will throw errors
 
      */
     function distributeRevenue(address _token)
