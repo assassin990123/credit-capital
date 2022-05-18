@@ -215,7 +215,7 @@ contract TreasuryStorage is AccessControl {
         return false;
     }
 
-    function removeDistributionListedUser(address _addr) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function removeDistributionList(address _addr) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(distributionlistCheck(_addr), "DistributionList: Address does not exist");
 
         // get index
@@ -226,7 +226,14 @@ contract TreasuryStorage is AccessControl {
         }
     }
 
-    /** Weight */
+    /** 
+    Sets the distribution weight for a specific address on the distribution list
+    Weights must be set as an integer representing a percent with two degrees of precision
+    Or more simply, a number between 1 and 10000. 10000 represents 100% of the pool.
+    Weights for all addresses are *assumed* to add up to 10,000. Weights less than 10,000 will
+    result in funds being left in the TreasuryController during distribution. Weights totaling more
+    than 10,000 will result in the distribution failing due to insufficient balance.
+    */
     function setWeight(address _addr, uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
         Weights[_addr] = _weight;
     }

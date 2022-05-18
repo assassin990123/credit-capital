@@ -119,6 +119,9 @@ contract TreasuryController is AccessControl {
 
     /**
         This function distributes its current token balance to the weighted distributionList 
+        Each recipient address receives a weight between 1-10000 representing up to 100% with 2 degrees of precison
+        Multiply the current contract balance by this weight, dividing by 10000 and transfer the resulting token amount
+
      */
     function distributeRevenue(address _token)
         external
@@ -135,10 +138,10 @@ contract TreasuryController is AccessControl {
             address addr = distributionList[i];
             uint256 weight = TreasuryStorage.getWeight(addr);
 
-            uint sharedAmount = (contractBalance / CAPL_PRECISION) * weight;
-            IERC20(_token).safeTransfer(addr, sharedAmount);
+            uint amount = contractBalance * weight / 10000;
+            IERC20(_token).safeTransfer(addr, amount);
 
-            emit DistributeTokenAlloc(_token, addr, sharedAmount);
+            emit DistributeTokenAlloc(_token, addr, amount);
         }
     }
     /**
