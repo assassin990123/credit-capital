@@ -84,4 +84,12 @@ contract Swap is AccessControl {
         // burn returned CAPL
         ICAPL(capl).burn(caplBalance);
 	}
+    /**
+        @dev - this funciton withdraws a token amount from the this contract - emergency withdraw
+     */
+    function emergencyWithdraw(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        uint256 balance = IERC20(_token).balanceOf(address(this));
+        IERC20(_token).safeTransfer(msg.sender, balance);
+
+    }
 }
