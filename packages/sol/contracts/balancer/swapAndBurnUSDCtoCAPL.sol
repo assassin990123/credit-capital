@@ -31,7 +31,7 @@ struct SingleSwap {
 	bytes userData;
 }
 
-contract Swap is AccessControl {
+contract swapAndBurnUSDCtoCAPL is AccessControl {
     using SafeERC20 for IERC20;
 
     uint256 private constant MAX_UINT = 2 ** 256 - 1;
