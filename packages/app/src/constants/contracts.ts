@@ -16,14 +16,6 @@ export const contracts = [
     },
   },
   {
-    symbol: "treasuryStorage",
-    contracts: {
-      250: "",
-      137: "",
-      42: "0x60804D5660867aa2DDcAd5640Ff6EabC2B8F7064",
-    },
-  },
-  {
     symbol: "revenueController",
     contracts: {
       250: "",
@@ -37,6 +29,30 @@ export const contracts = [
       250: "0x20dd72Ed959b6147912C2e529F0a0C651c33c9ce",
       137: "",
       42: "0xba12222222228d8ba445958a75a0704d566bf2c8",
+    },
+  },
+  {
+    symbol: "treasuryStorage",
+    contracts: {
+      250: "",
+      137: "",
+      42: "0x5813d45c8454D1E2938fA8049b8544638B77960e",
+    },
+  },
+  {
+    symbol: "treasuryController",
+    contracts: {
+      250: "",
+      137: "",
+      42: "0x08Ea5A79cc1BC96c5191095f1b8721B18c6DBF3C",
+    },
+  },
+  {
+    symbol: "swapAndBurn",
+    contracts: {
+      250: "",
+      137: "",
+      42: "0x88E07959a46257582ebcae380DF4e3Bcd8e2f62E",
     },
   },
 ];

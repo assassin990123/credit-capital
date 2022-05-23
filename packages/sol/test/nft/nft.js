@@ -52,7 +52,13 @@ describe("My Token / MTK", async () => {
 
     /* the metadata is assumed to come from IPFS */
     // the uri, name, description, value will be stored offchain like IPFS
-    let transaction = await nft.safeMint(deployer.address, URI, NAME, DESCRIPTION, VALUE);
+    let transaction = await nft.safeMint(
+      deployer.address,
+      URI,
+      NAME,
+      DESCRIPTION,
+      VALUE
+    );
     let tx = await transaction.wait();
     let tokenId = tx.events[0].args[2];
 
@@ -69,7 +75,9 @@ describe("My Token / MTK", async () => {
 
     // mint without permission
     try {
-      await nft.connect(user).safeMint(deployer.address, URI, NAME, DESCRIPTION, VALUE);
+      await nft
+        .connect(user)
+        .safeMint(deployer.address, URI, NAME, DESCRIPTION, VALUE);
     } catch (error) {
       const revert = new RegExp(
         "AccessControl: account " +
@@ -83,7 +91,13 @@ describe("My Token / MTK", async () => {
 
   it("Should be able to be locked", async () => {
     // mint nft
-    let transaction = await nft.safeMint(deployer.address, URI, NAME, DESCRIPTION, VALUE);
+    let transaction = await nft.safeMint(
+      deployer.address,
+      URI,
+      NAME,
+      DESCRIPTION,
+      VALUE
+    );
     let tx = await transaction.wait();
     let tokenId = tx.events[0].args[2];
 
@@ -119,18 +133,26 @@ describe("My Token / MTK", async () => {
 
     // token transfer should be failed
     try {
-      await nft['safeTransferFrom(address,address,uint256)'](deployer.address, user.address, tokenId); // overroaded function call
+      await nft["safeTransferFrom(address,address,uint256)"](
+        deployer.address,
+        user.address,
+        tokenId
+      ); // overroaded function call
     } catch (error) {
       expect(error.message).match(/Denied: Locked token/);
     }
 
     // unlock nft
     await nft.handleLock(tokenId, false);
-    
+
     // check the locked state
     expect(await nft.verifyLockedState(tokenId)).to.equal(false);
 
-    await nft['safeTransferFrom(address,address,uint256)'](deployer.address, user.address, tokenId);
+    await nft["safeTransferFrom(address,address,uint256)"](
+      deployer.address,
+      user.address,
+      tokenId
+    );
     expect(await nft.ownerOf(tokenId)).to.equal(user.address);
   });
 });

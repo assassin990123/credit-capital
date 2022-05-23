@@ -24,11 +24,20 @@
                   />
                 </div>
               </div>
-              <div class="myBalance" style="margin-top:-20px;">My Balance
-                <div v-if="swapTokenSymbol === 'USDC'" class="panel-explanation myBalance" @click="insertBalanceUSDC">
+              <div class="myBalance" style="margin-top: -20px">
+                My Balance
+                <div
+                  v-if="swapTokenSymbol === 'USDC'"
+                  class="panel-explanation myBalance"
+                  @click="insertBalanceUSDC"
+                >
                   <a>{{ usdcBalance }} USDC</a>
                 </div>
-                <div v-else class="panel-explanation myBalance" @click="insertBalanceCAPL">
+                <div
+                  v-else
+                  class="panel-explanation myBalance"
+                  @click="insertBalanceCAPL"
+                >
                   <a>{{ caplBalance }} CAPL</a>
                 </div>
               </div>
@@ -54,8 +63,13 @@
               {{ swapButtonString }}
             </button>
             <div class="explainer">
-              Use this page to trade USDC and CAPL tokens. Trades are subject to a 0.3% swap fee.
-              Want to earn instead? Consider using your tokens to <router-link to="liquidity" class="button">Add Liquidity</router-link> to this pool.
+              Use this page to trade USDC and CAPL tokens. Trades are subject to
+              a 0.3% swap fee. Want to earn instead? Consider using your tokens
+              to
+              <router-link to="liquidity" class="button"
+                >Add Liquidity</router-link
+              >
+              to this pool.
             </div>
           </div>
         </div>
@@ -98,10 +112,13 @@ const isUserConnected = computed(
 );
 const chainId = computed(() => store.getters["accounts/getChainId"]);
 
-let swapButtonDisabled:Ref<boolean> = ref(false)
+let swapButtonDisabled: Ref<boolean> = ref(false);
 
 watchEffect(async () => {
-  if (isUserConnected.value && chainId.value == parseInt(process.env.VUE_APP_NETWORK_ID)) {
+  if (
+    isUserConnected.value &&
+    chainId.value == parseInt(process.env.VUE_APP_NETWORK_ID)
+  ) {
     if (swapAmount.value == 0) {
       swapButtonClassName.value = "btn-custom-gray";
     } else {
@@ -123,17 +140,21 @@ watchEffect(async () => {
   }
 
   swapTokenSymbol.value == "USDC"
-  ? swapAmount.value = Number(parseFloat((swapAmount.value).toString()).toFixed(6))
-  : swapAmount.value = Number(parseFloat((swapAmount.value).toString()).toFixed(18))
+    ? (swapAmount.value = Number(
+        parseFloat(swapAmount.value.toString()).toFixed(6)
+      ))
+    : (swapAmount.value = Number(
+        parseFloat(swapAmount.value.toString()).toFixed(18)
+      ));
 });
 
 const handleAvailability = (amount: number, balance: number) => {
-  if (checkAvailability(amount, balance)) return
+  if (checkAvailability(amount, balance)) return;
   else {
-    swapButtonDisabled.value = true
+    swapButtonDisabled.value = true;
     swapButtonClassName.value = "btn-custom-gray";
   }
-}
+};
 
 // handles swapping button logic, dependant on current string
 const handleSwap = async () => {
@@ -180,7 +201,10 @@ const switchTokens = () => {
 
 // conversion rates for swaps
 async function exchangeCAPLToUSDC() {
-  if (checkConnection(store) && Number(chainId.value) == parseInt(process.env.VUE_APP_NETWORK_ID!)) {
+  if (
+    checkConnection(store) &&
+    Number(chainId.value) == parseInt(process.env.VUE_APP_NETWORK_ID!)
+  ) {
     await store.dispatch("balancer/getPoolTokens");
 
     const exchangedBalance = calculateCAPLUSDPrice(

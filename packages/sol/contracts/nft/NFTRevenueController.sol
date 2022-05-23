@@ -16,8 +16,7 @@ contract NFTRevenueController is AccessControl {
     using SafeERC20 for IERC20;
 
     // user Roles for RBAC
-    bytes32 public constant OPERATOR_ROLE =
-        keccak256("OPERATOR_ROLE");
+    bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
     // This controller will be represented by single NFT
     IERC721 NFT;
@@ -58,11 +57,17 @@ contract NFTRevenueController is AccessControl {
     }
 
     /** Weight */
-    function setControllerWeight(uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setControllerWeight(uint256 _weight)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         controllerWeight = _weight;
     }
 
-    function setNFTOwnerWeight(uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setNFTOwnerWeight(uint256 _weight)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         nftOwnerWeight = _weight;
     }
 
@@ -78,7 +83,10 @@ contract NFTRevenueController is AccessControl {
     /**
         @dev - this funciton withdraws a token amount from the this contract - emergency withdraw
      */
-    function emergencyWithdraw(address _token) external onlyRole(OPERATOR_ROLE) {
+    function emergencyWithdraw(address _token)
+        external
+        onlyRole(OPERATOR_ROLE)
+    {
         uint256 balance = IERC20(_token).balanceOf(address(this));
         IERC20(_token).safeTransfer(msg.sender, balance);
 
@@ -88,17 +96,21 @@ contract NFTRevenueController is AccessControl {
     /**
         This function returns the allocAmount calculated to distribute to the NFT owner
      */
-    function splitter(address _token, uint _profit, uint _tokenId) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function splitter(
+        address _token,
+        uint256 _profit,
+        uint256 _tokenId
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         address nftOwner = NFT.ownerOf(_tokenId);
 
         // send 95% of the profit to the NFT owner, rest 5% will remain to this contract
-        uint sharedProfit = (_profit * nftOwnerWeight) / 100;
+        uint256 sharedProfit = (_profit * nftOwnerWeight) / 100;
         IERC20(_token).safeTransfer(nftOwner, sharedProfit);
 
         emit Splitter(_token, nftOwner, sharedProfit);
 
         // the revenue controller will also get 5% of the profit, and swap to CAPL.
-        uint profitForSwap = (_profit * swapWeight) / 100;
+        uint256 profitForSwap = (_profit * swapWeight) / 100;
         IERC20(_token).safeTransfer(swap, profitForSwap);
 
         // 5% of the revenue will be swapped to CAPL and burned

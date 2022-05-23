@@ -60,9 +60,11 @@ const actions = {
         const accounts = await (window as any).ethereum.request({
           method: "eth_requestAccounts",
         });
-        
+
         // get the chain id
-        const network: number = await (window as any).ethereum.request({ method: 'net_version' });
+        const network: number = await (window as any).ethereum.request({
+          method: "net_version",
+        });
         commit("setChainData", network);
 
         if (network != parseInt(ChainID)) {
@@ -101,11 +103,12 @@ const actions = {
     });
 
     (window as any).ethereum.on("chainChanged", async (chainId: any) => {
-      if (chainId !== process.env.VUE_APP_NETWORK_ID_HEX) commit('setChainData', 0)
-      else commit('setChainData', parseInt(ChainID))
+      if (chainId !== process.env.VUE_APP_NETWORK_ID_HEX)
+        commit("setChainData", 0);
+      else commit("setChainData", parseInt(ChainID));
       // set chain id to clear interval function
       // try to change network
-      window.location.reload()
+      window.location.reload();
       //await actions.checkNetwork();
       //commit("setWeb3Provider", state.web3Provider);
     });
@@ -114,7 +117,7 @@ const actions = {
   async checkNetwork() {
     if ((window as any).ethereum) {
       const hexadecimal = "0x" + parseInt(ChainID).toString(16);
-      
+
       try {
         // check if the chain to connect to is installed
         await (window as any).ethereum.request({

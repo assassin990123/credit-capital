@@ -5,4 +5,7 @@ export interface ContractState {
   caplContract: object | null;
   usdcContract: object | null;
   lpContract: object | null;
+  treasuryStorageContract: any | null;
+  treasuryControllerContract: any | null;
+  swapAndBurnContract: any | null;
 }
