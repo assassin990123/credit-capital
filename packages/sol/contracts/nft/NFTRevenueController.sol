@@ -52,11 +52,17 @@ contract NFTRevenueController is AccessControl {
     }
 
     /** Weight */
-    function setControllerWeight(uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setControllerWeight(uint256 _weight)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         controllerWeight = _weight;
     }
 
-    function setNFTOwnerWeight(uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setNFTOwnerWeight(uint256 _weight)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         nftOwnerWeight = _weight;
     }
 
@@ -67,7 +73,10 @@ contract NFTRevenueController is AccessControl {
     /**
         @dev - this funciton withdraws a token balance from the this contract - emergency withdraw
      */
-    function emergencyWithdraw(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function emergencyWithdraw(address _token)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         uint256 balance = IERC20(_token).balanceOf(address(this));
         IERC20(_token).safeTransfer(msg.sender, balance);
 
@@ -77,17 +86,21 @@ contract NFTRevenueController is AccessControl {
     /**
         This function distributes the contract's balance of a token to designated recipients
      */
-    function distributeRevenue(address _token, uint _tokenId) external {
+    function distributeRevenue(
+        address _token,
+        uint256 _profit,
+        uint256 _tokenId
+    ) external {
         address nftOwner = NFT.ownerOf(_tokenId);
 
         // send 95% of the profit to the NFT owner, rest 5% will remain to this contract
-        uint sharedProfit = (_profit * nftOwnerWeight) / 100;
+        uint256 sharedProfit = (_profit * nftOwnerWeight) / 100;
         IERC20(_token).safeTransfer(nftOwner, sharedProfit);
 
         emit DistributeRevenue(_token, sharedProfit);
 
         // the revenue controller will also get 5% of the profit, and swap to CAPL.
-        uint profitForSwap = (_profit * swapWeight) / 100;
+        uint256 profitForSwap = (_profit * swapWeight) / 100;
         IERC20(_token).safeTransfer(swap, profitForSwap);
 
         // 5% of the revenue will be swapped to CAPL and burned

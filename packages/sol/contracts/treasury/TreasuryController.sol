@@ -13,8 +13,7 @@ contract TreasuryController is AccessControl {
     using SafeERC20 for IERC20;
 
     // user Roles for RBAC
-    bytes32 public constant OPERATOR_ROLE =
-        keccak256("OPERATOR_ROLE");
+    bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
     // all principal must go back to the treasury, profit stays here.
     ITreasuryStorage TreasuryStorage;
@@ -34,7 +33,11 @@ contract TreasuryController is AccessControl {
         uint256 _amount
     );
 
-    event Borrow(address indexed _token, address indexed _user, uint256 _amount);
+    event Borrow(
+        address indexed _token,
+        address indexed _user,
+        uint256 _amount
+    );
 
     constructor(address _treasuryStorage) {
         treasuryStorage = _treasuryStorage;
@@ -47,9 +50,7 @@ contract TreasuryController is AccessControl {
     /**
         @dev - Deposits tokens into the treasury, updating the AUM
      */
-    function deposit(address _token, uint256 _amount)
-        external
-    {
+    function deposit(address _token, uint256 _amount) external {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
 
         require(
@@ -58,7 +59,7 @@ contract TreasuryController is AccessControl {
         );
 
         TreasuryStorage.deposit(msg.sender, _token, _amount);
-        
+
         emit Deposit(_token, msg.sender, _amount);
     }
 
@@ -102,15 +103,13 @@ contract TreasuryController is AccessControl {
         @dev - This function sends the principal back to the treasury, leaving profit in the controller
              - The profit can be distributed by distriubuteRevenue()
      */
-    function treasuryIncome(address _token, uint256 _principal, uint256 _profit)
-        external 
-    {
+    function treasuryIncome(
+        address _token,
+        uint256 _principal,
+        uint256 _profit
+    ) external {
         // call the treasuryStorage's treasuryIncome function
-        ITreasuryStorage(treasuryStorage).repay(
-            msg.sender,
-            _token,
-            _principal
-        );
+        ITreasuryStorage(treasuryStorage).repay(msg.sender, _token, _principal);
 
         // the profit remains here
         IERC20(_token).safeTransferFrom(msg.sender, address(this), _profit);
@@ -123,27 +122,27 @@ contract TreasuryController is AccessControl {
         Total weights assumed to add up to 10000. Smaller total weights will leave a balance in this contract, larger will throw errors
 
      */
-    function distributeRevenue(address _token)
-        external
-    {
+    function distributeRevenue(address _token) external {
         TreasuryStorage = ITreasuryStorage(treasuryStorage);
 
         // Contract balance to distribute
-        uint contractBalance = IERC20(_token).balanceOf(address(this));
+        uint256 contractBalance = IERC20(_token).balanceOf(address(this));
 
         // get length of the distributionList
-        address[] memory distributionList = TreasuryStorage.getDistributionList();
+        address[] memory distributionList = TreasuryStorage
+            .getDistributionList();
 
-        for(uint i; i < distributionList.length; i++) {
+        for (uint256 i; i < distributionList.length; i++) {
             address addr = distributionList[i];
             uint256 weight = TreasuryStorage.getWeight(addr);
 
-            uint amount = contractBalance * weight / 10000;
+            uint256 amount = (contractBalance * weight) / 10000;
             IERC20(_token).safeTransfer(addr, amount);
 
             emit DistributeTokenAlloc(_token, addr, amount);
         }
     }
+
     /**
         Manually updates the pool for a specific token in the case of mismatch.
     */
@@ -175,11 +174,7 @@ contract TreasuryController is AccessControl {
     /**
         Adds a new pool to the allowed token list
     */
-    function addPool(address _token)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function addPool(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
         ITreasuryStorage(treasuryStorage).addPool(_token);
     }
-
 }

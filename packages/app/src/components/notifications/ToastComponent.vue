@@ -2,11 +2,11 @@
   <div>
     <div class="toastnotification-header">
       <font-awesome-icon icon="fa-light fa-triangle-exclamation" />
-      <span class="toast-title">{{title}}</span>
+      <span class="toast-title">{{ title }}</span>
       <span></span>
     </div>
     <div>
-      <div class="toastnotification-content">{{text}}</div>
+      <div class="toastnotification-content">{{ text }}</div>
     </div>
   </div>
 </template>
@@ -14,8 +14,8 @@
 <script>
 export default {
   // ...
-  props: ['title', 'text']
-}
+  props: ["title", "text"],
+};
 </script>
 
 <style>
