@@ -15,10 +15,6 @@ interface ISwap {
 contract NFTRevenueController is AccessControl {
     using SafeERC20 for IERC20;
 
-    // user Roles for RBAC
-    bytes32 public constant OPERATOR_ROLE =
-        keccak256("OPERATOR_ROLE");
-
     // This controller will be represented by single NFT
     IERC721 NFT;
     address public nft;
@@ -30,12 +26,11 @@ contract NFTRevenueController is AccessControl {
     // track user weight
     uint256 public controllerWeight = 5; // 5% of the profit
     uint256 public swapWeight = 5; // 5% of the profit
-    uint256 public nftOwnerWeight = 90; // 95% of the profit
+    uint256 public nftOwnerWeight = 90; // 90% of the profit
 
     event Deposit(address indexed _token, address _user, uint256 _amount);
-    event Splitter(
+    event DistributeRevenue(
         address indexed _token,
-        address indexed _user,
         uint256 _amount
     );
     event Withdraw(
@@ -54,7 +49,6 @@ contract NFTRevenueController is AccessControl {
 
         // setup the admin role for the storage owner
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        grantRole(OPERATOR_ROLE, msg.sender);
     }
 
     /** Weight */
@@ -66,19 +60,14 @@ contract NFTRevenueController is AccessControl {
         nftOwnerWeight = _weight;
     }
 
-    /**
-        @dev - this function deposits eligible token amounts to the treasury storage, updating the corresponding storage state (to be implemented)
-     */
-    function depositProfit(address _token, uint256 _profit) external {
-        // deposit funds into this contract;
-        IERC20(_token).safeTransferFrom(msg.sender, address(this), _profit);
-        emit Deposit(_token, msg.sender, _profit);
+    function setSwapWeight(uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        swapWeight = _weight;
     }
 
     /**
-        @dev - this funciton withdraws a token amount from the this contract - emergency withdraw
+        @dev - this funciton withdraws a token balance from the this contract - emergency withdraw
      */
-    function emergencyWithdraw(address _token) external onlyRole(OPERATOR_ROLE) {
+    function emergencyWithdraw(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
         uint256 balance = IERC20(_token).balanceOf(address(this));
         IERC20(_token).safeTransfer(msg.sender, balance);
 
@@ -86,16 +75,16 @@ contract NFTRevenueController is AccessControl {
     }
 
     /**
-        This function returns the allocAmount calculated to distribute to the NFT owner
+        This function distributes the contract's balance of a token to designated recipients
      */
-    function splitter(address _token, uint _profit, uint _tokenId) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function distributeRevenue(address _token, uint _tokenId) external {
         address nftOwner = NFT.ownerOf(_tokenId);
 
         // send 95% of the profit to the NFT owner, rest 5% will remain to this contract
         uint sharedProfit = (_profit * nftOwnerWeight) / 100;
         IERC20(_token).safeTransfer(nftOwner, sharedProfit);
 
-        emit Splitter(_token, nftOwner, sharedProfit);
+        emit DistributeRevenue(_token, sharedProfit);
 
         // the revenue controller will also get 5% of the profit, and swap to CAPL.
         uint profitForSwap = (_profit * swapWeight) / 100;
