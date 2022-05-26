@@ -118,8 +118,9 @@ contract NFTRevenueController is AccessControl {
         uint256 swapShare = (balance * swapWeight) / 100;
 
         // Todo: Refactor. We want to swap swapShare tokens into CAPL, then transfer them to the owner.
-        // IERC20(_token).safeTransfer(swap, swapShare);
+        IERC20(_token).safeTransfer(swap, swapShare);
         // do swap here
+        Swap.swap(nftOwner);
 
         // Todo: Initialize the capl global var, another constructor arg, right?
         uint256 caplBalance = IERC20(capl).balanceOf(address(this));

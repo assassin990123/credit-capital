@@ -98,6 +98,35 @@ contract swapAndBurnUSDCtoCAPL is AccessControl {
         ICAPL(capl).burn(caplBalance);
     }
 
+    // this will recieve usdc from the nft revenue controller, swap to capl and return to the nft owner.
+    function swap(address _owner) external {
+        uint256 internalBalance = IERC20(usdc).balanceOf(address(this));
+
+        SingleSwap memory swap = SingleSwap(
+            poolId,
+            SwapKind.GIVEN_IN,
+            usdc,
+            capl,
+            internalBalance,
+            "0x"
+        );
+
+        FundManagement memory fundManagement = FundManagement(
+            address(this),
+            false,
+            address(this),
+            false
+        );
+
+        VAULT.swap(swap, fundManagement, 0, block.timestamp + 10 minutes);
+
+        // get the returned CAPL balance
+        uint256 caplBalance = IERC20(capl).balanceOf(address(this));
+
+        // transfer swaped CAPL to the nft owner
+        IERC20(capl).safeTransfer(caplBalance, _owner);
+    }
+
     /**
         @dev - this funciton withdraws a token amount from the this contract - emergency withdraw
      */
