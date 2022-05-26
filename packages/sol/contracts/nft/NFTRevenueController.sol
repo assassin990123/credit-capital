@@ -27,8 +27,8 @@ contract NFTRevenueController is AccessControl {
     address public swap;
 
     // track user weight
-    uint256 public controllerWeight = 5; // 5% of the profit
-    uint256 public swapWeight = 5; // 5% of the profit
+    uint256 public controllerWeight = 5; // 5% of the profit to revenue controller
+    uint256 public swapWeight = 5; // 5% of the profit swapped into CAPL for the owner
     uint256 public nftOwnerWeight = 90; // 90% of the profit
 
     event Deposit(address indexed _token, address _user, uint256 _amount);
@@ -72,7 +72,10 @@ contract NFTRevenueController is AccessControl {
         nftOwnerWeight = _weight;
     }
 
-    function setSwapWeight(uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setSwapWeight(uint256 _weight)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         swapWeight = _weight;
     }
 
@@ -96,19 +99,27 @@ contract NFTRevenueController is AccessControl {
         address _token,
     ) external {
         address nftOwner = NFT.ownerOf(NftID);
+        uint256 balance = IERC20(_token).balanceOf(address(this));
 
-        // send 95% of the profit to the NFT owner, rest 5% will remain to this contract
-        uint256 contractBalance = IERC20(_token).balanceOf(address(this));
-        uint256 sharedProfit = (contractBalance * nftOwnerWeight) / 100;
-        IERC20(_token).safeTransfer(nftOwner, sharedProfit);
+        // send 90% of the balance to the NFT owner
+        uint256 ownerShare = (balance * nftOwnerWeight) / 100;
+        IERC20(_token).safeTransfer(nftOwner, ownerShare);
 
-        emit DistributeRevenue(_token, sharedProfit);
+        // Send 5% of the revenue to the treasury revenue controller
+        uint256 treasuryShare = (balance * swapWeight) / 100;
+        IERC20(_token).safeTransfer(swap, treasuryShare);
 
-        // the revenue controller will also get 5% of the profit, and swap to CAPL.
-        uint256 profitForSwap = (contractBalance * swapWeight) / 100;
-        IERC20(_token).safeTransfer(swap, profitForSwap);
+        // 5% of the revenue will be swapped to CAPL and sent to the owner
+        uint256 swapShare = (balance * swapWeight) / 100;
 
-        // 5% of the revenue will be swapped to CAPL and burned
-        Swap.swapAndBurn();
+        // Todo: Refactor. We want to swap swapShare tokens into CAPL, then transfer them to the owner.
+        // IERC20(_token).safeTransfer(swap, swapShare);
+        // do swap here
+
+        // Todo: Initialize the capl global var, another constructor arg, right?
+        uint256 caplBalance = IERC20(capl).balanceOf(address(this));
+        IERC20(_token).safeTransfer(nftOwner, caplBalance);
+
+        emit DistributeRevenue(_token, balance);
     }
 }
