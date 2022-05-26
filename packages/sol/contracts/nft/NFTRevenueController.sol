@@ -19,6 +19,9 @@ contract NFTRevenueController is AccessControl {
     IERC721 NFT;
     address public nft;
 
+    // Specific NFT ID
+    uint256 public NftID;
+
     // Swap contract
     ISwap Swap;
     address public swap;
@@ -39,10 +42,13 @@ contract NFTRevenueController is AccessControl {
         uint256 _amount
     );
 
-    constructor(address _nft, address _swap) {
+    constructor(address _nft, uint256 _nftid, address _swap) {
         // set representing NFT contract
         NFT = IERC721(_nft);
         nft = _nft;
+        
+        // NFT ID
+        NftID = uint256(_nftid);
 
         Swap = ISwap(_swap);
         swap = _swap;
@@ -88,19 +94,18 @@ contract NFTRevenueController is AccessControl {
      */
     function distributeRevenue(
         address _token,
-        uint256 _profit,
-        uint256 _NftID
     ) external {
-        address nftOwner = NFT.ownerOf(_NftID);
+        address nftOwner = NFT.ownerOf(NftID);
 
         // send 95% of the profit to the NFT owner, rest 5% will remain to this contract
-        uint256 sharedProfit = (_profit * nftOwnerWeight) / 100;
+        uint256 contractBalance = IERC20(_token).balanceOf(address(this));
+        uint256 sharedProfit = (contractBalance * nftOwnerWeight) / 100;
         IERC20(_token).safeTransfer(nftOwner, sharedProfit);
 
         emit DistributeRevenue(_token, sharedProfit);
 
         // the revenue controller will also get 5% of the profit, and swap to CAPL.
-        uint256 profitForSwap = (_profit * swapWeight) / 100;
+        uint256 profitForSwap = (contractBalance * swapWeight) / 100;
         IERC20(_token).safeTransfer(swap, profitForSwap);
 
         // 5% of the revenue will be swapped to CAPL and burned
