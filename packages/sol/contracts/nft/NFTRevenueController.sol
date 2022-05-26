@@ -89,9 +89,9 @@ contract NFTRevenueController is AccessControl {
     function distributeRevenue(
         address _token,
         uint256 _profit,
-        uint256 _tokenId
+        uint256 _NftID
     ) external {
-        address nftOwner = NFT.ownerOf(_tokenId);
+        address nftOwner = NFT.ownerOf(_NftID);
 
         // send 95% of the profit to the NFT owner, rest 5% will remain to this contract
         uint256 sharedProfit = (_profit * nftOwnerWeight) / 100;
