@@ -110,10 +110,6 @@ contract NFTRevenueController is AccessControl {
         uint256 ownerShare = (balance * nftOwnerWeight) / 100;
         IERC20(_token).safeTransfer(nftOwner, ownerShare);
 
-        // Send 5% of the revenue to the treasury revenue controller
-        uint256 treasuryShare = (balance * controllerWeight) / 100;
-        IERC20(_token).safeTransfer(swap, treasuryShare);
-
         // 5% of the revenue will be swapped to CAPL and sent to the owner
         uint256 swapShare = (balance * swapWeight) / 100;
 
