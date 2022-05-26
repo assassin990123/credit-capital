@@ -16,9 +16,7 @@ interface ITreasuryStorage {
 
     function addPool(address _token) external;
 
-    function updatePool(address _token)
-        external
-        returns (IPool.Pool memory);
+    function updatePool(address _token) external returns (IPool.Pool memory);
 
     function borrow(
         address _token,
@@ -43,7 +41,6 @@ interface ITreasuryStorage {
         view
         returns (uint256);
 
-    
     function getDistributionList() external view returns (address[] memory);
 
     function getWeight(address _user) external view returns (uint256 weight);

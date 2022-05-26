@@ -11,7 +11,7 @@
         </div>
         <div class="title-cus">
           <h2>APR</h2>
-          <div v-if="dailyEarnings " class="dashboard-daily-earning-panel-value">
+          <div v-if="dailyEarnings" class="dashboard-daily-earning-panel-value">
             {{ format((caplToUSD(dailyEarnings, store) / tvl) * 36500) }}%
           </div>
         </div>
@@ -81,7 +81,10 @@
             <div class="dashboard-daily-earning-capl-content-title">
               Daily Yield
             </div>
-            <div v-if="dailyEarnings" class="dashboard-daily-earning-capl-content-value">
+            <div
+              v-if="dailyEarnings"
+              class="dashboard-daily-earning-capl-content-value"
+            >
               {{ format((caplToUSD(dailyEarnings, store) / tvl) * 100) }}%
             </div>
           </div>

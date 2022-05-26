@@ -37,9 +37,9 @@
               <li class="nav-item">
                 <router-link to="swap">Swap</router-link>
               </li>
-              <!-- <li class="nav-item">
+              <li class="nav-item">
                 <router-link to="treasury">Treasury</router-link>
-              </li> -->
+              </li>
             </ul>
           </div>
           <div>
@@ -109,7 +109,10 @@ export default {
 
     const connectWeb3 = async () => {
       await store.dispatch("accounts/connectWeb3");
-      if (isConnected.value && chainId.value == process.env.VUE_APP_NETWORK_ID) {
+      if (
+        isConnected.value &&
+        chainId.value == process.env.VUE_APP_NETWORK_ID
+      ) {
         await store.dispatch("rewards/getRewardsInfo");
         await store.dispatch("balancer/getPoolTokens");
         await store.dispatch("dashboard/fetchTVL");
@@ -138,7 +141,10 @@ export default {
         connectWeb3();
       }
 
-      if (isConnected.value && chainId.value == process.env.VUE_APP_NETWORK_ID) {
+      if (
+        isConnected.value &&
+        chainId.value == process.env.VUE_APP_NETWORK_ID
+      ) {
         interval = setInterval(getTokenBalance, 2000);
       } else {
         clearInterval(interval);

@@ -30,7 +30,11 @@ export const checkBalance = (balance: number) => {
 export const checkAvailability = (amount: number, balance: number) => {
   if (amount > balance) {
     dismissNotification();
-    handleToasts("info", "Notification", "Amount exceeds your available balance.")
+    handleToasts(
+      "info",
+      "Notification",
+      "Amount exceeds your available balance."
+    );
     return false;
   }
 
@@ -40,23 +44,23 @@ export const checkAvailability = (amount: number, balance: number) => {
 export const showConnectResult = (store: any) => {
   if (store.getters["accounts/isUserConnected"]) {
     dismissNotification();
-    handleToasts("success", "Notification", "Connected Successfully!")
+    handleToasts("success", "Notification", "Connected Successfully!");
     return true;
   }
 
-  handleToasts("error", "Notification", "Connection Failed!")
+  handleToasts("error", "Notification", "Connection Failed!");
   return false;
 };
 
 export const checkWalletConnect = () => {
   dismissNotification();
-  handleToasts("info", "Notification", "Please unlock your wallet!")
+  handleToasts("info", "Notification", "Please unlock your wallet!");
   return false;
 };
 
 export const balanceExceeded = () => {
   dismissNotification();
-  handleToasts("info", "Notification", "Please unlock your wallet!")
+  handleToasts("info", "Notification", "Please unlock your wallet!");
   return false;
 };
 
@@ -66,41 +70,44 @@ function dismissNotification() {
   }
 }
 
-
 export const handleToasts = (type: string, title: string, text: string) => {
   // check type flag
   switch (type) {
     case "info":
       toastID = toast.info({
         component: ToastComponent,
-        props:  {
-            title: title,
-            text: text
-        }});
-    break;
+        props: {
+          title: title,
+          text: text,
+        },
+      });
+      break;
     case "warn":
       toastID = toast.warning({
         component: ToastComponent,
-        props:  {
-            title: title,
-            text: text
-        }});
-    break;
+        props: {
+          title: title,
+          text: text,
+        },
+      });
+      break;
     case "success":
       toastID = toast.success({
         component: ToastComponent,
-        props:  {
-            title: title,
-            text: text
-        }});
-    break;
+        props: {
+          title: title,
+          text: text,
+        },
+      });
+      break;
     case "error":
       toastID = toast.error({
         component: ToastComponent,
-        props:  {
-            title: title,
-            text: text
-        }});
-    break;
+        props: {
+          title: title,
+          text: text,
+        },
+      });
+      break;
   }
 };

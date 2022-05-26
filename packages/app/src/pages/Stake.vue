@@ -24,11 +24,13 @@
               {{ stakeButtonText }}
             </button>
             <div class="explainer">
-              USDC-CAPL Liquidity Pool Tokens are locked into CreditCapital vault for 4 years, 4 months, 4 weeks, and 4 days.
-              Staking rewards can be claimed on the 
-              <router-link to="reward" class="button">Rewards</router-link> page at any time.
-              Don't have LP tokens? 
-              <router-link to="liquidity" class="button">Buy Some</router-link> now.
+              USDC-CAPL Liquidity Pool Tokens are locked into CreditCapital
+              vault for 4 years, 4 months, 4 weeks, and 4 days. Staking rewards
+              can be claimed on the
+              <router-link to="reward" class="button">Rewards</router-link> page
+              at any time. Don't have LP tokens?
+              <router-link to="liquidity" class="button">Buy Some</router-link>
+              now.
             </div>
           </div>
         </div>
@@ -48,9 +50,10 @@
               Withdraw
             </button>
             <div class="explainer">
-              USDC-CAPL Liquidity Pool Tokens may be withdrawn after the time lock period expires.
-              Staking rewards can be claimed on the 
-              <router-link to="reward" class="button">Rewards</router-link> page at any time.
+              USDC-CAPL Liquidity Pool Tokens may be withdrawn after the time
+              lock period expires. Staking rewards can be claimed on the
+              <router-link to="reward" class="button">Rewards</router-link> page
+              at any time.
             </div>
           </div>
         </div>
@@ -65,9 +68,7 @@
 import DappFooter from "@/components/DappFooter.vue";
 import { watchEffect, ref, Ref, computed } from "vue";
 // @ts-ignore
-import { 
-  checkAllowance, 
-} from "@/utils";
+import { checkAllowance } from "@/utils";
 // @ts-ignore
 import { useStore } from "@/store";
 // @ts-ignore
@@ -89,14 +90,14 @@ const isUserConnected = computed(
   () => store.getters["accounts/isUserConnected"]
 );
 
-let stakeButtonDisabled:Ref<boolean> = ref(false)
+let stakeButtonDisabled: Ref<boolean> = ref(false);
 
 // this function checks the allowance a user has alloted our rewards contract via the LP token
 watchEffect(async () => {
-  if (
-    isUserConnected.value
-  ) {
-    stakeAmount.value = Number(parseFloat((stakeAmount.value).toString()).toFixed(18));
+  if (isUserConnected.value) {
+    stakeAmount.value = Number(
+      parseFloat(stakeAmount.value.toString()).toFixed(18)
+    );
 
     if (stakeAmount.value == 0) {
       stakeButtonText.value = "Stake";
@@ -112,11 +113,10 @@ watchEffect(async () => {
       ) {
         stakeButtonText.value = "Stake";
         if (!checkAvailability(stakeAmount.value, lpBalance.value)) {
-          stakeButtonDisabled.value = true
+          stakeButtonDisabled.value = true;
           stakeButtonClassName.value = "btn-custom-gray";
-        }
-        else {
-          stakeButtonDisabled.value = false
+        } else {
+          stakeButtonDisabled.value = false;
           stakeButtonClassName.value = "btn-custom-green";
         }
       } else {
@@ -124,7 +124,6 @@ watchEffect(async () => {
         stakeButtonClassName.value = "btn-custom";
       }
     }
-    
   }
 });
 

@@ -55,7 +55,7 @@ const deployContracts = async (deployer) => {
     // swap,
     controller,
     // nftController,
-    storage
+    storage,
   };
 };
 
@@ -78,7 +78,8 @@ describe("Treasury", async () => {
     [deployer, user, user2] = await ethers.getSigners();
 
     // deploy token contract
-    ({ lp, usdc, nft, swap, controller, nftController, storage } = await deployContracts(deployer));
+    ({ lp, usdc, nft, swap, controller, nftController, storage } =
+      await deployContracts(deployer));
 
     // grant controller the REVENUE_CONTROLLER role of storage contract
     await storage.grantRole(
@@ -97,7 +98,9 @@ describe("Treasury", async () => {
         await lp.approve(storage.address, BigInt(250_000 * 10 ** 18));
 
         // deposit new userposition
-        await controller.connect(deployer).deposit(lp.address, BigInt(250_000 * 10 ** 18));
+        await controller
+          .connect(deployer)
+          .deposit(lp.address, BigInt(250_000 * 10 ** 18));
 
         const pool = await storage.getPool(lp.address);
         const userbalance = await lp.balanceOf(deployer.address);
@@ -119,16 +122,30 @@ describe("Treasury", async () => {
         await controller.deposit(lp.address, BigInt(250_000 * 10 ** 18));
 
         // check the storage states
-        expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
-        expect(_formatEther(await lp.balanceOf(deployer.address))).to.equal(750_000);
-        expect(_formatEther(await lp.balanceOf(storage.address))).to.equal(250_000);
+        expect(
+          _formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(
+            0
+          )
+        ).to.equal("250000");
+        expect(_formatEther(await lp.balanceOf(deployer.address))).to.equal(
+          750_000
+        );
+        expect(_formatEther(await lp.balanceOf(storage.address))).to.equal(
+          250_000
+        );
 
         // withdraw token
         await controller.withdraw(lp.address, BigInt(250_000 * 10 ** 18));
 
         // check the storage states
-        expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('0');
-        expect(_formatEther(await lp.balanceOf(deployer.address))).to.equal(1_000_000);
+        expect(
+          _formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(
+            0
+          )
+        ).to.equal("0");
+        expect(_formatEther(await lp.balanceOf(deployer.address))).to.equal(
+          1_000_000
+        );
         expect(_formatEther(await lp.balanceOf(storage.address))).to.equal(0);
       });
     });
@@ -143,16 +160,28 @@ describe("Treasury", async () => {
 
         // deposit new userposition
         await controller.deposit(lp.address, BigInt(250_000 * 10 ** 18));
-        
+
         // check the storage states
-        expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
+        expect(
+          _formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(
+            0
+          )
+        ).to.equal("250000");
 
         // loan token
         await controller.borrow(lp.address, BigInt(50_000 * 10 ** 18));
 
         // check the storage states
-        expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
-        expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('50000');
+        expect(
+          _formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(
+            0
+          )
+        ).to.equal("250000");
+        expect(
+          _formatEther(
+            (await storage.getPool(lp.address)).loanedAmount
+          ).toFixed(0)
+        ).to.equal("50000");
       });
 
       it("Can't loan over available balance.", async () => {
@@ -166,21 +195,36 @@ describe("Treasury", async () => {
         await controller.deposit(lp.address, BigInt(250_000 * 10 ** 18));
 
         // check the storage states
-        expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
+        expect(
+          _formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(
+            0
+          )
+        ).to.equal("250000");
 
         // get user's unlocked amount
-        const unlocked = await storage.getAvailableBalance(
-          lp.address
-        );
+        const unlocked = await storage.getAvailableBalance(lp.address);
 
         // loaning will be reverted token
         try {
-          await controller.borrow(lp.address, unlocked + BigInt(50_000 * 10 ** 18));
+          await controller.borrow(
+            lp.address,
+            unlocked + BigInt(50_000 * 10 ** 18)
+          );
         } catch (error) {
-          expect(error.message).match(/Unable to borrow more than available balance/);
+          expect(error.message).match(
+            /Unable to borrow more than available balance/
+          );
         }
-        expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
-        expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('0');
+        expect(
+          _formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(
+            0
+          )
+        ).to.equal("250000");
+        expect(
+          _formatEther(
+            (await storage.getPool(lp.address)).loanedAmount
+          ).toFixed(0)
+        ).to.equal("0");
       });
     });
 
@@ -194,51 +238,92 @@ describe("Treasury", async () => {
 
         // deposit new userposition
         await controller.deposit(lp.address, BigInt(250_000 * 10 ** 18));
-        expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('750000');
+        expect(
+          _formatEther(await lp.balanceOf(deployer.address)).toFixed(0)
+        ).to.equal("750000");
 
         // check the storage states
-        expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
+        expect(
+          _formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(
+            0
+          )
+        ).to.equal("250000");
 
         // approve lp token allowance
         await lp.approve(storage.address, BigInt(50_000 * 10 ** 18));
 
         // loan token
         await controller.borrow(lp.address, BigInt(50_000 * 10 ** 18));
-        expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('800000');
+        expect(
+          _formatEther(await lp.balanceOf(deployer.address)).toFixed(0)
+        ).to.equal("800000");
 
         // check the storage states
-        expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
-        expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('50000');
+        expect(
+          _formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(
+            0
+          )
+        ).to.equal("250000");
+        expect(
+          _formatEther(
+            (await storage.getPool(lp.address)).loanedAmount
+          ).toFixed(0)
+        ).to.equal("50000");
 
         // approve lp token allowance
-        await lp.approve(controller.address, BigInt(51_000 * 10 **18));
+        await lp.approve(controller.address, BigInt(51_000 * 10 ** 18));
 
         // return loaned amount
-        await controller.treasuryIncome(lp.address, BigInt(50_000 * 10 ** 18), BigInt(1_000 * 10 ** 18)); // 1_000 LP for profit
-        expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749000'); // return loanAmount + profit
+        await controller.treasuryIncome(
+          lp.address,
+          BigInt(50_000 * 10 ** 18),
+          BigInt(1_000 * 10 ** 18)
+        ); // 1_000 LP for profit
+        expect(
+          _formatEther(await lp.balanceOf(deployer.address)).toFixed(0)
+        ).to.equal("749000"); // return loanAmount + profit
 
         // check the storage states
-        expect(_formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(0)).to.equal('250000');
-        expect(_formatEther((await storage.getPool(lp.address)).loanedAmount).toFixed(0)).to.equal('0');
+        expect(
+          _formatEther((await storage.getPool(lp.address)).totalPooled).toFixed(
+            0
+          )
+        ).to.equal("250000");
+        expect(
+          _formatEther(
+            (await storage.getPool(lp.address)).loanedAmount
+          ).toFixed(0)
+        ).to.equal("0");
 
         // the profit should be remain in controller
-        expect(_formatEther(await lp.balanceOf(controller.address))).to.equal(1_000);
+        expect(_formatEther(await lp.balanceOf(controller.address))).to.equal(
+          1_000
+        );
 
         /* split the profit based on the user weight */
         // set the user weight - deployer/user/user2 : 50%/30%%/20%
-        await storage.setWeight(deployer.address, BigInt(0.5 * WEIGHT_CONVERSION));
+        await storage.setWeight(
+          deployer.address,
+          BigInt(0.5 * WEIGHT_CONVERSION)
+        );
         await storage.setWeight(user.address, BigInt(0.3 * WEIGHT_CONVERSION));
         await storage.setWeight(user2.address, BigInt(0.2 * WEIGHT_CONVERSION));
 
         // check balances of the user before split
-        expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749000');
-        expect(_formatEther(await lp.balanceOf(user.address)).toFixed(0)).to.equal('0');
-        expect(_formatEther(await lp.balanceOf(user2.address)).toFixed(0)).to.equal('0');
+        expect(
+          _formatEther(await lp.balanceOf(deployer.address)).toFixed(0)
+        ).to.equal("749000");
+        expect(
+          _formatEther(await lp.balanceOf(user.address)).toFixed(0)
+        ).to.equal("0");
+        expect(
+          _formatEther(await lp.balanceOf(user2.address)).toFixed(0)
+        ).to.equal("0");
 
         // check weights of the user before split
-        expect(await storage.getWeight(deployer.address)).to.equal('5000');
-        expect(await storage.getWeight(user.address)).to.equal('3000');
-        expect(await storage.getWeight(user2.address)).to.equal('2000');
+        expect(await storage.getWeight(deployer.address)).to.equal("5000");
+        expect(await storage.getWeight(user.address)).to.equal("3000");
+        expect(await storage.getWeight(user2.address)).to.equal("2000");
 
         // add whitelisted users
         await storage.addDistributionList(deployer.address);
@@ -249,67 +334,128 @@ describe("Treasury", async () => {
         await controller.distributeRevenue(lp.address);
 
         // check the user balance
-        expect(_formatEther(await lp.balanceOf(deployer.address)).toFixed(0)).to.equal('749500');
-        expect(_formatEther(await lp.balanceOf(user.address)).toFixed(0)).to.equal('300');
-        expect(_formatEther(await lp.balanceOf(user2.address)).toFixed(0)).to.equal('200');
+        expect(
+          _formatEther(await lp.balanceOf(deployer.address)).toFixed(0)
+        ).to.equal("749500");
+        expect(
+          _formatEther(await lp.balanceOf(user.address)).toFixed(0)
+        ).to.equal("300");
+        expect(
+          _formatEther(await lp.balanceOf(user2.address)).toFixed(0)
+        ).to.equal("200");
 
         // check controller balance
-        expect(_formatEther(await lp.balanceOf(controller.address)).toFixed(0)).to.equal('0');
+        expect(
+          _formatEther(await lp.balanceOf(controller.address)).toFixed(0)
+        ).to.equal("0");
       });
       it("Deposit, borrow, repay and split the revenue(USDC)", async () => {
         // add pool for the capl
         await controller.addPool(usdc.address);
 
         // approve lp token allowance
-        await usdc.approve(storage.address, BigInt(250_000 * 10 ** SIX_DECIMALS));
+        await usdc.approve(
+          storage.address,
+          BigInt(250_000 * 10 ** SIX_DECIMALS)
+        );
 
         // deposit new userposition
-        await controller.deposit(usdc.address, BigInt(250_000 * 10 ** SIX_DECIMALS));
-        expect(_formatUSDC(await usdc.balanceOf(deployer.address)).toFixed(0)).to.equal('750000');
+        await controller.deposit(
+          usdc.address,
+          BigInt(250_000 * 10 ** SIX_DECIMALS)
+        );
+        expect(
+          _formatUSDC(await usdc.balanceOf(deployer.address)).toFixed(0)
+        ).to.equal("750000");
 
         // check the storage states
-        expect(_formatUSDC((await storage.getPool(usdc.address)).totalPooled).toFixed(0)).to.equal('250000');
+        expect(
+          _formatUSDC(
+            (await storage.getPool(usdc.address)).totalPooled
+          ).toFixed(0)
+        ).to.equal("250000");
 
         // approve lp token allowance
-        await usdc.approve(storage.address, BigInt(50_000 * 10 ** SIX_DECIMALS));
+        await usdc.approve(
+          storage.address,
+          BigInt(50_000 * 10 ** SIX_DECIMALS)
+        );
 
         // loan token
-        await controller.borrow(usdc.address, BigInt(50_000 * 10 ** SIX_DECIMALS));
-        expect(_formatUSDC(await usdc.balanceOf(deployer.address)).toFixed(0)).to.equal('800000');
+        await controller.borrow(
+          usdc.address,
+          BigInt(50_000 * 10 ** SIX_DECIMALS)
+        );
+        expect(
+          _formatUSDC(await usdc.balanceOf(deployer.address)).toFixed(0)
+        ).to.equal("800000");
 
         // check the storage states
-        expect(_formatUSDC((await storage.getPool(usdc.address)).totalPooled).toFixed(0)).to.equal('250000');
-        expect(_formatUSDC((await storage.getPool(usdc.address)).loanedAmount).toFixed(0)).to.equal('50000');
+        expect(
+          _formatUSDC(
+            (await storage.getPool(usdc.address)).totalPooled
+          ).toFixed(0)
+        ).to.equal("250000");
+        expect(
+          _formatUSDC(
+            (await storage.getPool(usdc.address)).loanedAmount
+          ).toFixed(0)
+        ).to.equal("50000");
 
         // approve lp token allowance
-        await usdc.approve(controller.address, BigInt(51_000 * 10 **18));
+        await usdc.approve(controller.address, BigInt(51_000 * 10 ** 18));
 
         // return loaned amount
-        await controller.treasuryIncome(usdc.address, BigInt(50_000 * 10 ** SIX_DECIMALS), BigInt(1_000 * 10 ** SIX_DECIMALS)); // 1_000 LP for profit
-        expect(_formatUSDC(await usdc.balanceOf(deployer.address)).toFixed(0)).to.equal('749000'); // return loanAmount + profit
+        await controller.treasuryIncome(
+          usdc.address,
+          BigInt(50_000 * 10 ** SIX_DECIMALS),
+          BigInt(1_000 * 10 ** SIX_DECIMALS)
+        ); // 1_000 LP for profit
+        expect(
+          _formatUSDC(await usdc.balanceOf(deployer.address)).toFixed(0)
+        ).to.equal("749000"); // return loanAmount + profit
 
         // check the storage states
-        expect(_formatUSDC((await storage.getPool(usdc.address)).totalPooled).toFixed(0)).to.equal('250000');
-        expect(_formatUSDC((await storage.getPool(usdc.address)).loanedAmount).toFixed(0)).to.equal('0');
+        expect(
+          _formatUSDC(
+            (await storage.getPool(usdc.address)).totalPooled
+          ).toFixed(0)
+        ).to.equal("250000");
+        expect(
+          _formatUSDC(
+            (await storage.getPool(usdc.address)).loanedAmount
+          ).toFixed(0)
+        ).to.equal("0");
 
         // the profit should be remain in controller
-        expect(_formatUSDC(await usdc.balanceOf(controller.address))).to.equal(1_000);
+        expect(_formatUSDC(await usdc.balanceOf(controller.address))).to.equal(
+          1_000
+        );
 
         /* split the profit based on the user weight */
         // set the user weight - deployer/user/user2 : 50%/30%%/20%
-        await storage.setWeight(deployer.address, BigInt(0.5 * WEIGHT_CONVERSION));
+        await storage.setWeight(
+          deployer.address,
+          BigInt(0.5 * WEIGHT_CONVERSION)
+        );
         await storage.setWeight(user.address, BigInt(0.3 * WEIGHT_CONVERSION));
         await storage.setWeight(user2.address, BigInt(0.2 * WEIGHT_CONVERSION));
 
         // check balances of the user before split
-        expect(_formatUSDC(await usdc.balanceOf(deployer.address)).toFixed(0)).to.equal('749000');
-        expect(_formatUSDC(await usdc.balanceOf(user.address)).toFixed(0)).to.equal('0');
-        expect(_formatUSDC(await usdc.balanceOf(user2.address)).toFixed(0)).to.equal('0');
+        expect(
+          _formatUSDC(await usdc.balanceOf(deployer.address)).toFixed(0)
+        ).to.equal("749000");
+        expect(
+          _formatUSDC(await usdc.balanceOf(user.address)).toFixed(0)
+        ).to.equal("0");
+        expect(
+          _formatUSDC(await usdc.balanceOf(user2.address)).toFixed(0)
+        ).to.equal("0");
 
         // check weights of the user before split
-        expect(await storage.getWeight(deployer.address)).to.equal('5000');
-        expect(await storage.getWeight(user.address)).to.equal('3000');
-        expect(await storage.getWeight(user2.address)).to.equal('2000');
+        expect(await storage.getWeight(deployer.address)).to.equal("5000");
+        expect(await storage.getWeight(user.address)).to.equal("3000");
+        expect(await storage.getWeight(user2.address)).to.equal("2000");
 
         // add whitelisted users
         await storage.addDistributionList(deployer.address);
@@ -320,12 +466,20 @@ describe("Treasury", async () => {
         await controller.distributeRevenue(usdc.address);
 
         // check the user balance
-        expect(_formatUSDC(await usdc.balanceOf(deployer.address)).toFixed(0)).to.equal('749500');
-        expect(_formatUSDC(await usdc.balanceOf(user.address)).toFixed(0)).to.equal('300');
-        expect(_formatUSDC(await usdc.balanceOf(user2.address)).toFixed(0)).to.equal('200');
+        expect(
+          _formatUSDC(await usdc.balanceOf(deployer.address)).toFixed(0)
+        ).to.equal("749500");
+        expect(
+          _formatUSDC(await usdc.balanceOf(user.address)).toFixed(0)
+        ).to.equal("300");
+        expect(
+          _formatUSDC(await usdc.balanceOf(user2.address)).toFixed(0)
+        ).to.equal("200");
 
         // check controller balance
-        expect(_formatUSDC(await usdc.balanceOf(controller.address)).toFixed(0)).to.equal('0');
+        expect(
+          _formatUSDC(await usdc.balanceOf(controller.address)).toFixed(0)
+        ).to.equal("0");
       });
     });
   });

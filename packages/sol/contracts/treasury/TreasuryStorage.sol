@@ -10,7 +10,8 @@ contract TreasuryStorage is AccessControl {
     using SafeERC20 for IERC20;
 
     // user Roles for RBAC
-    bytes32 public constant REVENUE_CONTROLLER = keccak256("REVENUE_CONTROLLER");
+    bytes32 public constant REVENUE_CONTROLLER =
+        keccak256("REVENUE_CONTROLLER");
     bytes32 public constant ORACLE_SETTER = keccak256("ORACLE_SETTER");
 
     struct Pool {
@@ -22,13 +23,13 @@ contract TreasuryStorage is AccessControl {
     // pool tracking
     address[] poolAddresses;
     mapping(address => Pool) Pools; // token => pool
-    mapping(address => uint) PoolPrices;
+    mapping(address => uint256) PoolPrices;
 
     // token distribution addresses
     address[] distributionList;
 
     // track whitelisted user weight
-    mapping(address => uint) Weights;
+    mapping(address => uint256) Weights;
 
     constructor() {
         // setup the admin role for the storage owner
@@ -48,7 +49,7 @@ contract TreasuryStorage is AccessControl {
         returns (uint256 availableBalance)
     {
         // get token balance of this contract
-        uint balance = IERC20(_token).balanceOf(address(this));
+        uint256 balance = IERC20(_token).balanceOf(address(this));
 
         return balance;
     }
@@ -57,24 +58,28 @@ contract TreasuryStorage is AccessControl {
         return Pools[_token];
     }
 
-    function getPoolTokenPrice(address _token) external view returns (uint256 price) {
+    function getPoolTokenPrice(address _token)
+        external
+        view
+        returns (uint256 price)
+    {
         return PoolPrices[_token];
     }
 
     function getDistributionList() external view returns (address[] memory) {
         return distributionList;
     }
-    
+
     function getWeight(address _addr) external view returns (uint256 weight) {
         return Weights[_addr];
     }
-    
+
     /**
         This function returns the total AUM value
         This is the sum of each total token balance * the current token value
      */
     function getAUM() external view returns (uint256 total) {
-        for(uint i; i < poolAddresses.length; i++) {
+        for (uint256 i; i < poolAddresses.length; i++) {
             address token = poolAddresses[i];
             total += Pools[token].totalPooled * PoolPrices[token];
         }
@@ -152,14 +157,11 @@ contract TreasuryStorage is AccessControl {
         IERC20(_token).safeTransferFrom(_user, address(this), _principal);
     }
 
-    function addPool(address _token)
-        external
-        onlyRole(REVENUE_CONTROLLER)
-    {
+    function addPool(address _token) external onlyRole(REVENUE_CONTROLLER) {
         require(!checkIfPoolExists(_token), "This pool already exists.");
 
         // get current contract balance
-        uint balance = IERC20(_token).balanceOf(address(this));
+        uint256 balance = IERC20(_token).balanceOf(address(this));
 
         Pools[_token] = Pool({
             totalPooled: balance,
@@ -174,13 +176,10 @@ contract TreasuryStorage is AccessControl {
     /**
         In the case of manual token deposits, allows for recalculating the total AUM
     */
-    function updatePool(address _token)
-        external
-        returns (Pool memory)
-    {
+    function updatePool(address _token) external returns (Pool memory) {
         // get real amount of pooled
         Pool storage pool = Pools[_token];
-        uint balance = IERC20(_token).balanceOf(address(this));
+        uint256 balance = IERC20(_token).balanceOf(address(this));
 
         unchecked {
             pool.totalPooled = (balance + pool.loanedAmount);
@@ -189,25 +188,27 @@ contract TreasuryStorage is AccessControl {
         return pool;
     }
 
-    // RBAC Oracle, price setter 
-    function setPoolTokenPrice(address _token, uint _price)
+    // RBAC Oracle, price setter
+    function setPoolTokenPrice(address _token, uint256 _price)
         external
         onlyRole(ORACLE_SETTER)
     {
         PoolPrices[_token] = _price;
     }
 
-        
     function addDistributionList(address _addr)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        require(!distributionlistCheck(_addr), "DistributionList: Address already exists");
+        require(
+            !distributionlistCheck(_addr),
+            "DistributionList: Address already exists"
+        );
         distributionList.push(_addr);
     }
-    
+
     function distributionlistCheck(address _addr) internal view returns (bool) {
-        for (uint i = 0; i < distributionList.length; i++) {
+        for (uint256 i = 0; i < distributionList.length; i++) {
             if (distributionList[i] == _addr) {
                 return true;
             }
@@ -215,11 +216,17 @@ contract TreasuryStorage is AccessControl {
         return false;
     }
 
-    function removeDistributionList(address _addr) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(distributionlistCheck(_addr), "DistributionList: Address does not exist");
+    function removeDistributionList(address _addr)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(
+            distributionlistCheck(_addr),
+            "DistributionList: Address does not exist"
+        );
 
         // get index
-        for (uint i = 0; i < distributionList.length; i++) {
+        for (uint256 i = 0; i < distributionList.length; i++) {
             if (distributionList[i] == _addr) {
                 delete distributionList[i];
             }
@@ -234,7 +241,10 @@ contract TreasuryStorage is AccessControl {
     result in funds being left in the TreasuryController during distribution. Weights totaling more
     than 10,000 will result in the distribution failing due to insufficient balance.
     */
-    function setWeight(address _addr, uint256 _weight) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setWeight(address _addr, uint256 _weight)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         Weights[_addr] = _weight;
     }
 }
