@@ -70,7 +70,7 @@ contract swapAndBurnUSDCtoCAPL is AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    function swapAndBurn() external {
+    function swap() internal {
         uint256 internalBalance = IERC20(usdc).balanceOf(address(this));
 
         SingleSwap memory swap = SingleSwap(
@@ -99,15 +99,16 @@ contract swapAndBurnUSDCtoCAPL is AccessControl {
     }
 
     // this will recieve usdc from the nft revenue controller, swap to capl and return to the nft owner.
-    function swap(address _owner) external {
-        uint256 internalBalance = IERC20(usdc).balanceOf(address(this));
+    function swapFor(uint256 _amount, address _destination) external {
+        // check initial CAPL balance
+        uint256 contractBalanceCAPL = IERC20(capl).balanceOf(address(this));
 
         SingleSwap memory swap = SingleSwap(
             poolId,
             SwapKind.GIVEN_IN,
             usdc,
             capl,
-            internalBalance,
+            _amount,
             "0x"
         );
 

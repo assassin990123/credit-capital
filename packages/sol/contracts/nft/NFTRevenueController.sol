@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "hardhat/console.sol";
 
 interface ISwap {
-    function swapAndBurn() external;
+    function swapAndSend(uint256 _amount, address _destination) external;
 }
 
 contract NFTRevenueController is AccessControl {
@@ -29,8 +29,11 @@ contract NFTRevenueController is AccessControl {
     // CAPL address
     address public capl;
 
+    // treasuryController
+    address public treasuryController;
+
     // track user weight
-    uint256 public controllerWeight = 5; // 5% of the profit to revenue controller
+    uint256 public controllerWeight = 5; // 5% of the profit to treasury controller
     uint256 public swapWeight = 5; // 5% of the profit swapped into CAPL for the owner
     uint256 public nftOwnerWeight = 90; // 90% of the profit
 
@@ -45,7 +48,7 @@ contract NFTRevenueController is AccessControl {
         uint256 _amount
     );
 
-    constructor(address _nft, uint256 _nftid, address _swap, address _capl) {
+    constructor(address _nft, uint256 _nftid, address _swap, address _capl, address _treasuryController) {
         // set representing NFT contract
         NFT = IERC721(_nft);
         nft = _nft;
@@ -57,6 +60,7 @@ contract NFTRevenueController is AccessControl {
         swap = _swap;
 
         capl = _capl;
+        treasuryController = _treasuryController;
 
         // setup the admin role for the storage owner
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -110,13 +114,17 @@ contract NFTRevenueController is AccessControl {
         uint256 ownerShare = (balance * nftOwnerWeight) / 100;
         IERC20(_token).safeTransfer(nftOwner, ownerShare);
 
+        // Send 5% of the revenue to the treasury controller
+        uint256 treasuryShare = (balance * controllerWeight) / 100;
+        IERC20(_token).safeTransfer(treasuryController, treasuryShare);
+
         // 5% of the revenue will be swapped to CAPL and sent to the owner
         uint256 swapShare = (balance * swapWeight) / 100;
 
         // Todo: Refactor. We want to swap swapShare tokens into CAPL, then transfer them to the owner.
         IERC20(_token).safeTransfer(swap, swapShare);
         // do swap here
-        Swap.swap(nftOwner);
+        Swap.swapAndSend(swapShare, nftOwner);
 
         // Todo: Initialize the capl global var, another constructor arg, right?
         uint256 caplBalance = IERC20(capl).balanceOf(address(this));
