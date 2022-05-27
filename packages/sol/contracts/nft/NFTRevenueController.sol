@@ -62,7 +62,7 @@ contract NFTRevenueController is AccessControl {
         capl = _capl;
         usdc = _usdc;
         treasuryController = _treasuryController;
-        setSwap(_swap)
+        setSwap(_swap);
 
         // setup the admin role for the storage owner
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
