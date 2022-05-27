@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract MyToken is
+contract CCAssets is
     ERC721,
     ERC721Enumerable,
     ERC721URIStorage,
@@ -31,7 +31,7 @@ contract MyToken is
 
     mapping(uint256 => NFTData) metadataOnChain;
 
-    constructor() ERC721("MyToken", "MTK") {
+    constructor() ERC721("CreditCapital Asset", "CCAsset") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
     }

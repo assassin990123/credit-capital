@@ -62,10 +62,10 @@ contract NFTRevenueController is AccessControl {
         capl = _capl;
         usdc = _usdc;
         treasuryController = _treasuryController;
+
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         setSwap(_swap);
 
-        // setup the admin role for the storage owner
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     /** set swap contract for the swap contract to transfer tokens from this contract.
@@ -74,7 +74,7 @@ contract NFTRevenueController is AccessControl {
     Assumes USDC, additional approvals may be added with approveSwap(_token)
     */
     function setSwap(address _swap)
-        external
+        public 
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         Swap = ISwap(_swap);
@@ -88,7 +88,7 @@ contract NFTRevenueController is AccessControl {
     /** Any address can call this function as it approves any token
     only on the swap contract. Only the admin can change the swap contract. */
     function approveSwap(address _token)
-        external
+        public
     {
         IERC20(_token).approve(swap, MAX_UINT);
     }
@@ -150,10 +150,6 @@ contract NFTRevenueController is AccessControl {
 
         // swap swapShare amount to CAPL and return to nft owner
         Swap.swapAndSend(_token, swapShare, nftOwner);
-
-        // Todo: Initialize the capl global var, another constructor arg, right?
-        uint256 caplBalance = IERC20(capl).balanceOf(address(this));
-        IERC20(_token).safeTransfer(nftOwner, caplBalance);
 
         emit DistributeRevenue(_token, balance);
     }
