@@ -59,18 +59,38 @@ contract NFTRevenueController is AccessControl {
         // NFT ID
         NftID = uint256(_nftid);
 
-        Swap = ISwap(_swap);
-        swap = _swap;
-
         capl = _capl;
         usdc = _usdc;
         treasuryController = _treasuryController;
+        setSwap(_swap)
 
         // setup the admin role for the storage owner
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        
-        // approve max amount to swap contract
-        IERC20(_usdc).approve(swap, MAX_UINT);
+    }
+
+    /** set swap contract for the swap contract to transfer tokens from this contract.
+    If the admin sets this to an incorrect or malicious contract this can result
+    in a loss of funds.
+    Assumes USDC, additional approvals may be added with approveSwap(_token)
+    */
+    function setSwap(address _swap)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        Swap = ISwap(_swap);
+        swap = _swap;
+
+        // approve USDC on swap contract. Approve other tokens as necessary.
+        approveSwap(usdc);
+    }
+
+    /** Approve Swap Contract */
+    /** Any address can call this function as it approves any token
+    only on the swap contract. Only the admin can change the swap contract. */
+    function approveSwap(address _token)
+        external
+    {
+        IERC20(_token).approve(swap, MAX_UINT);
     }
 
     /** Weight */
@@ -93,15 +113,6 @@ contract NFTRevenueController is AccessControl {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         swapWeight = _weight;
-    }
-
-    // set swap contract & approval max uint amount for the swap contract to transfer token from this contract.
-    function setSwap(address _swap) external {
-        Swap = ISwap(_swap);
-        swap = _swap;
-
-        // approve max amount to swap contract
-        IERC20(usdc).approve(swap, MAX_UINT);
     }
 
     /**
