@@ -9,11 +9,13 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "hardhat/console.sol";
 
 interface ISwap {
-    function swapAndSend(uint256 _amount, address _destination) external;
+    function swapAndSend(address _token, uint256 _amount, address _destination) external;
 }
 
 contract NFTRevenueController is AccessControl {
     using SafeERC20 for IERC20;
+
+    uint256 constant MAX_UINT = 2 ** 256 -1;
 
     // This controller will be represented by single NFT
     IERC721 NFT;
@@ -105,7 +107,7 @@ contract NFTRevenueController is AccessControl {
         This function distributes the contract's balance of a token to designated recipients
      */
     function distributeRevenue(
-        address _token,
+        address _token
     ) external {
         address nftOwner = NFT.ownerOf(NftID);
         uint256 balance = IERC20(_token).balanceOf(address(this));
@@ -121,10 +123,11 @@ contract NFTRevenueController is AccessControl {
         // 5% of the revenue will be swapped to CAPL and sent to the owner
         uint256 swapShare = (balance * swapWeight) / 100;
 
-        // Todo: Refactor. We want to swap swapShare tokens into CAPL, then transfer them to the owner.
-        IERC20(_token).safeTransfer(swap, swapShare);
-        // do swap here
-        Swap.swapAndSend(swapShare, nftOwner);
+        // approve max amount to swap contract
+        IERC20(_token).approve(swap, MAX_UINT);
+
+        // swap swapShare amount to CAPL and return to nft owner
+        Swap.swapAndSend(_token, swapShare, nftOwner);
 
         // Todo: Initialize the capl global var, another constructor arg, right?
         uint256 caplBalance = IERC20(capl).balanceOf(address(this));

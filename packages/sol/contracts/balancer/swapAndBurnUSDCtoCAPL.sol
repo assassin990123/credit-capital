@@ -72,8 +72,11 @@ contract swapAndBurnUSDCtoCAPL is AccessControl {
 
     function swap() internal {
         uint256 internalBalance = IERC20(usdc).balanceOf(address(this));
+        if (internalBalance == 0) {
+            return;
+        }
 
-        SingleSwap memory swap = SingleSwap(
+        SingleSwap memory Swap = SingleSwap(
             poolId,
             SwapKind.GIVEN_IN,
             usdc,
@@ -89,43 +92,41 @@ contract swapAndBurnUSDCtoCAPL is AccessControl {
             false
         );
 
-        VAULT.swap(swap, fundManagement, 0, block.timestamp + 10 minutes);
+        VAULT.swap(Swap, fundManagement, 0, block.timestamp + 10 minutes);
+    }
 
+    function burn() internal {
         // get the returned CAPL balance
         uint256 caplBalance = IERC20(capl).balanceOf(address(this));
 
         // burn returned CAPL
         ICAPL(capl).burn(caplBalance);
     }
+    
+    function swapAndBurn() public {
+        // swap the internal contract balance to the CAPL
+        swap();
+
+        // burn capl contract balance
+        burn();
+    }
 
     // this will recieve usdc from the nft revenue controller, swap to capl and return to the nft owner.
-    function swapFor(uint256 _amount, address _destination) external {
-        // check initial CAPL balance
-        uint256 contractBalanceCAPL = IERC20(capl).balanceOf(address(this));
+    function swapAndSend(address _token, uint256 _amount, address _destination) external {
+        // swap&burn current contract balance
+        swapAndBurn();
 
-        SingleSwap memory swap = SingleSwap(
-            poolId,
-            SwapKind.GIVEN_IN,
-            usdc,
-            capl,
-            _amount,
-            "0x"
-        );
+        // request transfer capl amount
+        IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
 
-        FundManagement memory fundManagement = FundManagement(
-            address(this),
-            false,
-            address(this),
-            false
-        );
-
-        VAULT.swap(swap, fundManagement, 0, block.timestamp + 10 minutes);
+        // swap token to capl
+        swap();
 
         // get the returned CAPL balance
         uint256 caplBalance = IERC20(capl).balanceOf(address(this));
 
         // transfer swaped CAPL to the nft owner
-        IERC20(capl).safeTransfer(caplBalance, _owner);
+        IERC20(capl).safeTransfer(_destination, caplBalance);
     }
 
     /**
