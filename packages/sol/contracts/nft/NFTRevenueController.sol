@@ -28,8 +28,9 @@ contract NFTRevenueController is AccessControl {
     ISwap Swap;
     address public swap;
 
-    // CAPL address
+    // CAPL, USDC address
     address public capl;
+    address public usdc;
 
     // treasuryController
     address public treasuryController;
@@ -50,7 +51,7 @@ contract NFTRevenueController is AccessControl {
         uint256 _amount
     );
 
-    constructor(address _nft, uint256 _nftid, address _swap, address _capl, address _treasuryController) {
+    constructor(address _nft, uint256 _nftid, address _swap, address _usdc, address _capl, address _treasuryController) {
         // set representing NFT contract
         NFT = IERC721(_nft);
         nft = _nft;
@@ -62,10 +63,14 @@ contract NFTRevenueController is AccessControl {
         swap = _swap;
 
         capl = _capl;
+        usdc = _usdc;
         treasuryController = _treasuryController;
 
         // setup the admin role for the storage owner
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        
+        // approve max amount to swap contract
+        IERC20(_usdc).approve(swap, MAX_UINT);
     }
 
     /** Weight */
@@ -88,6 +93,15 @@ contract NFTRevenueController is AccessControl {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         swapWeight = _weight;
+    }
+
+    // set swap contract & approval max uint amount for the swap contract to transfer token from this contract.
+    function setSwap(address _swap) external {
+        Swap = ISwap(_swap);
+        swap = _swap;
+
+        // approve max amount to swap contract
+        IERC20(usdc).approve(swap, MAX_UINT);
     }
 
     /**
@@ -122,9 +136,6 @@ contract NFTRevenueController is AccessControl {
 
         // 5% of the revenue will be swapped to CAPL and sent to the owner
         uint256 swapShare = (balance * swapWeight) / 100;
-
-        // approve max amount to swap contract
-        IERC20(_token).approve(swap, MAX_UINT);
 
         // swap swapShare amount to CAPL and return to nft owner
         Swap.swapAndSend(_token, swapShare, nftOwner);
