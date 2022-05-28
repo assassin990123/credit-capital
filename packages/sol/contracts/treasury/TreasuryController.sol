@@ -127,6 +127,7 @@ contract TreasuryController is AccessControl {
 
         // Contract balance to distribute
         uint256 contractBalance = IERC20(_token).balanceOf(address(this));
+        address zeroAddr = 0x0000000000000000000000000000000000000000;
 
         // get length of the distributionList
         address[] memory distributionList = TreasuryStorage
@@ -134,6 +135,9 @@ contract TreasuryController is AccessControl {
 
         for (uint256 i; i < distributionList.length; i++) {
             address addr = distributionList[i];
+            if (addr == zeroAddr) { // This is an ugly hack. Please fix the case where we get errors after deleting a distList address...
+                continue; 
+             }
             uint256 weight = TreasuryStorage.getWeight(addr);
 
             uint256 amount = (contractBalance * weight) / 10000;
