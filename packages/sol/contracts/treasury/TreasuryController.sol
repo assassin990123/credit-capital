@@ -135,9 +135,7 @@ contract TreasuryController is AccessControl {
 
         for (uint256 i; i < distributionList.length; i++) {
             address addr = distributionList[i];
-            if (addr == zeroAddr) { // This is an ugly hack. Please fix the case where we get errors after deleting a distList address...
-                continue; 
-             }
+            if addr == address(0) continue;
             uint256 weight = TreasuryStorage.getWeight(addr);
 
             uint256 amount = (contractBalance * weight) / 10000;
