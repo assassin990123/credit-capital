@@ -462,6 +462,9 @@ describe("Treasury", async () => {
         await storage.addDistributionList(user.address);
         await storage.addDistributionList(user2.address);
 
+        // remove distribution list\
+        await storage.removeDistributionList(user.address);
+
         // ditributeRevenue
         await controller.distributeRevenue(usdc.address);
 
@@ -471,7 +474,7 @@ describe("Treasury", async () => {
         ).to.equal("749500");
         expect(
           _formatUSDC(await usdc.balanceOf(user.address)).toFixed(0)
-        ).to.equal("300");
+        ).to.equal("0");
         expect(
           _formatUSDC(await usdc.balanceOf(user2.address)).toFixed(0)
         ).to.equal("200");
@@ -479,7 +482,7 @@ describe("Treasury", async () => {
         // check controller balance
         expect(
           _formatUSDC(await usdc.balanceOf(controller.address)).toFixed(0)
-        ).to.equal("0");
+        ).to.equal("300");
       });
     });
   });

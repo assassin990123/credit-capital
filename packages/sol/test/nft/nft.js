@@ -21,7 +21,7 @@ const deployContract = async (contract, params) => {
 };
 
 const deployContracts = async () => {
-  const nft = await deployContract("MyToken", []);
+  const nft = await deployContract("CCAssets", []);
   return { nft };
 };
 
