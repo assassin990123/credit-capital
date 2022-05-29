@@ -2,10 +2,11 @@ const { expect } = require("chai");
 const { toUtf8Bytes } = require("ethers/lib/utils");
 const { ethers } = require("hardhat");
 
-const URI = "testuri";
-const NAME = "MTK1";
-const DESCRIPTION = "Example description";
+const URI = "Token Uri";
+const NAME = "CCAsset token name";
+const DESCRIPTION = "CCAsset name description";
 const VALUE = BigInt(0.1 * 10 ** 18);
+
 const MINTER_ROLE = ethers.utils.keccak256(
   ethers.utils.toUtf8Bytes("MINTER_ROLE")
 );
@@ -60,7 +61,7 @@ describe("My Token / MTK", async () => {
       VALUE
     );
     let tx = await transaction.wait();
-    let tokenId = tx.events[0].args[2];
+    const tokenId = tx.events[0].args[2];
 
     // check the metadata on chain
     const metadata = await nft.getMetadataOnChain(tokenId);
@@ -99,7 +100,7 @@ describe("My Token / MTK", async () => {
       VALUE
     );
     let tx = await transaction.wait();
-    let tokenId = tx.events[0].args[2];
+    const tokenId = tx.events[0].args[2];
 
     // check the metadata on chain
     let metadata = await nft.getMetadataOnChain(tokenId);
@@ -154,5 +155,61 @@ describe("My Token / MTK", async () => {
       tokenId
     );
     expect(await nft.ownerOf(tokenId)).to.equal(user.address);
+  });
+
+  it("Should be able to update metadata onchain", async () => {
+    // mint nft
+    let transaction = await nft.safeMint(
+      deployer.address,
+      URI,
+      NAME,
+      DESCRIPTION,
+      VALUE
+    );
+    let tx = await transaction.wait();
+    const tokenId = tx.events[0].args[2];
+
+    // check the metadata on chain
+    let metadata = await nft.getMetadataOnChain(tokenId);
+    expect(metadata.name).to.equal(NAME);
+    expect(metadata.description).to.equal(DESCRIPTION);
+    expect(metadata.value).to.equal(VALUE);
+    expect(metadata.isLocked).to.equal(false);
+    expect(await nft.tokenURI(tokenId)).to.equal(URI);
+
+    await nft.setMetadataOnChain(
+      tokenId, 
+      "Updated name",
+      BigInt(0.2 * 10 ** 18),
+      true
+    );
+
+    // check updated metadata
+    metadata = await nft.getMetadataOnChain(tokenId);
+    expect(metadata.name).to.equal("Updated name");
+    expect(_formatEther(metadata.value)).to.equal(0.2);
+    expect(metadata.isLocked).to.equal(true);
+  });
+
+  it("Should be able to update tokenUri", async () => {
+    // mint nft
+    let transaction = await nft.safeMint(
+      deployer.address,
+      URI,
+      NAME,
+      DESCRIPTION,
+      VALUE
+    );
+    let tx = await transaction.wait();
+    const tokenId = tx.events[0].args[2];
+
+    // check token uri
+    expect(await nft.tokenURI(tokenId)).to.equal(URI);
+
+    // update token Uri
+    await nft.setTokenURI(tokenId, "Updated Uri");
+
+    // check updated uri
+    expect(await nft.tokenURI(tokenId)).to.equal("Updated Uri");
   });
 });

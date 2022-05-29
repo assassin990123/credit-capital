@@ -46,13 +46,13 @@ contract CCAssets is
     }
 
     /** Setters */
-    function setMetadataOnChain(uint256 _tokenId, NFTData memory _metadata)
+    function setMetadataOnChain(uint256 _tokenId, string memory _name, uint256 _value, bool _isLocked)
         external
     {
         NFTData storage metadata = metadataOnChain[_tokenId];
-        metadata.name = _metadata.name;
-        metadata.value = _metadata.value;
-        metadata.isLocked = _metadata.isLocked;
+        metadata.name = _name;
+        metadata.value = _value;
+        metadata.isLocked = _isLocked;
     }
 
     function handleLock(uint256 _tokenId, bool _lock)
