@@ -50,8 +50,6 @@ contract CCAssets is
         external
     {
         NFTData storage metadata = metadataOnChain[_tokenId];
-
-        metadata.description = _metadata.description;
         metadata.name = _metadata.name;
         metadata.value = _metadata.value;
         metadata.isLocked = _metadata.isLocked;
@@ -107,6 +105,19 @@ contract CCAssets is
         returns (string memory)
     {
         return super.tokenURI(tokenId);
+    }
+
+    /**
+     * @dev Sets `_tokenURI` as the tokenURI of `tokenId`.
+     *
+     * Requirements:
+     *
+     * - `tokenId` must exist.
+     */
+    function setTokenURI(uint256 tokenId, string memory _tokenURI)
+        external
+    {
+        _setTokenURI(tokenId, _tokenURI);
     }
 
     function supportsInterface(bytes4 interfaceId)
