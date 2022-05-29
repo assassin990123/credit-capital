@@ -45,6 +45,18 @@ contract CCAssets is
         return metadataOnChain[_tokenId];
     }
 
+    /** Setters */
+    function setMetadataOnChain(uint256 _tokenId, NFTData memory _metadata)
+        external
+    {
+        NFTData storage metadata = metadataOnChain[_tokenId];
+
+        metadata.description = _metadata.description;
+        metadata.name = _metadata.name;
+        metadata.value = _metadata.value;
+        metadata.isLocked = _metadata.isLocked;
+    }
+
     function handleLock(uint256 _tokenId, bool _lock)
         external
         onlyRole(LOCKER_ROLE)
