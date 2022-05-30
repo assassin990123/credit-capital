@@ -63,6 +63,9 @@ contract NFTRevenueController is AccessControl {
         // set representing NFT contract
         NFT = IERC721(_nft);
         nft = _nft;
+        
+        // NFT ID
+        NftID = uint256(_nftid);
 
         // NFT ID
         NftID = uint256(_nftid);
