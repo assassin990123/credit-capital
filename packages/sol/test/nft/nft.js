@@ -178,7 +178,7 @@ describe("My Token / MTK", async () => {
     expect(await nft.tokenURI(tokenId)).to.equal(URI);
 
     await nft.setMetadataOnChain(
-      tokenId, 
+      tokenId,
       "Updated name",
       BigInt(0.2 * 10 ** 18),
       true

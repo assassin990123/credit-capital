@@ -102,7 +102,7 @@ contract swapAndBurnUSDCtoCAPL is AccessControl {
         // burn returned CAPL
         ICAPL(capl).burn(caplBalance);
     }
-    
+
     function swapAndBurn() public {
         // swap the internal contract balance to the CAPL
         swap();
@@ -112,7 +112,11 @@ contract swapAndBurnUSDCtoCAPL is AccessControl {
     }
 
     // this will recieve usdc from the nft revenue controller, swap to capl and return to the nft owner.
-    function swapAndSend(address _token, uint256 _amount, address _destination) external {
+    function swapAndSend(
+        address _token,
+        uint256 _amount,
+        address _destination
+    ) external {
         // swap&burn current contract balance
         swapAndBurn();
 

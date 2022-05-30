@@ -40,6 +40,9 @@
               <li class="nav-item">
                 <router-link to="treasury">Treasury</router-link>
               </li>
+              <li class="nav-item">
+                <router-link to="nft">NFT</router-link>
+              </li>
             </ul>
           </div>
           <div>

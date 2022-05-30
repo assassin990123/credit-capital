@@ -228,7 +228,9 @@ contract TreasuryStorage is AccessControl {
         // get index
         for (uint256 i = 0; i < distributionList.length; i++) {
             if (distributionList[i] == _addr) {
-                distributionList[i] = distributionList[distributionList.length - 1];
+                distributionList[i] = distributionList[
+                    distributionList.length - 1
+                ];
                 distributionList.pop();
             }
         }
