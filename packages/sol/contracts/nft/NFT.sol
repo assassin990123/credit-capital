@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract MyToken is
+contract CCAssets is
     ERC721,
     ERC721Enumerable,
     ERC721URIStorage,
@@ -31,7 +31,7 @@ contract MyToken is
 
     mapping(uint256 => NFTData) metadataOnChain;
 
-    constructor() ERC721("MyToken", "MTK") {
+    constructor() ERC721("CreditCapital Asset", "CCAsset") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
     }
@@ -43,6 +43,19 @@ contract MyToken is
         returns (NFTData memory)
     {
         return metadataOnChain[_tokenId];
+    }
+
+    /** Setters */
+    function setMetadataOnChain(
+        uint256 _tokenId,
+        string memory _name,
+        uint256 _value,
+        bool _isLocked
+    ) external {
+        NFTData storage metadata = metadataOnChain[_tokenId];
+        metadata.name = _name;
+        metadata.value = _value;
+        metadata.isLocked = _isLocked;
     }
 
     function handleLock(uint256 _tokenId, bool _lock)
@@ -95,6 +108,17 @@ contract MyToken is
         returns (string memory)
     {
         return super.tokenURI(tokenId);
+    }
+
+    /**
+     * @dev Sets `_tokenURI` as the tokenURI of `tokenId`.
+     *
+     * Requirements:
+     *
+     * - `tokenId` must exist.
+     */
+    function setTokenURI(uint256 tokenId, string memory _tokenURI) external {
+        _setTokenURI(tokenId, _tokenURI);
     }
 
     function supportsInterface(bytes4 interfaceId)

@@ -9,56 +9,76 @@ async function main() {
   /**
    * Standard contracts - Rewards, Vault
    */
-  // const Vault = await hre.ethers.getContractFactory("Vault");
-  // const vault = await Vault.deploy(process.env.LP_ADDRESS_KOVAN, BigInt(5000 / (24 * 60 * 60) * (10 ** 18)));
-  // await vault.deployed();
-  // console.log("vault deployed to:", vault.address);
-  // await saveContractABI("vault", "Vault");
+  const Vault = await hre.ethers.getContractFactory("Vault");
+  const vault = await Vault.deploy(process.env.LP_ADDRESS_KOVAN, BigInt(5000 / (24 * 60 * 60) * (10 ** 18)));
+  await vault.deployed();
+  console.log("vault deployed to:", vault.address);
+  await saveContractABI("vault", "Vault");
 
-  // const Rewards = await hre.ethers.getContractFactory("Rewards");
-  // const rewards = await Rewards.deploy(vault.address, process.env.CAPL_ADDRESS_KOVAN);
-  // await rewards.deployed();
-  // console.log("rewards deployed to:", rewards.address);
-  // await saveContractABI("rewards", "Rewards");
+  const Rewards = await hre.ethers.getContractFactory("Rewards");
+  const rewards = await Rewards.deploy(vault.address, process.env.CAPL_ADDRESS_KOVAN);
+  await rewards.deployed();
+  console.log("rewards deployed to:", rewards.address);
+  await saveContractABI("rewards", "Rewards");
 
-  const Swap = await hre.ethers.getContractFactory("Swap");
+  /**
+   * Balancer swap contract
+   */
+  const Swap = await hre.ethers.getContractFactory("SwapAndBurnUSDCtoCAPL");
   const swap = await Swap.deploy(process.env.CAPL_ADDRESS_KOVAN, USDC_ADDRESS, VAULT_ADDRESS, USDC_CAPL_POOL_ID);
   await swap.deployed();
   console.log("swap deployed to:", swap.address);
-  await saveContractABI("swap", "Swap");
+  await saveContractABI("swapAndBurnUSDCtoCAPL", "SwapAndBurnUSDCtoCAPL");
 
   /**
-   * Treasury contracts - TreasuryController, TreasuryStorage
+   * Treasury contracts - TreasuryController, Treasury Storage 
+  */
   const TreasuryStorage = await hre.ethers.getContractFactory("TreasuryStorage");
-  const treasurystorage = await TreasuryStorage.deploy(process.env.LP_TOKEN_ADDRESS);
+  const treasurystorage = await TreasuryStorage.deploy();
   await treasurystorage.deployed();
   console.log("treasurystorage deployed to:", treasurystorage.address);
   await saveContractABI("treasurystorage", "TreasuryStorage");
  
   const TreasuryController = await hre.ethers.getContractFactory("TreasuryController");
-  const treasuryController = await TreasuryController.deploy(capl.address, treasurystorage.address);
+  const treasuryController = await TreasuryController.deploy(treasurystorage.address);
   await treasuryController.deployed();
   console.log("treasuryController deployed to:", treasuryController.address);
   await saveContractABI("treasuryController", "TreasuryController");
-   */  
 
-  // /**
-  //  * Grant roles
-  //  */
-  // await grantRoles(rewards, vault);
+  /**
+   * NFT contracts - CCAssets, NFTRevenueController
+   */
+  const CCAssets = await hre.ethers.getContractFactory("CCAssets");
+  const ccAssets = await CCAssets.deploy();
+  await ccAssets.deployed();
+  console.log("ccAssets deployed to:", ccAssets.address);
+  await saveContractABI("ccAssets", "CCAssets");
+
+  const NFTRevenueController = await hre.ethers.getContractFactory("NFTRevenueController");
+  const nftRevenueController = await NFTRevenueController.deploy();
+  await nftRevenueController.deployed();
+  console.log("nftRevenueController deployed to:", nftRevenueController.address);
+  await saveContractABI("nftRevenueController", "NFTRevenueController");
+
+
+  /**
+   * Grant roles
+   */
+  await grantRoles(rewards, vault);
   
-  // // save deployed address in config file
-  // let config = `
-  // export const vaultcontractaddress = "${vault.address}"
-  // export const rewardscontractaddress = "${rewards.address}"
-  // `
-  // /*
-  //   export const treasurystorage = "${treasurystorage.address}"
-  // export const treasuryController = "${treasuryController.address}"
-  // */
+  // save deployed address in config file
+  let config = `
+  export const vault = "${vault.address}"
+  export const rewards = "${rewards.address}"
+  export const swap = "${swap.address}"
+  export const treasurystorage = "${treasurystorage.address}"
+  export const treasuryController = "${treasuryController.address}"
+  export const ccAssets = "${ccAssets.address}"
+  export const nftRevenueController = "${nftRevenueController.address}"
+  `
 
-  // let data = JSON.stringify(config);
-  // fs.writeFileSync('config.js', JSON.parse(data));
+  let data = JSON.stringify(config);
+  fs.writeFileSync('config.js', JSON.parse(data));
 }
 
 async function saveContractABI(contract, contractArtifact) {

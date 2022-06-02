@@ -39,7 +39,7 @@ struct SingleSwap {
     bytes userData;
 }
 
-contract swapAndBurnUSDCtoCAPL is AccessControl {
+contract SwapAndBurnUSDCtoCAPL is AccessControl {
     using SafeERC20 for IERC20;
 
     uint256 private constant MAX_UINT = 2**256 - 1;
@@ -70,10 +70,13 @@ contract swapAndBurnUSDCtoCAPL is AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    function swapAndBurn() external {
+    function swap() internal {
         uint256 internalBalance = IERC20(usdc).balanceOf(address(this));
+        if (internalBalance == 0) {
+            return;
+        }
 
-        SingleSwap memory swap = SingleSwap(
+        SingleSwap memory Swap = SingleSwap(
             poolId,
             SwapKind.GIVEN_IN,
             usdc,
@@ -89,13 +92,45 @@ contract swapAndBurnUSDCtoCAPL is AccessControl {
             false
         );
 
-        VAULT.swap(swap, fundManagement, 0, block.timestamp + 10 minutes);
+        VAULT.swap(Swap, fundManagement, 0, block.timestamp + 10 minutes);
+    }
 
+    function burn() internal {
         // get the returned CAPL balance
         uint256 caplBalance = IERC20(capl).balanceOf(address(this));
 
         // burn returned CAPL
         ICAPL(capl).burn(caplBalance);
+    }
+
+    function swapAndBurn() public {
+        // swap the internal contract balance to the CAPL
+        swap();
+
+        // burn capl contract balance
+        burn();
+    }
+
+    // this will recieve usdc from the nft revenue controller, swap to capl and return to the nft owner.
+    function swapAndSend(
+        address _token,
+        uint256 _amount,
+        address _destination
+    ) external {
+        // swap&burn current contract balance
+        swapAndBurn();
+
+        // request transfer capl amount
+        IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
+
+        // swap token to capl
+        swap();
+
+        // get the returned CAPL balance
+        uint256 caplBalance = IERC20(capl).balanceOf(address(this));
+
+        // transfer swaped CAPL to the nft owner
+        IERC20(capl).safeTransfer(_destination, caplBalance);
     }
 
     /**

@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "lerna": "^4.0.0"
+    "lerna": "^4.0.0",
+    "swiper": "^8.1.6"
   },
   "scripts": {
     "bootstrap": "yarn && lerna bootstrap",
@@ -13,5 +14,6 @@
     "lint": "lerna run lint",
     "upgrade": "lerna exec -- yarn upgrade"
   },
-  "name": "credit-capital"
+  "name": "credit-capital",
+  "devDependencies": {}
 }

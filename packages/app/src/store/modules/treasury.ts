@@ -1,7 +1,7 @@
 import { Commit, Dispatch } from "vuex";
 import { RootState } from "@/models";
 import { TreasuryState } from "@/models/treasury";
-import { contracts } from './../../constants/contracts';
+import { contracts } from "./../../constants/contracts";
 import { ethers } from "ethers";
 
 const state = {
@@ -38,15 +38,21 @@ const actions = {
     commit("setBalances", balances);
   },
 
-  async getAUM(
-    { commit, rootState, dispatch }: { commit: Commit; rootState: RootState; dispatch: Dispatch }
-  ) {
+  async getAUM({
+    commit,
+    rootState,
+    dispatch,
+  }: {
+    commit: Commit;
+    rootState: RootState;
+    dispatch: Dispatch;
+  }) {
     if (rootState.contracts.treasuryStorageContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
     }
     const contract = rootState.contracts.treasuryStorageContract;
 
-    const aum =  await contract?.getAUM();
+    const aum = await contract?.getAUM();
 
     commit("setAUM", aum);
   },
@@ -54,7 +60,11 @@ const actions = {
   // setters
   async deposit(
     { rootState, dispatch }: { rootState: RootState; dispatch: Dispatch },
-    { token, amount, decimal }: { token: string; amount: number; decimal: number }
+    {
+      token,
+      amount,
+      decimal,
+    }: { token: string; amount: number; decimal: number }
   ) {
     if (rootState.contracts.treasuryControllerContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -76,7 +86,11 @@ const actions = {
 
   async withdraw(
     { rootState, dispatch }: { rootState: RootState; dispatch: Dispatch },
-    { token, amount, decimal }: { token: string; amount: number; decimal: number }
+    {
+      token,
+      amount,
+      decimal,
+    }: { token: string; amount: number; decimal: number }
   ) {
     if (rootState.contracts.treasuryControllerContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -98,7 +112,11 @@ const actions = {
 
   async borrow(
     { rootState, dispatch }: { rootState: RootState; dispatch: Dispatch },
-    { token, amount, decimal }: { token: string; amount: number; decimal: number }
+    {
+      token,
+      amount,
+      decimal,
+    }: { token: string; amount: number; decimal: number }
   ) {
     if (rootState.contracts.treasuryControllerContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -120,7 +138,12 @@ const actions = {
 
   async repay(
     { rootState, dispatch }: { rootState: RootState; dispatch: Dispatch },
-    { token, principal, profit, decimal }: { token: string; principal: number; profit: number; decimal: number }
+    {
+      token,
+      principal,
+      profit,
+      decimal,
+    }: { token: string; principal: number; profit: number; decimal: number }
   ) {
     if (rootState.contracts.treasuryControllerContract === null) {
       dispatch("contracts/setContracts", null, { root: true });
@@ -139,7 +162,7 @@ const actions = {
         console.log(error);
       }
     }
-  }
+  },
 };
 
 const mutations = {
