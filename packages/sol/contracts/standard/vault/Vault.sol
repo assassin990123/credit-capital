@@ -100,14 +100,21 @@ contract Vault is AccessControl, Pausable {
 
         // reset the stakes to the default value related to the unlocked amount
         Stake[] storage stakes = UserPositions[_user][_token].stakes;
+        uint256 lastUnlockedIndex;
+
         for (
-            uint256 i = 0;
-            i <= userPosition.userLastWithdrawnStakeIndex;
+            uint i = userPosition.userLastWithdrawnStakeIndex;
+            i <= stakes.length;
             i++
         ) {
             // reset the stake to the default value - in this case 0
             delete stakes[i];
+
+            // update the last index
+            lastUnlockedIndex = i;
         }
+
+        userPosition.userLastWithdrawnStakeIndex = lastUnlockedIndex;
 
         IERC20(_token).safeTransfer(_user, _amount);
         emit Withdraw(_user, _token, _amount);
@@ -196,6 +203,7 @@ contract Vault is AccessControl, Pausable {
 
     function getUnlockedAmount(address _token, address _user)
         public
+        view
         onlyRole(REWARDS)
         returns (uint256)
     {
@@ -207,7 +215,6 @@ contract Vault is AccessControl, Pausable {
         }
 
         uint256 unlockedAmount = 0;
-        uint256 lastUnlockedIndex;
 
         for (
             uint256 i = userPosition.userLastWithdrawnStakeIndex;
@@ -218,18 +225,14 @@ contract Vault is AccessControl, Pausable {
                 break;
             }
             unlockedAmount += stakes[i].amount;
-
-            // update last unclocked amount
-            lastUnlockedIndex = i;
         }
-
-        userPosition.userLastWithdrawnStakeIndex = lastUnlockedIndex;
 
         return unlockedAmount;
     }
 
     function getUserStakedPosition(address _token, address _user)
         external
+        view
         returns (uint256)
     {
         // get userposition

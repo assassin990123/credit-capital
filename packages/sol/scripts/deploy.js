@@ -82,20 +82,20 @@ async function main() {
 }
 
 async function saveContractABI(contract, contractArtifact) {
-  const fs = require("fs");
-  const abiDir = __dirname + "/../../app/src/abi";
+  // const fs = require("fs");
+  // const abiDir = __dirname + "/../../app/src/abi";
 
-  if (!fs.existsSync(abiDir)) {
-    fs.mkdirSync(abiDir);
-  }
+  // if (!fs.existsSync(abiDir)) {
+  //   fs.mkdirSync(abiDir);
+  // }
 
-  const artifact = JSON.stringify(artifacts.readArtifactSync(contractArtifact).abi);
-  const contractABI = `export const ${contract}ABI = ${artifact}`;
+  // const artifact = JSON.stringify(artifacts.readArtifactSync(contractArtifact).abi);
+  // const contractABI = `export const ${contract}ABI = ${artifact}`;
 
-  fs.writeFileSync(
-    abiDir + "/" + contract + ".ts",
-    contractABI
-  );
+  // fs.writeFileSync(
+  //   abiDir + "/" + contract + ".ts",
+  //   contractABI
+  // );
 }
 
 async function grantRoles(rewards, vault) {

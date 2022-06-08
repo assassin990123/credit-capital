@@ -77,7 +77,7 @@ describe("Deposit Vault", function () {
       capl.address,
       deployer.address
     );
-    expect(Number(unlockedAmount.value.toString())).to.equal(0);
+    expect(Number(ethers.utils.formatEther(unlockedAmount)).toFixed(0)).to.equal("0");
     // check pool instance for correct values
     const pool = await vault.getPool(capl.address);
 
