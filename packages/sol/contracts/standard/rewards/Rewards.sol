@@ -232,28 +232,28 @@ contract Rewards is Pausable, AccessControl {
         }
     }
 
-    function pendingRewards(address _token, address _user)
-        external
-        returns (uint256 pending)
-    {
-        IPool.Pool memory pool = vault.getPool(_token);
-        IUserPositions.UserPosition memory user = vault.getUserPosition(
-            _token,
-            _user
-        );
+    // function pendingRewards(address _token, address _user)
+    //     external
+    //     returns (uint256 pending)
+    // {
+    //     IPool.Pool memory pool = vault.getPool(_token);
+    //     IUserPositions.UserPosition memory user = vault.getUserPosition(
+    //         _token,
+    //         _user
+    //     );
 
-        uint256 accCaplPerShare = pool.accCaplPerShare;
-        uint256 tokenSupply = vault.getTokenSupply(_token);
+    //     uint256 accCaplPerShare = pool.accCaplPerShare;
+    //     uint256 tokenSupply = vault.getTokenSupply(_token);
 
-        if (block.timestamp > pool.lastRewardTime && tokenSupply != 0) {
-            uint256 passedTime = block.timestamp - pool.lastRewardTime;
-            uint256 caplReward = passedTime * pool.rewardsPerSecond;
-            accCaplPerShare = accCaplPerShare + caplReward / tokenSupply;
-        }
-        pending =
-            ((user.totalAmount * accCaplPerShare) / CAPL_PRECISION) -
-            user.rewardDebt;
-    }
+    //     if (block.timestamp > pool.lastRewardTime && tokenSupply != 0) {
+    //         uint256 passedTime = block.timestamp - pool.lastRewardTime;
+    //         uint256 caplReward = passedTime * pool.rewardsPerSecond;
+    //         accCaplPerShare = accCaplPerShare + caplReward / tokenSupply;
+    //     }
+    //     pending =
+    //         ((user.totalAmount * accCaplPerShare) / CAPL_PRECISION) -
+    //         user.rewardDebt;
+    // }
 
     function claim(address _token, address _user) external {
         IPool.Pool memory pool = updatePool(_token);
