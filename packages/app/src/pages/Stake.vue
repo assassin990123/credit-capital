@@ -82,7 +82,7 @@ const store = useStore();
 const stakeAmount: Ref<number> = ref(0);
 const stakeButtonText: Ref<string> = ref("Stake");
 const stakeButtonClassName: Ref<string> = ref("btn-custom-gray");
-const unstakeAmount = ref(0);
+const unstakeAmount = computed(() => store.getters["rewards/getUserUnlockedAmount"]);
 // for we make the user withdraw the total unlockedAmount.
 const lpBalance = computed(() => store.getters["tokens/getLPBalance"]);
 
