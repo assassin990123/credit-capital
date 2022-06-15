@@ -52,9 +52,8 @@
             <p>
               Unlike funds that rely on predetermined yield strategies,
               CreditCapital engages in a variety of investment opportunities and
-              strategies that maximizes returns for member users
+              strategies that maximizes returns for member users.
             </p>
-            .
 
             <p>
               The network can be thought of as an investment hedge fund but with

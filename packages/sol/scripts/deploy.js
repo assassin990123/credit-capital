@@ -55,47 +55,46 @@ async function main() {
   await saveContractABI("ccAssets", "CCAssets");
 
   const NFTRevenueController = await hre.ethers.getContractFactory("NFTRevenueController");
-  const nftRevenueController = await NFTRevenueController.deploy();
+  const nftRevenueController = await NFTRevenueController.deploy(ccAssets.address, 0, swap.address, USDC_ADDRESS, process.env.CAPL_ADDRESS_KOVAN, treasuryController.address);
   await nftRevenueController.deployed();
   console.log("nftRevenueController deployed to:", nftRevenueController.address);
   await saveContractABI("nftRevenueController", "NFTRevenueController");
 
-
   /**
    * Grant roles
    */
-  await grantRoles(rewards, vault);
+  // await grantRoles(rewards, vault);
   
   // save deployed address in config file
   let config = `
   export const vault = "${vault.address}"
   export const rewards = "${rewards.address}"
-  export const swap = "${swap.address}"
-  export const treasurystorage = "${treasurystorage.address}"
-  export const treasuryController = "${treasuryController.address}"
-  export const ccAssets = "${ccAssets.address}"
-  export const nftRevenueController = "${nftRevenueController.address}"
   `
+  // export const swap = "${swap.address}"
+  // export const treasurystorage = "${treasurystorage.address}"
+  // export const treasuryController = "${treasuryController.address}"
+  // export const ccAssets = "${ccAssets.address}"
+  // export const nftRevenueController = "${nftRevenueController.address}"
 
   let data = JSON.stringify(config);
   fs.writeFileSync('config.js', JSON.parse(data));
 }
 
 async function saveContractABI(contract, contractArtifact) {
-  // const fs = require("fs");
-  // const abiDir = __dirname + "/../../app/src/abi";
+  const fs = require("fs");
+  const abiDir = __dirname + "/../../app/src/abi";
 
-  // if (!fs.existsSync(abiDir)) {
-  //   fs.mkdirSync(abiDir);
-  // }
+  if (!fs.existsSync(abiDir)) {
+    fs.mkdirSync(abiDir);
+  }
 
-  // const artifact = JSON.stringify(artifacts.readArtifactSync(contractArtifact).abi);
-  // const contractABI = `export const ${contract}ABI = ${artifact}`;
+  const artifact = JSON.stringify(artifacts.readArtifactSync(contractArtifact).abi, null, 2);
+  const contractABI = `export const ${contract}ABI = ${artifact}`;
 
-  // fs.writeFileSync(
-  //   abiDir + "/" + contract + ".ts",
-  //   contractABI
-  // );
+  fs.writeFileSync(
+    abiDir + "/" + contract + ".ts",
+    contractABI
+  );
 }
 
 async function grantRoles(rewards, vault) {

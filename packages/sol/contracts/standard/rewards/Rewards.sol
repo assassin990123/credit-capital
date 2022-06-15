@@ -169,7 +169,6 @@ contract Rewards is Pausable, AccessControl {
 
         // update pool to current block
         IPool.Pool memory pool = updatePool(_token);
-
         uint256 rewardDebt = (_amount * pool.accCaplPerShare) / CAPL_PRECISION;
 
         if (!vault.checkIfUserPositionExists(_token, msg.sender)) {
