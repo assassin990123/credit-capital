@@ -1,4 +1,4 @@
-# Stabletokens
+# Minting CCUSD
 
 ### Initiating a Loan
 Before a user can take out a loan/mint tokens, they must lock up their collateral (property which is already stored in the trust system). Once this is done, they can initiate the loan. They’ll be expected to pay interest on the loan at 2.0% annually (final rate TBD). The dapp will explain to the user that they need to send CCUSD to the loan contract, at monthly intervals.
