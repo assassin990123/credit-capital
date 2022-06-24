@@ -10,4 +10,4 @@ Risky - revenue redirection - 85% LTV
 Pending/Insolvent - liquidation - 95%+ LTV
 
 
-![_figure 2_](/packages/docs/contract_diagram_f2.png)
+![_figure 2_](/images/contract_diagram_f2.png)
