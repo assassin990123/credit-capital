@@ -1,4 +1,6 @@
 ---
+icon: ":heavy_dollar_sign:"
+expanded: true
 ---
 # CCUSD Stabletoken
 Credit Capital will offer a stabletoken in the form of CCUSD. It will be loaned out by a smart contract, running on the Fantom proof-of-stake blockchain, and backed by either commercial real-estate/bonds in the traditional market or whitelisted crypto assets such as Liquidity Pool Positions.
