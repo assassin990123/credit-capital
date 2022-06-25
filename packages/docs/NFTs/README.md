@@ -1,4 +1,8 @@
-# NFTs
+---
+icon: ":office:"
+expanded: true
+label: Tokenized Asset Platform (CCTAP)
+---
+# CreditCapital Tokenized Asset Platform (CCTAP) 
 
-### Backing
-Real Estate properties will serve as collateral in this system. Through the use of a specially designed trust, the properties will be tokenized and tracked on the Fantom network. The details of the property tokenization is in its own, separate document.
+Commercial Real Estate properties and Bonds will be the primary assets tokenized on the CreditCapital Tokenized Asset Platform. Through the use of a specially designed trust, the assets will be tokenized and managed as ERC-721 Non-Fungible Tokens on the Fantom network. 

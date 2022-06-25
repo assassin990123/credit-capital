@@ -1,5 +1,5 @@
 ---
 label: CreditCapital
-icon: home
+icon: ":bar_chart:"
 ---
 Introduction to CreditCapital
