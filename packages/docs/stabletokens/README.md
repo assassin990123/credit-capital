@@ -13,3 +13,5 @@ The minting process will look like a loan being extended to the user, but the to
 This model can be seen as a spiritual successor to the commonly known DAI by MakerDAO, or more recently, MIM, provided by Abracadabra.
 
 ![_figure 1_](/images/contract_diagram_f1.png)
+
+Any percentages mentioned in this documentation are estimates/examples, and should not be thought of as final amounts.

@@ -1,5 +1,5 @@
 ---
-order: 80
+order: 70
 label: Borrowing CCUSD
 ---
 
@@ -16,3 +16,5 @@ Pending/Insolvent - liquidation - 95%+ LTV
 
 
 ![_figure 2_](/images/contract_diagram_f2.png)
+
+There is a list in the dapp, which allows users to sort through currently open loans, and select from a list. Doing this, they can push them into redirection or liquidation state, in exchange for a fee.

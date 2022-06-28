@@ -13,4 +13,4 @@ Contract’s mint process:
 When the loan/minting contract receives a Real Estate NFT, it calls the NFT ownership contract, to determine that NFT’s value. After evaluating the percentage of collateral value that can be offered as a loan, it calls on the CCUSD contract to mint new tokens, and assign them to the user’s wallet.
 
 ### CAPL Rewards
-While the loan is active, the NFT Revenue controller contract will dispense CAPL tokens to the borrower, as an added incentive.
+While the loan is active, the NFT Revenue controller contract will dispense CAPL tokens to the borrower, as an added incentive. These effectively come from the portion of the borrower's interest payments that go to the NFT Rev Controller Contract.
