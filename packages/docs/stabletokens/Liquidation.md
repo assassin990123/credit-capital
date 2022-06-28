@@ -1,3 +1,8 @@
+---
+order: 80
+label: Borrowing CCUSD
+---
+
 # Liquidation of Loans
 
 This is also called revenue-redirecting on a loan. If the value of the real estate asset(s) backing the loan drop low enough to make the loan risky, a third party can interact with the dapp to initiate a “liquidation”.
