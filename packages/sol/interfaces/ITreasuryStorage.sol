@@ -7,15 +7,6 @@ interface IPool {
     }
 }
 
-interface IUserPositions {
-    struct UserPosition {
-        uint256 totalAmount;
-        uint256 loanedAmount; // amount that has been taken out of the treasury storage as a loan
-        uint256 profit;
-        uint256 lastAllocRequestBlock; // track the last block when the profit has distributed from the RevenueController
-    }
-}
-
 interface ITreasuryStorage {
     function deposit(
         address _user,
@@ -23,20 +14,11 @@ interface ITreasuryStorage {
         uint256 _amount
     ) external;
 
-    function setUserPosition(
-        address _token,
-        address _user,
-        uint256 _profit,
-        uint256 _lastRequestBlock
-    ) external;
-
     function addPool(address _token) external;
 
-    function updatePool(address _token, uint256 _allocAmount)
-        external
-        returns (IPool.Pool memory);
+    function updatePool(address _token) external returns (IPool.Pool memory);
 
-    function loan(
+    function borrow(
         address _token,
         address _user,
         uint256 _amount
@@ -48,25 +30,20 @@ interface ITreasuryStorage {
         uint256 _amount
     ) external;
 
-    function returnPrincipal(
+    function repay(
         address _user,
         address _token,
         uint256 _principal
     ) external;
 
-    function getTokenSupply(address _token) external returns (uint256);
-
-    function getPool(address _token) external returns (IPool.Pool memory);
-
-    function getUserPosition(address _token, address _user)
-        external
-        view
-        returns (IUserPositions.UserPosition memory);
-
-    function getUnlockedAmount(address _token, address _user)
+    function getAvailableBalance(address _token)
         external
         view
         returns (uint256);
+
+    function getDistributionList() external view returns (address[] memory);
+
+    function getWeight(address _user) external view returns (uint256 weight);
 
     function checkIfPoolExists(address _token) external returns (bool);
 }

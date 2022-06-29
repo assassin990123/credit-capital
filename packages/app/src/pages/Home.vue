@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <section class="section-1">
-      <div class="hero wow fadeInDown ">
+      <div class="hero wow fadeInDown">
         <div class="container">
           <div class="sec-1-inner">
             <p>
@@ -464,7 +464,7 @@
                   <h3>8</h3>
                 </div>
                 <div class="roadmap-block-right">
-                  <h4>8: Multi Chain Asset Managements</h4>
+                  <h4>8: Multi Chain Asset Management</h4>
                   <p>
                     Modify and deploy contracts on multiple chains: Polygon,
                     Fantom, Avalanche, Ethereum. Utilize existing, or build
@@ -803,7 +803,8 @@
               <div class="treasury-inner-con">
                 <div class="treasury-item-block">
                   <div class="treasury-icon-area">
-                    <img src="/images/gear.png" />
+                    <!-- <img src="/images/gear.png" /> -->
+                    <i class="las la-cogs"></i>
                   </div>
                   <div class="treasury-heading-main">
                     <h2>Sovereign Treasury</h2>
@@ -838,7 +839,8 @@
               <div class="treasury-inner-con">
                 <div class="treasury-item-block">
                   <div class="treasury-icon-area">
-                    <img src="/images/gear.png" />
+                    <!-- <img src="/images/gear.png" /> -->
+                    <i class="las la-cogs"></i>
                   </div>
                   <div class="treasury-heading-main">
                     <h2>Liquidity pool</h2>

@@ -17,7 +17,7 @@
                   safeguard your crypto assets.
                 </p>
               </div>
-              <div class="footer-icon" style="display:none;">
+              <div class="footer-icon" style="display: none">
                 <a href="#"><i class="uil uil-facebook-f"></i></a>
                 <a href="#"><i class="uil uil-twitter"></i></a>
                 <a href="#"><i class="uil uil-instagram-alt"></i></a>
@@ -45,7 +45,7 @@
           <!-- /col -->
           <!-- col -->
           <div class="col-xl-3 col-lg-3 col-md-6">
-            <div class="footer-wrapper mb-30" style="display:none;">
+            <div class="footer-wrapper mb-30" style="display: none">
               <h3 class="footer-title">Info</h3>
               <div class="footer-link">
                 <ul>

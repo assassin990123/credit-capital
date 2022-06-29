@@ -279,10 +279,10 @@ contract Rewards is Pausable, AccessControl {
 
     function withdraw(address _token, address _user) external {
         IPool.Pool memory pool = updatePool(_token);
-        IUserPositions.UserPosition memory user = vault.getUserPosition(
-            _token,
-            _user
-        );
+        // IUserPositions.UserPosition memory user = vault.getUserPosition(
+        //     _token,
+        //     _user
+        // );
 
         uint256 amount = vault.getUnlockedAmount(_token, _user);
         uint256 newRewardDebt;

@@ -4,6 +4,7 @@ import { ContractState } from "./contracts";
 import { RewardsState } from "./rewards";
 import { DashboardState } from "./dashboard";
 import { TokenState } from "./tokens";
+import { TreasuryState } from "./treasury";
 
 export interface RootState {
   accounts: AccountState;
@@ -12,4 +13,5 @@ export interface RootState {
   rewards: RewardsState;
   dashboard: DashboardState;
   tokens: TokenState;
+  TreasuryState: TreasuryState;
 }

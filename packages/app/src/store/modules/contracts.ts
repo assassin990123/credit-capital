@@ -12,6 +12,7 @@ import { findObjectContract } from "@/utils";
 import { ContractState } from "@/models/contracts";
 import { RootState } from "@/models";
 import { lpABI } from "@/abi/lp";
+import { treasuryStorageABI, treasuryControllerABI, swapABI } from "@/abi";
 
 const ChainID = process.env.VUE_APP_NETWORK_ID
   ? process.env.VUE_APP_NETWORK_ID
@@ -24,6 +25,9 @@ const state: ContractState = {
   caplContract: null,
   usdcContract: null,
   lpContract: null,
+  treasuryStorageContract: null,
+  treasuryControllerContract: null,
+  swapAndBurnContract: null,
 };
 
 const getters = {
@@ -117,6 +121,36 @@ const actions = {
           )
         )
       );
+      commit(
+        "setTreasuryStorageContract",
+        markRaw(
+          new ethers.Contract(
+            findObjectContract("treasuryStorage", contracts, ChainID),
+            treasuryStorageABI,
+            providerOrSigner
+          )
+        )
+      );
+      commit(
+        "setTreasuryControllerContract",
+        markRaw(
+          new ethers.Contract(
+            findObjectContract("treasuryController", contracts, ChainID),
+            treasuryControllerABI,
+            providerOrSigner
+          )
+        )
+      );
+      commit(
+        "setSwapAndBurnContract",
+        markRaw(
+          new ethers.Contract(
+            findObjectContract("swapAndBurn", contracts, ChainID),
+            swapABI,
+            providerOrSigner
+          )
+        )
+      );
     } catch (e) {
       console.log(e);
     }
@@ -141,6 +175,15 @@ const mutations = {
   },
   setCAPLUSDCTokenContract(state: ContractState, _contract: object) {
     state.lpContract = _contract;
+  },
+  setTreasuryStorageContract(state: ContractState, _contract: object) {
+    state.treasuryStorageContract = _contract;
+  },
+  setTreasuryControllerContract(state: ContractState, _contract: object) {
+    state.treasuryControllerContract = _contract;
+  },
+  setSwapAndBurnContract(state: ContractState, _contract: object) {
+    state.swapAndBurnContract = _contract;
   },
 };
 

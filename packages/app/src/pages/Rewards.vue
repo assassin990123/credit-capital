@@ -8,14 +8,18 @@
             <div class="rewards-display">
               {{ pendingRewardsCAPL + " CAPL" }}<br />
               ({{ pendingRewardsUSDC + " USD" }})
-            <div class="rewards-section">
-              <button class="rewards-section-item" @click="claim">CLAIM</button>
-              <!-- <div class="rewards-section-item">COMPOUND</div> -->
-              <div class="explainer">
-                Claim your rewards whenever you want! If you aren't earning, you may want to
-                <router-link to="stake" class="button">Stake</router-link> some tokens.
+              <div class="rewards-section">
+                <button class="rewards-section-item" @click="claim">
+                  CLAIM
+                </button>
+                <!-- <div class="rewards-section-item">COMPOUND</div> -->
+                <div class="explainer">
+                  Claim your rewards whenever you want! If you aren't earning,
+                  you may want to
+                  <router-link to="stake" class="button">Stake</router-link>
+                  some tokens.
+                </div>
               </div>
-            </div>
             </div>
           </div>
         </div>
@@ -53,7 +57,10 @@ const claim = () => {
 };
 
 watchEffect(async () => {
-  if (connected.value === true && Number(chainId.value) == parseInt(process.env.VUE_APP_NETWORK_ID!)) {
+  if (
+    connected.value === true &&
+    Number(chainId.value) == parseInt(process.env.VUE_APP_NETWORK_ID!)
+  ) {
     if (pendingRewards.value >= 0) {
       await store.dispatch("balancer/getPoolTokens");
       pendingRewardsCAPL.value = format(pendingRewards.value);

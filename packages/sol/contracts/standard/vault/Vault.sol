@@ -12,7 +12,7 @@ contract Vault is AccessControl, Pausable {
 
     bytes32 public constant REWARDS = keccak256("REWARDS");
 
-    uint256 timelock = 137092276; // 4 years, 4 months, 4 days ...
+    uint256 public timelock = 137092276; // 4 years, 4 months, 4 days ...
 
     struct Stake {
         uint256 amount; // quantity staked
@@ -58,6 +58,13 @@ contract Vault is AccessControl, Pausable {
 
         // create first pool
         addPool(_token, _rewardsPerSecond);
+    }
+
+    function setTimelock(uint256 _timelock)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        timelock = _timelock;
     }
 
     function updatePool(

@@ -22,7 +22,7 @@ const deployContracts = async (deployer) => {
   return { capl, vault, rewards };
 };
 
-describe("Rewards Vault", function () {
+describe("Deposit Vault", function () {
   let deployer;
   let user;
   let capl;

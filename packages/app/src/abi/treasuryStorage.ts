@@ -1,11 +1,5 @@
-export const treasurystorageABI = [
-  {
-    inputs: [
-      { internalType: "address", name: "_treasuryShares", type: "address" },
-    ],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
+export const treasuryStorageABI = [
+  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
   {
     anonymous: false,
     inputs: [
@@ -75,9 +69,23 @@ export const treasurystorageABI = [
   },
   {
     inputs: [],
+    name: "ORACLE_SETTER",
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "REVENUE_CONTROLLER",
     outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "_addr", type: "address" }],
+    name: "addDistributionList",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -88,18 +96,19 @@ export const treasurystorageABI = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "address", name: "_token", type: "address" }],
-    name: "checkIfPoolExists",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
-    stateMutability: "view",
+    inputs: [
+      { internalType: "address", name: "_token", type: "address" },
+      { internalType: "address", name: "_user", type: "address" },
+      { internalType: "uint256", name: "_amount", type: "uint256" },
+    ],
+    name: "borrow",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      { internalType: "address", name: "_user", type: "address" },
-      { internalType: "address", name: "_token", type: "address" },
-    ],
-    name: "checkIfUserPositionExists",
+    inputs: [{ internalType: "address", name: "_token", type: "address" }],
+    name: "checkIfPoolExists",
     outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
@@ -116,12 +125,36 @@ export const treasurystorageABI = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "getAUM",
+    outputs: [{ internalType: "uint256", name: "total", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "_token", type: "address" }],
+    name: "getAvailableBalance",
+    outputs: [
+      { internalType: "uint256", name: "availableBalance", type: "uint256" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getDistributionList",
+    outputs: [{ internalType: "address[]", name: "", type: "address[]" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "address", name: "_token", type: "address" }],
     name: "getPool",
     outputs: [
       {
         components: [
           { internalType: "uint256", name: "totalPooled", type: "uint256" },
+          { internalType: "uint256", name: "loanedAmount", type: "uint256" },
           { internalType: "bool", name: "isActive", type: "bool" },
         ],
         internalType: "struct TreasuryStorage.Pool",
@@ -133,6 +166,13 @@ export const treasurystorageABI = [
     type: "function",
   },
   {
+    inputs: [{ internalType: "address", name: "_token", type: "address" }],
+    name: "getPoolTokenPrice",
+    outputs: [{ internalType: "uint256", name: "price", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }],
     name: "getRoleAdmin",
     outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
@@ -140,47 +180,9 @@ export const treasurystorageABI = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "address", name: "_token", type: "address" }],
-    name: "getTokenSupply",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "_token", type: "address" },
-      { internalType: "address", name: "_user", type: "address" },
-    ],
-    name: "getUnlockedAmount",
-    outputs: [
-      { internalType: "uint256", name: "unlockedAmount", type: "uint256" },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "_token", type: "address" },
-      { internalType: "address", name: "_user", type: "address" },
-    ],
-    name: "getUserPosition",
-    outputs: [
-      {
-        components: [
-          { internalType: "uint256", name: "totalAmount", type: "uint256" },
-          { internalType: "uint256", name: "loanedAmount", type: "uint256" },
-          { internalType: "uint256", name: "profit", type: "uint256" },
-          {
-            internalType: "uint256",
-            name: "lastAllocRequestBlock",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct TreasuryStorage.UserPosition",
-        name: "",
-        type: "tuple",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "_addr", type: "address" }],
+    name: "getWeight",
+    outputs: [{ internalType: "uint256", name: "weight", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
@@ -205,22 +207,8 @@ export const treasurystorageABI = [
     type: "function",
   },
   {
-    inputs: [
-      { internalType: "address", name: "_token", type: "address" },
-      { internalType: "address", name: "_user", type: "address" },
-      { internalType: "uint256", name: "_amount", type: "uint256" },
-    ],
-    name: "loan",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "_destination", type: "address" },
-      { internalType: "uint256", name: "_amount", type: "uint256" },
-    ],
-    name: "mintTreasuryShares",
+    inputs: [{ internalType: "address", name: "_addr", type: "address" }],
+    name: "removeDistributionList",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -241,7 +229,7 @@ export const treasurystorageABI = [
       { internalType: "address", name: "_token", type: "address" },
       { internalType: "uint256", name: "_principal", type: "uint256" },
     ],
-    name: "returnPrincipal",
+    name: "repay",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -259,15 +247,19 @@ export const treasurystorageABI = [
   {
     inputs: [
       { internalType: "address", name: "_token", type: "address" },
-      { internalType: "address", name: "_user", type: "address" },
-      { internalType: "uint256", name: "_profit", type: "uint256" },
-      {
-        internalType: "uint256",
-        name: "_lastAllockRequetBlock",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "_price", type: "uint256" },
     ],
-    name: "setUserPosition",
+    name: "setPoolTokenPrice",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "_addr", type: "address" },
+      { internalType: "uint256", name: "_weight", type: "uint256" },
+    ],
+    name: "setWeight",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -280,15 +272,13 @@ export const treasurystorageABI = [
     type: "function",
   },
   {
-    inputs: [
-      { internalType: "address", name: "_token", type: "address" },
-      { internalType: "uint256", name: "_amount", type: "uint256" },
-    ],
+    inputs: [{ internalType: "address", name: "_token", type: "address" }],
     name: "updatePool",
     outputs: [
       {
         components: [
           { internalType: "uint256", name: "totalPooled", type: "uint256" },
+          { internalType: "uint256", name: "loanedAmount", type: "uint256" },
           { internalType: "bool", name: "isActive", type: "bool" },
         ],
         internalType: "struct TreasuryStorage.Pool",
