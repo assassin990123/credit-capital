@@ -1,8 +1,10 @@
 ---
-order: 70
-label: Treasury
+order: 60
+label: Sovereign Treasury
 ---
 
-# The Treasury
+# The Sovereign Treasury
 
-The purpose of the treasury is to house interest payments from borrowers, and to act as on onramp for revenue from property NFTs and DEX yield aggregation. The treasury recieves 2/3rds of the interest paid by users (the 10% in the 5-10 split).
+The purpose of the treasury is to:
+1. Act as a vault for interest payments from borrowers, and
+2. To act as on onramp for revenue from property NFTs and DEX yield aggregation. The treasury recieves a portion of the interest paid by users (some part of the 3%).
