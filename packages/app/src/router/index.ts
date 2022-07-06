@@ -9,6 +9,7 @@ import PlatformPage from "../pages/Platform.vue";
 import PortfolioPage from "../pages/Portfolio.vue";
 import LiquidityPage from "../pages/Liquidity.vue";
 import NFT from "../pages/NFT.vue";
+import TreasuryFundPage from "../pages/TreasuryFund.vue"; 
 
 const routeInfos = [
   {
@@ -51,6 +52,10 @@ const routeInfos = [
     path: "/nft",
     component: NFT,
   },
+  {
+    path: "/treasuryfund",
+    component: TreasuryFundPage,
+  }
 ];
 
 const router = createRouter({
