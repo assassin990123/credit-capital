@@ -10,6 +10,8 @@ import PortfolioPage from "../pages/Portfolio.vue";
 import LiquidityPage from "../pages/Liquidity.vue";
 import NFT from "../pages/NFT.vue";
 import TreasuryFundPage from "../pages/TreasuryFund.vue"; 
+import Wallet from "../pages/Wallet.vue"; 
+
 
 const routeInfos = [
   {
@@ -55,6 +57,10 @@ const routeInfos = [
   {
     path: "/treasuryfund",
     component: TreasuryFundPage,
+  },
+  {
+    path: "/wallet",
+    component: Wallet,
   }
 ];
 

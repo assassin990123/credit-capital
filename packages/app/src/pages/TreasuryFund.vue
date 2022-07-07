@@ -83,73 +83,8 @@
           </div>
         </div>
       </div>
-      <!-- current NFTs Contract Tab -->
-      <div class="treasury-fund-row">
-        <div class="current-nft-tab-main">
-          <div class="current-nft-tab-head">
-            <h2>Current NFTs in Contract</h2>
-          </div>
-          <div class="current-nft-tabs">
-            <button type="button">Card</button>
-            <button type="button">List</button>
-            <button type="button">All</button>
-          </div>
-        </div>
-      </div>
-      <!-- Current Assets Details -->
-      <div class="treasury-fund-row">
-        <div class="treasury-column">
-          <div class="current-assets-table-main">
-            <div class="current-assets-table-inner">
-              <div class="current-assets-head">
-                <h2>Current Assets in Contract</h2>
-              </div>
-              <div class="current-assets-table-head">
-                <table class="table table-borderless">
-                  <thead>
-                    <tr>
-                      <th scope="col">Asset</th>
-                      <th scope="col">Contract</th>
-                      <th scope="col">Tx</th>
-                      <th scope="col">Amount</th>
-                    </tr>
-                  </thead>
-                </table>
-              </div>
-              <div class="current-assets-table-body">
-                <table class="table">
-                  <tbody>
-                    <tr>
-                      <td>Token Name</td>
-                      <td>Contract</td>
-                      <td>Tx</td>
-                      <td>Amount</td>
-                    </tr>
-                    <tr>
-                      <td>Token Name</td>
-                      <td>Contract</td>
-                      <td>Tx</td>
-                      <td>Amount</td>
-                    </tr>
-                    <tr>
-                      <td>Token Name</td>
-                      <td>Contract</td>
-                      <td>Tx</td>
-                      <td>Amount</td>
-                    </tr>
-                    <tr>
-                      <td>Token Name</td>
-                      <td>Contract</td>
-                      <td>Tx</td>
-                      <td>Amount</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Current NFTs Tab Details -->
+      <CurrentNFTsTab />
       <!-- Revenue Projections Details -->
       <div class="treasury-fund-row">
         <div class="treasury-column">
@@ -167,13 +102,53 @@
           </div>
         </div>
       </div>
+      <!-- actions tabs -->
+      <div class="treasury-fund-row">
+        <div class="treasury-actions-main">
+          <div class="treasury-actions-inner">
+            <div class="treasury-actions-head">
+              <h2>Actions</h2>
+            </div>
+            <div class="treasury-actions-tab">
+              <button type="button">Withdraw</button>
+              <button type="button">Deposit</button>
+              <button type="button">Revenue</button>
+            </div>
+            <div class="treasury-actions-tab-details-main">
+              <div class="actions-inner">
+                <label for="select-withdraw-token">Token</label>
+                <select id="select-withdraw-token">
+                  <option value="" selected></option>
+                  <option value="withdraw-option">Withdraw-option</option>
+                </select>
+              </div>
+              <div class="actions-inner">
+                <label for="withdraw-amount">Amount</label>
+                <input type="number" value="00" id="withdraw-amount" />
+              </div>
+              <div class="actions-inner">
+                <label for="wallet-address">Wallet Address</label>
+                <input type="text" id="wallet-address" />
+              </div>
+              <div class="actions-inner">
+                <label for="confirm-button">Confirm</label>
+                <button type="button" id="confirm-button">Process</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import CurrentNFTsTab from "@/components/CurrentNFTsTab/CurrentNFTsTab.vue";
 export default {
   name: "TreasuryFundPage",
+  components: {
+    CurrentNFTsTab,
+  },
 };
 </script>
 
@@ -252,7 +227,6 @@ export default {
 .outstanding-value-details span {
   font-size: 46px;
 }
-
 /* Current Assets Details */
 .current-assets-head h2 {
   text-align: center;
@@ -266,7 +240,7 @@ export default {
   background: #fff;
   border-radius: 20px;
   box-shadow: 0px 0px 22px 0px rgb(0 0 0 / 17%);
-  margin: 0 0 50px 0;
+  margin: 50px 0 50px 0;
 }
 .current-assets-table-head {
   padding: 0 20px;
@@ -282,39 +256,6 @@ export default {
 .current-assets-table-main .table > :not(:last-child) > :last-child > * {
   border: none;
 }
-
-/* nft tabs */
-.current-nft-tab-main {
-  margin: 0 0 50px 0;
-}
-.current-nft-tab-head h2 {
-  text-align: center;
-  margin: 0;
-  color: #000;
-  padding: 0 0 30px 0;
-}
-.current-nft-tabs {
-  display: flex;
-  justify-content: center;
-}
-.current-nft-tabs button {
-  background: transparent;
-  border: 2px solid #ff8900;
-  border-radius: 25px;
-  width: 150px;
-  text-transform: uppercase;
-  font-size: 22px;
-  font-weight: 700;
-  margin: 0 15px;
-  transition: 0.3s all ease;
-}
-.current-nft-tabs button:hover,
-.current-nft-tabs button:active,
-.current-nft-tabs button:focus {
-  background: #ff8900;
-  color: #fff;
-}
-
 /* treasury projection  */
 .treasury-revenue-projection-main {
   width: 100%;
@@ -349,5 +290,93 @@ export default {
   justify-content: center;
   align-items: center;
   text-transform: uppercase;
+}
+
+/* Actions tab */
+.treasury-actions-inner {
+  width: 100%;
+  padding: 50px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0px 0px 22px 0px rgb(0 0 0 / 17%);
+  margin: 0 0 0 0;
+}
+.treasury-actions-head h2 {
+  text-align: center;
+  margin: 0;
+  color: #000;
+  padding: 0 0 30px 0;
+}
+.treasury-actions-tab {
+  display: flex;
+  justify-content: center;
+}
+.treasury-actions-tab button {
+  background: transparent;
+  border: 2px solid #ff8900;
+  border-radius: 25px;
+  width: 160px;
+  text-transform: uppercase;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 15px;
+  transition: 0.3s all ease;
+}
+.treasury-actions-tab button:hover,
+.treasury-actions-tab button:active,
+.treasury-actions-tab button:focus {
+  background: gray;
+  color: #fff;
+  border: 2px solid gray;
+}
+
+.treasury-actions-tab-details-main {
+  display: flex;
+  justify-content: space-between;
+  margin: 70px 0 0 0;
+  flex-wrap: wrap;
+}
+.actions-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 25%;
+}
+.actions-inner label {
+  color: #4d4d4d;
+}
+.actions-inner #select-withdraw-token {
+  width: 80%;
+  background: #4d4d4d;
+  color: white;
+  border-radius: 7px;
+  padding: 10px;
+}
+.actions-inner input {
+  border: 2px solid #ff8900;
+  padding: 5px;
+  border-radius: 7px;
+  width: 80%;
+}
+.actions-inner #withdraw-amount {
+  text-align: right;
+  font-size: 24px;
+  line-height: 0;
+}
+.actions-inner #wallet-address {
+  font-size: 24px;
+  line-height: 0;
+}
+.actions-inner #confirm-button {
+  width: 80%;
+  background: #ff8900;
+  border: 2px solid #ff8900;
+  padding: 21px 0;
+  text-transform: uppercase;
+  font-weight: 700;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 24px;
+  line-height: 0;
 }
 </style>
