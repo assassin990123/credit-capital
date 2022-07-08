@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "lerna": "^4.0.0",
-    "swiper": "^8.1.6"
+    "swiper": "^8.1.6",
+    "vue3-carousel": "^0.1.40"
   },
   "scripts": {
     "bootstrap": "yarn && lerna bootstrap",
@@ -14,6 +15,5 @@
     "lint": "lerna run lint",
     "upgrade": "lerna exec -- yarn upgrade"
   },
-  "name": "credit-capital",
-  "devDependencies": {}
+  "name": "credit-capital"
 }

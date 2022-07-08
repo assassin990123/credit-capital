@@ -165,9 +165,6 @@ export default {
   align-items: center;
 }
 .button-svg {
-  margin: 0 0 0 15px;
-}
-.button-svg {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -175,6 +172,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 0 0 0 15px;
 }
 .connect-wallet .connect-wallet-button svg {
   fill: #ffa000;

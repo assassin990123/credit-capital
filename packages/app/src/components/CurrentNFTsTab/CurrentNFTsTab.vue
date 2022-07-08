@@ -29,7 +29,7 @@
         </button>
       </div>
       <CurrentAssets v-if="activetab === '1'" />
-      <CurrentAssets v-if="activetab === '2'" />
+      <CurrentNFTsCard v-if="activetab === '2'" />
       <CurrentAssets v-if="activetab === '3'" />
     </div>
   </div>
@@ -37,6 +37,8 @@
 
 <script>
 import CurrentAssets from "@/components/CurrentNFTsTab/CurrentAssets.vue";
+import CurrentNFTsCard from "@/components/CurrentNFTsTab/CurrentNFTsCard.vue";
+
 export default {
   name: "CurrentNFTsTab",
   data() {
@@ -46,6 +48,7 @@ export default {
   },
   components: {
     CurrentAssets,
+    CurrentNFTsCard,
   },
 };
 </script>
