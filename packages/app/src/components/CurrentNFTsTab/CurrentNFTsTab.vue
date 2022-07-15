@@ -28,8 +28,9 @@
           All
         </button>
       </div>
-      <CurrentAssets v-if="activetab === '1'" />
-      <CurrentNFTsCard v-if="activetab === '2'" />
+      <CurrentNFTsCard v-if="activetab === '1'" />
+      <CurrentAssets v-if="activetab === '2'" />
+      <CurrentNFTsCard v-if="activetab === '3'" />
       <CurrentAssets v-if="activetab === '3'" />
     </div>
   </div>
@@ -80,8 +81,11 @@ export default {
   transition: 0.3s all ease;
 }
 .current-nft-tabs button:hover,
-.current-nft-tabs button:active,
 .current-nft-tabs button:focus {
+  background: #ff8900;
+  color: #fff;
+}
+.current-nft-tabs button.active {
   background: #ff8900;
   color: #fff;
 }

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "../pages/Home.vue";
-import DashboardPage from "../pages/Dashboard.vue";
+import Dashboard from "../pages/Dashboard.vue";
 import RewardsPage from "../pages/Rewards.vue";
 import StakePage from "../pages/Stake.vue";
 import SwapPage from "../pages/Swap.vue";
@@ -20,7 +20,7 @@ const routeInfos = [
   },
   {
     path: "/dashboard",
-    component: DashboardPage,
+    component: Dashboard,
   },
   {
     path: "/stake",
